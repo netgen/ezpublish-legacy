@@ -1,7 +1,7 @@
 {
-    "name":        "ezsystems/ezpublish-legacy",
-    "description": "eZ Publish LegacyStack (4.x)",
-    "homepage":    "http://share.ez.no",
+    "name":        "netgen/ezpublish-legacy",
+    "description": "eZ Publish LegacyStack (4.x), maintained by Netgen for compatibility with eZ Platform",
+    "homepage":    "http://www.netgenlabs.com",
     "license":     "GPL-2.0",
     "type":        "ezpublish-legacy",
     "suggest": {
@@ -61,5 +61,8 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*",
         "zetacomponents/php-generator": "~1.1"
+    },
+    "replace": {
+        "ezsystems/ezpublish-legacy": "*"
     }
 }
