@@ -78,9 +78,6 @@
           "@legacy-scripts"
       ]
     },
-    "conflict": {
-        "ezsystems/ezpublish-kernel": "<7.3 || >=2013.4"
-    },
     "extra": {
         "branch-alias": {
             "dev-2017.12": "2017.12.x-dev",
