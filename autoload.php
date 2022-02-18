@@ -7,9 +7,8 @@
  * @version //autogentag//
  * @package kernel
  */
-
 // Disable the PHAR stream wrapper as it is insecure
-if (in_array('phar', stream_get_wrappers())) {
+if (PHP_SAPI !== 'cli' && in_array('phar', stream_get_wrappers())) {
     stream_wrapper_unregister('phar');
 }
 
