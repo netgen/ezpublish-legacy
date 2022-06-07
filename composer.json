@@ -1,6 +1,6 @@
 {
-    "name":        "emodric/ezpublish-legacy",
-    "description": "eZ Publish Legacy (aka LegacyStack in 5.x. Is an updated version of eZ Publish 4.x cable of being combined with eZ Platform)",
+    "name":        "netgen/ezpublish-legacy",
+    "description": "eZ Publish Legacy (aka LegacyStack in 5.x. Is an updated version of eZ Publish 4.x cable of being combined with Ibexa OSS)",
     "homepage":    "http://share.ez.no",
     "license":     "GPL-2.0-only",
     "type":        "ezpublish-legacy",
