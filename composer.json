@@ -64,9 +64,6 @@
         "phpunit/phpunit": "4.8.36",
         "zetacomponents/php-generator": "~1.1"
     },
-    "replace": {
-        "ezsystems/ezpublish-legacy": "*"
-    },
     "autoload": {
       "files": ["autoload.php"]
     },
