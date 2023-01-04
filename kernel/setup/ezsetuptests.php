@@ -241,7 +241,11 @@ function eZSetupTestFileUpload( $type )
 
 function eZSetupCheckMagicQuotesRuntime( $type )
 {
-    $magicQuote = get_magic_quotes_runtime();
+    if ( version_compare( PHP_VERSION, '7.4' ) >= 0 ) {
+        $magicQuote = 0;
+    } else {
+        $magicQuote = get_magic_quotes_runtime();
+    }
     $result = ( $magicQuote == 0 );
     return array( 'result' => $result,
                   'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
