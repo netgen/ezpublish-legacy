@@ -249,7 +249,12 @@ function eZSetupCheckMagicQuotesRuntime( $type )
 
 function eZSetupCheckMagicQuotes( $type )
 {
-    $magicQuote = get_magic_quotes_gpc();
+    if ( version_compare( PHP_VERSION, '8.0' ) >= 0 ) {
+        $magicQuote = 0;
+    } else {
+        $magicQuote = get_magic_quotes_gpc();
+    }
+
     $result = ( $magicQuote == 0 );
     return array( 'result' => $result,
                   'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
