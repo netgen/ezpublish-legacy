@@ -835,7 +835,7 @@ function eZSetupTestMemLimit( $type )
     }
 
     $byteMinMem = intval( $minMemory );
-    switch ( $minMemory{strlen( $minMemory ) - 1} )
+    switch ( $minMemory[strlen( $minMemory ) - 1] )
     {
         case 'G':
             $byteMinMem *= 1024;
@@ -846,7 +846,7 @@ function eZSetupTestMemLimit( $type )
     }
 
     $byteMemLimit = intval( $memoryLimit );
-    switch ( $memoryLimit{strlen( $memoryLimit ) - 1} )
+    switch ( $memoryLimit[strlen( $memoryLimit ) - 1] )
     {
         case 'G':
             $byteMemLimit *= 1024;
