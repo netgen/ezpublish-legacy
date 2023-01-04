@@ -249,7 +249,7 @@ function eZSetupCheckMagicQuotesRuntime( $type )
 
 function eZSetupCheckMagicQuotes( $type )
 {
-    if ( version_compare( PHP_VERSION, '8.0' ) >= 0 ) {
+    if ( version_compare( PHP_VERSION, '7.4' ) >= 0 ) {
         $magicQuote = 0;
     } else {
         $magicQuote = get_magic_quotes_gpc();
