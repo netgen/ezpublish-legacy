@@ -795,7 +795,7 @@ WHERE user_id = '" . $userID . "' AND
      * @param mixed $userID
      * @param string $login
      */
-     protected static function loginFailed( $userID = false, $login )
+     protected static function loginFailed( $userID, $login )
     {
         $loginEscaped = eZDB::instance()->escapeString( $login );
 
@@ -1474,7 +1474,7 @@ WHERE user_id = '" . $userID . "' AND
         // At the end of this method flag is set to previous value again
         $previousCachingState = $user->setCachingEnabled( false );
         // user groups list (session: eZUserGroupsCache)
-        $groups = $user->groups(); 
+        $groups = $user->groups();
         $data['groups'] = $groups;
 
         // role list (session: eZRoleIDList)
