@@ -1558,7 +1558,10 @@ class eZDBInterface
      */
     public function countStringSize( $string )
     {
-        return mb_strlen( $string, "utf-8" );
+        if ( !is_string( $string ) )
+            return 0;
+        else
+            return mb_strlen( $string, "utf-8" );
     }
 
     /**
