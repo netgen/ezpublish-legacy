@@ -737,9 +737,8 @@ class eZTemplate
      - "text", the text.
      - "time-stamp", the timestamp.
     */
-    function loadURIRoot( $uri, $displayErrors/* = true*/, &$extraParameters )
+    function loadURIRoot( $uri, $displayErrors, &$extraParameters )
     {
-        // ###PATCH_PHP80###
         if ( !$displayErrors )
             $displayErrors = true;
 
@@ -798,10 +797,9 @@ class eZTemplate
         return $resourceData;
     }
 
-    function processURI( $uri, $displayErrors/* = true*/, &$extraParameters,
+    function processURI( $uri, $displayErrors, &$extraParameters,
                          &$textElements, $rootNamespace, $currentNamespace )
     {
-        // ###PATCH_PHP80###
         if ( !$displayErrors )
             $displayErrors = true;
 
@@ -1426,7 +1424,6 @@ class eZTemplate
         }
 
         $op = $this->Operators[$name];
-        //  ###PATCH_PHP8
         if ( isset( $op ) and is_object( $op ) and
              method_exists( $op, "namedParameterList" ) )
         {
