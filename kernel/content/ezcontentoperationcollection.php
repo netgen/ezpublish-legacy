@@ -1021,7 +1021,8 @@ class eZContentOperationCollection
         // See https://jira.ez.no/browse/EZP-22447
         foreach ( $aNodes as $node )
         {
-            eZContentCacheManager::addAdditionalNodeIDPerObject( $node->attribute( 'contentobject_id' ), $node->attribute( 'node_id' ) );
+            if ( is_object( $node ) )
+                eZContentCacheManager::addAdditionalNodeIDPerObject( $node->attribute( 'contentobject_id' ), $node->attribute( 'node_id' ) );
         }
         eZContentObjectTreeNode::removeSubtrees( $deleteIDArray, $moveToTrash );
         return array( 'status' => true );
