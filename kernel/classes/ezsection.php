@@ -261,10 +261,13 @@ class eZSection extends eZPersistentObject
                 foreach ( $assignedNodes as $node ) {
                     $objectIDArray = eZContentObjectTreeNode::getObjectIdsInNodeSubTree( $node );
 
-                    foreach (array_chunk($objectIDArray, 100) as $pagedObjectIDs) {
-                        // Clear cache of affected objects in sub tree so they are up-to-date when indexed.
-                        eZContentCacheManager::clearObjectViewCacheArray($pagedObjectIDs);
-                        eZSearch::updateObjectsSection($pagedObjectIDs, $sectionID);
+                    if ( is_array( $objectIDArray ) )
+                    {
+                        foreach (array_chunk($objectIDArray, 100) as $pagedObjectIDs) {
+                            // Clear cache of affected objects in sub tree so they are up-to-date when indexed.
+                            eZContentCacheManager::clearObjectViewCacheArray($pagedObjectIDs);
+                            eZSearch::updateObjectsSection($pagedObjectIDs, $sectionID);
+                        }
                     }
                 }
             } else {
