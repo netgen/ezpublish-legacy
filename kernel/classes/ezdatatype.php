@@ -51,7 +51,7 @@ class eZDataType
      * @param string $name
      * @param array $properties
      */
-    public function __construct( $dataTypeString = null, $name = null, $properties = array() )
+    public function __construct( $dataTypeString, $name, $properties = array() )
     {
         $this->DataTypeString = $dataTypeString;
         $this->Name = $name;
