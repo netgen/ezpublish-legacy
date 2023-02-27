@@ -788,7 +788,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
         // Check for class filtering
         $classCondition = '';
 
-        if ( isset( $classFilterType ) &&
+        if ( isset( $classFilterType ) && is_array( $classFilterArray ) &&
              ( $classFilterType == 'include' || $classFilterType == 'exclude' ) &&
              count( $classFilterArray ) > 0 )
         {
@@ -2380,7 +2380,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
     /*!
      \sa subTreeCount
     */
-    static function subTreeCountByNodeID( $params = array(), $nodeID )
+    static function subTreeCountByNodeID( $params, $nodeID )
     {
         if ( !is_numeric( $nodeID ) and !is_array( $nodeID ) )
         {
@@ -2415,7 +2415,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
         // Check for class filtering
         $classCondition = '';
 
-        if ( isset( $params['ClassFilterType'] ) and isset( $params['ClassFilterArray'] ) and
+        if ( isset( $params['ClassFilterType'] ) and isset( $params['ClassFilterArray'] ) and is_array( $params['ClassFilterArray'] ) and
              ( $params['ClassFilterType'] == 'include' or $params['ClassFilterType'] == 'exclude' )
              and count( $params['ClassFilterArray'] ) > 0 )
         {
@@ -2868,7 +2868,7 @@ class eZContentObjectTreeNode extends eZPersistentObject
      \note Transaction unsafe. If you call several transaction unsafe methods you must enclose
      the calls within a db transaction; thus within db->begin and db->commit.
     */
-    static function updateMainNodeID( $mainNodeID, $objectID, $version = false, $parentMainNodeID, $updateSection = true )
+    static function updateMainNodeID( $mainNodeID, $objectID, $version, $parentMainNodeID, $updateSection = true )
     {
         $mainNodeID = (int)$mainNodeID;
         $parentMainNodeID = (int)$parentMainNodeID;
@@ -4041,6 +4041,8 @@ class eZContentObjectTreeNode extends eZPersistentObject
             return 0;
         }
 
+        $pathStringArray = array();
+        $path2StringArray = array();
         foreach( $nodeIDArray as $nodeID )
         {
             $contentObjectTreeNode = eZContentObjectTreeNode::fetch( $nodeID, false, false );

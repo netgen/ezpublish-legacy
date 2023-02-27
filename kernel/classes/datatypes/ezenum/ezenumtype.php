@@ -150,20 +150,24 @@ class eZEnumType extends eZDataType
 
             // Remove stored enumerations before we store new enumerations
             eZEnum::removeObjectEnumerations( $contentObjectAttributeID, $contentObjectAttributeVersion );
-            for ( $i=0;$i<count( $array_enumElement );$i++ )
+
+            if ( is_countable( $array_enumElement ) && is_countable( $array_selectedEnumElement ) )
             {
-                for ( $j=0;$j<count( $array_selectedEnumElement );$j++ )
+                for ( $i=0;$i<count( $array_enumElement );$i++ )
                 {
-                    if ( $array_enumElement[$i] === $array_selectedEnumElement[$j] )
+                    for ( $j=0;$j<count( $array_selectedEnumElement );$j++ )
                     {
-                        $eID = $array_enumID[$i];
-                        $eElement = $array_enumElement[$i];
-                        $eValue = $array_enumValue[$i];
-                        eZEnum::storeObjectEnumeration( $contentObjectAttributeID,
-                                                        $contentObjectAttributeVersion,
-                                                        $eID,
-                                                        $eElement,
-                                                        $eValue );
+                        if ( $array_enumElement[$i] === $array_selectedEnumElement[$j] )
+                        {
+                            $eID = $array_enumID[$i];
+                            $eElement = $array_enumElement[$i];
+                            $eValue = $array_enumValue[$i];
+                            eZEnum::storeObjectEnumeration( $contentObjectAttributeID,
+                                                            $contentObjectAttributeVersion,
+                                                            $eID,
+                                                            $eElement,
+                                                            $eValue );
+                        }
                     }
                 }
             }
