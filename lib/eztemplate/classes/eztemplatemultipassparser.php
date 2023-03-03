@@ -424,6 +424,7 @@ class eZTemplateMultiPassParser extends eZTemplateParser
                         $stopPosition),
                     $templateFile);
             }
+
             switch ( $element["type"] )
             {
                 case eZTemplate::ELEMENT_TEXT:
