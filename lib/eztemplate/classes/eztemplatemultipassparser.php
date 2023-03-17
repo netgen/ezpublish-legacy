@@ -405,6 +405,10 @@ class eZTemplateMultiPassParser extends eZTemplateParser
 
         foreach( $textElements as $elementKey => $element )
         {
+            if ( !is_array( $element ) )
+                continue;
+            if ( !is_array( $element['placement'] ) )
+                continue;
             $elementPlacement = $element['placement'];
             $startLine = $elementPlacement['start']['line'];
             $startColumn = $elementPlacement['start']['column'];
