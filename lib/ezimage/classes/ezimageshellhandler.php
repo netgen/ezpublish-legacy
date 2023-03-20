@@ -155,7 +155,6 @@ class eZImageShellHandler extends eZImageHandler
                 $inputMimeList = $ini->variable( $iniGroup, 'InputMIMEList' );
             if ( $ini->hasVariable( $iniGroup, 'OutputMIMEList' ) )
                 $outputMimeList = $ini->variable( $iniGroup, 'OutputMIMEList' );
-            $qualityParameters = false;
             $qualityParameters = array();
             if ( $ini->hasVariable( $iniGroup, 'QualityParameters' ) )
             {
