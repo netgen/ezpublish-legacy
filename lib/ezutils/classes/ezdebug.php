@@ -2034,6 +2034,16 @@ class eZDebug
     public $topReportsList;
 
     private $recursionFlag = false;
+
+    public $MessageNames;
+
+    public $AlwaysLog;
+
+    public $OldHandler;
+
+    public $TimeAccumulatorGroupList;
+
+
 }
 
 ?>
