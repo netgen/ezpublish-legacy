@@ -321,7 +321,11 @@ class eZObjectForwarder
                         $matchCount = 0;
                         foreach ( $matchItem['custom_match'] as $customMatch )
                         {
-                            $matchConditionCount = is_countable( $customMatch['conditions'] ) ? count( $customMatch['conditions'] ) : 0;
+			    if( is_null( $customMatch['conditions'] ) )
+			    {
+				$customMatch['conditions'] = array();
+			    }
+                            $matchConditionCount = count( $customMatch['conditions'] );
                             $code = '';
                             if ( $matchCount > 0 )
                             {

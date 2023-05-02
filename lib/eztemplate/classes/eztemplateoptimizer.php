@@ -88,6 +88,10 @@ class eZTemplateOptimizer
     static function optimizeVariable( $useComments, &$php, $tpl, &$data, &$resourceData )
     {
         $ret = 0;
+        if( !is_array( $data ) )
+        {
+             $data = array();
+        }
         /* node.object.data_map optimization */
         if ( ( count( $data ) >= 3 ) and
              ( $data[0][0] == eZTemplate::TYPE_VARIABLE ) and
