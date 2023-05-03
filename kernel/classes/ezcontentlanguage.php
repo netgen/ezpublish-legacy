@@ -941,4 +941,9 @@ class eZContentLanguage extends eZPersistentObject
     {
         return ( 8 * PHP_INT_SIZE ) - 2;
     }
+
+    public $ID;
+    public $Name;
+    public $Locale;
+    public $Disabled;
 }

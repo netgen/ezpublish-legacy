@@ -1336,13 +1336,16 @@ print( $values['MyValue'] );
     /// \privatesection
     public $PHPDir;
     public $PHPFile;
+    public $FilePrefix;
     public $FileResource;
     public $Elements;
     public $TextChunks;
     public $isAtomic;
+    public $TemporaryCounter;
     public $tmpFilename;
     public $requestedFilename;
     public $Spacing = true;
+    public $ClusterHandler;
     public $ClusteringEnabled = false;
     public $ClusterFileScope  = false;
 }

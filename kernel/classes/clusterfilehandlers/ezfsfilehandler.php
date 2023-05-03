@@ -1021,6 +1021,8 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
 
     public $metaData = null;
     public $filePath;
+    public $Mutex;
+    public $lifetime;
 }
 
 ?>

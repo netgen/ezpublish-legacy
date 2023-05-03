@@ -2715,6 +2715,9 @@ class eZTemplate
 
 //     public $CurrentRelatedResource;
 //     public $CurrentRelatedTemplateName;
+
+   public $MaxLevelWarning;
+   public $TemplateFetchList;
 }
 
 ?>

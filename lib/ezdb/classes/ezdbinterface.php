@@ -1826,6 +1826,11 @@ class eZDBInterface
      * @var int One of the eZDB::ERROR_HANDLING_* constants
      */
     protected $errorHandling = eZDB::ERROR_HANDLING_STANDARD;
+
+    public $IsInternalCharset;
+    public $SlowSQLTimeout;
+    public $QueryAnalysisOutput;
+    public $AttributeVariableMap;
 }
 
 ?>

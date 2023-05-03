@@ -2993,6 +2993,7 @@ WHERE user_id = '" . $userID . "' AND
     public $Groups;
     public $OriginalPassword;
     public $OriginalPasswordConfirm;
+    public $AccessArray;
 
     /**
      * Holds user cache like user info and access array
