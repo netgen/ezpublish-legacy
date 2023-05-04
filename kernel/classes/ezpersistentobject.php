@@ -1437,6 +1437,8 @@ class eZPersistentObject
 
         return $attrName;
     }
+
+    public $ContentObjectID;
 }
 
 ?>

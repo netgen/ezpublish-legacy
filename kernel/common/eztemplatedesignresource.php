@@ -1042,6 +1042,7 @@ class eZTemplateDesignResource extends eZTemplateFileResource
 
     public $Keys;
     public $OverrideSiteAccess = false;
+    public $KeyStack;
 }
 
 ?>

@@ -195,5 +195,7 @@ abstract class ezpSessionHandler
     {
         return session_start();
     }
+
+    public $userHasCookie;
 }
 ?>
