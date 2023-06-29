@@ -221,6 +221,8 @@ class eZMutex
 
     public $Name;
     public $FileName;
+    public $MetaFileName;
+
 }
 
 ?>

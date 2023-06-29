@@ -249,6 +249,8 @@ class eZTemplateControlOperator
 
     /// The array of operators
     public $Operators;
+    public $CondName;
+    public $FirstSetName;
 }
 
 ?>

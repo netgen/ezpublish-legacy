@@ -2016,6 +2016,7 @@ You will need to change the class of the node by using the swap functionality.' 
     public $IsContainer;
     public $CanInstantiateLanguages;
     public $LanguageMask;
+    public $DataMap;
 
     /**
      * In-memory cache for class identifiers / id matching

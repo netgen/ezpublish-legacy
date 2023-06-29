@@ -1438,7 +1438,57 @@ class eZPersistentObject
         return $attrName;
     }
 
+    public $ID;
     public $ContentObjectID;
+    public $SectionID;
+    public $OwnerID;
+    public $ClassID;
+    public $Published;
+    public $Modified;
+    public $CurrentVersion;
+    public $Status;
+    public $RemoteID;
+    public $LanguageMask;
+    public $InitialLanguageID;
+    public $NodeID;
+    public $ParentNodeID;
+    public $MainNodeID;
+    public $ContentObjectVersion;
+    public $ContentObjectIsPublished;
+    public $Depth;
+    public $SortField;
+    public $SortOrder;
+    public $Priority;
+    public $ModifiedSubNode;
+    public $PathString;
+    public $PathIdentificationString;
+    public $IsHidden;
+    public $IsInvisible;
+    public $UserID;
+    public $Name;
+    public $Locale;
+    public $Identifier;
+    public $NavigationPartIdentifier;
+    public $SerializedDescriptionList;
+    public $URLAliasName;
+    public $AlwaysAvailable;
+    public $CanTranslate;
+    public $DataInt1;
+    public $DataInt2;
+    public $DataInt3;
+    public $DataInt4;
+    public $DataFloat1;
+    public $DataFloat2;
+    public $DataFloat3;
+    public $DataFloat4;
+    public $DataText1;
+    public $DataText2;
+    public $DataText3;
+    public $DataText4;
+    public $DataText5;
+    public $SerializedDataText;
+    public $Category;
+    public $CanTranslate;
 }
 
 ?>

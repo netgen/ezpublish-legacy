@@ -276,6 +276,7 @@ class eZTemplateTextOperator
     /// \privatesection
     public $ConcatName;
     public $Operators;
+    public $IndentName;
 }
 
 ?>

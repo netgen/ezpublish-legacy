@@ -1137,6 +1137,8 @@ class eZContentClassAttribute extends eZPersistentObject
     public $IsRequired;
     public $IsInformationCollector;
     public $Module;
+    public $DataTextI18nList;
+
     // Used locale for use by datatypes in class/edit when storing data
     protected $EditLocale = false;
 

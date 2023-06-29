@@ -6737,6 +6737,9 @@ class eZContentObject extends eZPersistentObject
      */
     public $InputRelationList = array();
 
+    public $Permissions;
+    public $ContentObject;
+
     /**
      * Cache for the state ID array
      *

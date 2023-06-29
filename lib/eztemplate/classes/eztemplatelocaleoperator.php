@@ -514,6 +514,10 @@ class eZTemplateLocaleOperator
     public $LocaleName;
     public $DateTimeName;
     public $CurrentDateName;
+    public $LocaleFetchName;
+    public $MakeTimeName;
+    public $MakeDateName;
+    public $GetTimeName;
 }
 
 ?>
