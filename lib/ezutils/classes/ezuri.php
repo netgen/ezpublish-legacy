@@ -33,6 +33,8 @@ class eZURI
      */
     public $URI;
 
+    public $OriginalURI;
+
     /**
      * The URI array
      *

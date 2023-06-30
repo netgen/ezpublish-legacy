@@ -54,5 +54,8 @@ class eZClusterFileFailure
     {
         return $this->Message;
     }
+
+    public $Errno;
+    public $Message;
 }
 ?>

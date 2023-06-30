@@ -352,6 +352,8 @@ class eZTemplateToolbarFunction
     {
         return false;
     }
+
+    public $BlockName;
 }
 
 ?>

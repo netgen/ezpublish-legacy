@@ -753,6 +753,9 @@ class eZTSTranslator extends eZTranslatorHandler
     public $UseCache;
     public $BuildCache;
     public $CachedMessages;
+    public $Locale;
+    public $HasRestoredCache;
+    public $RootCache;
 
     /**
      * Translation expiry key used by eZExpiryHandler to manage translation caches

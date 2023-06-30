@@ -728,6 +728,23 @@ class eZTemplateStringOperator
 
     /// The array of operators, used for registering operators
     public $Operators;
+    public $UpcaseName;
+    public $DowncaseName;
+    public $Count_wordsName;
+    public $Count_charsName;
+    public $TrimName;
+    public $BreakName;
+    public $WrapName;
+    public $ShortenName;
+    public $PadName;
+    public $UpfirstName;
+    public $UpwordName;
+    public $SimplifyName;
+    public $WashName;
+    public $ChrName;
+    public $OrdName;
+    public $phpMap;
+    public $customMap;
 }
 
 ?>

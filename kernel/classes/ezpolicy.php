@@ -451,6 +451,7 @@ class eZPolicy extends eZPersistentObject
     public $LimitValue;
     public $LimitIdentifier;
     public $UserRoleID;
+    public $Limitations;
 
 }
 

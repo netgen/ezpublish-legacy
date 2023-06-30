@@ -423,6 +423,19 @@ class eZTemplateTypeOperator
     public $Operators;
     /// The "less than" name
     public $IsArrayName;
+    public $IsBooleanName;
+    public $IsIntegerName;
+    public $IsFloatName;
+    public $IsNumericName;
+    public $IsStringName;
+    public $IsObjectName;
+    public $IsClassName;
+    public $IsNullName;
+    public $IsSetName;
+    public $IsUnsetName;
+    public $GetTypeName;
+    public $GetClassName;
+    public $PHPNameMap;
 }
 
 ?>

@@ -1017,6 +1017,12 @@ CODEPIECE;
     public $Operators;
     public $URLName, $URLRootName, $DesignName, $ImageName;
     public $Sys;
+    public $SysName;
+    public $ExtName;
+    public $HTTPName;
+    public $ININame;
+    public $ININameHasVariable;
+    public $HTTPNameHasVariable;
 }
 
 ?>
