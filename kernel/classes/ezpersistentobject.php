@@ -1488,7 +1488,6 @@ class eZPersistentObject
     public $DataText5;
     public $SerializedDataText;
     public $Category;
-    public $CanTranslate;
 }
 
 ?>
