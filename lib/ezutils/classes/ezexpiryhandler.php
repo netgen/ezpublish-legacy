@@ -199,6 +199,9 @@ class eZExpiryHandler
      * @var bool
      */
     public $IsModified;
+
+    public $CacheFile;
+    
 }
 
 ?>

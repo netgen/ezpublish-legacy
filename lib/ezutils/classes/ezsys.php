@@ -120,6 +120,10 @@ class eZSys
      */
     public $OSType;
 
+    public $Attributes;
+    public $OS;
+    public $BackupFilename;
+
     /**
      * Holds server variables as read automatically or provided by unit tests
      * Only used by init functionality as other calls will need to use live data direclty from globals.

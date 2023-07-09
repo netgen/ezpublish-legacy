@@ -241,6 +241,9 @@ class eZModule
     public $UIComponentMatch;
 
     public static $useExceptions;
+    public $FunctionList;
+    public $NavigationParts;
+
 
     /**
      * Constructor. Initializes the module.

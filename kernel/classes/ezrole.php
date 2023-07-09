@@ -929,6 +929,8 @@ class eZRole extends eZPersistentObject
     public $Policies;
     public $AccessArray;
     public $CachePolicies = true;
+    public $Version;
+    public $IsNew;
 }
 
 ?>

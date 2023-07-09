@@ -1514,6 +1514,8 @@ class eZDataType
     public $DataTypeString;
     /// The descriptive name of the datatype, usually used for displaying to the user
     public $Name;
+
+    
 }
 
 ?>

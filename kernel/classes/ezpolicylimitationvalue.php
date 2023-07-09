@@ -114,6 +114,9 @@ class eZPolicyLimitationValue extends eZPersistentObject
                                           array( "value" => $value ) );
     }
 
+    public $LimitationID;
+    public $Value;
+
 }
 
 ?>

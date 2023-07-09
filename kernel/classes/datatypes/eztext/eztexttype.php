@@ -260,6 +260,8 @@ class eZTextType extends eZDataType
     {
         return true;
     }
+
+    public $Attributes;
 }
 
 eZDataType::register( eZTextType::DATA_TYPE_STRING, "eZTextType" );
