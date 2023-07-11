@@ -2994,6 +2994,8 @@ WHERE user_id = '" . $userID . "' AND
     public $OriginalPassword;
     public $OriginalPasswordConfirm;
     public $AccessArray;
+    public $ContentObjectID;
+
 
     /**
      * Holds user cache like user info and access array

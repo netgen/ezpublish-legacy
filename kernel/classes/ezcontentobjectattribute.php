@@ -1506,6 +1506,20 @@ class eZContentObjectAttribute extends eZPersistentObject
     public $ContentClassAttributeIsRequired;
 
     public $ValidationParameters = array();
+    public $InputParameters;
+    public $HasValidationError;
+    public $DataTypeCustom;
+    public $DataTypeString;
+    public $Version;
+    public $LanguageCode;
+    public $LanguageID;
+    public $AttributeOriginalID;
+    public $SortKeyInt;
+    public $SortKeyString;
+    public $DataText;
+    public $DataInt;
+    public $DataFloat;
+
 }
 
 ?>

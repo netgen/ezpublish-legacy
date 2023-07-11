@@ -1428,6 +1428,19 @@ class eZImageManager
     public $RuleMap;
     public $MIMETypes;
     public $Types = array();
+    public $SupportedFormats;
+    public $SupportedMIMEMap;
+    public $AliasList;
+    public $Factories;
+    public $ImageFilters;
+    public $MIMETypeSettings;
+    public $MIMETypeSettingsMap;
+    public $QualityValues;
+    public $QualityValueMap;
+    public $QualityValueMapOverride;
+    public $TemporaryImageDirPath;
+    public $ConversionRules;
+    
 
     /**
      * Singleton instance of eZImageManager used by {@link eZImageManager::instance()}

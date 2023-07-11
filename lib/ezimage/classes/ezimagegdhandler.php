@@ -753,6 +753,23 @@ class eZImageGDHandler extends eZImageHandler
     public $Executable;
     public $PreParameters;
     public $PostParameters;
+
+    public $InputMap;
+    public $OutputMap;
+    public $OutputQualityMap;
+    public $FilterFunctionMap;
+    public $LuminanceColorScales;
+    public $ThresholdList;
+    public $HandlerName;
+    public $SupportedInputMIMETypes;
+    public $SupportedOutputMIMETypes;
+    public $ConversionRules;
+    public $OutputRewriteType;
+    public $Filters;
+    public $FilterMap;
+    public $SupportImageFilters;
+    public $MIMETagMap;
+    public $IsEnabled;
 }
 
 ?>

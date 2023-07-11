@@ -273,7 +273,19 @@ class eZImageShellHandler extends eZImageHandler
     public $ExecutableWin32;
     public $ExecutableMac;
     public $ExecutableUnix;
-
+    public $HandlerName;
+    public $SupportedInputMIMETypes;
+    public $SupportedOutputMIMETypes;
+    public $ConversionRules;
+    public $OutputRewriteType;
+    public $Filters;
+    public $FilterMap;
+    public $SupportImageFilters;
+    public $MIMETagMap;
+    public $IsEnabled;
+    public $UseTypeTag;
+    public $QualityParameters;
+    public $FrameRangeParameters;
 }
 
 ?>
