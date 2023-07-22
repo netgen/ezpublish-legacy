@@ -109,6 +109,7 @@ The following characters are recognized in the format string:
 
 class eZLocale
 {
+    public $Language;
     const DEBUG_INTERNALS = false;
 
     /**

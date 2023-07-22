@@ -17,6 +17,7 @@
 
 class eZVatType extends eZPersistentObject
 {
+    public $Percentage;
     static function definition()
     {
         return array( "fields" => array( "id" => array( 'name' => 'ID',

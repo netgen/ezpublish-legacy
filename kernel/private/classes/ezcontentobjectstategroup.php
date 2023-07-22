@@ -16,6 +16,7 @@
  */
 class eZContentObjectStateGroup extends eZPersistentObject
 {
+    public $DefaultLanguageID;
     const MAX_IDENTIFIER_LENGTH = 45;
 
     /**

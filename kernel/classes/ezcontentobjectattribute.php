@@ -18,6 +18,7 @@
 
 class eZContentObjectAttribute extends eZPersistentObject
 {
+    public $AddToBasketIsValid;
     public function __construct( $row )
     {
         $this->Content = null;

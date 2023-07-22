@@ -18,6 +18,13 @@
 
 class eZOrder extends eZPersistentObject
 {
+    public $ProductCollectionID;
+    public $IgnoreVAT;
+    public $OrderNr;
+    public $StatusID;
+    public $StatusModified;
+    public $StatusModifierID;
+    public $AccountIdentifier;
     const SHOW_NORMAL = 0;
     const SHOW_ARCHIVED = 1;
     const SHOW_ALL = 2;
