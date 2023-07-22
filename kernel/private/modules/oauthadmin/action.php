@@ -27,14 +27,14 @@ if ( $module->isCurrentAction( 'NewApplication' ) )
     $session->save( $application );
 
     // The following does not work on PostgreSQL, incorrect id. Probably need refresh from DB.
-    return $module->redirectToView( 'edit', array( $application->id ) );
+    return $module->redirectToView( 'edit', [$application->id] );
 }
 
 // delete several applications
 // Used from full view and checkboxes in view list
 if ( $module->isCurrentAction( 'DeleteApplicationList' ) )
 {
-    $applicationList = array();
+    $applicationList = [];
     $applicationIdList = $module->actionParameter( 'ApplicationIDList' );
 
     if ( $applicationIdList == null )
@@ -62,11 +62,7 @@ if ( $module->isCurrentAction( 'DeleteApplicationList' ) )
         $tpl = eZTemplate::factory();
         $tpl->setVariable( 'module', $module );
         $tpl->setVariable( 'applications', $applicationList );
-        $Result['path'] = array( array( 'url' => false,
-                                        'text' => ezpI18n::tr( 'extension/oauthadmin', 'oAuth admin' ) ),
-                                 array( 'url' => false,
-                                        'text' => ezpI18n::tr( 'extension/oauthadmin', 'Confirm removal' ) )
-        );
+        $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'extension/oauthadmin', 'oAuth admin' )], ['url' => false, 'text' => ezpI18n::tr( 'extension/oauthadmin', 'Confirm removal' )]];
 
         $Result['content'] = $tpl->fetch( 'design:oauthadmin/delete_confirmation.tpl' );
         return $Result;

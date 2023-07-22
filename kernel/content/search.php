@@ -11,24 +11,13 @@
  */
 function pageLimit( $searchPageLimit )
 {
-    switch ( $searchPageLimit )
-    {
-        case 1:
-            return 5;
-
-        case 2:
-        default:
-            return 10;
-
-        case 3:
-            return 20;
-
-        case 4:
-            return 30;
-
-        case 5:
-            return 50;
-    }
+    return match ($searchPageLimit) {
+        1 => 5,
+        3 => 20,
+        4 => 30,
+        5 => 50,
+        default => 10,
+    };
 }
 
 $http = eZHTTPTool::instance();
@@ -87,13 +76,13 @@ if ( $http->hasVariable( "SearchType" ) )
     $searchType = $http->variable( "SearchType" );
 }
 
-$subTreeArray = array();
+$subTreeArray = [];
 if ( $http->hasVariable( "SubTreeArray" ) )
 {
     if ( is_array( $http->variable( "SubTreeArray" ) ) )
         $subTreeList = $http->variable( "SubTreeArray" );
     else
-        $subTreeList = array( $http->variable( "SubTreeArray" ) );
+        $subTreeList = [$http->variable( "SubTreeArray" )];
     foreach ( $subTreeList as $subTreeItem )
     {
         if ( is_numeric( $subTreeItem ) && $subTreeItem > 0 )
@@ -105,25 +94,19 @@ $Module->setTitle( "Search for: $searchText" );
 
 if ( $useSearchCode )
 {
-    $sortArray = array( array( 'attribute', true, 153 ), array( 'priority', true ) );
-    $searchResult = eZSearch::search( $searchText, array( "SearchType" => $searchType,
-                                                          "SearchSectionID" => $searchSectionID,
-                                                          "SearchSubTreeArray" => $subTreeArray,
-                                                          'SearchTimestamp' => $searchTimestamp,
-                                                          "SearchLimit" => $pageLimit,
-                                                          "SearchOffset" => $Offset ) );
+    $sortArray = [['attribute', true, 153], ['priority', true]];
+    $searchResult = eZSearch::search( $searchText, ["SearchType" => $searchType, "SearchSectionID" => $searchSectionID, "SearchSubTreeArray" => $subTreeArray, 'SearchTimestamp' => $searchTimestamp, "SearchLimit" => $pageLimit, "SearchOffset" => $Offset] );
 }
 
 if ( $searchSectionID != -1 )
 {
     $res = eZTemplateDesignResource::instance();
     $section = eZSection::fetch( $searchSectionID );
-    $keyArray = array( array( 'section', $searchSectionID ),
-                       array( 'section_identifier', $section->attribute( 'identifier' ) ) );
+    $keyArray = [['section', $searchSectionID], ['section_identifier', $section->attribute( 'identifier' )]];
     $res->setKeys( $keyArray );
 }
 
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $searchData = false;
 $tpl->setVariable( "search_data", $searchData );
@@ -139,21 +122,14 @@ $tpl->setVariable( 'use_template_search', !$useSearchCode );
 if ( $http->hasVariable( 'Mode' ) && $http->variable( 'Mode' ) == 'browse' )
 {
     if( !isset( $searchResult ) )
-        $searchResult = eZSearch::search( $searchText, array( "SearchType" => $searchType,
-                                                              "SearchSectionID" => $searchSectionID,
-                                                              "SearchSubTreeArray" => $subTreeArray,
-                                                              'SearchTimestamp' => $searchTimestamp,
-                                                              "SearchLimit" => $pageLimit,
-                                                              "SearchOffset" => $Offset ) );
+        $searchResult = eZSearch::search( $searchText, ["SearchType" => $searchType, "SearchSectionID" => $searchSectionID, "SearchSubTreeArray" => $subTreeArray, 'SearchTimestamp' => $searchTimestamp, "SearchLimit" => $pageLimit, "SearchOffset" => $Offset] );
     $sys = eZSys::instance();
     $searchResult['RequestedURI'] = "content/search";
 //    $searchResult['RequestedURISuffix'] = $sys->serverVariable( "QUERY_STRING" );
 
 
-    $searchResult['RequestedURISuffix'] = 'SearchText=' . urlencode ( $searchText ) . ( isset( $subTreeArray[0] ) ? '&SubTreeArray=' . $subTreeArray[0] : '' ) . ( ( $searchTimestamp > 0 ) ?  '&SearchTimestamp=' . $searchTimestamp : '' ) . '&BrowsePageLimit=' . $pageLimit . '&Mode=browse';
-    return $Module->run( 'browse',array(),array( "NodeList" => $searchResult,
-                                                 "Offset" => $Offset,
-                                                 "NodeID" => isset( $subTreeArray[0] ) && $subTreeArray[0] != 1 ? $subTreeArray[0] : null  ) );
+    $searchResult['RequestedURISuffix'] = 'SearchText=' . urlencode ( (string) $searchText ) . ( isset( $subTreeArray[0] ) ? '&SubTreeArray=' . $subTreeArray[0] : '' ) . ( ( $searchTimestamp > 0 ) ?  '&SearchTimestamp=' . $searchTimestamp : '' ) . '&BrowsePageLimit=' . $pageLimit . '&Mode=browse';
+    return $Module->run( 'browse',[],["NodeList" => $searchResult, "Offset" => $Offset, "NodeID" => isset( $subTreeArray[0] ) && $subTreeArray[0] != 1 ? $subTreeArray[0] : null] );
 }
 
 // --- Compatibility code start ---
@@ -161,7 +137,7 @@ if ( $useSearchCode )
 {
     $tpl->setVariable( "offset", $Offset );
     $tpl->setVariable( "page_limit", $pageLimit );
-    $tpl->setVariable( "search_text_enc", urlencode( $searchText ) );
+    $tpl->setVariable( "search_text_enc", urlencode( (string) $searchText ) );
     $tpl->setVariable( "search_result", $searchResult["SearchResult"] );
     $tpl->setVariable( "search_count", $searchResult["SearchCount"] );
     $tpl->setVariable( "stop_word_array", $searchResult["StopWordArray"] );
@@ -181,10 +157,9 @@ else
 }
 // --- Compatibility code end ---
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:content/search.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Search' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Search' ), 'url' => false]];
 
 $searchData = false;
 if ( !$useSearchCode )
@@ -200,7 +175,7 @@ else
 }
 
 if ( $logSearchStats and
-     trim( $searchText ) != "" and
+     trim( (string) $searchText ) != "" and
      is_array( $searchData ) and
      array_key_exists( 'SearchCount', $searchData ) and
      is_numeric( $searchData['SearchCount'] ) )

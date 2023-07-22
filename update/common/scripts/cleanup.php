@@ -14,45 +14,35 @@ set_time_limit( 0 );
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
 
-$script = eZScript::instance( array( 'description' => ( "eZ Publish database cleanup.\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish database cleanup.\n\n" .
                                                         "Will cleanup various data from the currently used database in eZ Publish\n" .
                                                         "\n" .
                                                         "Possible values for NAME is:\n" .
                                                         "session, expired_session, preferences, browse, tipafriend, shop, forgotpassword, workflow,\n" .
                                                         "collaboration, collectedinformation, notification, searchstats or all (for all items)\n" .
-                                                        "cleanup.php -s admin session"),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "cleanup.php -s admin session"), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[db-host:][db-user:][db-password:][db-database:][db-type:|db-driver:][sql]",
                                 "[name]",
-                                array( 'db-host' => "Database host",
-                                       'db-user' => "Database user",
-                                       'db-password' => "Database password",
-                                       'db-database' => "Database name",
-                                       'db-driver' => "Database driver",
-                                       'db-type' => "Database driver, alias for --db-driver",
-                                       'sql' => "Display sql queries"
-                                       ) );
+                                ['db-host' => "Database host", 'db-user' => "Database user", 'db-password' => "Database password", 'db-database' => "Database name", 'db-driver' => "Database driver", 'db-type' => "Database driver, alias for --db-driver", 'sql' => "Display sql queries"] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( "Missing NAME value ( could be session, expired_session, preferences, browse, tipafriend, shop, forgotpassword, workflow,\n" .
                  "collaboration, collectedinformation, notification, searchstats or all )" );
     $script->shutdown( 1 );
 }
 
-$dbUser = $options['db-user'] ? $options['db-user'] : false;
-$dbPassword = $options['db-password'] ? $options['db-password'] : false;
-$dbHost = $options['db-host'] ? $options['db-host'] : false;
-$dbName = $options['db-database'] ? $options['db-database'] : false;
-$dbImpl = $options['db-driver'] ? $options['db-driver'] : false;
+$dbUser = $options['db-user'] ?: false;
+$dbPassword = $options['db-password'] ?: false;
+$dbHost = $options['db-host'] ?: false;
+$dbName = $options['db-database'] ?: false;
+$dbImpl = $options['db-driver'] ?: false;
 $showSQL = $options['sql'] ? true : false;
-$siteAccess = $options['siteaccess'] ? $options['siteaccess'] : false;
+$siteAccess = $options['siteaccess'] ?: false;
 
 if ( $siteAccess )
 {
@@ -60,23 +50,12 @@ if ( $siteAccess )
 }
 
 $cleanAllItems = false;
-$clean = array( 'session' => false,
-                'expired_session' => false,
-                'preferences' => false,
-                'browse' => false,
-                'tipafriend' => false,
-                'shop' => false,
-                'forgotpassword' => false,
-                'workflow' => false,
-                'collaboration' => false,
-                'collectedinformation' => false,
-                'notification' => false,
-                'searchstats' => false );
+$clean = ['session' => false, 'expired_session' => false, 'preferences' => false, 'browse' => false, 'tipafriend' => false, 'shop' => false, 'forgotpassword' => false, 'workflow' => false, 'collaboration' => false, 'collectedinformation' => false, 'notification' => false, 'searchstats' => false];
 
 foreach ( $options['arguments'] as $arg )
 {
 
-    $item = strtolower( $arg );
+    $item = strtolower( (string) $arg );
     if ( $item == 'all' )
         $cleanAllItems = true;
     else
@@ -93,7 +72,7 @@ if ( $cleanAllItems )
 }
 else
 {
-    if ( count( $cleanItems ) == 0 )
+    if ( (is_countable($cleanItems) ? count( $cleanItems ) : 0) == 0 )
     {
         help();
         $script->shutdown( 0 );
@@ -123,7 +102,7 @@ function changeSiteAccessSetting( &$siteaccess, $optionData )
 $db = eZDB::instance();
 if ( $dbHost or $dbName or $dbUser or $dbImpl )
 {
-    $params = array();
+    $params = [];
     if ( $dbHost !== false )
         $params['server'] = $dbHost;
     if ( $dbUser !== false )
@@ -213,7 +192,7 @@ if ( $clean['workflow'] )
 {
     $cli->output( "Removing all workflow processes and operation mementos" );
     eZOperationMemento::cleanup();
-    eZWorkflowProcess::cleanup();
+    (new eZWorkflowProcess())->cleanup();
 }
 
 if ( $clean['collaboration'] )

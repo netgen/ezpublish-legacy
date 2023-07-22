@@ -24,7 +24,7 @@ class eZTextTool
     */
     function highlightHTML( $input )
     {
-        $input = str_replace( "<", "&lt;", $input );
+        $input = str_replace( "<", "&lt;", (string) $input );
         $input = str_replace( ">", "&gt;", $input );
 
         $input = preg_replace( "#&lt;(.*?)&gt;#m", "<font color='red'>&lt;$1&gt;</font>", $input );
@@ -45,7 +45,7 @@ class eZTextTool
         if ( $numargs > 1 )
         {
             $delimit = $argList[0];
-            $text = implode( $delimit, eZTextTool::arrayFlatten( array_splice( $argList, 1 ) ) );
+            $text = implode( $delimit, (new eZTextTool())->arrayFlatten(array_splice( $argList, 1 )) );
         }
         return $text;
     }
@@ -57,20 +57,20 @@ class eZTextTool
         $text = null;
         if ( $numargs > 0 )
         {
-            $text = implode( '', eZTextTool::arrayFlatten( $argList ) );
+            $text = implode( '', (new eZTextTool())->arrayFlatten($argList) );
         }
         return $text;
     }
 
     function arrayFlatten( $array )
     {
-        $flatArray = array();
+        $flatArray = [];
         $expandItems = $array;
         $done = false;
         while ( !$done )
         {
             $checkList = $expandItems;
-            $leftOvers = array();
+            $leftOvers = [];
             $foundArray = false;
             foreach ( array_keys( $checkList ) as $key )
             {

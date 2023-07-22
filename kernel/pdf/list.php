@@ -38,7 +38,7 @@ else if ( $Module->isCurrentAction( 'RemoveExport' ) && $Module->hasActionParame
 }
 
 $exportArray = eZPDFExport::fetchList();
-$exportList = array();
+$exportList = [];
 foreach( $exportArray as $export )
 {
     $exportList[$export->attribute( 'id' )] = $export;
@@ -48,9 +48,8 @@ $tpl = eZTemplate::factory();
 
 $tpl->setVariable( 'pdfexport_list', $exportList );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:pdf/list.tpl" );
-$Result['path'] = array( array( 'url' => 'pdf/list',
-                                'text' => ezpI18n::tr( 'kernel/pdf', 'PDF Export' ) ) );
+$Result['path'] = [['url' => 'pdf/list', 'text' => ezpI18n::tr( 'kernel/pdf', 'PDF Export' )]];
 
 ?>

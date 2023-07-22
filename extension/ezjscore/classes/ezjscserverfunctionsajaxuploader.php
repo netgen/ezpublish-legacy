@@ -39,7 +39,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
         }
 
         $http = eZHTTPTool::instance();
-        $handlerData = $http->postVariable( 'AjaxUploadHandlerData', array() );
+        $handlerData = $http->postVariable( 'AjaxUploadHandlerData', [] );
 
         $handlerOptions = new ezpExtensionOptions();
         $handlerOptions->iniFile = 'ezjscore.ini';
@@ -85,10 +85,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
             );
         }
         $tpl = eZTemplate::factory();
-        return array(
-            'meta_data' => false,
-            'html' => $tpl->fetch( 'design:ajaxuploader/upload.tpl' )
-        );
+        return ['meta_data' => false, 'html' => $tpl->fetch( 'design:ajaxuploader/upload.tpl' )];
     }
 
     /**
@@ -142,10 +139,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
             // wit a json HTTP Accept header...
             // see JavaScript code in eZAjaxUploader::delegateWindowEvents();
             return json_encode(
-                array(
-                    'error_text' => $e->getMessage(),
-                    'content' => ''
-                )
+                ['error_text' => $e->getMessage(), 'content' => ''], JSON_THROW_ON_ERROR
             );
         }
 
@@ -163,12 +157,9 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
         // json_encode and url encode the HTML to be able to get it in the
         // JavaScript code. see eZAjaxUploader::delegateWindowEvents()
         return json_encode(
-            array(
-                'meta_data' => false,
-                'html' => rawurlencode(
-                    $tpl->fetch( 'design:ajaxuploader/location.tpl' )
-                )
-            )
+            ['meta_data' => false, 'html' => rawurlencode(
+                (string) $tpl->fetch( 'design:ajaxuploader/location.tpl' )
+            )], JSON_THROW_ON_ERROR
         );
     }
 
@@ -190,40 +181,21 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
      */
     private static function getBrowseItems( eZContentObjectTreeNode $start, eZContentClass $class, $offset = 0 )
     {
-        $result = array(
-            'limit' => 10,
-            'offset' => $offset,
-            'items' => array(),
-            'has_prev' => ( $offset != 0 ),
-            'has_next' => false
-        );
+        $result = ['limit' => 10, 'offset' => $offset, 'items' => [], 'has_prev' => ( $offset != 0 ), 'has_next' => false];
         $containerClasses = eZPersistentObject::fetchObjectList(
             eZContentClass::definition(), null,
-            array(
-                'version' => eZContentClass::VERSION_STATUS_DEFINED,
-                'is_container' => 1
-            )
+            ['version' => eZContentClass::VERSION_STATUS_DEFINED, 'is_container' => 1]
         );
-        $classFilterArray = array();
+        $classFilterArray = [];
         foreach ( $containerClasses as $c )
         {
             $classFilterArray[] = $c->attribute( 'identifier' );
         }
         $children = $start->subTree(
-            array(
-                'ClassFilterArray' => $classFilterArray,
-                'ClassFilterType' => 'include',
-                'Depth' => 1,
-                'Limit' => $result['limit'],
-                'Offset' => $offset
-            )
+            ['ClassFilterArray' => $classFilterArray, 'ClassFilterType' => 'include', 'Depth' => 1, 'Limit' => $result['limit'], 'Offset' => $offset]
         );
         $count = $start->subTreeCount(
-            array(
-                'ClassFilterArray' => $classFilterArray,
-                'ClassFilterType' => 'include',
-                'Depth' => 1
-            )
+            ['ClassFilterArray' => $classFilterArray, 'ClassFilterType' => 'include', 'Depth' => 1]
         );
         if ( $count > ( $offset + $result['limit'] ) )
         {
@@ -231,7 +203,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
         }
         foreach( $children as $node )
         {
-            $elt = array();
+            $elt = [];
             $elt['node'] = $node;
             $canCreateClassist = $node->canCreateClassList();
             foreach( $canCreateClassist as $c )
@@ -247,11 +219,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
                 $elt['can_create'] = false;
             }
             $childrenContainerCount = $node->subTreeCount(
-                array(
-                    'ClassFilterArray' => $classFilterArray,
-                    'ClassFilterType' => 'include',
-                    'Depth' => 1
-                )
+                ['ClassFilterArray' => $classFilterArray, 'ClassFilterType' => 'include', 'Depth' => 1]
             );
             $elt['has_child'] = ( $childrenContainerCount > 0 );
             $result['items'][] = $elt;
@@ -279,7 +247,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
                 )
             );
         }
-        list( $nodeID, $classId ) = $args;
+        [$nodeID, $classId] = $args;
         $offset = 0;
         if ( isset( $args[2] ) )
         {
@@ -309,13 +277,10 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
         $tpl = eZTemplate::factory();
         $tpl->setVariable( 'browse', $browseItems );
         $tpl->setVariable( 'browse_start', $node );
-        $tpl->setVariable( 'default_parent_node', array( 'node_id' => 0 ) );
+        $tpl->setVariable( 'default_parent_node', ['node_id' => 0] );
         $tpl->setVariable( 'class', $class );
 
-        return array(
-            'meta_data' => false,
-            'html' => $tpl->fetch( 'design:ajaxuploader/browse.tpl' )
-        );
+        return ['meta_data' => false, 'html' => $tpl->fetch( 'design:ajaxuploader/browse.tpl' )];
     }
 
 
@@ -357,8 +322,8 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
             $tmpFile = eZSys::cacheDirectory() . '/' .
                         eZINI::instance()->variable( 'FileSettings', 'TemporaryDir' ) . '/' .
                         str_replace(
-                            array( '/', '\\' ), '_',
-                            $http->postVariable( 'UploadOriginalFilename' )
+                            ['/', '\\'], '_',
+                            (string) $http->postVariable( 'UploadOriginalFilename' )
                         );
             eZFile::rename( $file, $tmpFile, true );
             $fileHandler->fileDelete( $file );
@@ -374,10 +339,7 @@ class ezjscServerFunctionsAjaxUploader extends ezjscServerFunctions
 
         $tpl = eZTemplate::factory();
         $tpl->setVariable( 'object', $contentObject );
-        return array(
-            'meta_data' => $handler->serializeObject( $contentObject ),
-            'html' => $tpl->fetch( 'design:ajaxuploader/preview.tpl' )
-        );
+        return ['meta_data' => $handler->serializeObject( $contentObject ), 'html' => $tpl->fetch( 'design:ajaxuploader/preview.tpl' )];
     }
 }
 ?>

@@ -12,22 +12,19 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Translation Checker\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Translation Checker\n\n" .
                                                         "Will display some statistics on a given translation" .
                                                         "\n" .
-                                                        "ezchecktranslation.php ita-IT" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "ezchecktranslation.php ita-IT" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[ignore-tr-setup]",
                                 "[translation]",
-                                array( 'ignore-tr-setup' => 'Tells the analyzer to skip all translations regarding the setup' ) );
+                                ['ignore-tr-setup' => 'Tells the analyzer to skip all translations regarding the setup'] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
     $script->shutdown( 1, "No translation specified" );
 
 $translationName = false;
@@ -61,7 +58,7 @@ if ( !eZTSTranslator::validateDOMTree( $tree ) )
 function handleContextNode( $context, $cli, $data )
 {
     $contextName = null;
-    $messages = array();
+    $messages = [];
     $context_children = $context->childNodes;
     foreach ( $context_children as $context_child )
     {
@@ -160,23 +157,13 @@ function handleMessageNode( $contextName, $message, $cli, $data, $requireTransla
     return $data;
 }
 
-$data = array( 'element_count' => 0,
-               'context_count' => 0,
-               'translated_element_count' => 0,
-               'untranslated_element_count' => 0,
-               'obsolete_element_count' => 0 );
-$data['ignored_context_list'] = array();
+$data = ['element_count' => 0, 'context_count' => 0, 'translated_element_count' => 0, 'untranslated_element_count' => 0, 'obsolete_element_count' => 0];
+$data['ignored_context_list'] = [];
 
 if ( $options['ignore-tr-setup'] )
 {
     $data['ignored_context_list'] = array_merge( $data['ignored_context_list'],
-                                                 array( 'design/standard/setup',
-                                                        'design/standard/setup/datatypecode',
-                                                        'design/standard/setup',
-                                                        'design/standard/setup/db',
-                                                        'design/standard/setup/init',
-                                                        'design/standard/setup/operatorcode',
-                                                        'design/standard/setup/tests' ) );
+                                                 ['design/standard/setup', 'design/standard/setup/datatypecode', 'design/standard/setup', 'design/standard/setup/db', 'design/standard/setup/init', 'design/standard/setup/operatorcode', 'design/standard/setup/tests'] );
 }
 
 $treeRoot = $tree->documentElement;

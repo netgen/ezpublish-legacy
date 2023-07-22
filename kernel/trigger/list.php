@@ -8,7 +8,7 @@
 
 function makeTriggerArray( $triggerList )
 {
-    $triggerArray = array();
+    $triggerArray = [];
     foreach ( $triggerList as $trigger )
     {
         $newKey = $trigger->attribute( 'module_name' ) . '_' . $trigger->attribute( 'function_name' ) . '_' . $trigger->attribute( 'connect_type' );
@@ -22,7 +22,7 @@ $http = eZHTTPTool::instance();
 
 $Module = $Params['Module'];
 
-$possibleTriggers = array();
+$possibleTriggers = [];
 
 $triggers = makeTriggerArray( eZTrigger::fetchList() );
 
@@ -32,22 +32,22 @@ foreach ( array_unique( eZINI::instance( 'workflow.ini' )->variable( 'OperationS
     {
         continue;
     }
-    $trigger = array();
+    $trigger = [];
 
     // the operation string has either two or three underscore characters.
     // Eg: shop_checkout, before_shop_checkout, after_shop_checkout.
     // Only the strings before and after are allowed in front of the module.
-    $explodedOperation = explode ('_', $operation);
+    $explodedOperation = explode ('_', (string) $operation);
     $i = 0;
 
     if (sizeof ($explodedOperation) >= 3)
     {
         if (strcmp($explodedOperation[$i], "before") == 0 || strcmp($explodedOperation[$i], "after") == 0)
-            $moduleParts = array ($explodedOperation[$i++]);
+            $moduleParts = [$explodedOperation[$i++]];
     }
     else
     {
-        $moduleParts = array ("before", "after");
+        $moduleParts = ["before", "after"];
     }
 
     foreach ($moduleParts as $trigger['connect_type'])
@@ -134,7 +134,7 @@ if ( $http->hasPostVariable( 'RemoveButton' )  )
         $db->begin();
         foreach ( $deleteIDArray as $deleteID )
         {
-            eZTrigger::remove( $deleteID );
+            (new eZTrigger())->remove($deleteID);
         }
         $db->commit();
     }
@@ -142,14 +142,11 @@ if ( $http->hasPostVariable( 'RemoveButton' )  )
 
 $tpl = eZTemplate::factory();
 
-$triggers = eZTrigger::fetchList( array(
-                                       'module' => $moduleName,
-                                       'function' => $functionName
-                                       ) );
+$triggers = eZTrigger::fetchList( ['module' => $moduleName, 'function' => $functionName] );
 $showModuleList = false;
 $showFunctionList = false;
-$functionList = array();
-$moduleList = array();
+$functionList = [];
+$moduleList = [];
 if ( $moduleName == '*' )
 {
     $showModuleList = true;
@@ -178,10 +175,7 @@ $tpl->setVariable( 'triggers', $triggers );
 $tpl->setVariable( 'module', $Module );
 
 $Result['content'] = $tpl->fetch( 'design:trigger/list.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/trigger', 'Trigger' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/trigger', 'List' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/trigger', 'Trigger' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/trigger', 'List' ), 'url' => false]];
 
 
 ?>

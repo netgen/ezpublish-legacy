@@ -24,7 +24,7 @@ if ( $http->hasPostVariable( 'NewWorkflowButton' ) )
         $GroupID = $http->postVariable( "CurrentGroupID" );
     if ( $http->hasPostVariable( "CurrentGroupName" ) )
         $GroupName = $http->postVariable( "CurrentGroupName" );
-    $params = array( null, $GroupID, $GroupName );
+    $params = [null, $GroupID, $GroupName];
     $Module->run( 'edit', $params );
     return;
 }
@@ -44,7 +44,7 @@ if ( $http->hasPostVariable( 'DeleteButton' ) and
             if ( $workflow )
             {
                 $workflowInGroups = $workflow->attribute( 'ingroup_list' );
-                if ( count( $workflowInGroups ) == 1 )
+                if ( (is_countable($workflowInGroups) ? count( $workflowInGroups ) : 0) == 1 )
                 {
                     //remove entry from eztrigger table also, if it exists there.
                     eZTrigger::removeTriggerForWorkflow( $workflowID );
@@ -55,7 +55,7 @@ if ( $http->hasPostVariable( 'DeleteButton' ) and
                 else
                 {
                     // if there is more than 1 group, remove only from the group:
-                    eZWorkflowFunctions::removeGroup( $workflowID, 0, array( $groupID ) );
+                    eZWorkflowFunctions::removeGroup( $workflowID, 0, [$groupID] );
                 }
 
             }
@@ -98,7 +98,7 @@ $list_in_group = eZWorkflowGroupLink::fetchWorkflowList( 0, $WorkflowGroupID, $a
 
 $workflow_list = eZWorkflow::fetchList( );
 
-$list = array();
+$list = [];
 foreach( $workflow_list as $workflow )
 {
     foreach( $list_in_group as $inGroup )
@@ -113,7 +113,7 @@ foreach( $workflow_list as $workflow )
 $templist_in_group = eZWorkflowGroupLink::fetchWorkflowList( 1, $WorkflowGroupID, $asObject = true);
 $tempworkflow_list = eZWorkflow::fetchList( 1 );
 
-$temp_list =array();
+$temp_list =[];
 foreach( $tempworkflow_list as $tmpWorkflow )
 {
     foreach ( $templist_in_group as $tmpInGroup )
@@ -143,10 +143,7 @@ $tpl->setVariable( "group_name", $WorkflowGroupName );
 $tpl->setVariable( 'workflow_list', $list );
 $tpl->setVariable( 'module', $Module );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:workflow/workflowlist.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/workflow', 'List' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/workflow', 'List' ), 'url' => false]];
 ?>

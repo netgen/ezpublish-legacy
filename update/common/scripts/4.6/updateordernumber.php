@@ -14,14 +14,11 @@ require 'autoload.php';
 set_time_limit( 0 );
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => 'eZ Publish webshop order number update script. '.
+$script = eZScript::instance( ['description' => 'eZ Publish webshop order number update script. '.
                                                        'This script makes sure that the new order ' .
                                                        'number is consistent with old order number. '.
-                                                       'See issue http://issues.ez.no/18233.',
-                                      'use-session' => false,
-                                      'use-modules' => false,
-                                      'use-extensions' => true ) );
-$options = $script->getOptions( '', '', array( '-q' => 'Quiet mode' ) );
+                                                       'See issue http://issues.ez.no/18233.', 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
+$options = $script->getOptions( '', '', ['-q' => 'Quiet mode'] );
 
 $cli = eZCLI::instance();
 

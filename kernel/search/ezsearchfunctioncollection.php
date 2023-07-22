@@ -22,15 +22,15 @@ class eZSearchFunctionCollection
         $query = "SELECT count(*) as count FROM ezsearch_search_phrase";
         $searchListCount = $db->arrayQuery( $query );
 
-        return array( 'result' => $searchListCount[0]['count'] );
+        return ['result' => $searchListCount[0]['count']];
     }
 
     function fetchSearchList( $offset, $limit )
     {
-        $parameters = array( 'offset' => $offset, 'limit'  => $limit );
+        $parameters = ['offset' => $offset, 'limit'  => $limit];
         $mostFrequentPhraseArray = eZSearchLog::mostFrequentPhraseArray( $parameters );
 
-        return array( 'result' => $mostFrequentPhraseArray );
+        return ['result' => $mostFrequentPhraseArray];
     }
 
 }

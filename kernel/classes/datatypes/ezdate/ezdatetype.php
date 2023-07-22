@@ -17,18 +17,18 @@
 
 class eZDateType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezdate";
+    final public const DATA_TYPE_STRING = "ezdate";
 
-    const DEFAULT_FIELD = 'data_int1';
+    final public const DEFAULT_FIELD = 'data_int1';
 
-    const DEFAULT_EMTPY = 0;
+    final public const DEFAULT_EMTPY = 0;
 
-    const DEFAULT_CURRENT_DATE = 1;
+    final public const DEFAULT_CURRENT_DATE = 1;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Date", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
 
@@ -262,7 +262,7 @@ class eZDateType extends eZDataType
     function toString( $contentObjectAttribute )
     {
         $stamp = $contentObjectAttribute->attribute( 'data_int' );
-        return $stamp === null ? '' : $stamp;
+        return $stamp ?? '';
     }
 
     function fromString( $contentObjectAttribute, $string )
@@ -322,7 +322,7 @@ class eZDateType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $defaultNode = $attributeParametersNode->getElementsByTagName( 'default-value' )->item( 0 );
-        $defaultValue = strtolower( $defaultNode->getAttribute( 'type' ) );
+        $defaultValue = strtolower( (string) $defaultNode->getAttribute( 'type' ) );
         switch ( $defaultValue )
         {
             case 'empty':
@@ -381,12 +381,11 @@ class eZDateType extends eZDataType
         if ( $defaultType == 1 )
         {
             $default = time();
-            return array( 'data_int'     => $default,
-                          'sort_key_int' => $default );
+            return ['data_int'     => $default, 'sort_key_int' => $default];
         }
         else
         {
-            return array();
+            return [];
         }
     }
 }

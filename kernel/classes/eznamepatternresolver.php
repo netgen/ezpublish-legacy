@@ -37,7 +37,7 @@
  */
 class eZNamePatternResolver
 {
-    const FIELD_NAME_MAX_SIZE = 255;
+    final public const FIELD_NAME_MAX_SIZE = 255;
 
     /**
      * Holds token groups
@@ -47,74 +47,34 @@ class eZNamePatternResolver
     private $groupLookupTable;
 
     /**
-     * Contains the original name pattern entered
-     *
-     * @var string
-     */
-    private $origNamePattern;
-
-    /**
      * Holds the filtered name pattern where token groups are replaced with
      * meta strings
-     *
-     * @var string
      */
-    private $namePattern;
-
-    /**
-     * The content object which holds the attributes used to resolve name pattern.
-     *
-     * @var eZContentObject
-     */
-    private $contentObject;
-
-    /**
-     * Version number of the content object to fetch attributes from.
-     *
-     * @var int
-     */
-    private $version;
-
-    /**
-     * Contains the language locale for which to fetch attributes.
-     *
-     * @var string
-     */
-    private $translation;
+    private readonly string $namePattern;
 
     /**
      * Holds data fetched from content object attributes
-     *
-     * @var array(string=>string)
      */
-    private $attributeArray;
+    private ?array $attributeArray = null;
 
 
     /**
      * The string to use to signify group tokens.
-     *
-     * @var string
      */
-    private $metaString = 'EZMETAGROUP_';
+    private string $metaString = 'EZMETAGROUP_';
 
     /**
      * Constructs a object to resolve $namePattern. $contentVersion and
      * $contentTranslation specify which version and translation respectively
      * of the content object to use.
      *
-     * @param string $namePattern
-     * @param eZContentObject $contentObject
-     * @param int|false $contentVersion
-     * @param string|false $contentTranslation
+     * @param string $origNamePattern
+     * @param int|false $version
+     * @param string|false $translation
      */
-    public function __construct( $namePattern, eZContentObject $contentObject, $contentVersion = false, $contentTranslation = false )
+    public function __construct( private $origNamePattern, private readonly eZContentObject $contentObject, private $version = false, private $translation = false )
     {
-        $this->origNamePattern = $namePattern;
-        $this->contentObject = $contentObject;
-        $this->version = $contentVersion;
-        $this->translation = $contentTranslation;
-
-        $this->namePattern = $this->filterNamePattern( $namePattern );
+        $this->namePattern = $this->filterNamePattern( $origNamePattern );
     }
 
     /**
@@ -157,11 +117,11 @@ class eZNamePatternResolver
      */
     private function fetchContentAttributes()
     {
-        $returnAttributeArray = array();
+        $returnAttributeArray = [];
 
         $identifierArray = $this->getIdentifiers( $this->origNamePattern );
 
-        $attributes = $this->contentObject->fetchAttributesByIdentifier( $identifierArray, $this->version, array( $this->translation ) );
+        $attributes = $this->contentObject->fetchAttributesByIdentifier( $identifierArray, $this->version, [$this->translation] );
 
         if ( is_array( $attributes ) )
         {
@@ -173,7 +133,7 @@ class eZNamePatternResolver
         }
         else
         {
-            $returnAttributeArray = array();
+            $returnAttributeArray = [];
         }
         $this->attributeArray = $returnAttributeArray;
     }
@@ -239,7 +199,7 @@ class eZNamePatternResolver
 
                 foreach ( $groupTokenArray as $groupToken )
                 {
-                    $replaceString = str_replace( $groupToken, $this->resolveToken( $groupToken ), $replaceString );
+                    $replaceString = str_replace( $groupToken, $this->resolveToken( $groupToken ), (string) $replaceString );
                 }
                 // We want to stop after the first matching token part / identifier is found
                 // <id1|id2> if id1 has a value, id2 will not be used.
@@ -269,7 +229,7 @@ class eZNamePatternResolver
      */
     private function isTokenGroup( $identifier )
     {
-        if ( strpos( $identifier, $this->metaString ) === false )
+        if ( !str_contains( $identifier, $this->metaString ) )
         {
             return false;
         }
@@ -323,7 +283,7 @@ class eZNamePatternResolver
                 $retNamePattern = str_replace( $group, $metaToken, $namePattern );
 
                 // Remove the pattern "(" ")" from the tokens
-                $group = str_replace( array( '(', ')' ), '', $group );
+                $group = str_replace( ['(', ')'], '', (string) $group );
 
                 $this->groupLookupTable[$metaToken] = $group;
                 ++$i;
@@ -345,15 +305,15 @@ class eZNamePatternResolver
         $allTokens = '#<(.*)>#U';
         $identifiers = '#\W#';
 
-        $tmpArray = array();
+        $tmpArray = [];
         preg_match_all( $allTokens, $patternString, $matches );
 
         foreach ( $matches[1] as $match )
         {
-            $tmpArray[] = preg_split( $identifiers, $match, -1, PREG_SPLIT_NO_EMPTY );
+            $tmpArray[] = preg_split( $identifiers, (string) $match, -1, PREG_SPLIT_NO_EMPTY );
         }
 
-        $retArray = array();
+        $retArray = [];
         foreach ( $tmpArray as $matchGroup )
         {
             if ( is_array( $matchGroup ) )

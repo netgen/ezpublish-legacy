@@ -18,16 +18,16 @@
 
 class eZPackageType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezpackage';
-    const TYPE_FIELD = 'data_text1';
-    const TYPE_VARIABLE = '_ezpackage_type_';
-    const VIEW_MODE_FIELD = 'data_int1';
-    const VIEW_MODE_VARIABLE = '_ezpackage_view_mode_';
+    final public const DATA_TYPE_STRING = 'ezpackage';
+    final public const TYPE_FIELD = 'data_text1';
+    final public const TYPE_VARIABLE = '_ezpackage_type_';
+    final public const VIEW_MODE_FIELD = 'data_int1';
+    final public const VIEW_MODE_VARIABLE = '_ezpackage_view_mode_';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Package', 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -47,6 +47,8 @@ class eZPackageType extends eZDataType
     */
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
+        $siteCSS = null;
+        $classesCSS = null;
         if ( $http->hasPostVariable( $base . '_ezpackage_data_text_' . $contentObjectAttribute->attribute( 'id' ) ) )
         {
             $data = $http->postVariable( $base . '_ezpackage_data_text_' . $contentObjectAttribute->attribute( 'id' ) );
@@ -107,14 +109,14 @@ class eZPackageType extends eZDataType
             $cacheDir = $siteINI->variable( 'FileSettings', 'CacheDir' );
             if ( $cacheDir[0] == "/" )
             {
-                $cacheDir = eZDir::path( array( $cacheDir ) );
+                $cacheDir = eZDir::path( [$cacheDir] );
             }
             else
             {
                 if ( $siteINI->hasVariable( 'FileSettings', 'VarDir' ) )
                 {
                     $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
-                    $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+                    $cacheDir = eZDir::path( [$varDir, $cacheDir] );
                 }
             }
         }
@@ -122,7 +124,7 @@ class eZPackageType extends eZDataType
         {
             $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
             $cacheDir = $ini->variable( 'FileSettings', 'CacheDir' );
-            $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+            $cacheDir = eZDir::path( [$varDir, $cacheDir] );
         }
         else
         {
@@ -180,7 +182,7 @@ class eZPackageType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return trim( $contentObjectAttribute->attribute( 'data_text' ) ) != '';
+        return trim( (string) $contentObjectAttribute->attribute( 'data_text' ) ) != '';
     }
 
     function isIndexable()
@@ -190,7 +192,7 @@ class eZPackageType extends eZDataType
 
     function sortKey( $contentObjectAttribute )
     {
-        return strtolower( $contentObjectAttribute->attribute( 'data_text' ) );
+        return strtolower( (string) $contentObjectAttribute->attribute( 'data_text' ) );
     }
 
     function sortKeyType()

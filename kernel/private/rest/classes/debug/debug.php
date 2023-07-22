@@ -9,28 +9,18 @@
  */
 final class ezpRestDebug
 {
-    private static $instance;
+    private static ?\ezpRestDebug $instance = null;
 
-    /**
-     * @var eZINI
-     */
-    private $restINI;
+    private readonly \eZINI $restINI;
 
     /**
      * eZDebug instance
-     * @var eZDebug
      */
-    private $eZDebug;
+    private readonly \eZDebug $eZDebug;
 
-    /**
-     * @var ezcDebug
-     */
-    private $debug;
+    private readonly \ezcDebug $debug;
 
-    /**
-     * @var bool
-     */
-    private static $isDebugEnabled;
+    private static ?bool $isDebugEnabled = null;
 
     /**
      * Private constructor
@@ -81,12 +71,12 @@ final class ezpRestDebug
      */
     public function getReport()
     {
-        $report = array();
+        $report = [];
 
         $report['restDebug'] = $this->debug->generateOutput();
 
         $reportEZDebug = $this->eZDebug->printReportInternal( false );
-        $report['eZDebug'] = explode( "\n", $reportEZDebug );
+        $report['eZDebug'] = explode( "\n", (string) $reportEZDebug );
 
 
         return $report;
@@ -98,19 +88,15 @@ final class ezpRestDebug
     public function updateDebugSettings()
     {
         $ini = eZINI::instance();
-        $debugSettings = array();
+        $debugSettings = [];
         $debugSettings['debug-enabled'] = ( $ini->variable( 'DebugSettings', 'DebugOutput' ) == 'enabled' and
                                             $this->restINI->variable( 'DebugSettings', 'Debug' ) == 'enabled' );
         $debugSettings['debug-by-ip'] = $ini->variable( 'DebugSettings', 'DebugByIP' ) == 'enabled';
         $debugSettings['debug-ip-list'] = $ini->variable( 'DebugSettings', 'DebugIPList' );
 
         $logList = $ini->variable( 'DebugSettings', 'AlwaysLog' );
-        $logMap = array( 'notice' => eZDebug::LEVEL_NOTICE,
-                         'warning' => eZDebug::LEVEL_WARNING,
-                         'error' => eZDebug::LEVEL_ERROR,
-                         'debug' => eZDebug::LEVEL_DEBUG,
-                         'strict' => eZDebug::LEVEL_STRICT );
-        $debugSettings['always-log'] = array();
+        $logMap = ['notice' => eZDebug::LEVEL_NOTICE, 'warning' => eZDebug::LEVEL_WARNING, 'error' => eZDebug::LEVEL_ERROR, 'debug' => eZDebug::LEVEL_DEBUG, 'strict' => eZDebug::LEVEL_STRICT];
+        $debugSettings['always-log'] = [];
         foreach ( $logMap as $name => $level )
         {
             $debugSettings['always-log'][$level] = in_array( $name, $logList );
@@ -128,7 +114,7 @@ final class ezpRestDebug
         if( self::isDebugEnabled() )
         {
             if ( method_exists( $this->debug, $method ) )
-                return call_user_func_array( array( $this->debug, $method ), $arguments );
+                return call_user_func_array( [$this->debug, $method], $arguments );
             else
                 throw new ezcBasePropertyNotFoundException( 'ezcDebug::'.$method.'()' );
         }

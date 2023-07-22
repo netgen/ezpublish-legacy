@@ -18,43 +18,7 @@ class eZContentClassGroup extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "creator_id" => array( 'name' => "CreatorID",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         "modifier_id" => array( 'name' => "ModifierID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "modified" => array( 'name' => "Modified",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      "keys" => array( "id" ),
-                      'function_attributes' => array( 'modifier' => 'modifier',
-                                                      'creator' => 'creator' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZContentClassGroup",
-                      "sort" => array( "id" => "asc" ),
-                      "name" => "ezcontentclassgroup" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true], "creator_id" => ['name' => "CreatorID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "modifier_id" => ['name' => "ModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], "modified" => ['name' => "Modified", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["id"], 'function_attributes' => ['modifier' => 'modifier', 'creator' => 'creator'], "increment_key" => "id", "class_name" => "eZContentClassGroup", "sort" => ["id" => "asc"], "name" => "ezcontentclassgroup"];
     }
 
     static function create( $userID = false )
@@ -62,13 +26,7 @@ class eZContentClassGroup extends eZPersistentObject
         $dateTime = time();
         if ( !$userID )
             $userID = eZUser::currentUserID();
-        $row = array(
-            "id" => null,
-            "name" => "",
-            "creator_id" => $userID,
-            "modifier_id" => $userID,
-            "created" => $dateTime,
-            "modified" => $dateTime );
+        $row = ["id" => null, "name" => "", "creator_id" => $userID, "modifier_id" => $userID, "created" => $dateTime, "modified" => $dateTime];
         return new eZContentClassGroup( $row );
     }
 
@@ -97,7 +55,7 @@ class eZContentClassGroup extends eZPersistentObject
     static function removeSelected( $id )
     {
         eZPersistentObject::removeObject( eZContentClassGroup::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
     }
 
     /*!
@@ -108,7 +66,7 @@ class eZContentClassGroup extends eZPersistentObject
     */
     static function fetchByName( $name, $asObject = true )
     {
-        $conds = array( 'name' => $name );
+        $conds = ['name' => $name];
         return eZPersistentObject::fetchObject( eZContentClassGroup::definition(),
                                                 null,
                                                 $conds,
@@ -117,7 +75,7 @@ class eZContentClassGroup extends eZPersistentObject
 
     static function fetch( $id, $user_id = false, $asObject = true )
     {
-        $conds = array( "id" => $id );
+        $conds = ["id" => $id];
         if ( $user_id !== false and is_numeric( $user_id ) )
             $conds["creator_id"] = $user_id;
         return eZPersistentObject::fetchObject( eZContentClassGroup::definition(),
@@ -128,7 +86,7 @@ class eZContentClassGroup extends eZPersistentObject
 
     static function fetchList( $user_id = false, $asObject = true )
     {
-        $conds = array();
+        $conds = [];
         if ( $user_id !== false and is_numeric( $user_id ) )
             $conds["creator_id"] = $user_id;
         return eZPersistentObject::fetchObjectList( eZContentClassGroup::definition(),

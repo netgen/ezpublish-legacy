@@ -140,7 +140,7 @@ WHERE p.status = $pendingStatusValue
 ORDER BY p.created, p.ezcontentobject_version_id ASC
 SQL;
         $db = eZDB::instance();
-        $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => 1 ) );
+        $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => 1] );
         if ( count( $rows ) == 0 )
             return false;
 

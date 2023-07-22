@@ -31,14 +31,6 @@ class eZScriptClusterPurge
 {
     public function __construct()
     {
-        $this->options = array(
-            'dry-run' => false,
-            'iteration-sleep' => 1,
-            'iteration-limit' => 100,
-            'memory-monitoring' => false,
-            'scopes' => false,
-            'expiry' => 2592000 // 60*60*24*30 = 30 days
-        );
     }
 
     /**
@@ -72,11 +64,11 @@ class eZScriptClusterPurge
         }
 
         if ( $this->optIterationSleep > 0 )
-            $sleep = ( $this->optIterationSleep * 1000000 );
+            $sleep = ( $this->optIterationSleep * 1_000_000 );
         else
             $sleep = false;
 
-        $limit = array( 0, $this->optIterationLimit );
+        $limit = [0, $this->optIterationLimit];
 
         $cli->output( "Purging expired items:" );
 
@@ -200,8 +192,8 @@ class eZScriptClusterPurge
         }
     }
 
-    private $options = array();
+    private array $options = ['dry-run' => false, 'iteration-sleep' => 1, 'iteration-limit' => 100, 'memory-monitoring' => false, 'scopes' => false, 'expiry' => 2_592_000];
 
-    const LOG_FILE = 'clusterpurge.log';
+    final public const LOG_FILE = 'clusterpurge.log';
 }
 ?>

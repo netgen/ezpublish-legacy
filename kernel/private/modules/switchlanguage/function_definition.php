@@ -8,24 +8,7 @@
  * @package kernel
  */
 
-$FunctionList = array();
-$FunctionList['url_alias'] = array( 'name' => 'url_alias',
-                                    'call_method' => array( 'class' => 'ezpLanguageSwitcherFunctionCollection',
-                                                            'method' => 'fetchUrlAlias' ),
-                                    'parameters' => array(
-                                                           array( 'name' => 'node_id',
-                                                                  'type' => 'integer',
-                                                                  'default' => false,
-                                                                  'required' => false ),
-
-                                                           array( 'name' => 'path',
-                                                                  'type' => 'string',
-                                                                  'default' => false,
-                                                                  'required' => false ),
-
-                                                           array( 'name' => 'locale',
-                                                                  'type' => 'string',
-                                                                  'default' => false,
-                                                                  'required' => true ), ) );
+$FunctionList = [];
+$FunctionList['url_alias'] = ['name' => 'url_alias', 'call_method' => ['class' => 'ezpLanguageSwitcherFunctionCollection', 'method' => 'fetchUrlAlias'], 'parameters' => [['name' => 'node_id', 'type' => 'integer', 'default' => false, 'required' => false], ['name' => 'path', 'type' => 'string', 'default' => false, 'required' => false], ['name' => 'locale', 'type' => 'string', 'default' => false, 'required' => true]]];
 
 ?>

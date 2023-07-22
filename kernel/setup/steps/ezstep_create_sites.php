@@ -66,7 +66,7 @@ class eZStepCreateSites extends eZStepInstaller
 
     function init()
     {
-        $this->Error = array( 'errors' => array()  );
+        $this->Error = ['errors' => []];
 
         set_time_limit( 10*60 );
 
@@ -84,18 +84,15 @@ class eZStepCreateSites extends eZStepInstaller
 
         //$ini = eZINI::create();
 
-        $accessMap = array( 'url' => array(),
-                            'hostname' => array(),
-                            'port' => array(),
-                            'accesses' => array() );
+        $accessMap = ['url' => [], 'hostname' => [], 'port' => [], 'accesses' => []];
 
         $primaryLanguage     = null;
-        $allLanguages        = array();
-        $allLanguageCodes    = array();
-        $variationsLanguages = array();
+        $allLanguages        = [];
+        $allLanguageCodes    = [];
+        $variationsLanguages = [];
         $primaryLanguageCode = $this->PersistenceList['regional_info']['primary_language'];
-        $extraLanguageCodes  = isset( $this->PersistenceList['regional_info']['languages'] ) ? $this->PersistenceList['regional_info']['languages'] : array();
-        $extraLanguageCodes  = array_diff( $extraLanguageCodes, array( $primaryLanguageCode ) );
+        $extraLanguageCodes  = $this->PersistenceList['regional_info']['languages'] ?? [];
+        $extraLanguageCodes  = array_diff( $extraLanguageCodes, [$primaryLanguageCode] );
 
         /*
         if ( isset( $this->PersistenceList['regional_info']['variations'] ) )
@@ -129,7 +126,7 @@ class eZStepCreateSites extends eZStepInstaller
 
         // If we have already figured out charset we used that
         if ( isset( $this->PersistenceList['regional_info']['site_charset'] ) and
-             strlen( $this->PersistenceList['regional_info']['site_charset'] ) > 0 )
+             strlen( (string) $this->PersistenceList['regional_info']['site_charset'] ) > 0 )
         {
             $charset = $this->PersistenceList['regional_info']['site_charset'];
         }
@@ -157,11 +154,11 @@ class eZStepCreateSites extends eZStepInstaller
             $i18nINI->save( false, '.php', 'append', true );
         }
 
-        $siteINISettings = array();
+        $siteINISettings = [];
         $result = true;
 
             $accessType = $siteType['access_type'];
-            $resultArray = array( 'errors' => array() );
+            $resultArray = ['errors' => []];
 
             $result = $this->initializePackage( $siteType, $accessMap, $charset,
                                                 $allLanguageCodes, $allLanguages, $primaryLanguage, $this->PersistenceList['admin'],
@@ -169,8 +166,7 @@ class eZStepCreateSites extends eZStepInstaller
             if ( !$result )
             {
                 $this->Error['errors'] = array_merge( $this->Error['errors'], $resultArray['errors'] );
-                $this->Error['errors'][] = array( 'code' => 'EZSW-040',
-                                                  'text' => "Failed to initialize site package '" . $siteType['identifier'] . "'" );
+                $this->Error['errors'][] = ['code' => 'EZSW-040', 'text' => "Failed to initialize site package '" . $siteType['identifier'] . "'"];
                 //$result = false;
                 return false;
             }
@@ -261,28 +257,17 @@ class eZStepCreateSites extends eZStepInstaller
             */
         }
 
-        switch ( $accessType )
-        {
-            case 'port':
-            {
-                $matchOrder = 'port';
-            } break;
-            case 'hostname':
-            {
-                $matchOrder = 'host';
-            } break;
-            case 'url':
-            default:
-            {
-                $matchOrder = 'uri';
-            } break;
-        }
-        $hostMatchMapItems = array();
+        $matchOrder = match ($accessType) {
+            'port' => 'port',
+            'hostname' => 'host',
+            default => 'uri',
+        };
+        $hostMatchMapItems = [];
         foreach ( $accessMap['hostname'] as $hostName => $siteAccessName )
         {
             $hostMatchMapItems[] = $hostName . ';' . $siteAccessName;
         }
-        $portMatchMapItems = array();
+        $portMatchMapItems = [];
         foreach ( $accessMap['port'] as $port => $siteAccessName )
         {
             $portMatchMapItems[$port] = $siteAccessName;
@@ -338,7 +323,7 @@ class eZStepCreateSites extends eZStepInstaller
 
     function display()
     {
-        $errors = array();
+        $errors = [];
         if ( is_array( $this->Error ) )
         {
             $errors = $this->Error['errors'];
@@ -346,12 +331,11 @@ class eZStepCreateSites extends eZStepInstaller
 
         $this->Tpl->setVariable( 'error_list', $errors );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( "design:setup/init/create_sites.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Creating sites' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Creating sites' ), 'url' => false]];
         return $result;
     }
 
@@ -362,6 +346,7 @@ class eZStepCreateSites extends eZStepInstaller
                                 &$admin,
                                 &$resultArray )
     {
+        $tmpINI = null;
         // Time limit #3:
         // We set the time limit to 5 minutes to ensure we have enough time
         // to initialize the site. However we only set if the current limit
@@ -420,19 +405,12 @@ class eZStepCreateSites extends eZStepInstaller
         $dbDriver = $databaseInfo['info']['driver'];
 
         $dbName = $siteType['database'];
-        $dbParameters = array( 'server' => $dbServer,
-                               'port' => $dbPort,
-                               'user' => $dbUser,
-                               'password' => $dbPwd,
-                               'socket' => $dbSocket,
-                               'database' => $dbName,
-                               'charset' => $dbCharset );
+        $dbParameters = ['server' => $dbServer, 'port' => $dbPort, 'user' => $dbUser, 'password' => $dbPwd, 'socket' => $dbSocket, 'database' => $dbName, 'charset' => $dbCharset];
         $db = eZDB::instance( $dbDriver, $dbParameters, true );
         if ( !$db->isConnected() )
         {
-            $resultArray['errors'][] = array( 'code' => 'EZSW-005',
-                                              'text' => ( "Failed connecting to database $dbName\n" .
-                                                          $db->errorMessage() ) );
+            $resultArray['errors'][] = ['code' => 'EZSW-005', 'text' => ( "Failed connecting to database $dbName\n" .
+                        $db->errorMessage() )];
             return false;
         }
         eZDB::setInstance( $db );
@@ -456,8 +434,7 @@ class eZStepCreateSites extends eZStepInstaller
             $schemaArray = eZDbSchema::read( 'share/db_schema.dba', true );
             if ( !$schemaArray )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-001',
-                                                  'message' => "Failed loading database schema file share/db_schema.dba" );
+                $resultArray['errors'][] = ['code' => 'EZSW-001', 'message' => "Failed loading database schema file share/db_schema.dba"];
                 $result = false;
             }
 
@@ -467,8 +444,7 @@ class eZStepCreateSites extends eZStepInstaller
                 $dataArray = eZDbSchema::read( 'share/db_data.dba', true );
                 if ( !$dataArray )
                 {
-                    $resultArray['errors'][] = array( 'code' => 'EZSW-002',
-                                                      'text' => "Failed loading database data file share/db_data.dba" );
+                    $resultArray['errors'][] = ['code' => 'EZSW-002', 'text' => "Failed loading database data file share/db_data.dba"];
                     $result = false;
                 }
 
@@ -481,8 +457,7 @@ class eZStepCreateSites extends eZStepInstaller
                     $dbSchema = eZDbSchema::instance( $schemaArray );
                     if ( !$dbSchema )
                     {
-                        $resultArray['errors'][] = array( 'code' => 'EZSW-003',
-                                                          'text' => "Failed loading " . $db->databaseName() . " schema handler" );
+                        $resultArray['errors'][] = ['code' => 'EZSW-003', 'text' => "Failed loading " . $db->databaseName() . " schema handler"];
                         $result = false;
                     }
 
@@ -491,15 +466,14 @@ class eZStepCreateSites extends eZStepInstaller
                         $result = true;
                         // This will insert the schema, then the data and
                         // run any sequence value correction SQL if required
-                        $params = array( 'schema' => true,
-                                         'data' => true );
+                        $params = ['schema' => true, 'data' => true];
 
                         if ( $db->databaseName() == 'mysql' )
                         {
                             $engines = $db->arrayQuery( 'SHOW ENGINES' );
                             foreach( $engines as $engine )
                             {
-                                if ( $engine['Engine'] == 'InnoDB' && in_array( $engine['Support'], array( 'YES', 'DEFAULT' ) ) )
+                                if ( $engine['Engine'] == 'InnoDB' && in_array( $engine['Support'], ['YES', 'DEFAULT'] ) )
                                 {
                                     $params['table_type'] = 'innodb';
                                     break;
@@ -509,9 +483,8 @@ class eZStepCreateSites extends eZStepInstaller
 
                         if ( !$dbSchema->insertSchema( $params ) )
                         {
-                            $resultArray['errors'][] = array( 'code' => 'EZSW-004',
-                                                              'text' => ( "Failed inserting data to " . $db->databaseName() . "\n" .
-                                                                          $db->errorMessage() ) );
+                            $resultArray['errors'][] = ['code' => 'EZSW-004', 'text' => ( "Failed inserting data to " . $db->databaseName() . "\n" .
+                                        $db->errorMessage() )];
                             $result = false;
                         }
                     }
@@ -527,10 +500,9 @@ class eZStepCreateSites extends eZStepInstaller
                 {
                     if ( !$dataType->importDBDataFromDBAFile() )
                     {
-                        $resultArray['errors'][] = array( 'code' => 'EZSW-002',
-                                                          'text' => "Failed importing datatype related data into database: \n" .
-                                                                    'datatype - ' . $dataType->DataTypeString . ", \n" .
-                                                                    'dba-data file - ' . $dataType->getDBAFilePath() );
+                        $resultArray['errors'][] = ['code' => 'EZSW-002', 'text' => "Failed importing datatype related data into database: \n" .
+                                  'datatype - ' . $dataType->DataTypeString . ", \n" .
+                                  'dba-data file - ' . $dataType->getDBAFilePath()];
                     }
                 }
             }
@@ -545,44 +517,34 @@ class eZStepCreateSites extends eZStepInstaller
         // Prepare languages
         $primaryLanguageLocaleCode = $primaryLanguage->localeCode();
         $primaryLanguageName = $primaryLanguage->languageName();
-        $prioritizedLanguages = array_merge( array( $primaryLanguageLocaleCode ), $extraLanguageCodes );
+        $prioritizedLanguages = array_merge( [$primaryLanguageLocaleCode], $extraLanguageCodes );
 
-        $installParameters = array( 'path' => '.' );
-        $installParameters['ini'] = array();
-        $siteINIChanges = array();
+        $installParameters = ['path' => '.'];
+        $installParameters['ini'] = [];
+        $siteINIChanges = [];
         $url = $siteType['url'];
-        if ( preg_match( "#^[a-zA-Z0-9]+://(.*)$#", $url, $matches ) )
+        if ( preg_match( "#^[a-zA-Z0-9]+://(.*)$#", (string) $url, $matches ) )
         {
             $url = $matches[1];
         }
 
-        $siteINIChanges['SiteAccessSettings'] = array( 'RelatedSiteAccessList' => $accessMap['accesses'] );
+        $siteINIChanges['SiteAccessSettings'] = ['RelatedSiteAccessList' => $accessMap['accesses']];
 
-        $siteINIChanges['ContentSettings'] = array( 'TranslationList' => implode( ';', $extraLanguageCodes ) );
-        $siteINIChanges['SiteSettings'] = array( 'SiteName' => $siteType['title'],
-                                                 'SiteURL' => $url );
-        $siteINIChanges['DatabaseSettings'] = array( 'DatabaseImplementation' => $dbDriver,
-                                                     'Server' => $dbServer,
-                                                     'Port' => $dbPort,
-                                                     'Database' => $dbName,
-                                                     'User' => $dbUser,
-                                                     'Password' => $dbPwd,
-                                                     'Charset' => false );
-        $siteINIChanges['FileSettings'] = array( 'VarDir' => 'var/' . $siteType['identifier'] );
-        if ( trim( $dbSocket ) != '' )
+        $siteINIChanges['ContentSettings'] = ['TranslationList' => implode( ';', $extraLanguageCodes )];
+        $siteINIChanges['SiteSettings'] = ['SiteName' => $siteType['title'], 'SiteURL' => $url];
+        $siteINIChanges['DatabaseSettings'] = ['DatabaseImplementation' => $dbDriver, 'Server' => $dbServer, 'Port' => $dbPort, 'Database' => $dbName, 'User' => $dbUser, 'Password' => $dbPwd, 'Charset' => false];
+        $siteINIChanges['FileSettings'] = ['VarDir' => 'var/' . $siteType['identifier']];
+        if ( trim( (string) $dbSocket ) != '' )
             $siteINIChanges['DatabaseSettings']['Socket'] = $dbSocket;
         else
             $siteINIChanges['DatabaseSettings']['Socket'] = 'disabled';
         if ( $admin['email'] )
         {
-            $siteINIChanges['InformationCollectionSettings'] = array( 'EmailReceiver' => false );
-            $siteINIChanges['UserSettings'] = array( 'RegistrationEmail' => false );
-            $siteINIChanges['MailSettings'] = array( 'AdminEmail' =>  $admin['email'],
-                                                     'EmailSender' => false );
+            $siteINIChanges['InformationCollectionSettings'] = ['EmailReceiver' => false];
+            $siteINIChanges['UserSettings'] = ['RegistrationEmail' => false];
+            $siteINIChanges['MailSettings'] = ['AdminEmail' =>  $admin['email'], 'EmailSender' => false];
         }
-        $siteINIChanges['RegionalSettings'] = array( 'Locale' => $primaryLanguage->localeFullCode(),
-                                                     'ContentObjectLocale' => $primaryLanguage->localeCode(),
-                                                     'SiteLanguageList' => $prioritizedLanguages );
+        $siteINIChanges['RegionalSettings'] = ['Locale' => $primaryLanguage->localeFullCode(), 'ContentObjectLocale' => $primaryLanguage->localeCode(), 'SiteLanguageList' => $prioritizedLanguages];
         if ( $primaryLanguage->localeCode() == 'eng-GB' )
             $siteINIChanges['RegionalSettings']['TextTranslation'] = 'disabled';
         else
@@ -590,7 +552,7 @@ class eZStepCreateSites extends eZStepInstaller
 
         $installParameters['ini']['siteaccess'][$adminSiteaccessName]['site.ini.append'] = $siteINIChanges;
         $installParameters['ini']['siteaccess'][$userSiteaccessName]['site.ini.append'] = $siteINIChanges;
-        $installParameters['ini']['siteaccess'][$userSiteaccessName]['site.ini']['DesignSettings'] = array( 'SiteDesign' => $userDesignName );
+        $installParameters['ini']['siteaccess'][$userSiteaccessName]['site.ini']['DesignSettings'] = ['SiteDesign' => $userDesignName];
         $installParameters['variables']['user_siteaccess'] = $userSiteaccessName;
         $installParameters['variables']['admin_siteaccess'] = $adminSiteaccessName;
         $installParameters['variables']['design'] = $userDesignName;
@@ -619,21 +581,20 @@ class eZStepCreateSites extends eZStepInstaller
         */
 
         // Add a policy to permit editors using OE
-        eZPolicy::createNew( 3, array( 'ModuleName' => 'ezoe', 'FunctionName' => '*' ) );
+        eZPolicy::createNew( 3, ['ModuleName' => 'ezoe', 'FunctionName' => '*'] );
 
         // Install site package and it's required packages
         $sitePackageName = $this->chosenSitePackage();
         $sitePackage = eZPackage::fetch( $sitePackageName );
         if ( !is_object( $sitePackage ) )
         {
-            $resultArray['errors'][] = array( 'code' => 'EZSW-041',
-                                              'text' => " Could not fetch site package: '$sitePackageName'" );
+            $resultArray['errors'][] = ['code' => 'EZSW-041', 'text' => " Could not fetch site package: '$sitePackageName'"];
             return false;
         }
 
         $dependecies = $sitePackage->attribute('dependencies');
         $requires = $dependecies['requires'];
-        $requiredPackages = array();
+        $requiredPackages = [];
 
         // Include setting files
         $settingsFiles = $sitePackage->attribute( 'settings-files' );
@@ -690,7 +651,7 @@ ezcontentobject
 WHERE
 language_mask & 1 = 1";
             }
-            $objectList = array();
+            $objectList = [];
             $list = $db->arrayQuery( $sql );
             foreach ( $list as $row )
             {
@@ -833,8 +794,7 @@ language_locale='eng-GB'";
             $user = eZUser::instance( 14 );  // Must be initialized to make node assignments work correctly
             if ( !is_object( $user ) )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-020',
-                                                  'text' => "Could not fetch administrator user object" );
+                $resultArray['errors'][] = ['code' => 'EZSW-020', 'text' => "Could not fetch administrator user object"];
                 return false;
             }
             // Make sure Admin is the currently logged in user
@@ -860,7 +820,7 @@ language_locale='eng-GB'";
                         $prioritizedLanguageObjects[] = eZContentLanguage::fetchByLocale( $toLanguage, true );
                     }
                 }
-                $prioritizedLanguageLocales = array();
+                $prioritizedLanguageLocales = [];
                 foreach ( $prioritizedLanguageObjects as $language )
                 {
                     $locale = $language->attribute( 'locale' );
@@ -886,14 +846,7 @@ language_locale='eng-GB'";
                     $requiredPackages[] = $package;
                     if ( $package->attribute( 'install_type' ) == 'install' )
                     {
-                        $installParameters = array( 'use_dates_from_package' => true,
-                                                    'site_access_map' => array( '*' => $userSiteaccessName ),
-                                                    'top_nodes_map' => array( '*' => 2 ),
-                                                    'design_map' => array( '*' => $userDesignName ),
-                                                    'language_map' => $languageMap,
-                                                    'restore_dates' => true,
-                                                    'user_id' => $user->attribute( 'contentobject_id' ),
-                                                    'non-interactive' => true );
+                        $installParameters = ['use_dates_from_package' => true, 'site_access_map' => ['*' => $userSiteaccessName], 'top_nodes_map' => ['*' => 2], 'design_map' => ['*' => $userDesignName], 'language_map' => $languageMap, 'restore_dates' => true, 'user_id' => $user->attribute( 'contentobject_id' ), 'non-interactive' => true];
 
                         $status = $package->install( $installParameters );
                         if ( !$status )
@@ -902,16 +855,14 @@ language_locale='eng-GB'";
                             if ( isset( $installParameters['error']['description'] ) )
                                 $errorText .= ": " . $installParameters['error']['description'];
 
-                            $resultArray['errors'][] = array( 'code' => 'EZSW-051',
-                                                              'text' => $errorText );
+                            $resultArray['errors'][] = ['code' => 'EZSW-051', 'text' => $errorText];
                             return false;
                         }
                     }
                 }
                 else
                 {
-                    $resultArray['errors'][] = array( 'code' => 'EZSW-050',
-                                                      'text' => "Could not fetch required package: '$packageName'" );
+                    $resultArray['errors'][] = ['code' => 'EZSW-050', 'text' => "Could not fetch required package: '$packageName'"];
                     return false;
                 }
                 unset( $package );
@@ -920,32 +871,31 @@ language_locale='eng-GB'";
 
         $GLOBALS['eZContentObjectDefaultLanguage'] = $primaryLanguageLocaleCode;
 
-        $nodeRemoteMap = array();
+        $nodeRemoteMap = [];
         $rows = $db->arrayQuery( "SELECT node_id, remote_id FROM ezcontentobject_tree" );
         foreach ( $rows as $row )
         {
             $remoteID = $row['remote_id'];
-            if ( strlen( trim( $remoteID ) ) > 0 )
+            if ( strlen( trim( (string) $remoteID ) ) > 0 )
                 $nodeRemoteMap[$remoteID] = $row['node_id'];
         }
 
-        $objectRemoteMap = array();
+        $objectRemoteMap = [];
         $rows = $db->arrayQuery( "SELECT id, remote_id FROM ezcontentobject" );
         foreach ( $rows as $row )
         {
             $remoteID = $row['remote_id'];
-            if ( strlen( trim( $remoteID ) ) > 0 )
+            if ( strlen( trim( (string) $remoteID ) ) > 0 )
                 $objectRemoteMap[$remoteID] = $row['id'];
         }
 
-        $classRemoteMap = array();
+        $classRemoteMap = [];
         $rows = $db->arrayQuery( "SELECT id, identifier, remote_id FROM ezcontentclass" );
         foreach ( $rows as $row )
         {
             $remoteID = $row['remote_id'];
-            if ( strlen( trim( $remoteID ) ) > 0 )
-                $classRemoteMap[$remoteID] = array( 'id' => $row['id'],
-                                                    'identifier' => $row['identifier'] );
+            if ( strlen( trim( (string) $remoteID ) ) > 0 )
+                $classRemoteMap[$remoteID] = ['id' => $row['id'], 'identifier' => $row['identifier']];
         }
 
         $siteCSS = false;
@@ -971,19 +921,21 @@ language_locale='eng-GB'";
             }
         }
 
-        $parameters = array( 'node_remote_map' => $nodeRemoteMap,
-                             'object_remote_map' => $objectRemoteMap,
-                             'class_remote_map' => $classRemoteMap,
-                             //'extra_functionality' => $extraFunctionality,
-                             'preview_design' => $userDesignName,
-                             'design_list' => array( $userDesignName, 'admin2', 'admin' ),
-                             'user_siteaccess' => $userSiteaccessName,
-                             'admin_siteaccess' => $adminSiteaccessName,
-                             'package_object' => $sitePackage,
-                             'siteaccess_urls' => $this->siteaccessURLs(),
-                             'access_map' => $accessMap,
-                             'site_type' => $siteType,
-                             'all_language_codes' => $prioritizedLanguages );
+        $parameters = [
+            'node_remote_map' => $nodeRemoteMap,
+            'object_remote_map' => $objectRemoteMap,
+            'class_remote_map' => $classRemoteMap,
+            //'extra_functionality' => $extraFunctionality,
+            'preview_design' => $userDesignName,
+            'design_list' => [$userDesignName, 'admin2', 'admin'],
+            'user_siteaccess' => $userSiteaccessName,
+            'admin_siteaccess' => $adminSiteaccessName,
+            'package_object' => $sitePackage,
+            'siteaccess_urls' => $this->siteaccessURLs(),
+            'access_map' => $accessMap,
+            'site_type' => $siteType,
+            'all_language_codes' => $prioritizedLanguages,
+        ];
 
 
         $siteINIStored = false;
@@ -993,17 +945,17 @@ language_locale='eng-GB'";
         if ( function_exists( 'eZSiteINISettings' ) )
             $extraSettings = eZSiteINISettings( $parameters );
         else
-            $extraSettings = array();
+            $extraSettings = [];
 
         if ( function_exists( 'eZSiteAdminINISettings' ) )
             $extraAdminSettings = eZSiteAdminINISettings( $parameters );
         else
-            $extraAdminSettings = array();
+            $extraAdminSettings = [];
 
         if ( function_exists( 'eZSiteCommonINISettings' ) )
             $extraCommonSettings = eZSiteCommonINISettings( $parameters );
         else
-            $extraCommonSettings = array();
+            $extraCommonSettings = [];
 
         $isUntranslatedSettingAdded = false;
         foreach ( $extraAdminSettings as $key => $extraAdminSetting )
@@ -1017,19 +969,20 @@ language_locale='eng-GB'";
         }
         if ( !$isUntranslatedSettingAdded )
         {
-            $extraAdminSettings[] = array( 'name' => 'site.ini',
-                                           'settings' => array( 'RegionalSettings' => array( 'ShowUntranslatedObjects' => 'enabled' ) ) );
+            $extraAdminSettings[] = ['name' => 'site.ini', 'settings' => ['RegionalSettings' => ['ShowUntranslatedObjects' => 'enabled']]];
         }
 
         // Enable OE and ODF extensions by default
-        $extensionsToEnable = array();
+        $extensionsToEnable = [];
         // Included in "fat" install, needs to override $extraCommonSettings extensions
-        $extensionsPrepended = array( 'ezjscore', /*@EZP_BUILD_EXTENSION_ACTIVATE@*/ 'ezoe', 'ezformtoken' );
+        $extensionsPrepended = [
+            'ezjscore',
+            /*@EZP_BUILD_EXTENSION_ACTIVATE@*/
+            'ezoe',
+            'ezformtoken',
+        ];
         foreach (
-            array(
-                'ezie', 'ezodf', 'ezprestapiprovider', 'ezmultiupload', 'eztags',
-                'ezautosave', 'ez_network', 'ez_network_demo'
-            ) as $extension
+            ['ezie', 'ezodf', 'ezprestapiprovider', 'ezmultiupload', 'eztags', 'ezautosave', 'ez_network', 'ez_network_demo'] as $extension
         )
         {
             if ( file_exists( "extension/$extension" ) )
@@ -1053,8 +1006,7 @@ language_locale='eng-GB'";
 
         if ( !$settingAdded )
         {
-            $extraCommonSettings[] = array( 'name' => 'site.ini',
-                                            'settings' => array( 'ExtensionSettings' => array( 'ActiveExtensions' => array_merge( $extensionsPrepended, $extensionsToEnable ) ) ) );
+            $extraCommonSettings[] = ['name' => 'site.ini', 'settings' => ['ExtensionSettings' => ['ActiveExtensions' => [...$extensionsPrepended, ...$extensionsToEnable]]]];
         }
 
         // Enable dynamic tree menu for the admin interface by default
@@ -1069,7 +1021,7 @@ language_locale='eng-GB'";
                 }
                 else
                 {
-                    $extraAdminSettings[$key]['settings'] = array( 'TreeMenu' => array( 'Dynamic' => 'enabled' ) );
+                    $extraAdminSettings[$key]['settings'] = ['TreeMenu' => ['Dynamic' => 'enabled']];
                 }
                 $enableDynamicTreeMenuAdded = true;
                 break;
@@ -1077,8 +1029,7 @@ language_locale='eng-GB'";
         }
         if ( !$enableDynamicTreeMenuAdded )
         {
-            $extraAdminSettings[] = array( 'name' => 'contentstructuremenu.ini',
-                                           'settings' => array( 'TreeMenu' => array( 'Dynamic' => 'enabled' ) ) );
+            $extraAdminSettings[] = ['name' => 'contentstructuremenu.ini', 'settings' => ['TreeMenu' => ['Dynamic' => 'enabled']]];
         }
 
         $resultArray['common_settings'] = $extraCommonSettings;
@@ -1105,7 +1056,7 @@ language_locale='eng-GB'";
                 $siteINIStored = true;
                 $tmpINI->setVariables( $siteINIChanges );
                 $tmpINI->setVariable( 'DesignSettings', 'SiteDesign', $userDesignName );
-                $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', array( 'base' ) );
+                $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', ['base'] );
             }
             else if ( $iniName == 'design.ini' )
             {
@@ -1124,7 +1075,7 @@ language_locale='eng-GB'";
                 if ( $templateLookClass )
                 {
                     $objectList = $templateLookClass->objectList();
-                    if ( $objectList and count( $objectList ) > 0 )
+                    if ( $objectList and (is_countable($objectList) ? count( $objectList ) : 0) > 0 )
                     {
                         $templateLookObject = current( $objectList );
                         $dataMap = $templateLookObject->fetchDataMap();
@@ -1171,7 +1122,7 @@ language_locale='eng-GB'";
                 $tmpINI->setVariables( $siteINIChanges );
                 $tmpINI->setVariable( 'SiteAccessSettings', 'RequireUserLogin', 'true' );
                 $tmpINI->setVariable( 'DesignSettings', 'SiteDesign', 'admin2' );
-                $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', array( 'admin' ) );
+                $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', ['admin'] );
                 $tmpINI->setVariable( 'SiteSettings', 'LoginPage', 'custom' );
                 $tmpINI->setVariable( 'SiteSettings', 'DefaultPage', 'content/dashboard' );
             }
@@ -1188,7 +1139,7 @@ language_locale='eng-GB'";
             $siteINI->setVariables( $siteINIChanges );
             $siteINI->setVariable( 'SiteAccessSettings', 'RequireUserLogin', 'true' );
             $siteINI->setVariable( 'DesignSettings', 'SiteDesign', 'admin2' );
-            $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', array( 'admin' ) );
+            $tmpINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', ['admin'] );
             $siteINI->setVariable( 'SiteSettings', 'LoginPage', 'custom' );
             $siteINI->setVariable( 'SiteSettings', 'DefaultPage', 'content/dashboard' );
             $siteINI->save( false, '.append.php', false, false, "settings/siteaccess/$adminSiteaccessName", true );
@@ -1202,7 +1153,7 @@ language_locale='eng-GB'";
 
             $siteINI->setVariables( $siteINIChanges );
             $siteINI->setVariable( 'DesignSettings', 'SiteDesign', $userDesignName );
-            $siteINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', array( 'base' ) );
+            $siteINI->setVariable( 'DesignSettings', 'AdditionalSiteDesignList', ['base'] );
             $siteINI->save( false, '.append.php', false, true, "settings/siteaccess/$userSiteaccessName", true );
         }
         if ( !$designINIStored )
@@ -1314,8 +1265,7 @@ language_locale='eng-GB'";
                     $prefValue = $pref['value'];
                     if ( !eZPreferences::setValue( $prefName, $prefValue, $prefUserID ) )
                     {
-                        $resultArray['errors'][] = array( 'code' => 'EZSW-070',
-                                                          'text' => "Could not create ezpreference '$prefValue' for $prefUserID" );
+                        $resultArray['errors'][] = ['code' => 'EZSW-070', 'text' => "Could not create ezpreference '$prefValue' for $prefUserID"];
                         return false;
                     }
                 }
@@ -1326,35 +1276,31 @@ language_locale='eng-GB'";
         $userAccount = eZUser::fetch( 14 );
         if ( !is_object( $userAccount ) )
         {
-            $resultArray['errors'][] = array( 'code' => 'EZSW-020',
-                                              'text' => "Could not fetch administrator user object" );
+            $resultArray['errors'][] = ['code' => 'EZSW-020', 'text' => "Could not fetch administrator user object"];
             return false;
         }
 
         $userObject = $userAccount->attribute( 'contentobject' );
         if ( !is_object( $userObject ) )
         {
-            $resultArray['errors'][] = array( 'code' => 'EZSW-021',
-                                              'text' => "Could not fetch administrator content object" );
+            $resultArray['errors'][] = ['code' => 'EZSW-021', 'text' => "Could not fetch administrator content object"];
             return false;
         }
 
         $newUserObject = $userObject->createNewVersion( false, false );
         if ( !is_object( $newUserObject ) )
         {
-            $resultArray['errors'][] = array( 'code' => 'EZSW-022',
-                'text' => "Could not create new version of administrator content object" );
+            $resultArray['errors'][] = ['code' => 'EZSW-022', 'text' => "Could not create new version of administrator content object"];
             return false;
         }
         $dataMap = $newUserObject->attribute( 'data_map' );
         $error = false;
 
-        if ( trim( $admin['email'] ) )
+        if ( trim( (string) $admin['email'] ) )
         {
             if ( !isset( $dataMap['user_account'] ) )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-023',
-                    'text' => "Administrator content object does not have a 'user_account' attribute" );
+                $resultArray['errors'][] = ['code' => 'EZSW-023', 'text' => "Administrator content object does not have a 'user_account' attribute"];
                 return false;
             }
 
@@ -1365,18 +1311,16 @@ language_locale='eng-GB'";
             $userAccount->store();
         }
 
-        if ( trim( $admin['first_name'] ) or trim( $admin['last_name'] ) )
+        if ( trim( (string) $admin['first_name'] ) or trim( (string) $admin['last_name'] ) )
         {
             if ( !isset( $dataMap['first_name'] ) )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-023',
-                                                  'text' => "Administrator content object does not have a 'first_name' field" );
+                $resultArray['errors'][] = ['code' => 'EZSW-023', 'text' => "Administrator content object does not have a 'first_name' field"];
                 $error = true;
             }
             if ( !isset( $dataMap['last_name'] ) )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-024',
-                                                  'text' => "Administrator content object does not have a 'last_name' field" );
+                $resultArray['errors'][] = ['code' => 'EZSW-024', 'text' => "Administrator content object does not have a 'last_name' field"];
                 $error = true;
             }
 
@@ -1393,12 +1337,10 @@ language_locale='eng-GB'";
 
         if ( $publishAdmin )
         {
-            $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newUserObject->attribute( 'contentobject_id' ),
-                                                                                         'version' => $newUserObject->attribute( 'version' ) ) );
+            $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newUserObject->attribute( 'contentobject_id' ), 'version' => $newUserObject->attribute( 'version' )] );
             if ( $operationResult['status'] != eZModuleOperationInfo::STATUS_CONTINUE )
             {
-                $resultArray['errors'][] = array( 'code' => 'EZSW-025',
-                                                  'text' => "Failed to properly publish the administrator object" );
+                $resultArray['errors'][] = ['code' => 'EZSW-025', 'text' => "Failed to properly publish the administrator object"];
                 return false;
             }
         }
@@ -1420,7 +1362,7 @@ language_locale='eng-GB'";
             $tmpOverrideINI->setVariable( 'tiny_image', 'Source'    , 'content/view/tiny.tpl' );
             $tmpOverrideINI->setVariable( 'tiny_image', 'MatchFile' , 'tiny_image.tpl' );
             $tmpOverrideINI->setVariable( 'tiny_image', 'Subdir'    , 'templates');
-            $tmpOverrideINI->setVariable( 'tiny_image', 'Match'     , array( 'class_identifier' => 'image' ) );
+            $tmpOverrideINI->setVariable( 'tiny_image', 'Match'     , ['class_identifier' => 'image'] );
 
             $tmpOverrideINI->save();
         }
@@ -1433,7 +1375,7 @@ language_locale='eng-GB'";
         {
             $text = eZSiteFinalText( $parameters );
             if ( !isset( $this->PersistenceList['final_text'] ) )
-                $this->PersistenceList['final_text'] = array();
+                $this->PersistenceList['final_text'] = [];
 
             $this->PersistenceList['final_text'][] = $text;
         }

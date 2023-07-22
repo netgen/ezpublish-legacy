@@ -17,19 +17,18 @@
 
 class eZPriceType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezprice";
-    const INCLUDE_VAT_FIELD = 'data_int1';
-    const INCLUDE_VAT_VARIABLE = '_ezprice_include_vat_';
-    const VAT_ID_FIELD = 'data_float1';
-    const VAT_ID_VARIABLE = '_ezprice_vat_id_';
-    const INCLUDED_VAT = 1;
-    const EXCLUDED_VAT = 2;
+    final public const DATA_TYPE_STRING = "ezprice";
+    final public const INCLUDE_VAT_FIELD = 'data_int1';
+    final public const INCLUDE_VAT_VARIABLE = '_ezprice_include_vat_';
+    final public const VAT_ID_FIELD = 'data_float1';
+    final public const VAT_ID_VARIABLE = '_ezprice_vat_id_';
+    final public const INCLUDED_VAT = 1;
+    final public const EXCLUDED_VAT = 2;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Price", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_float' => 'price' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_float' => 'price']] );
     }
 
     /*!
@@ -60,7 +59,7 @@ class eZPriceType extends eZDataType
             {
                 return eZInputValidator::STATE_ACCEPTED;
             }
-            if ( preg_match( "#^[0-9]+(.){0,1}[0-9]{0,2}$#", $data ) )
+            if ( preg_match( "#^[0-9]+(.){0,1}[0-9]{0,2}$#", (string) $data ) )
                 return eZInputValidator::STATE_ACCEPTED;
 
             $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
@@ -158,7 +157,7 @@ class eZPriceType extends eZDataType
 
         if ( $contentObjectAttribute->attribute( 'data_text' ) != '' )
         {
-            list( $vatType, $vatExInc ) = explode( ',', $contentObjectAttribute->attribute( "data_text" ), 2 );
+            [$vatType, $vatExInc] = explode( ',', (string) $contentObjectAttribute->attribute( "data_text" ), 2 );
 
             $price->setAttribute( 'selected_vat_type', $vatType );
             $price->setAttribute( 'is_vat_included', $vatExInc );
@@ -188,12 +187,8 @@ class eZPriceType extends eZDataType
     function contentActionList( $classAttribute )
     {
         $actionList = parent::contentActionList( $classAttribute );
-        $actionList[] = array( 'name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to basket' ),
-                               'action' => 'ActionAddToBasket'
-        );
-        $actionList[] = array( 'name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to wish list' ),
-                               'action' => 'ActionAddToWishList'
-        );
+        $actionList[] = ['name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to basket' ), 'action' => 'ActionAddToBasket'];
+        $actionList[] = ['name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to wish list' ), 'action' => 'ActionAddToWishList'];
         return $actionList;
     }
 
@@ -224,7 +219,7 @@ class eZPriceType extends eZDataType
         $price = $contentObjectAttribute->attribute( 'content' );
         $vatType =$price->attribute( 'selected_vat_type' );
 
-        $priceStr = implode( '|', array( $price->attribute( 'price' ), $vatType->attribute( 'id' ) , ($price->attribute( 'is_vat_included' ) )? 1:0 ) );
+        $priceStr = implode( '|', [$price->attribute( 'price' ), $vatType->attribute( 'id' ), ($price->attribute( 'is_vat_included' ) )? 1:0] );
         return $priceStr;
     }
 
@@ -234,7 +229,7 @@ class eZPriceType extends eZDataType
         if ( $string == '' )
             return true;
 
-        $priceData = explode( '|', $string );
+        $priceData = explode( '|', (string) $string );
         if ( count( $priceData ) != 3 )
             return false;
 
@@ -281,7 +276,7 @@ class eZPriceType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $vatNode = $attributeParametersNode->getElementsByTagName( 'vat-included' )->item( 0 );
-        $vatIncluded = strtolower( $vatNode->getAttribute( 'is-set' ) ) == 'true';
+        $vatIncluded = strtolower( (string) $vatNode->getAttribute( 'is-set' ) ) == 'true';
         if ( $vatIncluded )
             $vatIncluded = self::INCLUDED_VAT;
         else

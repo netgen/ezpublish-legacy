@@ -17,7 +17,7 @@ $module = $Params['Module'];
 $hashKey = $Params["HashKey"];
 $ini = eZINI::instance();
 
-if ( strlen( $hashKey ) == 32 )
+if ( strlen( (string) $hashKey ) == 32 )
 {
     $forgotPasswdObj = eZForgotPassword::fetchByKey( $hashKey );
     if ( $forgotPasswdObj )
@@ -39,8 +39,7 @@ if ( strlen( $hashKey ) == 32 )
         if ( eZOperationHandler::operationIsAvailable( 'user_password' ) )
         {
             $operationResult = eZOperationHandler::execute( 'user',
-                                                            'password', array( 'user_id'    => $userID,
-                                                                               'new_password'  => $newPassword ) );
+                                                            'password', ['user_id'    => $userID, 'new_password'  => $newPassword] );
         }
         else
         {
@@ -82,7 +81,7 @@ if ( strlen( $hashKey ) == 32 )
         $tpl->setVariable( 'wrong_key', true );
     }
 }
-else if ( strlen( $hashKey ) > 4 )
+else if ( strlen( (string) $hashKey ) > 4 )
 {
     $tpl->setVariable( 'wrong_key', true );
 }
@@ -99,11 +98,11 @@ if ( $module->isCurrentAction( "Generate" ) )
     if ( $module->hasActionParameter( "Email" ) )
     {
         $email = $module->actionParameter( "Email" );
-        if ( trim( $email ) != "" )
+        if ( trim( (string) $email ) != "" )
         {
             $users = eZPersistentObject::fetchObjectList( eZUser::definition(),
                                                        null,
-                                                       array( 'email' => $email ),
+                                                       ['email' => $email],
                                                        null,
                                                        null,
                                                        true );
@@ -132,10 +131,10 @@ if ( $module->isCurrentAction( "Generate" ) )
         }
         if ( $random_bytes === false )
         {
-            $random_bytes = mt_rand(); // Not secure, but should not happen since SSL is required, and anyway admins have been warned.
+            $random_bytes = random_int(0, mt_getrandmax()); // Not secure, but should not happen since SSL is required, and anyway admins have been warned.
         }
 
-        if ( isset($users) && count($users) > 0 )
+        if ( isset($users) && (is_countable($users) ? count($users) : 0) > 0 )
         {
             $user   = $users[0];
             $time   = time();
@@ -146,9 +145,7 @@ if ( $module->isCurrentAction( "Generate" ) )
             if ( eZOperationHandler::operationIsAvailable( 'user_forgotpassword' ) )
             {
                 $operationResult = eZOperationHandler::execute( 'user',
-                                                                'forgotpassword', array( 'user_id'    => $userID,
-                                                                                         'password_hash'  => $hashKey,
-                                                                                         'time' => $time ) );
+                                                                'forgotpassword', ['user_id'    => $userID, 'password_hash'  => $hashKey, 'time' => $time] );
             }
             else
             {
@@ -193,12 +190,9 @@ if ( $module->isCurrentAction( "Generate" ) )
     }
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:user/forgotpassword.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Forgot password' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Forgot password' ), 'url' => false]];
 
 if ( $ini->variable( 'SiteSettings', 'LoginPage' ) == 'custom' )
 {

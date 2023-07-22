@@ -10,8 +10,7 @@ $http = eZHTTPTool::instance();
 $module = $Params['Module'];
 $parameters = $Params["Parameters"];
 
-$overrideKeys = array( 'nodeID' => $Params['NodeID'],
-                       'classID' => $Params['ClassID'] );
+$overrideKeys = ['nodeID' => $Params['NodeID'], 'classID' => $Params['ClassID']];
 
 
 $ini = eZINI::instance();
@@ -62,22 +61,22 @@ $designExtension = '';
 
 $designINI = eZINI::instance( 'design.ini' );
 $designExtensionList = $designINI->variable( 'ExtensionSettings', 'DesignExtensions' );
-if ( $designExtensionList !== array() )
+if ( $designExtensionList !== [] )
 {
     $designExtension = $designExtensionList[0];
 }
 
 if ( $module->isCurrentAction( 'CreateOverride' ) )
 {
-    $templateName = trim( $http->postVariable( 'TemplateName' ) );
+    $templateName = trim( (string) $http->postVariable( 'TemplateName' ) );
     if ( $http->hasPostVariable( 'DesignExtension' ) )
     {
-        $designExtension = trim( $http->postVariable( 'DesignExtension' ) );
+        $designExtension = trim( (string) $http->postVariable( 'DesignExtension' ) );
     }
 
     if ( preg_match( "#^[0-9a-z_]+$#", $templateName ) )
     {
-        $templateName = trim( $http->postVariable( 'TemplateName' ) );
+        $templateName = trim( (string) $http->postVariable( 'TemplateName' ) );
         $filePath = "design/$siteDesign/override/templates";
         if ( $designExtension !== '' )
         {
@@ -86,28 +85,12 @@ if ( $module->isCurrentAction( 'CreateOverride' ) )
         $fileName = $filePath . "/" . $templateName . ".tpl";
 
         $templateCode = "";
-        switch ( $templateType )
-        {
-            case "node_view":
-            {
-                $templateCode = generateNodeViewTemplate( $http, $template, $fileName );
-            }break;
-
-            case "object_view":
-            {
-                $templateCode = generateObjectViewTemplate( $http, $template, $fileName );
-            }break;
-
-            case "pagelayout":
-            {
-                $templateCode = generatePagelayoutTemplate( $http, $template, $fileName );
-            }break;
-
-            default:
-            {
-                $templateCode = generateDefaultTemplate( $http, $template, $fileName );
-            }break;
-        }
+        $templateCode = match ($templateType) {
+            "node_view" => generateNodeViewTemplate( $http, $template, $fileName ),
+            "object_view" => generateObjectViewTemplate( $http, $template, $fileName ),
+            "pagelayout" => generatePagelayoutTemplate( $http, $template, $fileName ),
+            default => generateDefaultTemplate( $http, $template, $fileName ),
+        };
 
         if ( !file_exists( $filePath ) )
         {
@@ -120,9 +103,9 @@ if ( $module->isCurrentAction( 'CreateOverride' ) )
         {
             $filePermission = $ini->variable( 'FileSettings', 'StorageFilePermissions' );
             $oldumask = umask( 0 );
-            fwrite( $fp, $templateCode );
+            fwrite( $fp, (string) $templateCode );
             fclose( $fp );
-            chmod( $fileName, octdec( $filePermission ) );
+            chmod( $fileName, octdec( (string) $filePermission ) );
             umask( $oldumask );
 
             // Store override.ini.append file
@@ -142,7 +125,7 @@ if ( $module->isCurrentAction( 'CreateOverride' ) )
 
                 foreach ( array_keys( $matchArray ) as $matchKey )
                 {
-                    if ( $matchArray[$matchKey] == -1 or trim( $matchArray[$matchKey] ) == "" )
+                    if ( $matchArray[$matchKey] == -1 or trim( (string) $matchArray[$matchKey] ) == "" )
                         unset( $matchArray[$matchKey] );
                 }
                 $overrideINI->setVariable( $templateName, 'Match', $matchArray );
@@ -157,7 +140,7 @@ if ( $module->isCurrentAction( 'CreateOverride' ) )
                 $mode = $s["mode"] & 0777; // get only the last 9 bits.
                 if ($mode & $filePermission != $filePermission ) // filePermission wrong?
                 {
-                    chmod( $overridePath, octdec( $filePermission ) );
+                    chmod( $overridePath, octdec( (string) $filePermission ) );
                 }
             }
             umask( $oldumask );
@@ -452,12 +435,7 @@ $tpl->setVariable( 'site_design', $siteDesign );
 $tpl->setVariable( 'override_keys', $overrideKeys );
 $tpl->setVariable( 'design_extension', $designExtension );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/templatecreate.tpl" );
-$Result['path'] = array( array( 'url' => "/visual/templatelist/",
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template list' ) ),
-                         array( 'url' => "/visual/templateview". $template,
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template view' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/design', 'Create new template' ) ) );
+$Result['path'] = [['url' => "/visual/templatelist/", 'text' => ezpI18n::tr( 'kernel/design', 'Template list' )], ['url' => "/visual/templateview". $template, 'text' => ezpI18n::tr( 'kernel/design', 'Template view' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/design', 'Create new template' )]];
 ?>

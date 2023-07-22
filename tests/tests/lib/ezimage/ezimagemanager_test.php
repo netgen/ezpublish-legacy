@@ -73,13 +73,13 @@ class eZImageManagerTest extends ezpTestCase
     public function testMultiHandlerAlias()
     {
         if ( !self::gdIsEnabled() && !self::imageMagickIsEnabled() )
-            $this->markTestSkipped( 'Neither GD nor ImageMagick are enabled' );
+            static::markTestSkipped('Neither GD nor ImageMagick are enabled');
 
         $aliasList = $this->imageIni->variable( 'AliasSettings', 'AliasList' );
         array_push( $aliasList, 'multihandler' );
         $this->imageIni->setVariable( 'AliasSettings', 'AliasList', $aliasList );
         $this->imageIni->setVariable( 'multihandler', 'Reference', '' );
-        $this->imageIni->setVariable( 'multihandler', 'Filters', array( 'luminance/gray', 'filter/swirl=210' ) );
+        $this->imageIni->setVariable( 'multihandler', 'Filters', ['luminance/gray', 'filter/swirl=210'] );
 
         $sourcePath = 'tests/tests/lib/ezimage/data/andernach.jpg';
         $targetPath = 'tests/tests/lib/ezimage/data/andernach_result.jpg';
@@ -91,7 +91,7 @@ class eZImageManagerTest extends ezpTestCase
         $result = $img->convert( $sourcePath, $targetPath, 'multihandler' );
         set_time_limit( $timeLimit );
 
-        $this->assertEquals( true, $result );
+        static::assertEquals(true, $result);
     }
 }
 

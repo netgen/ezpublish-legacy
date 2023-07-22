@@ -59,13 +59,13 @@ function eZDisplayResult( $templateResult )
     {
         $templateResult = ezpEvent::getInstance()->filter( 'response/preoutput', $templateResult );
         $debugMarker = '<!--DEBUG_REPORT-->';
-        $pos = strpos( $templateResult, $debugMarker );
+        $pos = strpos( (string) $templateResult, $debugMarker );
         if ( $pos !== false )
         {
             $debugMarkerLength = strlen( $debugMarker );
-            echo substr( $templateResult, 0, $pos );
+            echo substr( (string) $templateResult, 0, $pos );
             eZDisplayDebug();
-            echo substr( $templateResult, $pos + $debugMarkerLength );
+            echo substr( (string) $templateResult, $pos + $debugMarkerLength );
         }
         else
         {
@@ -86,22 +86,16 @@ function eZDisplayResult( $templateResult )
  */
 function eZUpdateDebugSettings()
 {
-    $settings = array();
-    list( $settings['debug-enabled'], $settings['debug-by-ip'], $settings['log-only'], $settings['debug-by-user'], $settings['debug-ip-list'], $logList, $settings['debug-user-list'] ) =
+    $settings = [];
+    [$settings['debug-enabled'], $settings['debug-by-ip'], $settings['log-only'], $settings['debug-by-user'], $settings['debug-ip-list'], $logList, $settings['debug-user-list']] =
         eZINI::instance()->variableMulti(
             'DebugSettings',
-            array( 'DebugOutput', 'DebugByIP', 'DebugLogOnly', 'DebugByUser', 'DebugIPList', 'AlwaysLog', 'DebugUserIDList' ),
-            array( 'enabled', 'enabled', 'disabled', 'enabled' )
+            ['DebugOutput', 'DebugByIP', 'DebugLogOnly', 'DebugByUser', 'DebugIPList', 'AlwaysLog', 'DebugUserIDList'],
+            ['enabled', 'enabled', 'disabled', 'enabled']
         );
-    $settings['always-log'] = array();
+    $settings['always-log'] = [];
     foreach (
-        array(
-            'notice' => eZDebug::LEVEL_NOTICE,
-            'warning' => eZDebug::LEVEL_WARNING,
-            'error' => eZDebug::LEVEL_ERROR,
-            'debug' => eZDebug::LEVEL_DEBUG,
-            'strict' => eZDebug::LEVEL_STRICT
-        ) as $name => $level )
+        ['notice' => eZDebug::LEVEL_NOTICE, 'warning' => eZDebug::LEVEL_WARNING, 'error' => eZDebug::LEVEL_ERROR, 'debug' => eZDebug::LEVEL_DEBUG, 'strict' => eZDebug::LEVEL_STRICT] as $name => $level )
     {
         $settings['always-log'][$level] = $logList !== null && in_array( $name, $logList );
     }
@@ -115,24 +109,15 @@ function eZUpdateDebugSettings()
  * @deprecated Since 5.0
  * @param array $parameters
  */
-function eZAppendWarningItem( $parameters = array() )
+function eZAppendWarningItem( $parameters = [] )
 {
     global $warningList;
-    $parameters += array(
-        'error' => false,
-        'text' => false,
-        'identifier' => false
-    );
-    $warningList[] = array(
-        'error' => $parameters['error'],
-        'text' => $parameters['text'],
-        'identifier' => $parameters['identifier'],
-    );
+    $parameters += ['error' => false, 'text' => false, 'identifier' => false];
+    $warningList[] = ['error' => $parameters['error'], 'text' => $parameters['text'], 'identifier' => $parameters['identifier']];
 }
 
 /**
  * @deprecated Since 5.0
- * @param \eZURI $uri
  * @param null|array $check
  * @param null|\eZModule $module ByRef, will be set to a eZModule instace based on $moduleName
  * @param string $moduleName

@@ -23,16 +23,16 @@ if ( $module->isCurrentAction( 'Store' ) )
 {
     $inputIsValid = true;
     $firstName = $http->postVariable( "FirstName" );
-    if ( trim( $firstName ) == "" )
+    if ( trim( (string) $firstName ) == "" )
         $inputIsValid = false;
     $lastName = $http->postVariable( "LastName" );
-    if ( trim( $lastName ) == "" )
+    if ( trim( (string) $lastName ) == "" )
         $inputIsValid = false;
     $email = $http->postVariable( "EMail" );
     if ( ! eZMail::validate( $email ) )
         $inputIsValid = false;
     $address = $http->postVariable( "Address" );
-    if ( trim( $address ) == "" )
+    if ( trim( (string) $address ) == "" )
         $inputIsValid = false;
     $tpl->setVariable( "first_name", $firstName );
     $tpl->setVariable( "last_name", $lastName );
@@ -79,9 +79,8 @@ if ( $module->isCurrentAction( 'Store' ) )
     }
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/register.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Enter account information' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Enter account information' )]];
 
 ?>

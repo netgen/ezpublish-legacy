@@ -10,10 +10,10 @@
 
 class ezpOauthFilter extends ezcAuthenticationFilter
 {
-    const STATUS_TOKEN_INVALID = 1;
-    const STATUS_TOKEN_EXPIRED = 2;
-    const STATUS_TOKEN_INSUFFICIENT_SCOPE = 3;
-    const STATUS_TOKEN_UNAVAILABLE = 4;
+    final public const STATUS_TOKEN_INVALID = 1;
+    final public const STATUS_TOKEN_EXPIRED = 2;
+    final public const STATUS_TOKEN_INSUFFICIENT_SCOPE = 3;
+    final public const STATUS_TOKEN_UNAVAILABLE = 4;
 
     /**
      * Struct holding oAuth token info

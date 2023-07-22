@@ -16,111 +16,39 @@
 
 class eZWorkflow extends eZPersistentObject
 {
-    const STATUS_NONE = 0;
-    const STATUS_BUSY = 1;
-    const STATUS_DONE = 2;
-    const STATUS_FAILED = 3;
-    const STATUS_DEFERRED_TO_CRON = 4;
-    const STATUS_CANCELLED = 5;
-    const STATUS_FETCH_TEMPLATE = 6;
-    const STATUS_REDIRECT = 7;
-    const STATUS_RESET = 8;
-    const STATUS_WAITING_PARENT = 9;
-    const STATUS_FETCH_TEMPLATE_REPEAT = 10;
+    final public const STATUS_NONE = 0;
+    final public const STATUS_BUSY = 1;
+    final public const STATUS_DONE = 2;
+    final public const STATUS_FAILED = 3;
+    final public const STATUS_DEFERRED_TO_CRON = 4;
+    final public const STATUS_CANCELLED = 5;
+    final public const STATUS_FETCH_TEMPLATE = 6;
+    final public const STATUS_REDIRECT = 7;
+    final public const STATUS_RESET = 8;
+    final public const STATUS_WAITING_PARENT = 9;
+    final public const STATUS_FETCH_TEMPLATE_REPEAT = 10;
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "version" => array( 'name' => "Version",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "is_enabled" => array( 'name' => "IsEnabled",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         "workflow_type_string" => array( 'name' => "WorkflowTypeString",
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true,
-                                                                          'max_length' => 50 ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true,
-                                                          'max_length' => 255 ),
-                                         "creator_id" => array( 'name' => "CreatorID",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         "modifier_id" => array( 'name' => "ModifierID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "modified" => array( 'name' => "Modified",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      "keys" => array( "id", "version" ),
-                      'function_attributes' => array( 'creator' => 'creator',
-                                                      'modifier' => 'modifier',
-                                                      'workflow_type' => 'workflowType',
-                                                      'event_count' => 'fetchEventCount',
-                                                      'ordered_event_list' => 'fetchEvents',
-                                                      'ingroup_list' => 'ingroupList',
-                                                      'ingroup_id_list' => 'ingroupIDList',
-                                                      'group_list' => 'groupList' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZWorkflow",
-                      "sort" => array( "name" => "asc" ),
-                      "name" => "ezworkflow" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "version" => ['name' => "Version", 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_enabled" => ['name' => "IsEnabled", 'datatype' => 'integer', 'default' => 0, 'required' => true], "workflow_type_string" => ['name' => "WorkflowTypeString", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 50], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 255], "creator_id" => ['name' => "CreatorID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "modifier_id" => ['name' => "ModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], "modified" => ['name' => "Modified", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["id", "version"], 'function_attributes' => ['creator' => 'creator', 'modifier' => 'modifier', 'workflow_type' => 'workflowType', 'event_count' => 'fetchEventCount', 'ordered_event_list' => 'fetchEvents', 'ingroup_list' => 'ingroupList', 'ingroup_id_list' => 'ingroupIDList', 'group_list' => 'groupList'], "increment_key" => "id", "class_name" => "eZWorkflow", "sort" => ["name" => "asc"], "name" => "ezworkflow"];
     }
 
     static function statusName( $status )
     {
         $statusNameMap = self::statusNameMap();
-        if ( isset( $statusNameMap[$status] ) )
-            return $statusNameMap[$status];
-        return false;
+        return $statusNameMap[$status] ?? false;
     }
 
     static function create( $user_id )
     {
         $date_time = time();
-        $row = array(
-            "id" => null,
-            "workflow_type_string" => "group_ezserial",
-            "version" => 1,
-            "is_enabled" => 1,
-            "name" => "",
-            "creator_id" => $user_id,
-            "modifier_id" => $user_id,
-            "created" => $date_time,
-            "modified" => $date_time );
+        $row = ["id" => null, "workflow_type_string" => "group_ezserial", "version" => 1, "is_enabled" => 1, "name" => "", "creator_id" => $user_id, "modifier_id" => $user_id, "created" => $date_time, "modified" => $date_time];
         return new eZWorkflow( $row );
     }
 
     static function setIsEnabled( $enabled, $id, $version = 0 )
     {
-        eZPersistentObject::updateObjectList( array(
-                                                  "definition" => eZWorkflow::definition(),
-                                                  "update_fields" => array( "is_enabled" => ( $enabled ? 1 : 0 ) ),
-                                                  "conditions" => array( "id" => $id,
-                                                                         "version" => $version )
-                                                  )
+        eZPersistentObject::updateObjectList( ["definition" => eZWorkflow::definition(), "update_fields" => ["is_enabled" => ( $enabled ? 1 : 0 )], "conditions" => ["id" => $id, "version" => $version]]
                                               );
     }
 
@@ -131,8 +59,7 @@ class eZWorkflow extends eZPersistentObject
     static function removeWorkflow( $id, $version )
     {
         eZPersistentObject::removeObject( eZWorkflow::definition(),
-                                          array( "id" => $id,
-                                                 "version" => $version ) );
+                                          ["id" => $id, "version" => $version] );
     }
 
     /*!
@@ -153,8 +80,7 @@ class eZWorkflow extends eZPersistentObject
         else if ( $remove_childs )
         {
             eZPersistentObject::removeObject( eZWorkflowEvent::definition(),
-                                              array( "workflow_id" => $this->ID,
-                                                     "version" => $this->Version ) );
+                                              ["workflow_id" => $this->ID, "version" => $this->Version] );
         }
 
         $this->remove();
@@ -179,7 +105,7 @@ class eZWorkflow extends eZPersistentObject
             $workflow->removeThis( true );
         }
         eZPersistentObject::removeObject( eZWorkflowEvent::definition(),
-                                          array( 'version' => $version ) );
+                                          ['version' => $version] );
         $db->commit();
     }
 
@@ -201,7 +127,7 @@ class eZWorkflow extends eZPersistentObject
         }
         else
         {
-            $condArray = array();
+            $condArray = [];
             if ( $version !== false )
             {
                 $condArray['version'] = $version;
@@ -303,8 +229,7 @@ class eZWorkflow extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZWorkflow::definition(),
                                                 null,
-                                                array( "id" => $id,
-                                                       "version" => $version ),
+                                                ["id" => $id, "version" => $version],
                                                 $asObject );
     }
 
@@ -321,7 +246,7 @@ class eZWorkflow extends eZPersistentObject
     static function fetchLimited( $moduleName, $functionName, $connectType )
     {
         $workflowArray = eZWorkflow::fetchList();
-        $returnArray = array();
+        $returnArray = [];
 
         foreach ( array_keys( $workflowArray ) as $key )
         {
@@ -363,7 +288,7 @@ class eZWorkflow extends eZPersistentObject
 
     static function fetchList( $version = 0, $enabled = 1, $asObject = true )
     {
-        $conds = array( 'version' => $version );
+        $conds = ['version' => $version];
         if ( $enabled !== null )
             $conds['is_enabled'] = $enabled;
         return eZPersistentObject::fetchObjectList( eZWorkflow::definition(),
@@ -374,15 +299,13 @@ class eZWorkflow extends eZPersistentObject
     static function fetchListCount( $version = 0, $enabled = 1 )
     {
         $list = eZPersistentObject::fetchObjectList( eZWorkflow::definition(),
-                                                     array(),
-                                                     array( 'version' => $version,
-                                                            'is_enabled' => $enabled ),
+                                                     [],
+                                                     ['version' => $version, 'is_enabled' => $enabled],
                                                      false,
                                                      null,
                                                      false,
                                                      null,
-                                                     array( array( 'operation' => 'count( id )',
-                                                                    'name' => 'count' ) ) );
+                                                     [['operation' => 'count( id )', 'name' => 'count']] );
         return $list[0]["count"];
     }
 
@@ -391,16 +314,14 @@ class eZWorkflow extends eZPersistentObject
         $id = $this->ID;
         eZDebugSetting::writeDebug( 'workflow-event', $index, 'index in fetchEventIndexed' );
         $list = eZPersistentObject::fetchObjectList( eZWorkflowEvent::definition(),
-                                                      array( "id", "placement" ),
-                                                      array( "workflow_id" => $id,
-                                                             "version" => 0 ),
-                                                      array( "placement" => "asc" ),
-                                                      array( "offset" => $index - 1,
-                                                             "length" => 1 ),
+                                                      ["id", "placement"],
+                                                      ["workflow_id" => $id, "version" => 0],
+                                                      ["placement" => "asc"],
+                                                      ["offset" => $index - 1, "length" => 1],
                                                       false );
 
         eZDebugSetting::writeDebug( 'workflow-event', $list, "event indexed" );
-        if ( count( $list ) > 0 )
+        if ( count( (array) $list ) > 0 )
             return $list[$index - 1]["id"];
         return null;
     }
@@ -411,15 +332,13 @@ class eZWorkflow extends eZPersistentObject
         {
             $version = $this->Version;
         }
-        return eZWorkflowEvent::fetchFilteredList( array( "workflow_id" => $this->ID,
-                                                          "version" => $version ),
+        return eZWorkflowEvent::fetchFilteredList( ["workflow_id" => $this->ID, "version" => $version],
                                                    $asObject );
     }
 
     static function fetchEventsByWorkflowID( $id, $asObject = true, $version = 0 )
     {
-        return eZWorkflowEvent::fetchFilteredList( array( "workflow_id" => $id,
-                                                          "version" => $version ),
+        return eZWorkflowEvent::fetchFilteredList( ["workflow_id" => $id, "version" => $version],
                                                    $asObject );
     }
 
@@ -430,30 +349,26 @@ class eZWorkflow extends eZPersistentObject
             $version = $this->Version;
         }
         $list = eZPersistentObject::fetchObjectList( eZWorkflowEvent::definition(),
-                                                     array(),
-                                                     array( 'version' => $version,
-                                                            'workflow_id' => $id ),
+                                                     [],
+                                                     ['version' => $version, 'workflow_id' => $id],
                                                      false,
                                                      null,
                                                      false,
                                                      false,
-                                                     array( array( 'operation' => 'count( id )',
-                                                                   'name' => 'count' ) ) );
+                                                     [['operation' => 'count( id )', 'name' => 'count']] );
         return $list[0]["count"];
     }
 
     static function fetchEventCountByWorkflowID( $id, $version = 0 )
     {
         $list = eZPersistentObject::fetchObjectList( eZWorkflowEvent::definition(),
-                                                     array(),
-                                                     array( 'version' => $version,
-                                                            'workflow_id' => $id ),
+                                                     [],
+                                                     ['version' => $version, 'workflow_id' => $id],
                                                      false,
                                                      null,
                                                      false,
                                                      false,
-                                                     array( array( 'operation' => 'count( id )',
-                                                                   'name' => 'count' ) ) );
+                                                     [['operation' => 'count( id )', 'name' => 'count']] );
         return $list[0]["count"];
     }
 
@@ -491,7 +406,7 @@ class eZWorkflow extends eZPersistentObject
                                                      $this->attribute("version"),
                                                      false );
 
-        $this->InGroupIDs = array();
+        $this->InGroupIDs = [];
         foreach ( $list as $item )
         {
             $this->InGroupIDs[] = $item['group_id'];
@@ -521,7 +436,7 @@ class eZWorkflow extends eZPersistentObject
         $event_list = $this->fetchEvents();
         if ( $event_list != null )
         {
-            $existEventIDArray = array();
+            $existEventIDArray = [];
             foreach ( $event_list as $event )
             {
                 $eventID = $event->attribute( 'id' );
@@ -545,15 +460,7 @@ class eZWorkflow extends eZPersistentObject
      */
     static function statusNameMap()
     {
-        return array( eZWorkflow::STATUS_NONE => ezpI18n::tr( 'kernel/classes', 'No state yet' ),
-                      eZWorkflow::STATUS_BUSY => ezpI18n::tr( 'kernel/classes', 'Workflow running' ),
-                      eZWorkflow::STATUS_DONE => ezpI18n::tr( 'kernel/classes', 'Workflow done' ),
-                      eZWorkflow::STATUS_FAILED => ezpI18n::tr( 'kernel/classes', 'Workflow failed an event' ),
-                      eZWorkflow::STATUS_DEFERRED_TO_CRON => ezpI18n::tr( 'kernel/classes', 'Workflow event deferred to cron job' ),
-                      eZWorkflow::STATUS_CANCELLED => ezpI18n::tr( 'kernel/classes', 'Workflow was canceled' ),
-                      eZWorkflow::STATUS_FETCH_TEMPLATE => ezpI18n::tr( 'kernel/classes', 'Workflow fetches template' ),
-                      eZWorkflow::STATUS_REDIRECT => ezpI18n::tr( 'kernel/classes', 'Workflow redirects user view' ),
-                      eZWorkflow::STATUS_RESET => ezpI18n::tr( 'kernel/classes', 'Workflow was reset for reuse' ) );
+        return [eZWorkflow::STATUS_NONE => ezpI18n::tr( 'kernel/classes', 'No state yet' ), eZWorkflow::STATUS_BUSY => ezpI18n::tr( 'kernel/classes', 'Workflow running' ), eZWorkflow::STATUS_DONE => ezpI18n::tr( 'kernel/classes', 'Workflow done' ), eZWorkflow::STATUS_FAILED => ezpI18n::tr( 'kernel/classes', 'Workflow failed an event' ), eZWorkflow::STATUS_DEFERRED_TO_CRON => ezpI18n::tr( 'kernel/classes', 'Workflow event deferred to cron job' ), eZWorkflow::STATUS_CANCELLED => ezpI18n::tr( 'kernel/classes', 'Workflow was canceled' ), eZWorkflow::STATUS_FETCH_TEMPLATE => ezpI18n::tr( 'kernel/classes', 'Workflow fetches template' ), eZWorkflow::STATUS_REDIRECT => ezpI18n::tr( 'kernel/classes', 'Workflow redirects user view' ), eZWorkflow::STATUS_RESET => ezpI18n::tr( 'kernel/classes', 'Workflow was reset for reuse' )];
     }
 
     /// \privatesection

@@ -32,12 +32,12 @@ class eZStepLanguageOptions extends eZStepInstaller
     function processPostData()
     {
         $primaryLanguage = $this->Http->postVariable( 'eZSetupDefaultLanguage' );
-        $languages       = $this->Http->hasPostVariable( 'eZSetupLanguages' ) ? $this->Http->postVariable( 'eZSetupLanguages' ): array();
+        $languages       = $this->Http->hasPostVariable( 'eZSetupLanguages' ) ? $this->Http->postVariable( 'eZSetupLanguages' ): [];
 
         if ( !in_array( $primaryLanguage, $languages ) )
             $languages[] = $primaryLanguage;
 
-        $regionalInfo = array();
+        $regionalInfo = [];
         $regionalInfo['language_type'] = 1 ;
         $regionalInfo['primary_language'] = $primaryLanguage;
         $regionalInfo['languages'] = $languages;
@@ -61,12 +61,12 @@ class eZStepLanguageOptions extends eZStepInstaller
             else
             {
                 $primaryLanguage     = null;
-                $allLanguages        = array();
-                $allLanguageCodes    = array();
-                $variationsLanguages = array();
+                $allLanguages        = [];
+                $allLanguageCodes    = [];
+                $variationsLanguages = [];
                 $primaryLanguageCode = $this->PersistenceList['regional_info']['primary_language'];
-                $extraLanguageCodes  = isset( $this->PersistenceList['regional_info']['languages'] ) ? $this->PersistenceList['regional_info']['languages'] : array();
-                $extraLanguageCodes  = array_diff( $extraLanguageCodes, array( $primaryLanguageCode ) );
+                $extraLanguageCodes  = $this->PersistenceList['regional_info']['languages'] ?? [];
+                $extraLanguageCodes  = array_diff( $extraLanguageCodes, [$primaryLanguageCode] );
 
                 /*
                 if ( isset( $this->PersistenceList['regional_info']['variations'] ) )
@@ -98,7 +98,7 @@ class eZStepLanguageOptions extends eZStepInstaller
                     $allLanguageCodes[] = $extraLanguageCode;
                 }
 
-                $canUseUnicode = isset( $this->PersistenceList['database_info']['use_unicode'] ) ? $this->PersistenceList['database_info']['use_unicode'] : false;
+                $canUseUnicode = $this->PersistenceList['database_info']['use_unicode'] ?? false;
                 $charset = $this->findAppropriateCharset( $primaryLanguage, $allLanguages, $canUseUnicode );
                 if ( !$charset )
                 {
@@ -132,7 +132,7 @@ class eZStepLanguageOptions extends eZStepInstaller
         {
             $data = $this->kickstartData();
 
-            $regionalInfo = array();
+            $regionalInfo = [];
             $regionalInfo['primary_language'] = $data['Primary'];
             if ( !in_array( $data['Primary'], $data['Languages'] ) )
                 $data['Languages'][] = $data['Primary'];
@@ -166,8 +166,7 @@ class eZStepLanguageOptions extends eZStepInstaller
         }
         $this->Tpl->setVariable( 'show_unicode_error', $showUnicodeError );
 
-        $regionalInfo = array( 'primary_language' => $defaultLanguage,
-                               'languages' => $defaultExtraLanguages );
+        $regionalInfo = ['primary_language' => $defaultLanguage, 'languages' => $defaultExtraLanguages];
         if ( isset( $this->PersistenceList['regional_info'] ) )
             $regionalInfo = $this->PersistenceList['regional_info'];
         if ( !isset( $regionalInfo['enable_unicode'] ) )
@@ -177,7 +176,7 @@ class eZStepLanguageOptions extends eZStepInstaller
 
         // The default is to not use unicode if it has not been detected by
         // database driver to be OK.
-        $databaseInfo = array( 'use_unicode' => false );
+        $databaseInfo = ['use_unicode' => false];
         if ( isset( $this->PersistenceList['database_info'] ) )
         {
             $databaseInfo = $this->PersistenceList['database_info'];
@@ -185,13 +184,12 @@ class eZStepLanguageOptions extends eZStepInstaller
 
         $this->Tpl->setVariable( 'database_info', $databaseInfo );
 
-        $result = array();
+        $result = [];
         // Display template
 
         $result['content'] = $this->Tpl->fetch( "design:setup/init/language_options.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Language options' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Language options' ), 'url' => false]];
         return $result;
     }
 

@@ -12,25 +12,18 @@ class eZImageTypeRegression extends ezpDatabaseTestCase
 {
     protected $backupGlobals = false;
 
-    const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
+    final public const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
 
-    /**
-     * @var ezpClass
-     */
-    private $imageClass;
+    private ?\ezpClass $imageClass = null;
 
-    /**
-     * @var ezpObject
-     */
-    private $imageObject;
+    private ?\ezpObject $imageObject = null;
 
     /**
      * Image content object attribute
-     * @var eZContentObjectAttribute
      */
-    private $fileAttribute;
+    private ?\eZContentObjectAttribute $fileAttribute = null;
 
-    public function __construct( $name = null, array $data = array(), $dataName = '' )
+    public function __construct( $name = null, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
         $this->setName( "eZImageType Regression Tests" );
@@ -95,7 +88,7 @@ class eZImageTypeRegression extends ezpDatabaseTestCase
         unset( $files );
 
         self::assertInstanceOf( 'eZImageFile', $file );
-        self::assertTrue( strpos( $file->attribute( "filepath" ), '/trashed') !== false, "The stored file should be renamed when trashed" );
+        self::assertTrue( str_contains( (string) $file->attribute( "filepath" ), '/trashed'), "The stored file should be renamed when trashed" );
     }
 
     /**

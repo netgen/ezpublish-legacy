@@ -6,189 +6,55 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZSetup",
-                 "variable_params" => true,
-                 'ui_component_match' => 'view',
-                 "function" => array(
-                     "script" => "setup.php",
-                     "params" => array( ) ) );
+$Module = ["name" => "eZSetup", "variable_params" => true, 'ui_component_match' => 'view', "function" => ["script" => "setup.php", "params" => []]];
 
-$ViewList = array();
-$ViewList["init"] = array(
-    'functions' => array( 'install' ),
-    "script" => "ezsetup.php",
-    'single_post_actions' => array( 'ChangeStepAction' => 'ChangeStep' ),
-    'post_value_action_parameters' => array( 'ChangeStep' => array( 'Step' => 'StepButton' ) ),
-    "params" => array() );
+$ViewList = [];
+$ViewList["init"] = ['functions' => ['install'], "script" => "ezsetup.php", 'single_post_actions' => ['ChangeStepAction' => 'ChangeStep'], 'post_value_action_parameters' => ['ChangeStep' => ['Step' => 'StepButton']], "params" => []];
 
-$ViewList["cache"] = array(
-    "script" => "cache.php",
-    'functions' => array( 'managecache' ),
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'ClearCacheButton' => 'ClearCache',
-                                    'ClearAllCacheButton' => 'ClearAllCache',
-                                    'ClearContentCacheButton' => 'ClearContentCache',
-                                    'ClearINICacheButton' => 'ClearINICache',
-                                    'ClearTemplateCacheButton' => 'ClearTemplateCache',
-                                    'RegenerateStaticCacheButton' => 'RegenerateStaticCache' ),
-    'post_action_parameters' => array( 'ClearCache' => array( 'CacheList' => 'CacheList' ) ),
-    "params" => array() );
+$ViewList["cache"] = ["script" => "cache.php", 'functions' => ['managecache'], 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['ClearCacheButton' => 'ClearCache', 'ClearAllCacheButton' => 'ClearAllCache', 'ClearContentCacheButton' => 'ClearContentCache', 'ClearINICacheButton' => 'ClearINICache', 'ClearTemplateCacheButton' => 'ClearTemplateCache', 'RegenerateStaticCacheButton' => 'RegenerateStaticCache'], 'post_action_parameters' => ['ClearCache' => ['CacheList' => 'CacheList']], "params" => []];
 
-$ViewList['cachetoolbar'] = array(
-    'script' => 'cachetoolbar.php',
-    'functions' => array( 'managecache' ),
-    'single_post_actions' => array( 'ClearCacheButton' => 'ClearCache' ),
-    'post_action_parameters' => array( 'ClearCache' => array( 'CacheType' => 'CacheTypeValue',
-                                                              'NodeID' => 'NodeID',
-                                                              'ObjectID' => 'ObjectID' ) ),
-    'params' => array() );
+$ViewList['cachetoolbar'] = ['script' => 'cachetoolbar.php', 'functions' => ['managecache'], 'single_post_actions' => ['ClearCacheButton' => 'ClearCache'], 'post_action_parameters' => ['ClearCache' => ['CacheType' => 'CacheTypeValue', 'NodeID' => 'NodeID', 'ObjectID' => 'ObjectID']], 'params' => []];
 
-$ViewList['settingstoolbar'] = array(
-    'functions' => array( 'setup' ),
-    'script' => 'settingstoolbar.php',
-    'single_post_actions' => array( 'SetButton' => 'Set' ),
-    'post_action_parameters' => array( 'Set' => array( 'SiteAccess' => 'SiteAccess',
-                                                       'AllSettingsList' => 'AllSettingsList',
-                                                       'SelectedList' => 'SelectedList' ) ),
-    'params' => array() );
+$ViewList['settingstoolbar'] = ['functions' => ['setup'], 'script' => 'settingstoolbar.php', 'single_post_actions' => ['SetButton' => 'Set'], 'post_action_parameters' => ['Set' => ['SiteAccess' => 'SiteAccess', 'AllSettingsList' => 'AllSettingsList', 'SelectedList' => 'SelectedList']], 'params' => []];
 
-$ViewList['session'] = array(
-    'functions' => array( 'administrate' ),
-    'script'                  => 'session.php',
-    'ui_context'              => 'administration',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'single_post_actions'     => array( 'RemoveAllSessionsButton' => 'RemoveAllSessions',
-                                        'ShowAllUsersButton' => 'ShowAllUsers',
-                                        'ChangeFilterButton' => 'ChangeFilter',
-                                        'RemoveTimedOutSessionsButton' => 'RemoveTimedOutSessions',
-                                        'RemoveSelectedSessionsButton' => 'RemoveSelectedSessions' ),
-    'post_action_parameters' => array( 'ChangeFilter' => array( 'FilterType' => 'FilterType',
-                                                                'ExpirationFilterType' => 'ExpirationFilterType',
-                                                                'InactiveUsersCheck' => 'InactiveUsersCheck',
-                                                                'InactiveUsersCheckExists' => 'InactiveUsersCheckExists' ) ),
-    'params' => array( 'UserID' ) );
+$ViewList['session'] = ['functions' => ['administrate'], 'script'                  => 'session.php', 'ui_context'              => 'administration', 'default_navigation_part' => 'ezsetupnavigationpart', 'single_post_actions'     => ['RemoveAllSessionsButton' => 'RemoveAllSessions', 'ShowAllUsersButton' => 'ShowAllUsers', 'ChangeFilterButton' => 'ChangeFilter', 'RemoveTimedOutSessionsButton' => 'RemoveTimedOutSessions', 'RemoveSelectedSessionsButton' => 'RemoveSelectedSessions'], 'post_action_parameters' => ['ChangeFilter' => ['FilterType' => 'FilterType', 'ExpirationFilterType' => 'ExpirationFilterType', 'InactiveUsersCheck' => 'InactiveUsersCheck', 'InactiveUsersCheckExists' => 'InactiveUsersCheckExists']], 'params' => ['UserID']];
 
-$ViewList["info"] = array(
-    'functions' => array( 'system_info' ),
-    "script" => "info.php",
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    "params" => array( 'Mode' ) );
+$ViewList["info"] = ['functions' => ['system_info'], "script" => "info.php", "default_navigation_part" => 'ezsetupnavigationpart', "params" => ['Mode']];
 
-$ViewList["rad"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "rad.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    "params" => array( ) );
+$ViewList["rad"] = ['functions' => ['setup'], "script" => "rad.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', "params" => []];
 
-$ViewList["datatype"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "datatype.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'CreateOverrideButton' => 'CreateOverride'
-                                    ),
-    "params" => array( ) );
+$ViewList["datatype"] = ['functions' => ['setup'], "script" => "datatype.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['CreateOverrideButton' => 'CreateOverride'], "params" => []];
 
-$ViewList["templateoperator"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "templateoperator.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'CreateOverrideButton' => 'CreateOverride'
-                                    ),
-    "params" => array( ) );
+$ViewList["templateoperator"] = ['functions' => ['setup'], "script" => "templateoperator.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['CreateOverrideButton' => 'CreateOverride'], "params" => []];
 
-$ViewList["extensions"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "extensions.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'ActivateExtensionsButton' => 'ActivateExtensions',
-                                    'GenerateAutoloadArraysButton' => 'GenerateAutoloadArrays' ),
-    "params" => array( ) );
+$ViewList["extensions"] = ['functions' => ['setup'], "script" => "extensions.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['ActivateExtensionsButton' => 'ActivateExtensions', 'GenerateAutoloadArraysButton' => 'GenerateAutoloadArrays'], "params" => []];
 
-$ViewList['menu'] = array(
-    'functions' => array( 'setup' ),
-    'script' => 'setupmenu.php',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'params' => array( ) );
+$ViewList['menu'] = ['functions' => ['setup'], 'script' => 'setupmenu.php', 'default_navigation_part' => 'ezsetupnavigationpart', 'params' => []];
 
-$ViewList['systemupgrade'] = array(
-    'functions' => array( 'setup' ),
-    'script' => 'systemupgrade.php',
-    'ui_context' => 'administration',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'MD5CheckButton' => 'MD5Check',
-                                    'DBCheckButton' => 'DBCheck' ),
-    'params' => array( ) );
+$ViewList['systemupgrade'] = ['functions' => ['setup'], 'script' => 'systemupgrade.php', 'ui_context' => 'administration', 'default_navigation_part' => 'ezsetupnavigationpart', 'single_post_actions' => ['MD5CheckButton' => 'MD5Check', 'DBCheckButton' => 'DBCheck'], 'params' => []];
 
 
 /*! Provided for backwards compatibility */
-$ViewList["toolbarlist"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "toolbarlist.php",
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    "params" => array( 'SiteAccess' ) );
+$ViewList["toolbarlist"] = ['functions' => ['setup'], "script" => "toolbarlist.php", "default_navigation_part" => 'ezsetupnavigationpart', "params" => ['SiteAccess']];
 
-$ViewList["toolbar"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "toolbar.php",
-    'ui_context' => 'edit',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'post_actions' => array( 'BrowseActionName' ),
-    "params" => array( 'SiteAccess', 'Position' ) );
+$ViewList["toolbar"] = ['functions' => ['setup'], "script" => "toolbar.php", 'ui_context' => 'edit', "default_navigation_part" => 'ezsetupnavigationpart', 'post_actions' => ['BrowseActionName'], "params" => ['SiteAccess', 'Position']];
 
-$ViewList["menuconfig"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "menuconfig.php",
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'StoreButton' => 'Store',
-                                    'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess' ),
-    "params" => array() );
+$ViewList["menuconfig"] = ['functions' => ['setup'], "script" => "menuconfig.php", 'default_navigation_part' => 'ezsetupnavigationpart', 'single_post_actions' => ['StoreButton' => 'Store', 'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess'], "params" => []];
 
-$ViewList["templatelist"] = array(
-    'functions' => array( 'setup' ),
-    'script' => 'templatelist.php',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'params' => array( ),
-    'unordered_params' => array( 'offset' => 'Offset' ) );
+$ViewList["templatelist"] = ['functions' => ['setup'], 'script' => 'templatelist.php', 'default_navigation_part' => 'ezsetupnavigationpart', 'params' => [], 'unordered_params' => ['offset' => 'Offset']];
 
-$ViewList["templateview"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "templateview.php",
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess',
-                                    'RemoveOverrideButton' => 'RemoveOverride',
-                                    'UpdateOverrideButton' => 'UpdateOverride',
-                                    'NewOverrideButton' => 'NewOverride' ),
-    "params" => array( ) );
+$ViewList["templateview"] = ['functions' => ['setup'], "script" => "templateview.php", "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess', 'RemoveOverrideButton' => 'RemoveOverride', 'UpdateOverrideButton' => 'UpdateOverride', 'NewOverrideButton' => 'NewOverride'], "params" => []];
 
-$ViewList["templateedit"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "templateedit.php",
-    'ui_context' => 'edit',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'SaveButton' => 'Save',
-                                    'DiscardButton' => 'Discard' ),
-    "params" => array( ) );
+$ViewList["templateedit"] = ['functions' => ['setup'], "script" => "templateedit.php", 'ui_context' => 'edit', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['SaveButton' => 'Save', 'DiscardButton' => 'Discard'], "params" => []];
 
-$ViewList["templatecreate"] = array(
-    'functions' => array( 'setup' ),
-    "script" => "templatecreate.php",
-    'ui_context' => 'edit',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'CreateOverrideButton' => 'CreateOverride',
-                                    'CancelOverrideButton' => 'CancelOverride' ),
-    "params" => array( ) );
+$ViewList["templatecreate"] = ['functions' => ['setup'], "script" => "templatecreate.php", 'ui_context' => 'edit', "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['CreateOverrideButton' => 'CreateOverride', 'CancelOverrideButton' => 'CancelOverride'], "params" => []];
 
 
-$FunctionList = array();
-$FunctionList['administrate'] = array();
-$FunctionList['install'] = array();
-$FunctionList['managecache'] = array();
-$FunctionList['setup'] = array();
-$FunctionList['system_info'] = array();
+$FunctionList = [];
+$FunctionList['administrate'] = [];
+$FunctionList['install'] = [];
+$FunctionList['managecache'] = [];
+$FunctionList['setup'] = [];
+$FunctionList['system_info'] = [];
 
 ?>

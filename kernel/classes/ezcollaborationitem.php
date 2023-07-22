@@ -16,102 +16,19 @@
 
 class eZCollaborationItem extends eZPersistentObject
 {
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
-    const STATUS_ARCHIVE = 3;
+    final public const STATUS_ACTIVE = 1;
+    final public const STATUS_INACTIVE = 2;
+    final public const STATUS_ARCHIVE = 3;
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'type_identifier' => array( 'name' => 'TypeIdentifier',
-                                                                     'datatype' => 'string',
-                                                                     'default' => '',
-                                                                     'required' => true ),
-                                         'creator_id' =>  array( 'name' => 'CreatorID',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 1,
-                                                            'required' => true ),
-                                         'data_text1' => array( 'name' => 'DataText1',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text2' => array( 'name' => 'DataText2',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text3' => array( 'name' => 'DataText3',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_int1' => array( 'name' => 'DataInt1',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_int2' => array( 'name' => 'DataInt2',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_int3' => array( 'name' => 'DataInt3',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_float1' => array( 'name' => 'DataFloat1',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_float2' => array( 'name' => 'DataFloat2',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_float3' => array( 'name' => 'DataFloat3',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'creator' => 'creator',
-                                                      'is_creator' => 'isCreator',
-                                                      'participant_list' => 'participantList',
-                                                      'user_status' => 'userStatus',
-                                                      'handler' => 'handler',
-                                                      'use_messages' => 'useMessages',
-                                                      'message_count' => 'messageCount',
-                                                      'unread_message_count' => 'unreadMessageCount',
-                                                      'content' => 'content',
-                                                      'title' => 'title' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZCollaborationItem',
-                      'sort' => array( 'modified' => 'asc' ),
-                      'name' => 'ezcollab_item' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'type_identifier' => ['name' => 'TypeIdentifier', 'datatype' => 'string', 'default' => '', 'required' => true], 'creator_id' =>  ['name' => 'CreatorID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 1, 'required' => true], 'data_text1' => ['name' => 'DataText1', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text2' => ['name' => 'DataText2', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text3' => ['name' => 'DataText3', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_int1' => ['name' => 'DataInt1', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_int2' => ['name' => 'DataInt2', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_int3' => ['name' => 'DataInt3', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_float1' => ['name' => 'DataFloat1', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_float2' => ['name' => 'DataFloat2', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_float3' => ['name' => 'DataFloat3', 'datatype' => 'float', 'default' => 0, 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'function_attributes' => ['creator' => 'creator', 'is_creator' => 'isCreator', 'participant_list' => 'participantList', 'user_status' => 'userStatus', 'handler' => 'handler', 'use_messages' => 'useMessages', 'message_count' => 'messageCount', 'unread_message_count' => 'unreadMessageCount', 'content' => 'content', 'title' => 'title'], 'increment_key' => 'id', 'class_name' => 'eZCollaborationItem', 'sort' => ['modified' => 'asc'], 'name' => 'ezcollab_item'];
     }
 
     static function create( $typeIdentifier, $creatorID, $status = self::STATUS_ACTIVE )
     {
         $date_time = time();
-        $row = array(
-            'id' => null,
-            'type_identifier' => $typeIdentifier,
-            'creator_id' => $creatorID,
-            'status' => $status,
-            'created' => $date_time,
-            'modified' => $date_time );
+        $row = ['id' => null, 'type_identifier' => $typeIdentifier, 'creator_id' => $creatorID, 'status' => $status, 'created' => $date_time, 'modified' => $date_time];
         return new eZCollaborationItem( $row );
     }
 
@@ -126,15 +43,14 @@ class eZCollaborationItem extends eZPersistentObject
         $type = $info['type-identifier'];
         if ( $subType )
             $type .= '_' . $subType;
-        $event = eZNotificationEvent::create( 'ezcollaboration', array( 'collaboration_id' => $this->attribute( 'id' ),
-                                                                         'collaboration_identifier' => $type ) );
+        $event = eZNotificationEvent::create( 'ezcollaboration', ['collaboration_id' => $this->attribute( 'id' ), 'collaboration_identifier' => $type] );
         $event->store();
         return $event;
     }
 
     static function fetch( $id, $creatorID = false, $asObject = true )
     {
-        $conditions = array( 'id' => $id );
+        $conditions = ['id' => $id];
         if ( $creatorID !== false )
             $conditions['creator_id'] = $creatorID;
         return eZPersistentObject::fetchObject( eZCollaborationItem::definition(),
@@ -163,7 +79,7 @@ class eZCollaborationItem extends eZPersistentObject
 
     function participantList()
     {
-        return eZCollaborationItemParticipantLink::fetchParticipantList( array('item_id' => $this->ID ) );
+        return eZCollaborationItemParticipantLink::fetchParticipantList( ['item_id' => $this->ID] );
     }
 
     function userStatus()
@@ -264,12 +180,12 @@ class eZCollaborationItem extends eZPersistentObject
     function setIsActive( $active, $userID = false )
     {
         $active = intval($active);
-        eZCollaborationItemStatus::updateFields( $this->attribute( 'id' ), $userID, array( 'is_active' => $active ) );
+        eZCollaborationItemStatus::updateFields( $this->attribute( 'id' ), ['is_active' => $active], $userID );
     }
 
-    static function fetchListCount( $parameters = array() )
+    static function fetchListCount( $parameters = [] )
     {
-        return eZCollaborationItem::fetchListTool( $parameters, true );
+        return eZCollaborationItem::fetchListTool( true, $parameters );
 //         $parameters = array_merge( array( 'status' => false
 //                                           'is_active' => null,
 //                                           'is_read' => null ),
@@ -328,21 +244,15 @@ class eZCollaborationItem extends eZPersistentObject
         eZCollaborationItemParticipantLink::setLastRead( $collaborationID, $userID, $timestamp );
     }
 
-    static function fetchList( $parameters = array() )
+    static function fetchList( $parameters = [] )
     {
-        return eZCollaborationItem::fetchListTool( $parameters, false );
+        return eZCollaborationItem::fetchListTool( false, $parameters );
     }
 
-    static function fetchListTool( $parameters = array(), $asCount )
+    static function fetchListTool( $asCount, $parameters = [] )
     {
-        $parameters = array_merge( array( 'as_object' => true,
-                                          'offset' => false,
-                                          'parent_group_id' => false,
-                                          'limit' => false,
-                                          'is_active' => null,
-                                          'is_read' => null,
-                                          'status' => false,
-                                          'sort_by' => false ),
+        $sortingFields = null;
+        $parameters = array_merge( ['as_object' => true, 'offset' => false, 'parent_group_id' => false, 'limit' => false, 'is_active' => null, 'is_read' => null, 'status' => false, 'sort_by' => false],
                                    $parameters );
         $asObject = $parameters['as_object'];
         $offset = $parameters['offset'];
@@ -363,7 +273,7 @@ class eZCollaborationItem extends eZPersistentObject
                 if ( count( $sortList ) > 1 and
                      !is_array( $sortList[0] ) )
                 {
-                    $sortList = array( $sortList );
+                    $sortList = [$sortList];
                 }
             }
             if ( $sortList !== false )
@@ -431,8 +341,7 @@ class eZCollaborationItem extends eZPersistentObject
 
         $statusText = '';
         if ( $statusTypes === false )
-            $statusTypes = array( self::STATUS_ACTIVE,
-                                  self::STATUS_INACTIVE );
+            $statusTypes = [self::STATUS_ACTIVE, self::STATUS_INACTIVE];
         $statusText = implode( ', ', $statusTypes );
 
         if ( $asCount )
@@ -458,7 +367,7 @@ class eZCollaborationItem extends eZPersistentObject
         $db = eZDB::instance();
         if ( !$asCount )
         {
-            $sqlParameters = array();
+            $sqlParameters = [];
             if ( $offset !== false and $limit !== false )
             {
                 $sqlParameters['offset'] = $offset;
@@ -495,7 +404,6 @@ class eZCollaborationItem extends eZPersistentObject
 
     /**
      * Checks if $user is a participant in this collaboration item
-     * @param eZUser $user
      * @return bool
      */
     public function userIsParticipant( eZUser $user )

@@ -24,8 +24,9 @@ class eZProductCollectionTest extends ezpDatabaseTestCase
      */
     public function testCleanupList()
     {
+        $collectionIDArray = [];
         // Create a few collections
-        $row = array( 'created' => time(), 'currency_code' => 'EUR' );
+        $row = ['created' => time(), 'currency_code' => 'EUR'];
         $collection = new eZProductCollection( $row );
         $collection->store();
 
@@ -46,13 +47,13 @@ class eZProductCollectionTest extends ezpDatabaseTestCase
         // Check that each item of deleteIDArray has been removed
         foreach( $deleteIDArray as $id )
         {
-            $this->assertNull( eZProductCollection::fetch( $id ) );
+            static::assertNull(eZProductCollection::fetch( $id ));
         }
 
         // And check that each item of remainingIDArray hasn't been deleted
         foreach( $remainingIDArray as $id )
         {
-            $this->assertInstanceOf( 'eZProductCollection', eZProductCollection::fetch( $id ) );
+            static::assertInstanceOf('eZProductCollection', eZProductCollection::fetch( $id ));
         }
     }
 }

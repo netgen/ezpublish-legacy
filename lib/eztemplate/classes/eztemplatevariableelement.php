@@ -20,12 +20,12 @@ class eZTemplateVariableElement
 {
     /**
      * Initializes the object with the value array and operators.
-     *
-     * @param mixed $data
      */
-    public function __construct( $data )
+    public function __construct(
+        /// The variable array
+        public mixed $Variable
+    )
     {
-        $this->Variable = $data;
     }
 
     /*!
@@ -38,9 +38,7 @@ class eZTemplateVariableElement
 
     function serializeData()
     {
-        return array( 'class_name' => 'eZTemplateVariableElement',
-                      'parameters' => array( 'data' ),
-                      'variables' => array( 'data' => 'Variable' ) );
+        return ['class_name' => 'eZTemplateVariableElement', 'parameters' => ['data'], 'variables' => ['data' => 'Variable']];
     }
 
     /*!
@@ -59,9 +57,6 @@ class eZTemplateVariableElement
     {
         return $this->Variable;
     }
-
-    /// The variable array
-    public $Variable;
 }
 
 ?>

@@ -29,7 +29,7 @@ class eZFileTransport extends eZMailTransport
         if ( !eZMail::validate( $emailSender ) )
             $emailSender = false;
 
-        $filename = time() . '-' . mt_rand() . '.mail';
+        $filename = time() . '-' . random_int(0, mt_getrandmax()) . '.mail';
 
         $data = preg_replace('/(\r\n|\r|\n)/', "\r\n", $mail->headerText() . "\n" . $mail->body() );
         $returnedValue = eZFile::create( $filename, 'var/log/mail', $data );

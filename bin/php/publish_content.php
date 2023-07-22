@@ -20,10 +20,7 @@ require_once 'autoload.php';
 $pid = getmypid();
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => 'Asynchronous publishing handler, not meant to be used directly',
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => 'Asynchronous publishing handler, not meant to be used directly', 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 $script->startup();
 
 $argumentConfig = '[OBJECT_ID] [VERSION_ID]';
@@ -31,7 +28,7 @@ $optionsConfig = '';
 $options = $script->getOptions( $optionsConfig, $argumentConfig );
 
 $script->initialize();
-if ( count( $options['arguments'] ) != 2 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) != 2 )
 {
     eZLog::write( "Wrong arguments count", 'publishqueue.log' );
     $script->shutdown( 1, 'wrong argument count' );
@@ -41,7 +38,7 @@ $objectId = $options['arguments'][0];
 $version = $options['arguments'][1];
 
 eZLog::write( "[$pid] Publishing #{$objectId}/{$version}", 'async.log' );
-$operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $objectId, 'version' => $version  ) );
+$operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $objectId, 'version' => $version] );
 
 if ( isset( $operationResult['status'] ) && $operationResult['status'] == eZModuleOperationInfo::STATUS_CONTINUE )
 {

@@ -61,7 +61,7 @@ class eZPHPCreatorRegression extends ezpDatabaseTestCase
         $phpCache = new eZPHPCreator( $cacheDir,
                                       'classidentifiers_' . $dbName . '.php',
                                       '',
-                                      array( 'clustering' => 'classidentifiers' ) );
+                                      ['clustering' => 'classidentifiers'] );
 
         $handler = eZExpiryHandler::instance();
         $expiryTime = 0;
@@ -70,7 +70,7 @@ class eZPHPCreatorRegression extends ezpDatabaseTestCase
             $expiryTime = $handler->timestamp( 'class-identifier-cache' );
         }
 
-        $this->assertFalse( $phpCache->canRestore( $expiryTime ) );
+        static::assertFalse($phpCache->canRestore( $expiryTime ));
     }
 }
 

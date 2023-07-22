@@ -19,31 +19,13 @@ class eZImageFile extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'id',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'contentobject_attribute_id' => array( 'name' => 'ContentObjectAttributeID',
-                                                                                'datatype' => 'integer',
-                                                                                'default' => 0,
-                                                                                'required' => true,
-                                                                                'foreign_class' => 'eZContentObjectAttribute',
-                                                                                'foreign_attribute' => 'id',
-                                                                                'multiplicity' => '1..*' ),
-                                         'filepath' => array( 'name' => 'Filepath',
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'class_name' => 'eZImageFile',
-                      'name' => 'ezimagefile' );
+        static $definition = ['fields' => ['id' => ['name' => 'id', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'contentobject_attribute_id' => ['name' => 'ContentObjectAttributeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'filepath' => ['name' => 'Filepath', 'datatype' => 'string', 'default' => '', 'required' => true]], 'keys' => ['id'], 'class_name' => 'eZImageFile', 'name' => 'ezimagefile'];
         return $definition;
     }
 
     static function create( $contentObjectAttributeID, $filepath  )
     {
-        $row = array( "contentobject_attribute_id" => $contentObjectAttributeID,
-                      "filepath" => $filepath );
+        $row = ["contentobject_attribute_id" => $contentObjectAttributeID, "filepath" => $filepath];
         return new eZImageFile( $row );
     }
 
@@ -51,13 +33,13 @@ class eZImageFile extends eZPersistentObject
     {
         $rows = eZPersistentObject::fetchObjectList( eZImageFile::definition(),
                                                       null,
-                                                      array( "contentobject_attribute_id" => $contentObjectAttributeID ),
+                                                      ["contentobject_attribute_id" => $contentObjectAttributeID],
                                                       null,
                                                       null,
                                                       $asObject );
         if ( !$asObject )
         {
-            $files = array();
+            $files = [];
             foreach ( $rows as $row )
             {
                 $files[] = $row['filepath'];
@@ -82,17 +64,17 @@ class eZImageFile extends eZPersistentObject
         $db = eZDB::instance();
         $contentObjectAttributeID = (int) $contentObjectAttributeID;
 
-        $cond = array( 'id' => $contentObjectAttributeID );
-        $fields = array( 'contentobject_id', 'contentclassattribute_id' );
-        $limit = array( 'offset' => 0, 'length' => 1 );
+        $cond = ['id' => $contentObjectAttributeID];
+        $fields = ['contentobject_id', 'contentclassattribute_id'];
+        $limit = ['offset' => 0, 'length' => 1];
         $rows = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(),
                                                      $fields,
                                                      $cond,
                                                      null,
                                                      $limit,
                                                      false );
-        if ( count( $rows ) != 1 )
-            return array();
+        if ( count( (array) $rows ) != 1 )
+            return [];
 
         $contentObjectID = (int)( $rows[0]['contentobject_id'] );
         $contentClassAttributeID = (int)( $rows[0]['contentclassattribute_id'] );
@@ -101,7 +83,7 @@ class eZImageFile extends eZPersistentObject
         // Ref https://jira.ez.no/browse/EZP-20090
         $filepath = $db->escapeString(
             htmlspecialchars(
-                $filepath,
+                (string) $filepath,
                 // Forcing default flags to be able to specify encoding. See http://php.net/htmlspecialchars
                 version_compare( PHP_VERSION, '5.4.0', '>=' ) ? ENT_COMPAT | ENT_HTML401 : ENT_COMPAT,
                 'UTF-8'
@@ -140,13 +122,12 @@ class eZImageFile extends eZPersistentObject
 
             return eZPersistentObject::fetchObject( eZImageFile::definition(),
                                                     null,
-                                                    array( 'filepath' => $filepath ),
+                                                    ['filepath' => $filepath],
                                                     $asObject );
 
         return eZPersistentObject::fetchObject( eZImageFile::definition(),
                                                 null,
-                                                array( 'contentobject_attribute_id' => $contentObjectAttributeID,
-                                                       'filepath' => $filepath ),
+                                                ['contentobject_attribute_id' => $contentObjectAttributeID, 'filepath' => $filepath],
                                                 $asObject );
     }
 
@@ -161,8 +142,8 @@ class eZImageFile extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList(
             eZImageFile::definition(),
-            array( 'contentobject_attribute_id', 'filepath' ),
-            array( 'filepath' => $filePath ),
+            ['contentobject_attribute_id', 'filepath'],
+            ['filepath' => $filePath],
             null,
             null,
             false
@@ -215,7 +196,7 @@ class eZImageFile extends eZPersistentObject
 
     static function removeForContentObjectAttribute( $contentObjectAttributeID )
     {
-        eZPersistentObject::removeObject( eZImageFile::definition(), array( 'contentobject_attribute_id' => $contentObjectAttributeID ) );
+        eZPersistentObject::removeObject( eZImageFile::definition(), ['contentobject_attribute_id' => $contentObjectAttributeID] );
     }
 
     /**

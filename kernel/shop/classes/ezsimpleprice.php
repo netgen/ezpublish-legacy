@@ -59,29 +59,14 @@ class eZSimplePrice
             $object = $contentObjectAttribute->object();
             $this->ContentObject = $object;
             $discountPercent = eZDiscount::discountPercent( eZUser::currentUser(),
-                                                            array( 'contentclass_id' => $object->attribute( 'contentclass_id'),
-                                                                   'contentobject_id' => $object->attribute( 'id' ),
-                                                                   'section_id' => $object->attribute( 'section_id') ) );
+                                                            ['contentclass_id' => $object->attribute( 'contentclass_id'), 'contentobject_id' => $object->attribute( 'id' ), 'section_id' => $object->attribute( 'section_id')] );
         }
         $this->setDiscountPercent( $discountPercent );
     }
 
     function attributes()
     {
-        return array( 'price',
-                      'currency',
-                      'selected_vat_type',
-                      'vat_type',
-                      'vat_percent',
-                      'is_vat_included',
-                      'inc_vat_price',
-                      'ex_vat_price',
-                      'discount_percent',
-                      'discount_price_inc_vat',
-                      'discount_price_ex_vat',
-                      'has_discount',
-                      'current_user'            // for backward compatibility
-                    );
+        return ['price', 'currency', 'selected_vat_type', 'vat_type', 'vat_percent', 'is_vat_included', 'inc_vat_price', 'ex_vat_price', 'discount_percent', 'discount_price_inc_vat', 'discount_price_ex_vat', 'has_discount', 'current_user'];
     }
 
     /*!
@@ -94,23 +79,11 @@ class eZSimplePrice
 
     function setAttribute( $attr, $value )
     {
-        switch ( $attr )
-        {
-            case 'selected_vat_type':
-            {
-                $this->setVATType( $value );
-            } break;
-
-            case 'is_vat_included':
-            {
-                $this->setVATIncluded( $value == '1' );
-            } break;
-
-            default:
-            {
-                eZDebug::writeError( "Unspecified attribute: " . $attr, __METHOD__ );
-            } break;
-        }
+        match ($attr) {
+            'selected_vat_type' => $this->setVATType( $value ),
+            'is_vat_included' => $this->setVATIncluded( $value == '1' ),
+            default => eZDebug::writeError( "Unspecified attribute: " . $attr, __METHOD__ ),
+        };
     }
 
     function attribute( $attr )
@@ -377,7 +350,7 @@ class eZSimplePrice
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $vatNode = $attributeParametersNode->getElementsByTagName( 'vat-included' )->item( 0 );
-        $vatIncluded = strtolower( $vatNode->getAttribute( 'is-set' ) ) == 'true';
+        $vatIncluded = strtolower( (string) $vatNode->getAttribute( 'is-set' ) ) == 'true';
         $classAttribute->setAttribute( eZPriceType::INCLUDE_VAT_FIELD, $vatIncluded );
         $vatTypeNode = $attributeParametersNode->getElementsByTagName( 'vat-type' )->item( 0 );
         $vatName = $vatTypeNode->getAttribute( 'name' );

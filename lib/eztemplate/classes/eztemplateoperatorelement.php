@@ -25,17 +25,19 @@ class eZTemplateOperatorElement
     /**
      * Initializes the operator with a name and parameters.
      *
-     * @param string $name
-     * @param array $params
-     * @param mixed $resource
-     * @param string $templateName
+     * @param string $Name
+     * @param array $Params
+     * @param string $TemplateName
      */
-    public function __construct( $name, $params, $resource = null, $templateName = null )
+    public function __construct(
+        /// The operator name
+        public $Name,
+        /// The paramer array
+        public $Params,
+        public mixed $Resource = null,
+        public $TemplateName = null
+    )
     {
-        $this->Name = $name;
-        $this->Params = $params;
-        $this->Resource = $resource;
-        $this->TemplateName = $templateName;
     }
 
     function setResourceRelation( $resource )
@@ -68,12 +70,7 @@ class eZTemplateOperatorElement
 
     function serializeData()
     {
-        return array( 'class_name' => 'eZTemplateOperatorElement',
-                      'parameters' => array( 'name', 'parameters', 'resource', 'template_name' ),
-                      'variables' => array( 'name' => 'Name',
-                                            'parameters' => 'Params',
-                                            'resource' => 'Resource',
-                                            'template_name' => 'TemplateName' ) );
+        return ['class_name' => 'eZTemplateOperatorElement', 'parameters' => ['name', 'parameters', 'resource', 'template_name'], 'variables' => ['name' => 'Name', 'parameters' => 'Params', 'resource' => 'Resource', 'template_name' => 'TemplateName']];
     }
 
     /*!
@@ -82,7 +79,7 @@ class eZTemplateOperatorElement
     */
     function process( $tpl, &$value, $nspace, $current_nspace )
     {
-        $named_params = array();
+        $named_params = [];
         $param_list = $tpl->operatorParameterList( $this->Name );
         $i = 0;
         foreach ( $param_list as $param_name => $param_type )
@@ -120,13 +117,6 @@ class eZTemplateOperatorElement
     {
         return $this->Params;
     }
-
-    /// The operator name
-    public $Name;
-    /// The paramer array
-    public $Params;
-    public $Resource;
-    public $TemplateName;
 }
 
 ?>

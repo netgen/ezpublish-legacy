@@ -18,38 +18,7 @@ class eZPendingActions extends eZPersistentObject
      */
     public static function definition()
     {
-        return array(
-            'fields' => array(
-                'id' => array(
-                    'name' => 'id',
-                    'datatype' => 'integer',
-                    'default' => 0,
-                    'required' => true
-                ),
-                'action' => array(
-                    'name' => 'action',
-                    'datatype' => 'string',
-                    'default' => null,
-                    'required' => true
-                ),
-                'created' => array(
-                    'name' => 'created',
-                    'datatype' => 'integer',
-                    'default' => null,
-                    'required' => false
-                ),
-                'param' => array(
-                    'name' => 'param',
-                    'datatype' => 'string',
-                    'default' => null,
-                    'required' => false
-                )
-            ),
-            'keys' => array( 'id' ),
-            'class_name' => 'eZPendingActions',
-            'name' => 'ezpending_actions',
-            'function_attributes' => array()
-        );
+        return ['fields' => ['id' => ['name' => 'id', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'action' => ['name' => 'action', 'datatype' => 'string', 'default' => null, 'required' => true], 'created' => ['name' => 'created', 'datatype' => 'integer', 'default' => null, 'required' => false], 'param' => ['name' => 'param', 'datatype' => 'string', 'default' => null, 'required' => false]], 'keys' => ['id'], 'class_name' => 'eZPendingActions', 'name' => 'ezpending_actions', 'function_attributes' => []];
     }
 
     /**
@@ -60,28 +29,28 @@ class eZPendingActions extends eZPersistentObject
      *                                   Second entry is the filter value (timestamp)
      * @return array|null Array of eZPendingActions or null if no entry has been found
      */
-    public static function fetchByAction( $action, array $aCreationDateFilter = array() )
+    public static function fetchByAction( $action, array $aCreationDateFilter = [] )
     {
-        $filterConds = array( 'action' => $action );
+        $filterConds = ['action' => $action];
 
         // Handle creation date filter
         if( !empty( $aCreationDateFilter ) )
         {
             if( count( $aCreationDateFilter ) != 2 )
             {
-                eZDebug::writeError( __CLASS__.'::'.__METHOD__.' : Wrong number of entries for Creation date filter array' );
+                eZDebug::writeError( self::class.'::'.__METHOD__.' : Wrong number of entries for Creation date filter array' );
                 return null;
             }
 
-            list( $filterToken, $filterValue ) = $aCreationDateFilter;
-            $aAuthorizedFilterTokens = array( '=', '<', '>', '<=', '>=' );
+            [$filterToken, $filterValue] = $aCreationDateFilter;
+            $aAuthorizedFilterTokens = ['=', '<', '>', '<=', '>='];
             if( !is_string( $filterToken ) || !in_array( $filterToken, $aAuthorizedFilterTokens ) )
             {
-                eZDebug::writeError( __CLASS__.'::'.__METHOD__.' : Wrong filter type for creation date filter' );
+                eZDebug::writeError( self::class.'::'.__METHOD__.' : Wrong filter type for creation date filter' );
                 return null;
             }
 
-            $filterConds['created'] = array( $filterToken, $filterValue );
+            $filterConds['created'] = [$filterToken, $filterValue];
         }
 
         $result = parent::fetchObjectList( self::definition(), null, $filterConds );
@@ -95,9 +64,9 @@ class eZPendingActions extends eZPersistentObject
      * @param array $filterConds Additional filter conditions, as supported by {@link eZPersistentObject::fetchObjectList()} ($conds param).
      *                           For consistency sake, if an 'action' key is set here, it won't be taken into account
      */
-    public static function removeByAction( $action, array $filterConds = array() )
+    public static function removeByAction( $action, array $filterConds = [] )
     {
-        parent::removeObject( self::definition(), array( 'action' => $action ) + $filterConds );
+        parent::removeObject( self::definition(), ['action' => $action] + $filterConds );
     }
 }
 

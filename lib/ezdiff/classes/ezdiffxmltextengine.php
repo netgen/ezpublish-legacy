@@ -48,32 +48,26 @@ class eZDiffXMLTextEngine extends eZDiffEngine
 
         if ( !$diffSimplifiedXML )
         {
-            $old = trim( strip_tags( $old ) );
-            $new = trim( strip_tags( $new ) );
+            $old = trim( strip_tags( (string) $old ) );
+            $new = trim( strip_tags( (string) $new ) );
 
-            $pattern = array( '/[ ][ ]+/',
-                              '/ \n( \n)+/',
-                              '/^ /m',
-                              '/(\n){3,}/' );
-            $replace = array( ' ',
-                              "\n",
-                              '',
-                              "\n\n" );
+            $pattern = ['/[ ][ ]+/', '/ \n( \n)+/', '/^ /m', '/(\n){3,}/'];
+            $replace = [' ', "\n", '', "\n\n"];
 
             $old = preg_replace( $pattern, $replace, $old );
             $new = preg_replace( $pattern, $replace, $new );
         }
 
-        $oldArray = explode( "\n", $old );
-        $newArray = explode( "\n", $new );
+        $oldArray = explode( "\n", (string) $old );
+        $newArray = explode( "\n", (string) $new );
 
-        $oldSums = array();
+        $oldSums = [];
         foreach( $oldArray as $paragraph )
         {
             $oldSums[] = crc32( $paragraph );
         }
 
-        $newSums = array();
+        $newSums = [];
         foreach( $newArray as $paragraph )
         {
             $newSums[] = crc32( $paragraph );

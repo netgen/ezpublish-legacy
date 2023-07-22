@@ -67,7 +67,7 @@ class ezpRestVersionRouteTest extends ezpTestCase
         $versionTokenOptions->iniFile = 'rest.ini';
         $versionTokenOptions->iniSection = 'System';
         $versionTokenOptions->iniVariable = 'VersionTokenClass';
-        $versionTokenOptions->handlerParams = array( $request, '/api' );
+        $versionTokenOptions->handlerParams = [$request, '/api'];
 
 
         $versionInfo = eZExtension::getHandlerClass( $versionTokenOptions );

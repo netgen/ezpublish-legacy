@@ -26,7 +26,7 @@ abstract class eZDatatypeAbstractTest extends ezpDatabaseTestCase
      * @see setDataSet()
      * @var array(ezpDatatypeTestDataSet)
      */
-    protected $dataSets = array();
+    protected $dataSets = [];
 
     /**
      * The test attribute identifier
@@ -52,7 +52,7 @@ abstract class eZDatatypeAbstractTest extends ezpDatabaseTestCase
      */
     protected $attribute;
 
-    public function __construct( $name = null, array $data = array(), $dataName = '' )
+    public function __construct( $name = null, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
 
@@ -150,7 +150,7 @@ abstract class eZDatatypeAbstractTest extends ezpDatabaseTestCase
 
     public function globalDataProvider()
     {
-        return array( $this->dataSets );
+        return [$this->dataSets];
     }
 
     /**

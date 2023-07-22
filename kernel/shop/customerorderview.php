@@ -15,7 +15,7 @@ $http = eZHTTPTool::instance();
 
 $tpl = eZTemplate::factory();
 
-$Email = urldecode( $Email );
+$Email = urldecode( (string) $Email );
 $productList = eZOrder::productList( $CustomerID, $Email );
 $orderList = eZOrder::orderList( $CustomerID, $Email );
 
@@ -23,13 +23,11 @@ $tpl->setVariable( "product_list", $productList );
 
 $tpl->setVariable( "order_list", $orderList );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/customerorderview.tpl" );
-$path = array();
-$path[] = array( 'url' => '/shop/orderlist',
-                 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' ) );
-$path[] = array( 'url' => false,
-                 'text' => ezpI18n::tr( 'kernel/shop', 'Customer order view' ) );
+$path = [];
+$path[] = ['url' => '/shop/orderlist', 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' )];
+$path[] = ['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Customer order view' )];
 $Result['path'] = $path;
 
 ?>

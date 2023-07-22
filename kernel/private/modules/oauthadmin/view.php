@@ -19,12 +19,8 @@ $application = $session->load( 'ezpRestClient', $applicationId );
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'module', $module );
 $tpl->setVariable( 'application', $application );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'REST application: %application_name%', null,
-                                    array( '%application_name%' => $application->name ) ) ),
-);
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'REST application: %application_name%', null,
+    ['%application_name%' => $application->name] )]];
 
 $Result['content'] = $tpl->fetch( 'design:oauthadmin/view.tpl' );
 return $Result;

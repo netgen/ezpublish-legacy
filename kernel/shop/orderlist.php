@@ -85,21 +85,20 @@ if ( $http->hasPostVariable( 'SaveOrderStatusButton' ) )
     }
 }
 
-$orderArray = eZOrder::active( true, $offset, $limit, $sortField, $sortOrder );
+$orderArray = eZOrder::active( $offset, $limit, true, $sortField, $sortOrder );
 $orderCount = eZOrder::activeCount();
 
 $tpl->setVariable( 'order_list', $orderArray );
 $tpl->setVariable( 'order_list_count', $orderCount );
 $tpl->setVariable( 'limit', $limit );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'sort_field', $sortField );
 $tpl->setVariable( 'sort_order', $sortOrder );
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Order list' ), 'url' => false]];
 
 $Result['content'] = $tpl->fetch( 'design:shop/orderlist.tpl' );
 ?>

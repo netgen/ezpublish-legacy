@@ -15,7 +15,7 @@ class eZContentLanguageRegression extends ezpDatabaseTestCase
 {
     protected $backupGlobals = false;
 
-    public function __construct( $name = NULL, array $data = array(), $dataName = '' )
+    public function __construct( $name = NULL, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
         $this->setName( "eZContentLanguage Regression Tests" );

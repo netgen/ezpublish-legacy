@@ -27,7 +27,7 @@ elseif ( $http->hasPostVariable( "CancelButton" ) )
 }
 else // no action yet: just displaying the template
 {
-    $orderNumbersArray = array();
+    $orderNumbersArray = [];
     foreach ( $deleteIDArray as $orderID )
     {
         $order = eZOrder::fetch( $orderID );
@@ -43,10 +43,9 @@ else // no action yet: just displaying the template
     $tpl = eZTemplate::factory();
     $tpl->setVariable( "module", $Module );
     $tpl->setVariable( "delete_result", $orderNumbersString );
-    $Result = array();
+    $Result = [];
 
-    $Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Remove order' ),
-                                    'url' => false ) );
+    $Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Remove order' ), 'url' => false]];
     $Result['content'] = $tpl->fetch( "design:shop/removeorder.tpl" );
 }
 ?>

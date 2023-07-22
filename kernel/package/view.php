@@ -23,15 +23,15 @@ if ( !$package->attribute( 'can_read' ) )
 
 if ( $module->isCurrentAction( 'Export' ) )
 {
-    return $module->run( 'export', array( $packageName ) );
+    return $module->run( 'export', [$packageName] );
 }
 else if ( $module->isCurrentAction( 'Install' ) )
 {
-    return $module->redirectToView( 'install', array( $packageName ) );
+    return $module->redirectToView( 'install', [$packageName] );
 }
 else if ( $module->isCurrentAction( 'Uninstall' ) )
 {
-    return $module->redirectToView( 'uninstall', array( $packageName ) );
+    return $module->redirectToView( 'uninstall', [$packageName] );
 }
 
 $repositoryInformation = $package->currentRepositoryInformation();
@@ -41,17 +41,14 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( 'package_name', $packageName );
 $tpl->setVariable( 'repository_id', $repositoryID );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:package/view/$viewMode.tpl" );
-$path = array( array( 'url' => 'package/list',
-                      'text' => ezpI18n::tr( 'kernel/package', 'Packages' ) ) );
+$path = [['url' => 'package/list', 'text' => ezpI18n::tr( 'kernel/package', 'Packages' )]];
 if ( $repositoryInformation and $repositoryInformation['id'] != 'local' )
 {
-    $path[] = array( 'url' => 'package/list/' . $repositoryInformation['id'],
-                     'text' => $repositoryInformation['name'] );
+    $path[] = ['url' => 'package/list/' . $repositoryInformation['id'], 'text' => $repositoryInformation['name']];
 }
-$path[] = array( 'url' => false,
-                 'text' => $package->attribute( 'name' ) );
+$path[] = ['url' => false, 'text' => $package->attribute( 'name' )];
 $Result['path'] = $path;
 
 ?>

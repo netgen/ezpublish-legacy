@@ -12,18 +12,15 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Template Syntax Checker\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Template Syntax Checker\n" .
                                                         "\n" .
                                                         "./bin/php/eztemplatecheck.php -sadmin\n" .
                                                         "or\n" .
-                                                        "./bin/php/eztemplatecheck.php design/" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "./bin/php/eztemplatecheck.php design/" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
-$options = $script->getOptions( "", "[FILE*]", array() );
+$options = $script->getOptions( "", "[FILE*]", [] );
 $sys = eZSys::instance();
 
 $script->initialize();
@@ -31,12 +28,12 @@ $script->initialize();
 $result = true;
 $nbInvalidTemplates = 0;
 
-if ( count( $options['arguments'] ) > 0 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) > 0 )
 {
     $ini = eZINI::instance();
     $tpl = eZTemplate::factory();
 
-    $fileList = array();
+    $fileList = [];
 
     foreach ( $options['arguments'] as $file )
     {
@@ -54,10 +51,10 @@ if ( count( $options['arguments'] ) > 0 )
     $script->setIterationData( '.', '~' );
     $script->setShowVerboseOutput( true );
 
-    $files = array();
+    $files = [];
     foreach ( $fileList as $file )
     {
-        $filename = basename( $file );
+        $filename = basename( (string) $file );
         if ( preg_match( "!^.+~$|^/?#.+#$|^\..+$!", $filename ) )
             continue;
         $files[] = $file;
@@ -96,7 +93,7 @@ else
     $siteDesign = $ini->variable( "DesignSettings", "SiteDesign" );
     $additionalSiteDesignList = $ini->variable( "DesignSettings", "AdditionalSiteDesignList" );
 
-    $designList = array_merge( array( $standardDesign ), $additionalSiteDesignList, array( $siteDesign ) );
+    $designList = array_merge( [$standardDesign], $additionalSiteDesignList, [$siteDesign] );
 
     $tpl = eZTemplate::factory();
 

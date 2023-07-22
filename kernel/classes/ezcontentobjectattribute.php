@@ -20,115 +20,12 @@ class eZContentObjectAttribute extends eZPersistentObject
 {
     public function __construct( $row )
     {
-        $this->Content = null;
-        $this->DisplayInfo = null;
-        $this->HTTPValue = null;
-        $this->ValidationError = null;
-        $this->ValidationLog = null;
-        $this->ContentClassAttributeIdentifier = null;
-        $this->ContentClassAttributeID = null;
-        $this->InputParameters = false;
-        $this->HasValidationError = false;
-        $this->DataTypeCustom = null;
-        $this->DataTypeString = null;
         parent::__construct( $row );
     }
 
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "contentobject_id" => array( 'name' => "ContentObjectID",
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         "version" => array( 'name' => "Version",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "language_code" => array( 'name' => "LanguageCode",
-                                                                   'datatype' => 'string',
-                                                                   'default' => '',
-                                                                   'required' => true ),
-                                         'language_id' => array( 'name' => "LanguageID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => '0',
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZContentLanguage',
-                                                                 'foreign_attribute' => 'id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "contentclassattribute_id" => array( 'name' => "ContentClassAttributeID",
-                                                                              'datatype' => 'integer',
-                                                                              'default' => 0,
-                                                                              'required' => true,
-                                                                              'foreign_class' => 'eZContentClassAttribute',
-                                                                              'foreign_attribute' => 'id',
-                                                                              'multiplicity' => '1..*' ),
-                                         "attribute_original_id" => array( 'name' => "AttributeOriginalID",
-                                                                           'datatype' => 'integer',
-                                                                           'default' => 0,
-                                                                           'required' => true,
-                                                                           'foreign_class' => 'eZContentObjectAttribute',
-                                                                           'foreign_attribute' => 'id',
-                                                                           'multiplicity' => '1..*' ),
-                                         "sort_key_int" => array( 'name' => "SortKeyInt",
-                                                                  'datatype' => 'integer',
-                                                                  'default' => '0',
-                                                                  'required' => true ),
-                                         "sort_key_string" => array( 'name' => "SortKeyString",
-                                                                     'datatype' => 'string',
-                                                                     'max_length' => 255,
-                                                                     'default' => '',
-                                                                     'required' => true ),
-                                         "data_type_string" => array( 'name' => "DataTypeString",
-                                                                     'datatype' => 'string',
-                                                                     'default' => '',
-                                                                     'required' => true ),
-                                         "data_text" => array( 'name' => "DataText",
-                                                               'datatype' => 'text',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         "data_int" => array( 'name' => "DataInt",
-                                                              'datatype' => 'integer',
-                                                              'default' => null,
-                                                              'required' => false ),
-                                         "data_float" => array( 'name' => "DataFloat",
-                                                                'datatype' => 'float',
-                                                                'default' => 0,
-                                                                'required' => true ) ),
-                      "keys" => array( "id", "contentobject_id", "version", "language_code" ),
-                      "function_attributes" => array( "contentclass_attribute" => "contentClassAttribute",
-                                                      "contentclass_attribute_identifier" => "contentClassAttributeIdentifier",
-                                                      "contentclass_attribute_name" => "contentClassAttributeName",
-                                                      "can_translate" => "contentClassAttributeCanTranslate",
-                                                      "is_information_collector" => "contentClassAttributeIsInformationCollector",
-                                                      "is_required" => "contentClassAttributeIsRequired",
-                                                      "content" => "content",
-                                                      'has_http_value' => 'hasHTTPValue',
-                                                      'value' => 'value',
-                                                      'has_content' => 'hasContent',
-                                                      "class_content" => "classContent",
-                                                      "object" => "object",
-                                                      'object_version' => 'objectVersion',
-                                                      'view_template' => 'viewTemplateName',
-                                                      'edit_template' => 'editTemplateName',
-                                                      'result_template' => 'resultTemplate',
-                                                      "has_validation_error" => "hasValidationError",
-                                                      "validation_error" => "validationError",
-                                                      "validation_log" => "validationLog",
-                                                      "language" => "language",
-                                                      "is_a" => "isA",
-                                                      'display_info' => 'displayInfo',
-                                                      'class_display_info' => 'classDisplayInfo' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZContentObjectAttribute",
-                      "sort" => array( "id" => "asc" ),
-                      "name" => "ezcontentobject_attribute" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "contentobject_id" => ['name' => "ContentObjectID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "version" => ['name' => "Version", 'datatype' => 'integer', 'default' => 0, 'required' => true], "language_code" => ['name' => "LanguageCode", 'datatype' => 'string', 'default' => '', 'required' => true], 'language_id' => ['name' => "LanguageID", 'datatype' => 'integer', 'default' => '0', 'required' => true, 'foreign_class' => 'eZContentLanguage', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "contentclassattribute_id" => ['name' => "ContentClassAttributeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentClassAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "attribute_original_id" => ['name' => "AttributeOriginalID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "sort_key_int" => ['name' => "SortKeyInt", 'datatype' => 'integer', 'default' => '0', 'required' => true], "sort_key_string" => ['name' => "SortKeyString", 'datatype' => 'string', 'max_length' => 255, 'default' => '', 'required' => true], "data_type_string" => ['name' => "DataTypeString", 'datatype' => 'string', 'default' => '', 'required' => true], "data_text" => ['name' => "DataText", 'datatype' => 'text', 'default' => '', 'required' => true], "data_int" => ['name' => "DataInt", 'datatype' => 'integer', 'default' => null, 'required' => false], "data_float" => ['name' => "DataFloat", 'datatype' => 'float', 'default' => 0, 'required' => true]], "keys" => ["id", "contentobject_id", "version", "language_code"], "function_attributes" => ["contentclass_attribute" => "contentClassAttribute", "contentclass_attribute_identifier" => "contentClassAttributeIdentifier", "contentclass_attribute_name" => "contentClassAttributeName", "can_translate" => "contentClassAttributeCanTranslate", "is_information_collector" => "contentClassAttributeIsInformationCollector", "is_required" => "contentClassAttributeIsRequired", "content" => "content", 'has_http_value' => 'hasHTTPValue', 'value' => 'value', 'has_content' => 'hasContent', "class_content" => "classContent", "object" => "object", 'object_version' => 'objectVersion', 'view_template' => 'viewTemplateName', 'edit_template' => 'editTemplateName', 'result_template' => 'resultTemplate', "has_validation_error" => "hasValidationError", "validation_error" => "validationError", "validation_log" => "validationLog", "language" => "language", "is_a" => "isA", 'display_info' => 'displayInfo', 'class_display_info' => 'classDisplayInfo'], "increment_key" => "id", "class_name" => "eZContentObjectAttribute", "sort" => ["id" => "asc"], "name" => "ezcontentobject_attribute"];
         return $definition;
     }
 
@@ -136,16 +33,15 @@ class eZContentObjectAttribute extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                 $field_filters,
-                                                array( "id" => $id,
-                                                       "version" => $version ),
+                                                ["id" => $id, "version" => $version],
                                                 $asObject );
     }
 
     static function fetchListByClassID( $id, $version = false, $limit = null, $asObject = true, $asCount = false )
     {
-        $conditions = array();
+        $conditions = [];
         if ( is_array( $id ) )
-            $conditions['contentclassattribute_id'] = array( $id );
+            $conditions['contentclassattribute_id'] = [$id];
         else
             $conditions['contentclassattribute_id'] = $id;
         if ( $version !== false )
@@ -156,9 +52,8 @@ class eZContentObjectAttribute extends eZPersistentObject
         {
             $limit = null;
             $asObject = false;
-            $fieldFilters = array();
-            $customFields = array( array( 'operation' => 'count( id )',
-                                          'name' => 'count' ) );
+            $fieldFilters = [];
+            $customFields = [['operation' => 'count( id )', 'name' => 'count']];
         }
         $objectList = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(),
                                                            $fieldFilters,
@@ -182,10 +77,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                 null,
-                                                array( 'contentclassattribute_id' => $classAttributeID,
-                                                       'contentobject_id' => $objectID,
-                                                       'version' => $version,
-                                                       'language_id' => $languageID ),
+                                                ['contentclassattribute_id' => $classAttributeID, 'contentobject_id' => $objectID, 'version' => $version, 'language_id' => $languageID],
                                                 $asObject );
     }
 
@@ -203,7 +95,7 @@ class eZContentObjectAttribute extends eZPersistentObject
      */
     static function fetchSameClassAttributeIDList( $contentClassAttributeID, $asObject = true, $version = false, $contentObjectID = false, $limit = null )
     {
-        $conditions = array( "contentclassattribute_id" => $contentClassAttributeID );
+        $conditions = ["contentclassattribute_id" => $contentClassAttributeID];
         if ( $version !== false )
             $conditions['version'] = $version;
         if ( $contentObjectID !== false )
@@ -223,9 +115,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(),
                                                     null,
-                                                    array( "contentclassattribute_id" => $this->ContentClassAttributeID,
-                                                           "contentobject_id" => $this->ContentObjectID,
-                                                           "version" => $this->Version ),
+                                                    ["contentclassattribute_id" => $this->ContentClassAttributeID, "contentobject_id" => $this->ContentObjectID, "version" => $this->Version],
                                                     null,
                                                     null,
                                                     $asObject);
@@ -240,16 +130,7 @@ class eZContentObjectAttribute extends eZPersistentObject
 
         $languageID = eZContentLanguage::idByLocale( $languageCode );
 
-        $row = array(
-            "id" => null,
-            "contentobject_id" => $contentobjectID,
-            "version" => $version,
-            "language_code" => $languageCode,
-            'language_id' => $languageID,
-            "contentclassattribute_id" => $contentclassAttributeID,
-            'data_text' => '',
-            'data_int' => null,
-            'data_float' => 0.0 );
+        $row = ["id" => null, "contentobject_id" => $contentobjectID, "version" => $version, "language_code" => $languageCode, 'language_id' => $languageID, "contentclassattribute_id" => $contentclassAttributeID, 'data_text' => '', 'data_int' => null, 'data_float' => 0.0];
         return new eZContentObjectAttribute( $row );
     }
 
@@ -376,7 +257,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                 null,
-                                                array( 'sort_key_string' => $identifier, 'data_type_string' => 'ezstring' ),
+                                                ['sort_key_string' => $identifier, 'data_type_string' => 'ezstring'],
                                                 $asObject );
     }
 
@@ -393,10 +274,7 @@ class eZContentObjectAttribute extends eZPersistentObject
         }
         return eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                 null,
-                                                array( "contentclassattribute_id" => $this->ContentClassAttributeID,
-                                                       "contentobject_id" => $this->ContentObjectID,
-                                                       "version" => $this->Version,
-                                                       "language_code" => $languageCode ),
+                                                ["contentclassattribute_id" => $this->ContentClassAttributeID, "contentobject_id" => $this->ContentObjectID, "version" => $this->Version, "language_code" => $languageCode],
                                                 $asObject );
     }
 
@@ -545,7 +423,7 @@ class eZContentObjectAttribute extends eZPersistentObject
       does not validate.
      */
     function validateInput( $http, $base,
-                            &$inputParameters, $validationParameters = array() )
+                            &$inputParameters, $validationParameters = [] )
     {
         $dataType = $this->dataType();
         if ( $dataType )
@@ -674,7 +552,7 @@ class eZContentObjectAttribute extends eZPersistentObject
       Validates the information collection data.
    �*/
     function validateInformation( $http, $base,
-                                  &$inputParameters, $validationParameters = array() )
+                                  &$inputParameters, $validationParameters = [] )
     {
         $dataType = $this->dataType();
         if ( $dataType )
@@ -708,7 +586,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     /*!
      Executes the custom HTTP action
     */
-    function customHTTPAction( $http, $action, $parameters = array() )
+    function customHTTPAction( $http, $action, $parameters = [] )
     {
         $dataType = $this->dataType();
         if ( $dataType )
@@ -910,13 +788,12 @@ class eZContentObjectAttribute extends eZPersistentObject
         if( $currentVersion == null )
         {
             eZPersistentObject::removeObject( eZContentObjectAttribute::definition(),
-                                              array( "id" => $id ) );
+                                              ["id" => $id] );
         }
         else
         {
             eZPersistentObject::removeObject( eZContentObjectAttribute::definition(),
-                                              array( "id" => $id,
-                                                     "version" => $currentVersion ) );
+                                              ["id" => $id, "version" => $currentVersion] );
         }
     }
 
@@ -945,9 +822,7 @@ class eZContentObjectAttribute extends eZPersistentObject
             {
                 $exAttr =  eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                             null,
-                                                            array( 'contentobject_id'         => $contentObjectID,
-                                                                   'contentclassattribute_id' => $tmp->attribute( 'contentclassattribute_id' ),
-                                                                   'language_code'            => $tmp->attribute( 'language_code' ) ),
+                                                            ['contentobject_id'         => $contentObjectID, 'contentclassattribute_id' => $tmp->attribute( 'contentclassattribute_id' ), 'language_code'            => $tmp->attribute( 'language_code' )],
                                                             true );
 
                 // if the new object already contains the same attribute with another version
@@ -972,9 +847,7 @@ class eZContentObjectAttribute extends eZPersistentObject
         {
             $exAttr = eZPersistentObject::fetchObject( eZContentObjectAttribute::definition(),
                                                        null,
-                                                       array( 'contentobject_id'         => $contentObjectID? $contentObjectID: $tmp->attribute( 'contentobject_id' ),
-                                                              'contentclassattribute_id' => $tmp->attribute( 'contentclassattribute_id' ),
-                                                              'language_code'            => $newLanguageCode ),
+                                                       ['contentobject_id'         => $contentObjectID ?: $tmp->attribute( 'contentobject_id' ), 'contentclassattribute_id' => $tmp->attribute( 'contentclassattribute_id' ), 'language_code'            => $newLanguageCode],
                                                        true );
             // if the new object already contains the same attribute with another version
             if ( is_object( $exAttr ) )
@@ -1177,7 +1050,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     */
     static function metaDataArray( &$attributes, $skipRelationAttributes = false )
     {
-        $metaDataArray = array();
+        $metaDataArray = [];
         if ( !is_array( $attributes ) )
             return false;
         foreach( $attributes as $attribute )
@@ -1199,8 +1072,7 @@ class eZContentObjectAttribute extends eZPersistentObject
             {
                 if ( !is_array( $attributeMetaData ) )
                 {
-                    $attributeMetaData = array( array( 'id' => '',
-                                                       'text' => $attributeMetaData ) );
+                    $attributeMetaData = [['id' => '', 'text' => $attributeMetaData]];
                 }
                 $metaDataArray = array_merge( $metaDataArray, $attributeMetaData );
             }
@@ -1294,7 +1166,7 @@ class eZContentObjectAttribute extends eZPersistentObject
         for ( $i = 1; $i < $numargs; ++$i )
         {
             $arg = $argList[$i];
-            $text = str_replace( "%$i", $arg, $text );
+            $text = str_replace( "%$i", $arg, (string) $text );
         }
         return $text;
     }
@@ -1303,7 +1175,7 @@ class eZContentObjectAttribute extends eZPersistentObject
     {
         if ( is_string( $text ) )
         {
-            $logMessage = array();
+            $logMessage = [];
             $logMessage[] = $text;
             $this->ValidationLog = $logMessage;
         }
@@ -1479,37 +1351,37 @@ class eZContentObjectAttribute extends eZPersistentObject
     }
 
     /// Contains the value(s) submitted in HTTP form
-    public $HTTPValue;
+    public $HTTPValue = null;
 
     /// Contains the content for this attribute
-    public $Content;
+    public $Content = null;
 
     /// Contains information on how to display the current attribute in various viewmodes
-    public $DisplayInfo;
+    public $DisplayInfo = null;
 
     /// Stores the is valid
     public $IsValid;
 
-    public $ContentClassAttributeID;
+    public $ContentClassAttributeID = null;
 
     /// Contains the last validation error
-    public $ValidationError;
+    public $ValidationError = null;
 
     /// Contains the last validation error
-    public $ValidationLog;
+    public $ValidationLog = null;
 
     ///
-    public $ContentClassAttributeIdentifier;
+    public $ContentClassAttributeIdentifier = null;
     public $ContentClassAttributeCanTranslate;
     public $ContentClassAttributeName;
     public $ContentClassAttributeIsInformationCollector;
     public $ContentClassAttributeIsRequired;
 
-    public $ValidationParameters = array();
-    public $InputParameters;
-    public $HasValidationError;
-    public $DataTypeCustom;
-    public $DataTypeString;
+    public $ValidationParameters = [];
+    public $InputParameters = false;
+    public $HasValidationError = false;
+    public $DataTypeCustom = null;
+    public $DataTypeString = null;
     public $Version;
     public $LanguageCode;
     public $LanguageID;

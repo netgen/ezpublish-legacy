@@ -48,22 +48,23 @@
 
 class eZTemplateBlockFunction
 {
-    const SCOPE_RELATIVE = 1;
-    const SCOPE_ROOT = 2;
-    const SCOPE_GLOBAL = 3;
+    final public const SCOPE_RELATIVE = 1;
+    final public const SCOPE_ROOT = 2;
+    final public const SCOPE_GLOBAL = 3;
 
     /**
-     * @param string $blockName
-     * @param string $appendBlockName
-     * @param string $onceName
+     * @param string $BlockName
+     * @param string $AppendBlockName
+     * @param string $OnceName
      */
-    public function __construct(      $blockName = 'set-block',
-                                      $appendBlockName = 'append-block',
-                                      $onceName = 'run-once' )
+    public function __construct(
+        /// \privatesection
+        /// Name of the function
+        public $BlockName = 'set-block',
+        public $AppendBlockName = 'append-block',
+        public $OnceName = 'run-once'
+    )
     {
-        $this->BlockName = $blockName;
-        $this->AppendBlockName = $appendBlockName;
-        $this->OnceName = $onceName;
     }
 
     /*!
@@ -72,25 +73,12 @@ class eZTemplateBlockFunction
     */
     function functionList()
     {
-        return array( $this->BlockName, $this->AppendBlockName, $this->OnceName );
+        return [$this->BlockName, $this->AppendBlockName, $this->OnceName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->BlockName => array( 'parameters' => true,
-                                                 'static' => false,
-                                                 'transform-children' => true,
-                                                 'tree-transformation' => true,
-                                                 'transform-parameters' => true ),
-                      $this->AppendBlockName => array( 'parameters' => true,
-                                                       'static' => false,
-                                                       'transform-children' => true,
-                                                       'tree-transformation' => true,
-                                                       'transform-parameters' => true ),
-                      $this->OnceName => array( 'parameters' => false,
-                                                'static' => false,
-                                                'transform-children' => true,
-                                                'tree-transformation' => true ) );
+        return [$this->BlockName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true], $this->AppendBlockName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true], $this->OnceName => ['parameters' => false, 'static' => false, 'transform-children' => true, 'tree-transformation' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -125,7 +113,7 @@ class eZTemplateBlockFunction
             }
             $variableName = eZTemplateNodeTool::elementConstantValue( $parameters['variable'] );
 
-            $newNodes = array();
+            $newNodes = [];
 
             $children = eZTemplateNodeTool::extractFunctionNodeChildren( $node );
 
@@ -137,8 +125,8 @@ class eZTemplateBlockFunction
             $newNodes[] = eZTemplateNodeTool::createAssignFromOutputVariableNode( 'blockText' );
             if ( $functionName == $this->AppendBlockName )
             {
-                $data = array( eZTemplateNodeTool::createVariableElement( $variableName, $name, $scope ) );
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $data, false, array(),
+                $data = [eZTemplateNodeTool::createVariableElement( $variableName, $name, $scope )];
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $data, false, [],
                                                                       'blockData' );
 
                 // This block checks whether the append-block variable is an array or not.
@@ -147,14 +135,14 @@ class eZTemplateBlockFunction
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( is_null ( \$blockData ) ) \$blockData = array();" );
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( is_array ( \$blockData ) ) \$blockData[] = \$blockText;" );
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "else eZDebug::writeError( \"Variable '$variableName' is already in use.\" );" );
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, 'blockData', false, array(),
-                                                                      array( $name, $scope, $variableName ), false, true, true );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, 'blockData', false, [],
+                                                                      [$name, $scope, $variableName], false, true, true );
                 $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( 'blockData' );
             }
             else
             {
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, 'blockText', false, array(),
-                                                                      array( $name, $scope, $variableName ), false, true, true );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, 'blockText', false, [],
+                                                                      [$name, $scope, $variableName], false, true, true );
             }
             $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( 'blockText' );
             $newNodes[] = eZTemplateNodeTool::createOutputVariableDecreaseNode();
@@ -165,7 +153,7 @@ class eZTemplateBlockFunction
         {
             $functionPlacement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
             $key = $this->placementKey( $functionPlacement );
-            $newNodes = array();
+            $newNodes = [];
             if ( $key !== false )
             {
                 $keyText = eZPHPCreator::variableText( $key, 0, 0, false );
@@ -244,7 +232,7 @@ class eZTemplateBlockFunction
                     return;
                 }
 
-                $childTextElements = array();
+                $childTextElements = [];
                 if ( is_array( $children ) )
                 {
                     foreach ( array_keys( $children ) as $childKey )
@@ -256,7 +244,7 @@ class eZTemplateBlockFunction
                 $text = implode( '', $childTextElements );
                 if ( $functionName == $this->AppendBlockName )
                 {
-                    $textArray = array();
+                    $textArray = [];
                     if ( $tpl->hasVariable( $variableItem, $name ) )
                     {
                         $textArray = $tpl->variable( $variableItem, $name );
@@ -342,12 +330,6 @@ class eZTemplateBlockFunction
     {
         return true;
     }
-
-    /// \privatesection
-    /// Name of the function
-    public $BlockName;
-    public $AppendBlockName;
-    public $OnceName;
 }
 
 ?>

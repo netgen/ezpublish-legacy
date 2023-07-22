@@ -19,18 +19,18 @@ class eZMarkHashing extends eZBenchmarkCase
     public function __construct( $name = false )
     {
         parent::__construct( $name );
-        $this->addMark( 'markMD5', 'MD5 hash', array( 'repeat_count' => 1000 ) );
-        $this->addMark( 'markCRC32', 'CRC32 hash', array( 'repeat_count' => 1000 ) );
+        $this->addMark( 'markMD5', 'MD5 hash', ['repeat_count' => 1000] );
+        $this->addMark( 'markCRC32', 'CRC32 hash', ['repeat_count' => 1000] );
     }
 
     function prime( &$tr )
     {
-        $this->Text = implode( '_', array( '240', 'test', 'some_key', 'more' ) );
+        $this->Text = implode( '_', ['240', 'test', 'some_key', 'more'] );
     }
 
     function markMD5( &$tr )
     {
-        md5( $this->Text );
+        md5( (string) $this->Text );
     }
 
     function markCRC32( &$tr )
@@ -38,7 +38,7 @@ class eZMarkHashing extends eZBenchmarkCase
         eZSys::ezcrc32( $this->Text );
     }
 
-    var $Text;
+    public $Text;
 }
 
 ?>

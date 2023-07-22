@@ -24,36 +24,22 @@ class eZTopMenuOperator
      */
     public function __construct( $name = 'topmenu' )
     {
-        $this->Operators = array( $name );
-        $this->DefaultNames = array(
-            'content' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                  'Content structure' ),
-                                'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                    'Manage the main content structure of the site.' ) ),
-            'media' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                'Media library' ),
-                              'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                  'Manage images, files, documents, etc.' ) ),
-            'users' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                'User accounts' ),
-                              'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                  'Manage users, user groups and permission settings.' ) ),
-            'shop' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                               'Webshop' ),
-                             'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                 'Manage customers, orders, discounts and VAT types; view sales statistics.' ) ),
-            'design' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                 'Design' ),
-                               'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                   'Manage templates, menus, toolbars and other things related to appearence.' ) ),
-            'setup' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                'Setup' ),
-                              'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                  'Configure settings and manage advanced functionality.' ) ),
-            'dashboard' => array( 'name' => ezpI18n::tr( 'design/admin/pagelayout',
-                                                     'Dashboard' ),
-                                   'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
-                                                       'Manage items and settings that belong to your account.' ) ) );
+        $this->Operators = [$name];
+        $this->DefaultNames = ['content' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                              'Content structure' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage the main content structure of the site.' )], 'media' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                            'Media library' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage images, files, documents, etc.' )], 'users' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                            'User accounts' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage users, user groups and permission settings.' )], 'shop' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                           'Webshop' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage customers, orders, discounts and VAT types; view sales statistics.' )], 'design' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                             'Design' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage templates, menus, toolbars and other things related to appearence.' )], 'setup' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                            'Setup' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Configure settings and manage advanced functionality.' )], 'dashboard' => ['name' => ezpI18n::tr( 'design/admin/pagelayout',
+                                                 'Dashboard' ), 'tooltip'=> ezpI18n::tr( 'design/admin/pagelayout',
+                            'Manage items and settings that belong to your account.' )]];
     }
 
     /*!
@@ -69,12 +55,7 @@ class eZTopMenuOperator
     */
     function namedParameterList()
     {
-        return array( 'context' => array( 'type' => 'string',
-                                          'required' => true,
-                                          'default' => 'content' ),
-                      'filter_on_access' => array( 'type' => 'bool',
-                                          'required' => false,
-                                          'default' => false ) );
+        return ['context' => ['type' => 'string', 'required' => true, 'default' => 'content'], 'filter_on_access' => ['type' => 'bool', 'required' => false, 'default' => false]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
@@ -85,11 +66,11 @@ class eZTopMenuOperator
         if ( !$ini->hasVariable( 'TopAdminMenu', 'Tabs' ) )
         {
             eZDebug::writeError( 'Top Admin menu is not configured. Ini  setting [TopAdminMenu] Tabs[] is missing' );
-            $operatorValue = array();
+            $operatorValue = [];
             return;
         }
 
-        $menu = array();
+        $menu = [];
         $context = $namedParameters['context'];
         $tabIDs = $ini->variable( 'TopAdminMenu', 'Tabs' );
         foreach ( $tabIDs as $tabID )
@@ -100,7 +81,7 @@ class eZTopMenuOperator
                 continue;
             }
 
-            $menuItem = array();
+            $menuItem = [];
             $menuItem['access'] = true;
             if ( $ini->hasVariable( 'Topmenu_' . $tabID , 'PolicyList' ) )
             {
@@ -108,12 +89,12 @@ class eZTopMenuOperator
                 foreach( $policyList as $policy )
                 {
                     // Value is either "<node_id>" or "<module>/<function>"
-                    if ( strpos( $policy, '/' ) !== false )
+                    if ( str_contains( (string) $policy, '/' ) )
                     {
                         if ( !isset( $user ) )
                             $user = eZUser::currentUser();
 
-                        list( $module, $function ) = explode( '/', $policy );
+                        [$module, $function] = explode( '/', (string) $policy );
                         $result = $user->hasAccessTo( $module, $function );
 
                         if ( $result['accessWord'] === 'no' )
@@ -180,7 +161,7 @@ class eZTopMenuOperator
             }
             else
             {
-                $menuItem['tooltip'] = isset( $this->DefaultNames[$tabID]['tooltip'] ) ? $this->DefaultNames[$tabID]['tooltip'] : '';
+                $menuItem['tooltip'] = $this->DefaultNames[$tabID]['tooltip'] ?? '';
             }
 
             $menuItem['navigationpart_identifier'] =  $ini->variable( 'Topmenu_' . $tabID , 'NavigationPartIdentifier' );

@@ -16,22 +16,16 @@
 
 class eZTemplateElementParser
 {
-    function templateTypeName( $type )
+    function templateTypeName($type)
     {
-        switch ( $type )
-        {
-            case eZTemplate::TYPE_STRING:
-                return "string";
-            case eZTemplate::TYPE_NUMERIC:
-                return "numeric";
-            case eZTemplate::TYPE_IDENTIFIER:
-                return "identifier";
-            case eZTemplate::TYPE_VARIABLE:
-                return "variable";
-            case eZTemplate::TYPE_ATTRIBUTE:
-                return "attribute";
-        }
-        return null;
+        return match ($type) {
+            eZTemplate::TYPE_STRING => "string",
+            eZTemplate::TYPE_NUMERIC => "numeric",
+            eZTemplate::TYPE_IDENTIFIER => "identifier",
+            eZTemplate::TYPE_VARIABLE => "variable",
+            eZTemplate::TYPE_ATTRIBUTE => "attribute",
+            default => null,
+        };
     }
 
     /*!
@@ -42,7 +36,7 @@ class eZTemplateElementParser
                                $undefinedType = eZTemplate::TYPE_ATTRIBUTE )
     {
         $currentPosition = $startPosition;
-        $elements = array();
+        $elements = [];
         $lastPosition = false;
         if ( $allowedType === false )
             $allowedType = eZTemplate::TYPE_BASIC;
@@ -64,7 +58,7 @@ class eZTemplateElementParser
             if ( $endMarker !== false )
             {
                 if ( $currentPosition < $textLength and
-                     strpos( $endMarker, $text[$currentPosition] ) !== false )
+                     str_contains( (string) $endMarker, (string) $text[$currentPosition] ) )
                     break;
             }
             if ( $text[$currentPosition] == '|' )
@@ -107,10 +101,13 @@ class eZTemplateElementParser
                                                               eZTemplate::TYPE_BASIC, $maxAttributeElements, $attributeEndMarker );
                 if ( $attributeEndPosition > $currentPosition )
                 {
-                    $element = array( eZTemplate::TYPE_ATTRIBUTE, // type
-                                      $attributeElements, // content
-                                      false // debug
-                                      );
+                    $element = [
+                        eZTemplate::TYPE_ATTRIBUTE,
+                        // type
+                        $attributeElements,
+                        // content
+                        false,
+                    ];
                     $elements[] = $element;
                     if ( $attributeEndMarker !== false )
                         $attributeEndPosition += strlen( $attributeEndMarker );
@@ -129,12 +126,13 @@ class eZTemplateElementParser
                                                               $variableNamespace, $variableName, $namespaceScope );
                 if ( $variableEndPosition > $currentPosition )
                 {
-                    $element = array( eZTemplate::TYPE_VARIABLE, // type
-                                      array( $variableNamespace,
-                                             $namespaceScope,
-                                             $variableName ), // content
-                                      false // debug
-                                      );
+                    $element = [
+                        eZTemplate::TYPE_VARIABLE,
+                        // type
+                        [$variableNamespace, $namespaceScope, $variableName],
+                        // content
+                        false,
+                    ];
                     $elements[] = $element;
                     $currentPosition = $variableEndPosition;
                     $allowedType = eZTemplate::TYPE_MODIFIER_MASK;
@@ -151,12 +149,15 @@ class eZTemplateElementParser
                 $quote = $text[$currentPosition];
                 ++$currentPosition;
                 $quoteEndPosition = $this->quoteEndPos( $tpl, $text, $currentPosition, $textLength, $quote );
-                $string = substr( $text, $currentPosition, $quoteEndPosition - $currentPosition );
+                $string = substr( (string) $text, $currentPosition, $quoteEndPosition - $currentPosition );
                 $string = $this->unescapeCharacters( $string );
-                $element = array( eZTemplate::TYPE_STRING, // type
-                                  $string, // content
-                                  false // debug
-                                  );
+                $element = [
+                    eZTemplate::TYPE_STRING,
+                    // type
+                    $string,
+                    // content
+                    false,
+                ];
                 $elements[] = $element;
                 $currentPosition = $quoteEndPosition + 1;
                 $allowedType = eZTemplate::TYPE_OPERATOR_BIT;
@@ -173,15 +174,18 @@ class eZTemplateElementParser
                         break;
                     }
                     // We got a number
-                    $number = substr( $text, $currentPosition, $numericEndPosition - $currentPosition );
+                    $number = substr( (string) $text, $currentPosition, $numericEndPosition - $currentPosition );
                     if ( $float )
                         $number = (float)$number;
                     else
                         $number = (int)$number;
-                    $element = array( eZTemplate::TYPE_NUMERIC, // type
-                                      $number, // content
-                                      false // debug
-                                      );
+                    $element = [
+                        eZTemplate::TYPE_NUMERIC,
+                        // type
+                        $number,
+                        // content
+                        false,
+                    ];
                     $elements[] = $element;
                     $currentPosition = $numericEndPosition;
                     $allowedType = eZTemplate::TYPE_OPERATOR_BIT;
@@ -203,8 +207,8 @@ class eZTemplateElementParser
                             $currentPosition = $lastPosition;
                             break;
                         }
-                        $operatorName = substr( $text, $currentPosition, $identifierEndPosition - $currentPosition );
-                        $operatorParameterElements = array( $operatorName );
+                        $operatorName = substr( (string) $text, $currentPosition, $identifierEndPosition - $currentPosition );
+                        $operatorParameterElements = [$operatorName];
 
                         if ( $identifierEndPosition < $textLength and
                              $text[$identifierEndPosition] == '(' )
@@ -263,10 +267,13 @@ class eZTemplateElementParser
                             $operatorEndPosition = $identifierEndPosition;
                         }
 
-                        $element = array( eZTemplate::TYPE_OPERATOR, // type
-                                          $operatorParameterElements, // content
-                                          false // debug
-                                          );
+                        $element = [
+                            eZTemplate::TYPE_OPERATOR,
+                            // type
+                            $operatorParameterElements,
+                            // content
+                            false,
+                        ];
                         $elements[] = $element;
                         $currentPosition = $operatorEndPosition;
                         $allowedType = eZTemplate::TYPE_MODIFIER_MASK;
@@ -278,11 +285,14 @@ class eZTemplateElementParser
                             $currentPosition = $lastPosition;
                             break;
                         }
-                        $identifier = substr( $text, $currentPosition, $identifierEndPosition - $currentPosition );
-                        $element = array( eZTemplate::TYPE_IDENTIFIER, // type
-                                          $identifier, // content
-                                          false // debug
-                                          );
+                        $identifier = substr( (string) $text, $currentPosition, $identifierEndPosition - $currentPosition );
+                        $element = [
+                            eZTemplate::TYPE_IDENTIFIER,
+                            // type
+                            $identifier,
+                            // content
+                            false,
+                        ];
                         $elements[] = $element;
                         $currentPosition = $identifierEndPosition;
                         $allowedType = eZTemplate::TYPE_NONE;
@@ -301,7 +311,7 @@ class eZTemplateElementParser
                              &$namespace, &$name, &$scope )
     {
         $currentPosition = $startPosition;
-        $namespaces = array();
+        $namespaces = [];
         $variableName = false;
         $lastPosition = false;
         $scopeType = eZTemplate::NAMESPACE_SCOPE_LOCAL;
@@ -349,7 +359,7 @@ class eZTemplateElementParser
                 $identifierEndPosition = $this->identifierEndPosition( $tpl, $text, $currentPosition, $textLength );
                 if ( $identifierEndPosition > $currentPosition )
                 {
-                    $identifier = substr( $text, $currentPosition, $identifierEndPosition - $currentPosition );
+                    $identifier = substr( (string) $text, $currentPosition, $identifierEndPosition - $currentPosition );
                     $currentPosition = $identifierEndPosition;
                     if ( $identifierEndPosition < $textLength and
                          $text[$identifierEndPosition] == ':' )
@@ -400,7 +410,7 @@ class eZTemplateElementParser
     function unescapeCharacters( $string )
     {
         $newString = '';
-        $len = strlen( $string );
+        $len = strlen( (string) $string );
 
         // Fix escaped characters (double-quote, single-quote, newline, carriage-return, tab)
         for ( $i = 0; $i < $len; ++$i )
@@ -422,36 +432,13 @@ class eZTemplateElementParser
             }
 
             $c2 = $string[++$i];
-            switch ( $c2 )
-            {
-                case 'n':
-                {
-                    $newString .= "\n";
-                } break;
-
-                case 'r':
-                {
-                    $newString .= "\r";
-                } break;
-
-                case 't':
-                {
-                    $newString .= "\t";
-                } break;
-
-                case "'":
-                case '"':
-                case '\\':
-                {
-                    $newString .= $c2;
-                } break;
-
-                // If it is not known we keep the characters.
-                default:
-                {
-                    $newString .= $c . $c2;
-                }
-            }
+            match ($c2) {
+                'n' => $newString .= "\n",
+                'r' => $newString .= "\r",
+                't' => $newString .= "\t",
+                "'", '"', '\\' => $newString .= $c2,
+                default => $newString .= $c . $c2,
+            };
         }
         return $newString;
     }
@@ -465,7 +452,7 @@ class eZTemplateElementParser
         $pos = $start_pos;
         while ( $pos < $len )
         {
-            if ( !preg_match( "/^[a-zA-Z0-9_-]$/", $text[$pos] ) )
+            if ( !preg_match( "/^[a-zA-Z0-9_-]$/", (string) $text[$pos] ) )
             {
                 return $pos;
             }

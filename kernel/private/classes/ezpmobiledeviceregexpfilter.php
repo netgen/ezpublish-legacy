@@ -18,7 +18,7 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
      *
      * @var #E#V_SERVER|string
      */
-    protected $httpUserAgent;
+    protected $httpUserAgent = '';
 
     /**
      * Container for the HTTP Accept string
@@ -47,7 +47,6 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
      */
     public function __construct()
     {
-        $this->httpUserAgent = '';
         if ( isset( $_SERVER['HTTP_USER_AGENT'] ) )
         {
             $this->httpUserAgent = $_SERVER['HTTP_USER_AGENT'];
@@ -72,13 +71,13 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
 
         if ( isset( $_SERVER['HTTP_X_WAP_PROFILE'] )
                 || isset( $_SERVER['HTTP_PROFILE'] )
-                    || strpos( $this->httpAccept, 'text/vnd.wap.wml' ) > 0
-                        || strpos( $this->httpAccept, 'application/vnd.wap.xhtml+xml' ) > 0)
+                    || strpos( (string) $this->httpAccept, 'text/vnd.wap.wml' ) > 0
+                        || strpos( (string) $this->httpAccept, 'application/vnd.wap.xhtml+xml' ) > 0)
         {
             $this->isMobileDevice = true;
         }
-        else if ( in_array( strtolower( substr( $this->httpUserAgent, 0, 4 ) ),
-                            explode( '|', $ini->variable( 'SiteAccessSettings', 'MobileUserAgentCodes' ) ) ) )
+        else if ( in_array( strtolower( substr( (string) $this->httpUserAgent, 0, 4 ) ),
+                            explode( '|', (string) $ini->variable( 'SiteAccessSettings', 'MobileUserAgentCodes' ) ) ) )
         {
             $this->isMobileDevice = true;
         }
@@ -86,7 +85,7 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
         {
             foreach ( $ini->variable( 'SiteAccessSettings', 'MobileUserAgentRegexps' ) as $userAgentAlias => $regexp )
             {
-                if ( preg_match( $regexp, $this->httpUserAgent ) )
+                if ( preg_match( $regexp, (string) $this->httpUserAgent ) )
                 {
                     $this->isMobileDevice = true;
                     $this->userAgentAlias = $userAgentAlias;
@@ -108,7 +107,7 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
 
         if ( $http->hasGetVariable( 'notmobile' ) )
         {
-            setcookie( 'eZMobileDeviceDetect', 1, time() + (int)eZINI::instance()->variable( 'SiteAccessSettings', 'MobileDeviceDetectCookieTimeout' ), '/' );
+            setcookie( 'eZMobileDeviceDetect', 1, ['expires' => time() + (int)eZINI::instance()->variable( 'SiteAccessSettings', 'MobileDeviceDetectCookieTimeout' ), 'path' => '/'] );
 
             $http->redirect( eZSys::indexDir() );
 
@@ -122,7 +121,7 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
             $redirectUrl = eZINI::instance()->variable( 'SiteAccessSettings', 'MobileSiteAccessURL' );
 
             // Do not redirect if already on the redirect url
-            if ( strpos( $currentUrl, $redirectUrl ) !== 0 )
+            if ( !str_starts_with($currentUrl, (string) $redirectUrl) )
             {
                 // Default siteaccess name needs to be removed from the uri when redirecting
                 $uri = explode( '/', ltrim( eZSys::requestURI(), '/' ) );

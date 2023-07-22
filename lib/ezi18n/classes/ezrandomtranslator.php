@@ -30,7 +30,7 @@ class eZRandomTranslator extends eZTranslatorGroup
     {
         if ( $this->handlerCount() == 0 )
             return -1;
-        return mt_rand( 0, $this->handlerCount() - 1 );
+        return random_int( 0, $this->handlerCount() - 1 );
     }
 
     /*!
@@ -40,7 +40,7 @@ class eZRandomTranslator extends eZTranslatorGroup
     {
         if ( $this->handlerCount() == 0 )
             return -1;
-        return mt_rand( 0, $this->handlerCount() - 1 );
+        return random_int( 0, $this->handlerCount() - 1 );
     }
 }
 

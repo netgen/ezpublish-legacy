@@ -15,13 +15,12 @@ class ezpRestContentRenderer
      */
     protected static $renderer = null;
 
-    const DEFAULT_RENDERER = 'xhtml';
+    final public const DEFAULT_RENDERER = 'xhtml';
 
     /**
      * Returns ezpRestContentProviderInterface object for requested renderer
      *
      * @param string $renderer
-     * @param ezpContent $content
      * @return ezpRestContentProviderInterface
      */
     protected static function createRenderer( $renderer, ezpContent $content, ezpRestMvcController $controller )
@@ -31,7 +30,7 @@ class ezpRestContentRenderer
         $rendererOptions->iniSection = 'OutputSettings';
         $rendererOptions->iniVariable = 'RendererClass';
         $rendererOptions->handlerIndex = $renderer;
-        $rendererOptions->handlerParams = array( $content, $controller );
+        $rendererOptions->handlerParams = [$content, $controller];
 
         $rendererInstance = eZExtension::getHandlerClass( $rendererOptions );
 
@@ -46,7 +45,6 @@ class ezpRestContentRenderer
      *
      * @static
      * @param string $renderer
-     * @param ezpContent $content
      * @return bool|ezpRestContentProviderInterface
      */
     public static function getRenderer( $renderer, ezpContent $content, ezpRestMvcController $controller )

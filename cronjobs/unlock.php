@@ -55,7 +55,7 @@ function fetchLockedObjects()
 
     if( $rows )
     {
-        $contentObjectIDList = array();
+        $contentObjectIDList = [];
         foreach( $rows as $row )
             $contentObjectIDList[] = $row['contentobject_id'];
 

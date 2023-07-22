@@ -23,7 +23,7 @@ class eZTemplateOperator
     */
     function operatorList()
     {
-        $operationList = array();
+        $operationList = [];
         return $operationList;
     }
 
@@ -43,7 +43,7 @@ class eZTemplateOperator
     */
     function namedParameterList()
     {
-        return array();
+        return [];
     }
 
     /*!

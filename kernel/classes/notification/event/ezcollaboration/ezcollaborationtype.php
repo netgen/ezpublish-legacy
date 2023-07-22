@@ -16,7 +16,7 @@
 
 class eZCollaborationEventType extends eZNotificationEventType
 {
-    const NOTIFICATION_TYPE_STRING = 'ezcollaboration';
+    final public const NOTIFICATION_TYPE_STRING = 'ezcollaboration';
 
     public function __construct()
     {
@@ -32,8 +32,7 @@ class eZCollaborationEventType extends eZNotificationEventType
 
     function attributes()
     {
-        return array_merge( array( 'collaboration_identifier',
-                                   'collaboration_id' ),
+        return array_merge( ['collaboration_identifier', 'collaboration_id'],
                             eZNotificationEventType::attributes() );
     }
 

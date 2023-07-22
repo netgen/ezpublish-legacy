@@ -10,11 +10,11 @@
 
 class WorkflowEventRegressionFetchTemplateRepeatType extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = 'fetchtemplaterepeat';
+    final public const WORKFLOW_TYPE_STRING = 'fetchtemplaterepeat';
     function __construct()
     {
         parent::__construct( WorkflowEventRegressionFetchTemplateRepeatType::WORKFLOW_TYPE_STRING, "WorkflowEventRegressionFetchTemplateRepeatType test" );
-        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before' ) ) ) );
+        $this->setTriggerTypes( ['content' => ['publish' => ['before']]] );
     }
 
     function execute( $process, $event )
@@ -24,11 +24,9 @@ class WorkflowEventRegressionFetchTemplateRepeatType extends eZWorkflowEventType
             $index = eZSys::indexFile( true );
             $requestUri = eZSys::indexFile( false ) . eZSys::requestUri();
             $replace = "@" . preg_quote( $index ) . "@i";
-            $requestUri = preg_replace( array( $replace ), array(''), $requestUri, 1 );
+            $requestUri = preg_replace( [$replace], [''], $requestUri, 1 );
 
-            $process->Template = array( 'templateName' => 'file:' . dirname( __FILE__ ) . basename( __FILE__, '.php' ) .'.tpl',
-                                        'templateVars' => array( 'uri' => $requestUri ),
-                                        'path' => array( array( 'url' => false, 'text' => 'Workflow event regression: fetch template repeat' ) ) );
+            $process->Template = ['templateName' => 'file:' . __DIR__ . basename( __FILE__, '.php' ) .'.tpl', 'templateVars' => ['uri' => $requestUri], 'path' => [['url' => false, 'text' => 'Workflow event regression: fetch template repeat']]];
             return eZWorkflowType::STATUS_FETCH_TEMPLATE_REPEAT;
         }
         else

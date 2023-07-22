@@ -18,9 +18,8 @@ if ( $http->hasPostVariable( 'Cancel' ) )
 $ini = eZINI::instance();
 $tpl = eZTemplate::factory();
 
-$Result = array();
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template edit' ) ) );
+$Result = [];
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/design', 'Template edit' )]];
 
 $template = "";
 $i = 0;
@@ -107,11 +106,11 @@ if ( $module->isCurrentAction( 'Save' ) )
         if ( $templateConfig->variable( 'CharsetSettings', 'AutoConvertOnSave') == 'enabled' )
         {
             $outputCharset = eZCharsetInfo::realCharsetCode( $outputCharset );
-            if ( preg_match( '|{\*\?template.*charset=([a-zA-Z0-9-]*).*\?\*}|', $templateContent, $matches ) )
+            if ( preg_match( '|{\*\?template.*charset=([a-zA-Z0-9-]*).*\?\*}|', (string) $templateContent, $matches ) )
             {
                 $templateContent = preg_replace( '|({\*\?template.*charset=)[a-zA-Z0-9-]*(.*\?\*})|',
                                                  '\\1'. $outputCharset. '\\2',
-                                                 $templateContent );
+                                                 (string) $templateContent );
             }
             else
             {
@@ -125,7 +124,7 @@ if ( $module->isCurrentAction( 'Save' ) )
             /* Here we figure out the characterset of the template. If there is a charset
              * associated with the template in the header we use that one, if not we fall
              * back to the INI setting "DefaultTemplateCharset". */
-            if ( preg_match( '|{\*\?template.*charset=([a-zA-Z0-9-]*).*\?\*}|', $templateContent, $matches ) )
+            if ( preg_match( '|{\*\?template.*charset=([a-zA-Z0-9-]*).*\?\*}|', (string) $templateContent, $matches ) )
             {
                 $templateCharset = $matches[1];
             }
@@ -146,13 +145,13 @@ if ( $module->isCurrentAction( 'Save' ) )
         $fp = fopen( $template, 'w' );
         if ( $fp )
         {
-            fwrite( $fp, $templateContent );
+            fwrite( $fp, (string) $templateContent );
         }
         fclose( $fp );
 
         $siteConfig = eZINI::instance( 'site.ini' );
         $filePermissions = $siteConfig->variable( 'FileSettings', 'StorageFilePermissions');
-        chmod( $template, octdec( $filePermissions ) );
+        chmod( $template, octdec( (string) $filePermissions ) );
 
         // Expire content view cache
         eZContentCacheManager::clearAllContentCache();

@@ -33,11 +33,11 @@ if ( $module->isCurrentAction( 'ActivateExtensions' ) )
     {
         $selectedExtensionArray = $http->postVariable( "ActiveExtensionList" );
         if ( !is_array( $selectedExtensionArray ) )
-            $selectedExtensionArray = array( $selectedExtensionArray );
+            $selectedExtensionArray = [$selectedExtensionArray];
     }
     else
     {
-        $selectedExtensionArray = array();
+        $selectedExtensionArray = [];
     }
 
     // The file settings/override/site.ini.append.php is updated like this:
@@ -85,10 +85,9 @@ if ( $module->isCurrentAction( 'GenerateAutoloadArrays' ) )
 $tpl->setVariable( "available_extension_array", $availableExtensionArray );
 $tpl->setVariable( "selected_extension_array", $selectedExtensions );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/extensions.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'Extension configuration' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'Extension configuration' )]];
 
 function updateAutoload( $tpl = null )
 {
@@ -111,9 +110,9 @@ function updateAutoload( $tpl = null )
             // For web output we want to mark some of the important parts of
             // the message
             $pattern = '@^Class\s+(\w+)\s+.* file\s(.+\.php).*\n(.+\.php)\s@';
-            preg_match( $pattern, $warning, $m );
+            preg_match( $pattern, (string) $warning, $m );
 
-            $warning = str_replace( $m[1], '<strong>'.$m[1].'</strong>', $warning );
+            $warning = str_replace( $m[1], '<strong>'.$m[1].'</strong>', (string) $warning );
             $warning = str_replace( $m[2], '<em>'.$m[2].'</em>', $warning );
             $warning = str_replace( $m[3], '<em>'.$m[3].'</em>', $warning );
         }

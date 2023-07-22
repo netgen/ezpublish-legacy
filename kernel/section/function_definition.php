@@ -6,77 +6,18 @@
  * @package kernel
  */
 
-$FunctionList = array();
+$FunctionList = [];
 
-$FunctionList['object'] = array( 'name' => 'object',
-                                 'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                         'method' => 'fetchSectionObject' ),
-                                 'parameter_type' => 'standard',
-                                 'parameters' => array( array( 'name' => 'section_id',
-                                                               'type' => 'integer',
-                                                               'required' => false,
-                                                               'default' => false ),
-                                                        array( 'name' => 'identifier',
-                                                               'type' => 'string',
-                                                               'required' => false,
-                                                               'default' => false ) ) );
+$FunctionList['object'] = ['name' => 'object', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchSectionObject'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'section_id', 'type' => 'integer', 'required' => false, 'default' => false], ['name' => 'identifier', 'type' => 'string', 'required' => false, 'default' => false]]];
 
-$FunctionList['list'] = array( 'name' => 'list',
-                               'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                       'method' => 'fetchSectionList' ),
-                               'parameter_type' => 'standard',
-                               'parameters' => array( ) );
+$FunctionList['list'] = ['name' => 'list', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchSectionList'], 'parameter_type' => 'standard', 'parameters' => []];
 
-$FunctionList['object_list'] = array( 'name' => 'object_list',
-                                      'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                              'method' => 'fetchObjectList' ),
-                                      'parameter_type' => 'standard',
-                                      'parameters' => array( array( 'name' => 'section_id',
-                                                                    'type' => 'integer',
-                                                                    'required' => true ),
-                                                             array( 'name' => 'offset',
-                                                                    'type' => 'integer',
-                                                                    'required' => false,
-                                                                    'default' => false ),
-                                                             array( 'name' => 'limit',
-                                                                    'type' => 'integer',
-                                                                    'required' => false,
-                                                                    'default' => false ),
-                                                             array( 'name' => 'sort_order',
-                                                                    'type' => 'variant',
-                                                                    'required' => false,
-                                                                    'default' => false ),
-                                                             array( 'name' => 'status',
-                                                                    'type' => 'string',
-                                                                    'required' => false,
-                                                                    'default' => false ) ) );
+$FunctionList['object_list'] = ['name' => 'object_list', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchObjectList'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'section_id', 'type' => 'integer', 'required' => true], ['name' => 'offset', 'type' => 'integer', 'required' => false, 'default' => false], ['name' => 'limit', 'type' => 'integer', 'required' => false, 'default' => false], ['name' => 'sort_order', 'type' => 'variant', 'required' => false, 'default' => false], ['name' => 'status', 'type' => 'string', 'required' => false, 'default' => false]]];
 
-$FunctionList['object_list_count'] = array( 'name' => 'object_list_count',
-                                            'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                                    'method' => 'fetchObjectListCount' ),
-                                            'parameter_type' => 'standard',
-                                            'parameters' => array( array( 'name' => 'section_id',
-                                                                          'type' => 'integer',
-                                                                          'required' => true ),
-                                                                   array( 'name' => 'status',
-                                                                          'type' => 'string',
-                                                                          'required' => false,
-                                                                          'default' => false ) ) );
+$FunctionList['object_list_count'] = ['name' => 'object_list_count', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchObjectListCount'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'section_id', 'type' => 'integer', 'required' => true], ['name' => 'status', 'type' => 'string', 'required' => false, 'default' => false]]];
 
-$FunctionList['roles'] = array( 'name' => 'roles',
-                                'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                        'method' => 'fetchRoles' ),
-                                'parameter_type' => 'standard',
-                                'parameters' => array( array( 'name' => 'section_id',
-                                                              'type' => 'integer',
-                                                              'required' => true ) ) );
+$FunctionList['roles'] = ['name' => 'roles', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchRoles'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'section_id', 'type' => 'integer', 'required' => true]]];
 
-$FunctionList['user_roles'] = array( 'name' => 'user_roles',
-                                     'call_method' => array( 'class' => 'eZSectionFunctionCollection',
-                                                             'method' => 'fetchUserRoles' ),
-                                     'parameter_type' => 'standard',
-                                     'parameters' => array( array( 'name' => 'section_id',
-                                                                   'type' => 'integer',
-                                                                   'required' => true ) ) );
+$FunctionList['user_roles'] = ['name' => 'user_roles', 'call_method' => ['class' => 'eZSectionFunctionCollection', 'method' => 'fetchUserRoles'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'section_id', 'type' => 'integer', 'required' => true]]];
 
 ?>

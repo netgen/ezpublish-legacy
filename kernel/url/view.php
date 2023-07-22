@@ -11,12 +11,11 @@ $urlID = $Params['ID'];
 
 if( eZPreferences::value( 'admin_url_view_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_url_view_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_url_view_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -34,11 +33,11 @@ if ( !$url )
     return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
 
 $link = $url->attribute( 'url' );
-if ( preg_match("/^(http:)/i", $link ) or
-     preg_match("/^(ftp:)/i", $link ) or
-     preg_match("/^(https:)/i", $link ) or
-     preg_match("/^(file:)/i", $link ) or
-     preg_match("/^(mailto:)/i", $link ) )
+if ( preg_match("/^(http:)/i", (string) $link ) or
+     preg_match("/^(ftp:)/i", (string) $link ) or
+     preg_match("/^(https:)/i", (string) $link ) or
+     preg_match("/^(file:)/i", (string) $link ) or
+     preg_match("/^(mailto:)/i", (string) $link ) )
 {
     // No changes
 }
@@ -50,11 +49,11 @@ else
     $preFix = $protocol . "://" . $domain;
     $preFix .= eZSys::wwwDir();
 
-    $link = preg_replace("/^\//", "", $link );
+    $link = preg_replace("/^\//", "", (string) $link );
     $link = $preFix . "/" . $link;
 }
 
-$viewParameters = array( 'offset' => $offset, 'limit'  => $limit );
+$viewParameters = ['offset' => $offset, 'limit'  => $limit];
 $http = eZHTTPTool::instance();
 $objectList = eZURLObjectLink::fetchObjectVersionList( $urlID, $viewParameters );
 $urlViewCount= eZURLObjectLink::fetchObjectVersionCount( $urlID );
@@ -67,7 +66,7 @@ if ( $Module->isCurrentAction( 'EditObject' ) )
         $version = eZContentObjectVersion::fetch( $versionID );
         $contentObjectID = $version->attribute( 'contentobject_id' );
         $versionNr = $version->attribute( 'version' );
-        $Module->redirect( 'content', 'edit', array( $contentObjectID, $versionNr ) );
+        $Module->redirect( 'content', 'edit', [$contentObjectID, $versionNr] );
     }
 }
 
@@ -81,11 +80,8 @@ $tpl->setVariable( 'object_list', $objectList );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'url_view_count', $urlViewCount );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:url/view.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/url', 'URL' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/url', 'View' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/url', 'URL' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/url', 'View' )]];
 
 ?>

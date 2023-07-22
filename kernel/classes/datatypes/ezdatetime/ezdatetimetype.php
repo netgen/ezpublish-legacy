@@ -17,24 +17,24 @@
 
 class eZDateTimeType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezdatetime';
+    final public const DATA_TYPE_STRING = 'ezdatetime';
 
-    const DEFAULT_FIELD = 'data_int1';
+    final public const DEFAULT_FIELD = 'data_int1';
 
-    const USE_SECONDS_FIELD = 'data_int2';
+    final public const USE_SECONDS_FIELD = 'data_int2';
 
-    const ADJUSTMENT_FIELD = 'data_text5';
+    final public const ADJUSTMENT_FIELD = 'data_text5';
 
-    const DEFAULT_EMTPY = 0;
+    final public const DEFAULT_EMTPY = 0;
 
-    const DEFAULT_CURRENT_DATE = 1;
+    final public const DEFAULT_CURRENT_DATE = 1;
 
-    const DEFAULT_ADJUSTMENT = 2;
+    final public const DEFAULT_ADJUSTMENT = 2;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Date and time", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -290,7 +290,7 @@ class eZDateTimeType extends eZDataType
     function toString( $contentObjectAttribute )
     {
         $stamp = $contentObjectAttribute->attribute( 'data_int' );
-        return $stamp === null ? '' : $stamp;
+        return $stamp ?? '';
     }
 
     function fromString( $contentObjectAttribute, $string )
@@ -322,13 +322,14 @@ class eZDateTimeType extends eZDataType
 
     function classAttributeContent( $classAttribute )
     {
+        $content = [];
         $xmlText = $classAttribute->attribute( 'data_text5' );
-        if ( trim( $xmlText ) == '' )
+        if ( trim( (string) $xmlText ) == '' )
         {
-            $classAttrContent = eZDateTimeType::defaultClassAttributeContent();
+            $classAttrContent = (new eZDateTimeType())->defaultClassAttributeContent();
             return $classAttrContent;
         }
-        $doc = eZDateTimeType::parseXML( $xmlText );
+        $doc = (new eZDateTimeType())->parseXML($xmlText);
         $root = $doc->documentElement;
         $type = $root->getElementsByTagName( 'year' )->item( 0 );
         if ( $type )
@@ -365,12 +366,7 @@ class eZDateTimeType extends eZDataType
 
     function defaultClassAttributeContent()
     {
-        return array( 'year' => '',
-                      'month' => '',
-                      'day' => '',
-                      'hour' => '',
-                      'minute' => '',
-                      'second' => '' );
+        return ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''];
     }
 
     /*!
@@ -415,7 +411,7 @@ class eZDateTimeType extends eZDataType
             {
                 $doc = new DOMDocument( '1.0', 'utf-8' );
                 $root = $doc->createElement( 'adjustment' );
-                $contentList = eZDateTimeType::contentObjectArrayXMLMap();
+                $contentList = (new eZDateTimeType())->contentObjectArrayXMLMap();
                 foreach ( $contentList as $key => $value )
                 {
                     $postValue = $http->postVariable( $base . '_ezdatetime_' . $value . '_' . $classAttribute->attribute( 'id' ) );
@@ -438,12 +434,7 @@ class eZDateTimeType extends eZDataType
 
     function contentObjectArrayXMLMap()
     {
-        return array( 'year' => 'year',
-                      'month' => 'month',
-                      'day' => 'day',
-                      'hour' => 'hour',
-                      'minute' => 'minute',
-                      'second' => 'second' );
+        return ['year' => 'year', 'month' => 'month', 'day' => 'day', 'hour' => 'hour', 'minute' => 'minute', 'second' => 'second'];
     }
 
 
@@ -527,7 +518,7 @@ class eZDateTimeType extends eZDataType
         $defaultNode = $attributeParametersNode->getElementsByTagName( 'default-value' )->item( 0 );
         if ( $defaultNode )
         {
-            $defaultValue = strtolower( $defaultNode->getAttribute( 'type' ) );
+            $defaultValue = strtolower( (string) $defaultNode->getAttribute( 'type' ) );
         }
         switch ( $defaultValue )
         {
@@ -625,11 +616,11 @@ class eZDateTimeType extends eZDataType
 
             default:
             {
-                return array();
+                return [];
             }
         }
 
-        return array( 'data_int' => $default, 'sort_key_int' => $default );
+        return ['data_int' => $default, 'sort_key_int' => $default];
     }
 }
 

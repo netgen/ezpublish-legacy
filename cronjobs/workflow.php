@@ -19,7 +19,7 @@ $workflowProcessList = eZWorkflowProcess::fetchForStatus( eZWorkflow::STATUS_DEF
 $cli->output( "Checking for workflow processes"  );
 $removedProcessCount = 0;
 $processCount = 0;
-$statusMap = array();
+$statusMap = [];
 foreach( $workflowProcessList as $process )
 {
     $db->begin();
@@ -88,7 +88,7 @@ foreach( $workflowProcessList as $process )
         $mementoData['skip_trigger'] = true;
         $mementoData['memento_key'] = $process->attribute( 'memento_key' );
         $bodyMemento->remove();
-        $operationParameters = array();
+        $operationParameters = [];
         if ( isset( $mementoData['parameters'] ) )
             $operationParameters = $mementoData['parameters'];
         $operationResult = eZOperationHandler::execute( $mementoData['module_name'], $mementoData['operation_name'], $operationParameters, $mementoData );
@@ -103,14 +103,13 @@ foreach( $workflowProcessList as $process )
 if ( !$isQuiet )
 {
     $cli->output( $cli->stylize( 'emphasize', "Status list" ) );
-    $statusTextList = array();
+    $statusTextList = [];
     $maxStatusTextLength = 0;
     foreach ( $statusMap as $statusID => $statusCount )
     {
         $statusName = eZWorkflow::statusName( $statusID );
         $statusText = "$statusName($statusID)";
-        $statusTextList[] = array( 'text' => $statusText,
-                                   'count' => $statusCount );
+        $statusTextList[] = ['text' => $statusText, 'count' => $statusCount];
         if ( strlen( $statusText ) > $maxStatusTextLength )
             $maxStatusTextLength = strlen( $statusText );
     }

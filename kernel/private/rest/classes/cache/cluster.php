@@ -34,7 +34,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      * @param string $location Path to the cache location inside the cluster
      * @param array(string=>string) $options Options for the cache.
      */
-    public function __construct( $location, $options = array() )
+    public function __construct( $location, $options = [] )
     {
         $path = eZSys::cacheDirectory() . '/rest/' . $location;
         if( !file_exists( $path ) )
@@ -57,7 +57,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      * (non-PHPdoc)
      * @see lib/ezc/Cache/src/storage/ezcCacheStorageFile::store()
      */
-    public function store( $id, $data, $attributes = array() )
+    public function store( $id, $data, $attributes = [] )
     {
         if ( !isset( $this->clusterCacheFile ) )
         {
@@ -67,10 +67,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
         }
 
         $this->clusterCacheFile->storeCache(
-            array(
-                'scope'        => 'rest-cluster-cache',
-                'binarydata'   => $this->prepareData( $data )
-            )
+            ['scope'        => 'rest-cluster-cache', 'binarydata'   => $this->prepareData( $data )]
         );
 
         return $id;
@@ -102,7 +99,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      *
      * @return mixed The cached data on success, otherwise false.
      */
-    public function restore( $id, $attributes = array(), $search = false )
+    public function restore( $id, $attributes = [], $search = false )
     {
         // If cache is explicitely disabled, we don't try to process it
         if( $this->isCacheEnabled === false )
@@ -114,7 +111,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
             $this->properties['location'] . $this->generateIdentifier( $id, $attributes )
         );
         $result = $this->clusterCacheFile->processCache(
-            array( $this, 'clusterRetrieve' ),
+            $this->clusterRetrieve(...),
             null, // We won't call any generate callback as we're using ezcCache mechanism, so it's up to the cache caller to generate
             $this->properties['options']['ttl'],
             null,
@@ -163,7 +160,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      *                                          if not found directly. Default is
      *                                          false.
      */
-    public function delete( $id = null, $attributes = array(), $search = false )
+    public function delete( $id = null, $attributes = [], $search = false )
     {
         if ( !isset( $this->clusterCacheFile ) )
         {
@@ -188,7 +185,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      *
      * @return int The number of cache data items found matching the criteria
      */
-    public function countDataItems( $id = null, $attributes = array() )
+    public function countDataItems( $id = null, $attributes = [] )
     {
         if ( !isset( $this->clusterCacheFile ) )
         {
@@ -211,7 +208,7 @@ abstract class ezpRestCacheStorageCluster extends ezpRestCacheStorageFile implem
      *
      * @return int The remaining lifetime ( 0 if nonexists or outdated ).
      */
-    public function getRemainingLifetime( $id, $attributes = array() )
+    public function getRemainingLifetime( $id, $attributes = [] )
     {
         if ( !isset( $this->clusterCacheFile ) )
         {

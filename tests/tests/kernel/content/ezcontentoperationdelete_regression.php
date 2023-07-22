@@ -13,15 +13,15 @@
  */
 class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
 {
-    private $folder;
+    private ?\ezpObject $folder = null;
 
-    private $article;
+    private ?\ezpObject $article = null;
 
-    private $nodeIds = array();
+    private array $nodeIds = [];
 
-    private $objectIds = array();
+    private array $objectIds = [];
 
-    public function __construct( $name = NULL, array $data = array(), $dataName = '' )
+    public function __construct( $name = NULL, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
         $this->setName( "eZContentOperationDeleteObject Regression Tests" );
@@ -54,8 +54,8 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
         $this->article->remove();
         eZPendingActions::removeByAction( 'index_object' );
         eZPendingActions::removeByAction( 'index_moved_node' );
-        $this->nodeIds = array();
-        $this->objectIds = array();
+        $this->nodeIds = [];
+        $this->objectIds = [];
 
         $anonymousUser = eZUser::fetchByName( 'anonymous' );
         eZUser::setCurrentlyLoggedInUser( $anonymousUser, $anonymousUser->attribute( 'contentobject_id' ) );
@@ -83,11 +83,8 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
         $objectID = $this->folder->object->attribute( 'id' );
 
         // Now remove it
-        eZContentOperationCollection::deleteObject( array( $this->folder->mainNode->node_id ) );
-        $filterConds = array(
-            'action'        => 'index_object',
-            'param'         => $objectID
-        );
+        eZContentOperationCollection::deleteObject( [$this->folder->mainNode->node_id] );
+        $filterConds = ['action'        => 'index_object', 'param'         => $objectID];
         $pendingCount = eZPersistentObject::count( eZPendingActions::definition(), $filterConds );
         self::assertEquals( 0, $pendingCount, 'eZContentOperationCollection::deleteObject() must remove pending action for object #'.$objectID );
     }
@@ -99,10 +96,7 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
     public function testRemovePendingSearchOnDeleteSeveralObjects()
     {
         eZContentOperationCollection::deleteObject( $this->nodeIds );
-        $filterConds = array(
-            'action'        => 'index_object',
-            'param'         => array( $this->objectIds )
-        );
+        $filterConds = ['action'        => 'index_object', 'param'         => [$this->objectIds]];
         $pendingCount = eZPersistentObject::count( eZPendingActions::definition(), $filterConds );
         self::assertEquals( 0, $pendingCount, 'eZContentOperationCollection::deleteObject() must remove pending action for objects #'.implode( ', ', $this->objectIds ) );
     }
@@ -115,13 +109,10 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
     {
         // Activate delayed indexing for folder content class only
         ezpINIHelper::setINISetting( 'site.ini', 'SearchSettings', 'DelayedIndexing', 'classbased' );
-        ezpINIHelper::setINISetting( 'site.ini', 'SearchSettings', 'DelayedIndexingClassList', array( 'folder' ) );
+        ezpINIHelper::setINISetting( 'site.ini', 'SearchSettings', 'DelayedIndexingClassList', ['folder'] );
 
         eZContentOperationCollection::deleteObject( $this->nodeIds );
-        $filterConds = array(
-            'action'        => 'index_object',
-            'param'         => array( array( $this->folder->object->attribute( 'id' ) ) )
-        );
+        $filterConds = ['action'        => 'index_object', 'param'         => [[$this->folder->object->attribute( 'id' )]]];
         $pendingCount = eZPersistentObject::count( eZPendingActions::definition(), $filterConds );
         self::assertEquals( 0, $pendingCount, 'eZContentOperationCollection::deleteObject() must remove pending action for objects #'.implode( ', ', $this->objectIds ) );
     }
@@ -140,17 +131,14 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
         $this->folder->addNode( 43 );
         $folderObjectID = $this->folder->object->attribute( 'id' );
 
-        $aNodeID = array();
+        $aNodeID = [];
         foreach ( $this->folder->nodes as $node )
         {
             $aNodeID[] = $node->attribute( 'node_id' );
         }
 
         eZContentOperationCollection::deleteObject( $aNodeID );
-        $filterConds = array(
-            'action'        => 'index_object',
-            'param'         => $folderObjectID
-        );
+        $filterConds = ['action'        => 'index_object', 'param'         => $folderObjectID];
         $pendingCount = eZPersistentObject::count( eZPendingActions::definition(), $filterConds );
         self::assertEquals( 0, $pendingCount, "eZContentOperationCollection::deleteObject() must remove pending action for object #$folderObjectID as all nodes have been removed" );
     }
@@ -169,13 +157,10 @@ class eZContentOperationDeleteObjectRegression extends ezpDatabaseTestCase
         $this->folder->addNode( 43 );
         $folderObjectID = $this->folder->object->attribute( 'id' );
 
-        $aNodeID = array( $this->folder->nodes[0]->attribute( 'node_id' ) ); // Only delete the first node
+        $aNodeID = [$this->folder->nodes[0]->attribute( 'node_id' )]; // Only delete the first node
 
         eZContentOperationCollection::deleteObject( $aNodeID );
-        $filterConds = array(
-            'action'        => 'index_object',
-            'param'         => $folderObjectID
-        );
+        $filterConds = ['action'        => 'index_object', 'param'         => $folderObjectID];
         $pendingCount = eZPersistentObject::count( eZPendingActions::definition(), $filterConds );
         self::assertGreaterThan( 0, $pendingCount, "eZContentOperationCollection::deleteObject() must remove pending action for object #$folderObjectID as all nodes have been removed" );
     }

@@ -18,25 +18,23 @@
 class eZImageObject extends eZImageInterface
 {
     /// Alignment values @{
-    const ALIGN_AXIS_NONE = 0x00;
-    const ALIGN_AXIS_START = 0x01;
-    const ALIGN_AXIS_STOP = 0x02;
-    const ALIGN_AXIS_CENTER = 0x03; // ALIGN_AXIS_START | ALIGN_AXIS_STOP
-    const ALIGN_AXIS_MASK = 0x03; // ALIGN_AXIS_START | ALIGN_AXIS_STOP
+    final public const ALIGN_AXIS_NONE = 0x00;
+    final public const ALIGN_AXIS_START = 0x01;
+    final public const ALIGN_AXIS_STOP = 0x02;
+    final public const ALIGN_AXIS_CENTER = 0x03; // ALIGN_AXIS_START | ALIGN_AXIS_STOP
+    final public const ALIGN_AXIS_MASK = 0x03; // ALIGN_AXIS_START | ALIGN_AXIS_STOP
     ///@}
 
     /// Placement types @{
     /// Places the layer absolutely from on the axis.
-    const PLACE_CONSTANT = 1;
+    final public const PLACE_CONSTANT = 1;
     /// Places the layer relative to the axis size.
-    const PLACE_RELATIVE = 2;
+    final public const PLACE_RELATIVE = 2;
     ///@}
 
     public function __construct( $imageObjectRef = null, $imageObject = null, $width = false, $height = false )
     {
         parent::__construct( $imageObjectRef, $imageObject, $width, $height );
-        $this->TemplateURI = 'design:image/imageobject.tpl';
-        $this->ImageLayers = array();
         $this->ImageLayerCounter = 0;
     }
 
@@ -46,9 +44,7 @@ class eZImageObject extends eZImageInterface
     */
     function templateData()
     {
-        return array( 'type' => 'template',
-                      'template_variable_name' => 'image',
-                      'uri' => $this->TemplateURI );
+        return ['type' => 'template', 'template_variable_name' => 'image', 'uri' => $this->TemplateURI];
     }
 
     /*!
@@ -103,7 +99,7 @@ class eZImageObject extends eZImageInterface
     */
     function initializeAxis( $parameters, $name )
     {
-        $axis = array();
+        $axis = [];
         if ( isset( $parameters[$name] ) )
             $axis = $parameters[$name];
         if ( !isset( $axis['alignment'] ) )
@@ -122,14 +118,11 @@ class eZImageObject extends eZImageInterface
     */
     function calculatePosition( $parameters, $width, $height )
     {
-        $xAxis = eZImageObject::initializeAxis( $parameters, 'x' );
-        $yAxis = eZImageObject::initializeAxis( $parameters, 'y' );
-        $x = eZImageObject::calculateAxisPlacement( $xAxis['value'], $xAxis['placement'], $xAxis['alignment'],
-                                                    0, $this->width(), $width );
-        $y = eZImageObject::calculateAxisPlacement( $yAxis['value'], $yAxis['placement'], $yAxis['alignment'],
-                                                    0, $this->height(), $height );
-        return array( 'x' => $x,
-                      'y' => $y );
+        $xAxis = (new eZImageObject())->initializeAxis($parameters, 'x');
+        $yAxis = (new eZImageObject())->initializeAxis($parameters, 'y');
+        $x = (new eZImageObject())->calculateAxisPlacement($xAxis['value'], $xAxis['placement'], $xAxis['alignment'], 0, $this->width(), $width);
+        $y = (new eZImageObject())->calculateAxisPlacement($yAxis['value'], $yAxis['placement'], $yAxis['alignment'], 0, $this->height(), $height);
+        return ['x' => $x, 'y' => $y];
     }
 
     /*!
@@ -150,7 +143,7 @@ class eZImageObject extends eZImageInterface
     */
     function getTransparencyPercent( $parameters )
     {
-        $transparency = eZImageObject::getTransparency( $parameters );
+        $transparency = (new eZImageObject())->getTransparency($parameters);
         return (int)($transparency * 100.0);
     }
 
@@ -159,7 +152,7 @@ class eZImageObject extends eZImageInterface
      \return the ID of the layer, the ID is unique per image object.
      \sa prependLayer
     */
-    function appendLayer( &$imageLayer, $parameters = array() )
+    function appendLayer( &$imageLayer, $parameters = [] )
     {
         if ( !$imageLayer instanceof eZImageLayer )
         {
@@ -169,8 +162,7 @@ class eZImageObject extends eZImageInterface
         ++$this->ImageLayerCounter;
         $layerID = $this->ImageLayerCounter;
         $this->ImageLayers[] = $layerID;
-        $this->ImageLayerIndex[$layerID] = array( 'image' => &$imageLayer,
-                                                  'parameters' => $parameters );
+        $this->ImageLayerIndex[$layerID] = ['image' => &$imageLayer, 'parameters' => $parameters];
         return $layerID;
     }
 
@@ -179,7 +171,7 @@ class eZImageObject extends eZImageInterface
      \return the ID of the layer, the ID is unique per image object.
      \sa appendLayer
     */
-    function prependLayer( &$imageLayer, $parameters = array() )
+    function prependLayer( &$imageLayer, $parameters = [] )
     {
         if ( !$imageLayer instanceof eZImageLayer )
         {
@@ -188,10 +180,9 @@ class eZImageObject extends eZImageInterface
         }
         ++$this->ImageLayerCounter;
         $layerID = $this->ImageLayerCounter;
-        $this->ImageLayers = array_merge( array( $layerID ),
+        $this->ImageLayers = array_merge( [$layerID],
                                           $this->ImageLayers );
-        $this->ImageLayerIndex[$layerID] = array( 'image' => &$imageLayer,
-                                                  'parameters' => $parameters );
+        $this->ImageLayerIndex[$layerID] = ['image' => &$imageLayer, 'parameters' => $parameters];
         return $layerID;
     }
 
@@ -234,7 +225,7 @@ class eZImageObject extends eZImageInterface
             return false;
         $layerData = $this->ImageLayerIndex[$layerID];
         unset( $this->ImageLayerIndex[$layerID] );
-        $imageLayers = array();
+        $imageLayers = [];
         foreach ( $this->ImageLayers as $imageLayerID )
         {
             if ( $imageLayerID != $layerID )
@@ -263,7 +254,7 @@ class eZImageObject extends eZImageInterface
         $hasFirst = false;
         $firstImageLayer = null;
         $firstImageLayerData = null;
-        while ( $i < count( $this->ImageLayers ) and
+        while ( $i < (is_countable($this->ImageLayers) ? count( $this->ImageLayers ) : 0) and
                 !$hasFirst )
         {
             $layerID = $this->ImageLayers[$i];
@@ -295,7 +286,7 @@ class eZImageObject extends eZImageInterface
                                           $firstImageLayerData,
                                           $lastImageLayerData );
             $lastImageLayerData = null;
-            while ( $i < count( $this->ImageLayers ) )
+            while ( $i < (is_countable($this->ImageLayers) ? count( $this->ImageLayers ) : 0) )
             {
                 $layerID = $this->ImageLayers[$i];
                 $layerData =& $this->ImageLayerIndex[$layerID];
@@ -320,8 +311,8 @@ class eZImageObject extends eZImageInterface
     }
 
     /// \privatesection
-    public $ImageLayers;
-    public $TemplateURI;
+    public $ImageLayers = [];
+    public $TemplateURI = 'design:image/imageobject.tpl';
     public $ImageLayerIndex;
 }
 

@@ -26,47 +26,30 @@
 // ## END COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 //
 
-$Module = array( 'name' => 'ezjsc Module and Views' );
+$Module = ['name' => 'ezjsc Module and Views'];
 
 
-$ViewList = array();
+$ViewList = [];
 
-$ViewList['hello'] = array(
-    'script' => 'hello.php',
-    'params' => array( 'with_pagelayout' )
-    );
+$ViewList['hello'] = ['script' => 'hello.php', 'params' => ['with_pagelayout']];
     
-$ViewList['call'] = array(
-    'functions' => array( 'call' ),
-    'script' => 'call.php',
-    'params' => array( 'function_arguments', 'type', 'interval', 'debug' )
-    );
+$ViewList['call'] = ['functions' => ['call'], 'script' => 'call.php', 'params' => ['function_arguments', 'type', 'interval', 'debug']];
 
-$ViewList['run'] = array(
-    'functions' => array( 'run' ),
-    'script' => 'run.php',
-    'params' => array( )
-    );
+$ViewList['run'] = ['functions' => ['run'], 'script' => 'run.php', 'params' => []];
 
 
 
-$ezjscServerFunctionList = array(
-    'name'=> 'FunctionList',
-    'values'=> array()
-    );
+$ezjscServerFunctionList = ['name'=> 'FunctionList', 'values'=> []];
 
 $iniFunctionList = eZINI::instance('ezjscore.ini')->variable( 'ezjscServer', 'FunctionList' );
 foreach ( $iniFunctionList as $iniFunction )
 {
-    $ezjscServerFunctionList['values'][] = array(
-               'Name' => $iniFunction,
-               'value' => $iniFunction
-    );
+    $ezjscServerFunctionList['values'][] = ['Name' => $iniFunction, 'value' => $iniFunction];
 } 
 
-$FunctionList = array();
-$FunctionList['run'] = array();
-$FunctionList['call'] = array( 'FunctionList' => $ezjscServerFunctionList );
+$FunctionList = [];
+$FunctionList['run'] = [];
+$FunctionList['call'] = ['FunctionList' => $ezjscServerFunctionList];
 
 
 ?>

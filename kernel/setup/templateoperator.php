@@ -26,19 +26,13 @@ $tpl = eZTemplate::factory();
 
 */
 
-$steps = array( 'basic' => array( 'template' => 'templateoperator_basic.tpl',
-                                  'function' => 'templateOperatorBasic' ),
-                'describe' => array( 'pre_function' => 'templateOperatorBasicFetchData',
-                                     'template' => 'templateoperator_describe.tpl',
-                                     'function' => 'templateOperatorDescribe' ),
-                'download' => array( 'pre_function' => 'templateOperatorDescribeFetchData',
-                                     'function' => 'templateOperatorDownload' ) );
+$steps = ['basic' => ['template' => 'templateoperator_basic.tpl', 'function' => 'templateOperatorBasic'], 'describe' => ['pre_function' => 'templateOperatorBasicFetchData', 'template' => 'templateoperator_describe.tpl', 'function' => 'templateOperatorDescribe'], 'download' => ['pre_function' => 'templateOperatorDescribeFetchData', 'function' => 'templateOperatorDownload']];
 
 $template = 'templateoperator.tpl';
 
 $http = eZHTTPTool::instance();
 
-$persistentData = array();
+$persistentData = [];
 if ( $http->hasPostVariable( 'PersistentData' ) )
     $persistentData = $http->postVariable( 'PersistentData' );
 
@@ -57,7 +51,7 @@ if ( $http->hasPostVariable( 'OperatorStep' ) and
 if ( $http->hasPostVariable( 'TemplateOperatorRestartButton' ) )
 {
     $currentStep = false;
-    $persistentData = array();
+    $persistentData = [];
 }
 
 if ( $currentStep )
@@ -94,10 +88,9 @@ if ( $currentStep )
 
 $tpl->setVariable( 'persistent_data', $persistentData );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/$template" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'Template operator wizard' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'Template operator wizard' )]];
 
 
 function templateOperatorBasic( $tpl, &$persistentData, $stepData )
@@ -123,13 +116,9 @@ function templateOperatorBasicFetchData( $tpl, &$persistentData )
     if ( $http->hasPostVariable( 'Parameter' ) )
         $parameterCheck = $http->postVariable( 'Parameter' );
 
-    $operatorName = preg_replace( array( "#([a-z])([A-Z])#",
-                                         "#__+#",
-                                         "#(^_|_$)#" ),
-                                  array( '$1_$2',
-                                         '_',
-                                         '' ),
-                                  $operatorName );
+    $operatorName = preg_replace( ["#([a-z])([A-Z])#", "#__+#", "#(^_|_$)#"],
+                                  ['$1_$2', '_', ''],
+                                  (string) $operatorName );
     $operatorName = strtolower( $operatorName );
 
     $persistentData['name'] = $operatorName;
@@ -142,7 +131,7 @@ function templateOperatorBasicFetchData( $tpl, &$persistentData )
 function templateOperatorDescribe( $tpl, &$persistentData, $stepData )
 {
     $operatorName = $persistentData['name'];
-    $fullClassName = 'Template' . strtoupper( $operatorName[0] ) . substr( $operatorName, 1 ) . 'Operator';
+    $fullClassName = 'Template' . strtoupper( (string) $operatorName[0] ) . substr( (string) $operatorName, 1 ) . 'Operator';
 
     $singleOperator = $persistentData['single-operator'];
     $useInput = $persistentData['use-input'];
@@ -204,10 +193,10 @@ function templateOperatorDownload( $tpl, &$persistentData, $stepData )
     $operatorName = $persistentData['name'];
     $className = $persistentData['class-name'];
     if ( !$className )
-        $fullClassName = 'Template' . strtoupper( $operatorName[0] ) . substr( $operatorName, 1 ) . 'Operator';
+        $fullClassName = 'Template' . strtoupper( (string) $operatorName[0] ) . substr( (string) $operatorName, 1 ) . 'Operator';
     else
         $fullClassName = $className;
-    $filename = strtolower( $fullClassName ) . '.php';
+    $filename = strtolower( (string) $fullClassName ) . '.php';
 
     $description = $persistentData['description'];
     $creator = $persistentData['creator-name'];
@@ -215,7 +204,7 @@ function templateOperatorDownload( $tpl, &$persistentData, $stepData )
 
     $brief = '';
     $full = '';
-    $lines = explode( "\n", $description );
+    $lines = explode( "\n", (string) $description );
     if ( count( $lines ) > 0 )
     {
         $brief = $lines[0];
@@ -238,7 +227,7 @@ function templateOperatorDownload( $tpl, &$persistentData, $stepData )
 
     $content = $tpl->fetch( 'design:setup/templateoperator_code.tpl' );
 
-    $contentLength = strlen( $content );
+    $contentLength = strlen( (string) $content );
     $mimeType = 'application/octet-stream';
 
     $version = eZPublishSDK::version();

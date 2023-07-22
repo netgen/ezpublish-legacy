@@ -20,13 +20,16 @@ class eZSOAPFault
     /**
      * Constructs a new eZSOAPFault object
      *
-     * @param string $faultCode
-     * @param string $faultString
+     * @param string $FaultCode
+     * @param string $FaultString
      */
-    public function __construct( $faultCode = "", $faultString = "" )
+    public function __construct(
+        /// Contains the fault code
+        public $FaultCode = "",
+        /// Contains the fault string
+        public $FaultString = ""
+    )
     {
-        $this->FaultCode = $faultCode;
-        $this->FaultString = $faultString;
     }
 
     /*!
@@ -44,12 +47,6 @@ class eZSOAPFault
     {
         return $this->FaultString;
     }
-
-    /// Contains the fault code
-    public $FaultCode;
-
-    /// Contains the fault string
-    public $FaultString;
 }
 
 ?>

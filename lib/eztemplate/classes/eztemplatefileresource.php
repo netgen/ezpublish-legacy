@@ -22,14 +22,17 @@ class eZTemplateFileResource
      * Initializes with a default resource name "file".
      * Also sets whether the resource servers static data files, this is needed for the cache system.
      *
-     * @param string $name
-     * @param bool $servesStaticData
+     * @param string $Name
+     * @param bool $ServesStaticData
      */
-    public function __construct( $name = "file", $servesStaticData = true )
+    public function __construct(
+        /// \privatesection
+        /// The name of the resource
+        public $Name = "file",
+        /// True if the data served from this resource is static, ie it can be cached properly
+        public $ServesStaticData = true
+    )
     {
-        $this->Name = $name;
-        $this->ServesStaticData = $servesStaticData;
-        $this->TemplateCache = array();
     }
 
     /*!
@@ -57,12 +60,12 @@ class eZTemplateFileResource
         $file = $resourceData['template-name'];
         if ( !file_exists( $file ) )
             return false;
-        $newNodes = array();
+        $newNodes = [];
         $newNodes[] = eZTemplateNodeTool::createResourceAcquisitionNode( $resourceData['resource'],
                                                                          $file, $file,
                                                                          eZTemplate::RESOURCE_FETCH, false,
                                                                          $node[4],
-                                                                         array(),
+                                                                         [],
                                                                          $namespaceValue );
         return $newNodes;
     }
@@ -78,7 +81,7 @@ class eZTemplateFileResource
     */
     function cacheKey( $keyData, $res, $templatePath, &$extraParameters )
     {
-        $key = md5( $keyData );
+        $key = md5( (string) $keyData );
         return $key;
     }
 
@@ -215,7 +218,7 @@ class eZTemplateFileResource
                 $text = preg_replace( "/\n|\r\n|\r/", "\n", $text );
                 $tplINI = $tpl->ini();
                 $charset = $tplINI->variable( 'CharsetSettings', 'DefaultTemplateCharset' );
-                $locales = array();
+                $locales = [];
                 $pos = strpos( $text, "\n" );
                 if ( $pos !== false )
                 {
@@ -254,7 +257,7 @@ class eZTemplateFileResource
 
                 /* Setting locale to allow standard PHP functions to handle
                  * strtoupper/lower() */
-                $defaultLocale = trim( $tplINI->variable( 'CharsetSettings', 'DefaultTemplateLocale' ) );
+                $defaultLocale = trim( (string) $tplINI->variable( 'CharsetSettings', 'DefaultTemplateLocale' ) );
                 if ( $defaultLocale != '' )
                 {
                     $locales = array_merge( $locales, explode( ',', $defaultLocale ) );
@@ -281,14 +284,8 @@ class eZTemplateFileResource
             $result = true;
         return $result;
     }
-
-    /// \privatesection
-    /// The name of the resource
-    public $Name;
-    /// True if the data served from this resource is static, ie it can be cached properly
-    public $ServesStaticData;
     /// The cache for templates
-    public $TemplateCache;
+    public $TemplateCache = [];
 }
 
 ?>

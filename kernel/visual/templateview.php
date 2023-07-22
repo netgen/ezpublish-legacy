@@ -64,7 +64,7 @@ if ( $module->isCurrentAction( 'UpdateOverride' ) )
         asort( $priorityArray );
         $currentINIGroups =& $overrideINI->groups();
 
-        $newGroupArray = array();
+        $newGroupArray = [];
         foreach ( array_keys( $priorityArray ) as $key )
         {
             $newGroupArray[$key] = $currentINIGroups[$key];
@@ -76,13 +76,13 @@ if ( $module->isCurrentAction( 'UpdateOverride' ) )
 
         $oldumask = umask( 0 );
         $overrideINI->save( "siteaccess/$siteAccess/override.ini.append" );
-        chmod( "settings/siteaccess/$siteAccess/override.ini.append", octdec( $filePermission ) );
+        chmod( "settings/siteaccess/$siteAccess/override.ini.append", octdec( (string) $filePermission ) );
         umask( $oldumask );
     }
 }
 
 $overrideINISaveFailed = false;
-$notRemoved = array();
+$notRemoved = [];
 
 if ( $module->isCurrentAction( 'RemoveOverride' ) )
 {
@@ -115,7 +115,7 @@ if ( $module->isCurrentAction( 'RemoveOverride' ) )
             }
             else
             {
-                $notRemoved[] = array( 'filename' => $fileName );
+                $notRemoved[] = ['filename' => $fileName];
             }
         }
         if ( $overrideINI->save( "siteaccess/$siteAccess/override.ini.append" ) == false )
@@ -155,10 +155,7 @@ if ( $siteINI->variable( 'BackwardCompatibilitySettings', 'UsingDesignAdmin34' )
     $tpl->setVariable( 'custom_match', $templateSettings['custom_match'] );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/templateview.tpl" );
-$Result['path'] = array( array( 'url' => "/visual/templatelist/",
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template list' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template view' ) ) );
+$Result['path'] = [['url' => "/visual/templatelist/", 'text' => ezpI18n::tr( 'kernel/design', 'Template list' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/design', 'Template view' )]];
 ?>

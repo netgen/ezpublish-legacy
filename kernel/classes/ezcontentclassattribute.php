@@ -21,10 +21,6 @@ class eZContentClassAttribute extends eZPersistentObject
     {
         parent::__construct($row);
 
-        $this->Content = null;
-        $this->DisplayInfo = null;
-        $this->Module = null;
-
         $this->NameList = new eZSerializedObjectNameList();
         if ( isset( $row['serialized_name_list'] ) )
             $this->NameList->initFromSerializedList( $row['serialized_name_list'] );
@@ -61,136 +57,7 @@ class eZContentClassAttribute extends eZPersistentObject
 
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'serialized_name_list' => array( 'name' => 'SerializedNameList',
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true ),
-                                         'serialized_description_list' => array( 'name' => 'SerializedDescriptionList',
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true ),
-                                         'version' => array( 'name' => 'Version',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'contentclass_id' => array( 'name' => 'ContentClassID',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZContentClass',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         'identifier' => array( 'name' => 'Identifier',
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         'placement' => array( 'name' => 'Position',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'is_searchable' => array( 'name' => 'IsSearchable',
-                                                                   'datatype' => 'integer',
-                                                                   'default' => 0
-                                                                   ),
-                                         'is_required' => array( 'name' => 'IsRequired',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'can_translate' => array( 'name' => 'CanTranslate',
-                                                                   'datatype' => 'integer',
-                                                                   'default' => 0
-                                                                   ),
-                                         'is_information_collector' => array( 'name' => 'IsInformationCollector',
-                                                                              'datatype' => 'integer',
-                                                                              'default' => 0,
-                                                                              'required' => true ),
-                                         'data_type_string' => array( 'name' => 'DataTypeString',
-                                                                      'datatype' => 'string',
-                                                                      'default' => '',
-                                                                      'required' => true ),
-                                         'data_int1' => array( 'name' => 'DataInt1',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_int2' => array( 'name' => 'DataInt2',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_int3' => array( 'name' => 'DataInt3',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_int4' => array( 'name' => 'DataInt4',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'data_float1' => array( 'name' => 'DataFloat1',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_float2' => array( 'name' => 'DataFloat2',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_float3' => array( 'name' => 'DataFloat3',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_float4' => array( 'name' => 'DataFloat4',
-                                                                 'datatype' => 'float',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'data_text1' => array( 'name' => 'DataText1',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text2' => array( 'name' => 'DataText2',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text3' => array( 'name' => 'DataText3',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text4' => array( 'name' => 'DataText4',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'data_text5' => array( 'name' => 'DataText5',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'serialized_data_text' => array( 'name' => 'SerializedDataText',
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true ),
-                                         'category' => array( 'name' => 'Category',
-                                                               'datatype' => 'text',
-                                                               'default' => '',
-                                                               'required' => true )),
-                      'keys' => array( 'id', 'version' ),
-                      "function_attributes" => array( "content" => "content",
-                                                      'temporary_object_attribute' => 'instantiateTemporary',
-                                                      'data_type' => 'dataType',
-                                                      'display_info' => 'displayInfo',
-                                                      'name' => 'name',
-                                                      'nameList' => 'nameList',
-                                                      'description' => 'description',
-                                                      'descriptionList' => 'descriptionList',
-                                                      'data_text_i18n' => 'dataTextI18n',
-                                                      'data_text_i18n_list' => 'dataTextI18nList' ),
-                      'set_functions' => array( 'name' => 'setName',
-                                                'description' => 'setDescription',
-                                                'data_text_i18n' => 'setDataTextI18n' ),
-                      'increment_key' => 'id',
-                      'sort' => array( 'placement' => 'asc' ),
-                      'class_name' => 'eZContentClassAttribute',
-                      'name' => 'ezcontentclass_attribute' );
+        static $definition = ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'serialized_name_list' => ['name' => 'SerializedNameList', 'datatype' => 'string', 'default' => '', 'required' => true], 'serialized_description_list' => ['name' => 'SerializedDescriptionList', 'datatype' => 'string', 'default' => '', 'required' => true], 'version' => ['name' => 'Version', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'contentclass_id' => ['name' => 'ContentClassID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentClass', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'identifier' => ['name' => 'Identifier', 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 50], 'placement' => ['name' => 'Position', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'is_searchable' => ['name' => 'IsSearchable', 'datatype' => 'integer', 'default' => 0], 'is_required' => ['name' => 'IsRequired', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'can_translate' => ['name' => 'CanTranslate', 'datatype' => 'integer', 'default' => 0], 'is_information_collector' => ['name' => 'IsInformationCollector', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_type_string' => ['name' => 'DataTypeString', 'datatype' => 'string', 'default' => '', 'required' => true], 'data_int1' => ['name' => 'DataInt1', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_int2' => ['name' => 'DataInt2', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_int3' => ['name' => 'DataInt3', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_int4' => ['name' => 'DataInt4', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'data_float1' => ['name' => 'DataFloat1', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_float2' => ['name' => 'DataFloat2', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_float3' => ['name' => 'DataFloat3', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_float4' => ['name' => 'DataFloat4', 'datatype' => 'float', 'default' => 0, 'required' => true], 'data_text1' => ['name' => 'DataText1', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text2' => ['name' => 'DataText2', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text3' => ['name' => 'DataText3', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text4' => ['name' => 'DataText4', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_text5' => ['name' => 'DataText5', 'datatype' => 'text', 'default' => '', 'required' => true], 'serialized_data_text' => ['name' => 'SerializedDataText', 'datatype' => 'string', 'default' => '', 'required' => true], 'category' => ['name' => 'Category', 'datatype' => 'text', 'default' => '', 'required' => true]], 'keys' => ['id', 'version'], "function_attributes" => ["content" => "content", 'temporary_object_attribute' => 'instantiateTemporary', 'data_type' => 'dataType', 'display_info' => 'displayInfo', 'name' => 'name', 'nameList' => 'nameList', 'description' => 'description', 'descriptionList' => 'descriptionList', 'data_text_i18n' => 'dataTextI18n', 'data_text_i18n_list' => 'dataTextI18nList'], 'set_functions' => ['name' => 'setName', 'description' => 'setDescription', 'data_text_i18n' => 'setDataTextI18n'], 'increment_key' => 'id', 'sort' => ['placement' => 'asc'], 'class_name' => 'eZContentClassAttribute', 'name' => 'ezcontentclass_attribute'];
         return $definition;
     }
 
@@ -218,7 +85,7 @@ class eZContentClassAttribute extends eZPersistentObject
 
      \return 'eZContentClassAttribute' object.
     */
-    static function create( $class_id, $data_type_string, $optionalValues = array(), $languageLocale = false )
+    static function create( $class_id, $data_type_string, $optionalValues = [], $languageLocale = false )
     {
         $nameList = new eZSerializedObjectNameList();
         if ( isset( $optionalValues['serialized_name_list'] ) )
@@ -242,22 +109,9 @@ class eZContentClassAttribute extends eZPersistentObject
             $optionalValues['serialized_data_text'] = $dataTextI18nList->serializeNames();
         }
 
-        $row = array(
-            'id' => null,
-            'version' => eZContentClass::VERSION_STATUS_TEMPORARY,
-            'contentclass_id' => $class_id,
-            'identifier' => '',
-            'serialized_name_list' => $nameList->serializeNames(),
-            'serialized_description_list' => $descriptionList->serializeNames(),
-            'is_searchable' => 1,
-            'is_required' => 0,
-            'can_translate' => 1,
-            'is_information_collector' => 0,
-            'data_type_string' => $data_type_string,
-            'placement' => eZPersistentObject::newObjectOrder( eZContentClassAttribute::definition(),
-                                                               'placement',
-                                                               array( 'version' => 1,
-                                                                      'contentclass_id' => $class_id ) ) );
+        $row = ['id' => null, 'version' => eZContentClass::VERSION_STATUS_TEMPORARY, 'contentclass_id' => $class_id, 'identifier' => '', 'serialized_name_list' => $nameList->serializeNames(), 'serialized_description_list' => $descriptionList->serializeNames(), 'is_searchable' => 1, 'is_required' => 0, 'can_translate' => 1, 'is_information_collector' => 0, 'data_type_string' => $data_type_string, 'placement' => eZPersistentObject::newObjectOrder( eZContentClassAttribute::definition(),
+                                                           'placement',
+                                                           ['version' => 1, 'contentclass_id' => $class_id] )];
         $row = array_merge( $row, $optionalValues );
         $attribute = new eZContentClassAttribute( $row );
 
@@ -389,8 +243,7 @@ class eZContentClassAttribute extends eZPersistentObject
         {
             $object = eZPersistentObject::fetchObject( eZContentClassAttribute::definition(),
                                                        $field_filters,
-                                                       array( 'id' => $id,
-                                                              'version' => $version ),
+                                                       ['id' => $id, 'version' => $version],
                                                        $asObject );
             if ( $field_filters === null and $asObject )
             {
@@ -400,10 +253,9 @@ class eZContentClassAttribute extends eZPersistentObject
         return $object;
     }
 
-    static function fetchList( $asObject = true, $parameters = array() )
+    static function fetchList( $asObject = true, $parameters = [] )
     {
-        $parameters = array_merge( array( 'data_type' => false,
-                                          'version' => false ),
+        $parameters = array_merge( ['data_type' => false, 'version' => false],
                                    $parameters );
         $dataType = $parameters['data_type'];
         $version = $parameters['version'];
@@ -421,7 +273,7 @@ class eZContentClassAttribute extends eZPersistentObject
             if ( $dataType !== false or
                  $version !== false )
             {
-                $conditions = array();
+                $conditions = [];
                 if ( $dataType !== false )
                     $conditions['data_type_string'] = $dataType;
                 if ( $version !== false )
@@ -458,8 +310,7 @@ class eZContentClassAttribute extends eZPersistentObject
         if ( !isset( $objects ) or
              $objects === null )
         {
-            $cond = array( 'contentclass_id' => $classID,
-                           'version' => $version );
+            $cond = ['contentclass_id' => $classID, 'version' => $version];
             $objects = eZPersistentObject::fetchObjectList( eZContentClassAttribute::definition(),
                                                                 null, $cond, null, null,
                                                                 $asObject );
@@ -517,9 +368,8 @@ class eZContentClassAttribute extends eZPersistentObject
             $version = $this->Version;
         }
         eZPersistentObject::reorderObject( eZContentClassAttribute::definition(),
-                                           array( 'placement' => $pos ),
-                                           array( 'contentclass_id' => $cid,
-                                                  'version' => $version ),
+                                           ['placement' => $pos],
+                                           ['contentclass_id' => $cid, 'version' => $version],
                                            $down );
     }
 
@@ -593,12 +443,12 @@ class eZContentClassAttribute extends eZPersistentObject
 
     static function cachedInfo()
     {
-        $info = array();
+        $info = [];
         $db = eZDB::instance();
         $dbName = md5( $db->DB );
 
         $cacheDir = eZSys::cacheDirectory();
-        $phpCache = new eZPHPCreator( "$cacheDir", "sortkey_$dbName.php", '', array( 'clustering' => 'sortkey' ) );
+        $phpCache = new eZPHPCreator( "$cacheDir", "sortkey_$dbName.php", '', ['clustering' => 'sortkey'] );
         $handler = eZExpiryHandler::instance();
         $expiryTime = 0;
 
@@ -609,8 +459,7 @@ class eZContentClassAttribute extends eZPersistentObject
 
         if ( $phpCache->canRestore( $expiryTime ) )
         {
-            $info = $phpCache->restore( array( 'sortkey_type_array' => 'sortKeyTypeArray',
-                                               'attribute_type_array' => 'attributeTypeArray' ) );
+            $info = $phpCache->restore( ['sortkey_type_array' => 'sortKeyTypeArray', 'attribute_type_array' => 'attributeTypeArray'] );
         }
         else
         {
@@ -618,8 +467,8 @@ class eZContentClassAttribute extends eZPersistentObject
             $query = "SELECT id, data_type_string FROM ezcontentclass_attribute";
             $attributeArray = $db->arrayQuery( $query );
 
-            $attributeTypeArray = array();
-            $sortKeyTypeArray = array();
+            $attributeTypeArray = [];
+            $sortKeyTypeArray = [];
             foreach ( $attributeArray as $attribute )
             {
                 $attributeTypeArray[$attribute['id']] = $attribute['data_type_string'];
@@ -912,7 +761,7 @@ class eZContentClassAttribute extends eZPersistentObject
             $phpCache = new eZPHPCreator( $cacheDir,
                                           'classattributeidentifiers_' . $dbName . '.php',
                                           '',
-                                          array( 'clustering' => 'classattridentifiers' ) );
+                                          ['clustering' => 'classattridentifiers'] );
 
             $handler = eZExpiryHandler::instance();
             $expiryTime = 0;
@@ -923,7 +772,7 @@ class eZContentClassAttribute extends eZPersistentObject
 
             if ( $phpCache->canRestore( $expiryTime ) )
             {
-                $var = $phpCache->restore( array( 'identifierHash' => 'identifier_hash' ) );
+                $var = $phpCache->restore( ['identifierHash' => 'identifier_hash'] );
                 self::$identifierHash = $var['identifierHash'];
             }
             else
@@ -934,7 +783,7 @@ class eZContentClassAttribute extends eZPersistentObject
                           WHERE ezcontentclass.id=ezcontentclass_attribute.contentclass_id";
                 $identifierArray = $db->arrayQuery( $query );
 
-                self::$identifierHash = array();
+                self::$identifierHash = [];
                 foreach ( $identifierArray as $identifierRow )
                 {
                     $combinedIdentifier = $identifierRow['class_identifier'] . '/' . $identifierRow['attribute_identifier'];
@@ -955,7 +804,7 @@ class eZContentClassAttribute extends eZPersistentObject
      * @param mixed $objects not used, the existing objects are fetched if
      *        necessary (depending on the datatype of the attribute).
      */
-    function initializeObjectAttributes( &$objects = null )
+    function initializeObjectAttributes( mixed &$objects = null )
     {
         $classAttributeID = $this->ID;
         $classID = $this->ContentClassID;
@@ -964,12 +813,7 @@ class eZContentClassAttribute extends eZPersistentObject
         {
             $db = eZDB::instance();
 
-            $data = array( 'contentobject_id'         => 'a.contentobject_id',
-                           'version'                  => 'a.version',
-                           'contentclassattribute_id' => $classAttributeID,
-                           'data_type_string'         => "'" . $db->escapeString( $this->DataTypeString ) . "'",
-                           'language_code'            => 'a.language_code',
-                           'language_id'              => 'MAX(a.language_id)' );
+            $data = ['contentobject_id'         => 'a.contentobject_id', 'version'                  => 'a.version', 'contentclassattribute_id' => $classAttributeID, 'data_type_string'         => "'" . $db->escapeString( $this->DataTypeString ) . "'", 'language_code'            => 'a.language_code', 'language_id'              => 'MAX(a.language_id)'];
 
             $datatypeData = $dataType->batchInitializeObjectAttributeData( $this );
             $data = array_merge( $data, $datatypeData );
@@ -1042,7 +886,7 @@ class eZContentClassAttribute extends eZPersistentObject
                     $contentobjectID = $object->attribute( 'id' );
                     $objectVersions = $object->versions();
                     // the start version ID, to make sure one attribute in different version has same id.
-                    $startAttributeID = array();
+                    $startAttributeID = [];
                     foreach ( $objectVersions as $objectVersion )
                     {
                         $translations = $objectVersion->translations( false );
@@ -1118,9 +962,9 @@ class eZContentClassAttribute extends eZPersistentObject
 
     /// \privatesection
     /// Contains the content for this attribute
-    public $Content;
+    public $Content = null;
     /// Contains information on how to display the current attribute in various viewmodes
-    public $DisplayInfo;
+    public $DisplayInfo = null;
     public $ID;
     public $Version;
     public $ContentClassID;
@@ -1136,7 +980,7 @@ class eZContentClassAttribute extends eZPersistentObject
     public $IsSearchable;
     public $IsRequired;
     public $IsInformationCollector;
-    public $Module;
+    public $Module = null;
     public $DataTextI18nList;
 
     // Used locale for use by datatypes in class/edit when storing data

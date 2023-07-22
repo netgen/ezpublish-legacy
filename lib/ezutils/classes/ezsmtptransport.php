@@ -19,7 +19,7 @@ class eZSMTPTransport extends eZMailTransport
     function sendMail( eZMail $mail )
     {
         $ini = eZINI::instance();
-        $parameters = array();
+        $parameters = [];
         $parameters['host'] = $ini->variable( 'MailSettings', 'TransportServer' );
         $parameters['helo'] = $ini->variable( 'MailSettings', 'SenderHost' );
         $parameters['port'] = $ini->variable( 'MailSettings', 'TransportPort' );
@@ -53,7 +53,7 @@ class eZSMTPTransport extends eZMailTransport
         }
 
         $excludeHeaders = $ini->variable( 'MailSettings', 'ExcludeHeaders' );
-        if ( count( $excludeHeaders ) > 0 )
+        if ( (is_countable($excludeHeaders) ? count( $excludeHeaders ) : 0) > 0 )
             $mail->Mail->appendExcludeHeaders( $excludeHeaders );
 
         $options = new ezcMailSmtpTransportOptions();
@@ -67,9 +67,9 @@ class eZSMTPTransport extends eZMailTransport
         // If in debug mode, send to debug email address and nothing else
         if ( $ini->variable( 'MailSettings', 'DebugSending' ) == 'enabled' )
         {
-            $mail->Mail->to = array( new ezcMailAddress( $ini->variable( 'MailSettings', 'DebugReceiverEmail' ) ) );
-            $mail->Mail->cc = array();
-            $mail->Mail->bcc = array();
+            $mail->Mail->to = [new ezcMailAddress( $ini->variable( 'MailSettings', 'DebugReceiverEmail' ) )];
+            $mail->Mail->cc = [];
+            $mail->Mail->bcc = [];
         }
 
         // send() from ezcMailSmtpTransport doesn't return anything (it uses exceptions in case

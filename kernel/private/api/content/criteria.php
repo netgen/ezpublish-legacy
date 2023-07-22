@@ -24,7 +24,7 @@
  *
  * @package API
  */
-class ezpContentCriteria
+class ezpContentCriteria implements \Stringable
 {
     public function __construct()
     {
@@ -43,10 +43,9 @@ class ezpContentCriteria
 
     /**
      * Creates a field criteria
-     * @param mixed $fieldIdentifier
      * @return ezpContentFieldCriteria
      */
-    public static function field( $fieldIdentifier )
+    public static function field( mixed $fieldIdentifier )
     {
         return new ezpContentFieldCriteria( $fieldIdentifier );
     }
@@ -114,7 +113,7 @@ class ezpContentCriteria
     /**
      * Human readable string representation of the criteria, for debugging purpose
      */
-    public function __toString()
+    public function __toString(): string
     {
         $acceptCriteriaCount = count( $this->accept );
         $denyCriteriaCount = count( $this->deny );

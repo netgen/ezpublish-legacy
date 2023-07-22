@@ -6,80 +6,30 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZSection' );
+$Module = ['name' => 'eZSection'];
 
-$ViewList = array();
-$ViewList['list'] = array(
-    'functions' => array( 'view or edit or assign' ),
-    'script' => 'list.php',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    "unordered_params" => array( "offset" => "Offset" ),
-    'params' => array( ) );
+$ViewList = [];
+$ViewList['list'] = ['functions' => ['view or edit or assign'], 'script' => 'list.php', 'default_navigation_part' => 'ezsetupnavigationpart', "unordered_params" => ["offset" => "Offset"], 'params' => []];
 
-$ViewList['view'] = array(
-    'functions' => array( 'view or assign' ),
-    'script' => 'view.php',
-    'ui_context' => 'view',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'params' => array( 'SectionID' ),
-    'unordered_params' => array( 'offset' => 'Offset' ) );
+$ViewList['view'] = ['functions' => ['view or assign'], 'script' => 'view.php', 'ui_context' => 'view', 'default_navigation_part' => 'ezsetupnavigationpart', 'params' => ['SectionID'], 'unordered_params' => ['offset' => 'Offset']];
 
-$ViewList['edit'] = array(
-    'functions' => array( 'edit' ),
-    'script' => 'edit.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'params' => array( 'SectionID' ) );
+$ViewList['edit'] = ['functions' => ['edit'], 'script' => 'edit.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezsetupnavigationpart', 'params' => ['SectionID']];
 
-$ViewList['assign'] = array(
-    'functions' => array( 'assign' ),
-    'script' => 'assign.php',
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'post_actions' => array( 'BrowseActionName' ),
-    'params' => array( 'SectionID' ),
-    'functions' => array( 'assign' ) );
+$ViewList['assign'] = ['functions' => ['assign'], 'script' => 'assign.php', 'default_navigation_part' => 'ezsetupnavigationpart', 'post_actions' => ['BrowseActionName'], 'params' => ['SectionID'], 'functions' => ['assign']];
 
 
 
-$ClassID = array(
-    'name'=> 'Class',
-    'values'=> array(),
-    'class' => 'eZContentClass',
-    'function' => 'fetchList',
-    'parameter' => array( 0, false, false, array( 'name' => 'asc' ) )
-    );
+$ClassID = ['name'=> 'Class', 'values'=> [], 'class' => 'eZContentClass', 'function' => 'fetchList', 'parameter' => [0, false, false, ['name' => 'asc']]];
 
-$NewSectionID = array(
-    'name'=> 'NewSection',
-    'values'=> array(),
-    'class' => 'eZSection',
-    'function' => 'fetchList',
-    'parameter' => array( false )
-    );
+$NewSectionID = ['name'=> 'NewSection', 'values'=> [], 'class' => 'eZSection', 'function' => 'fetchList', 'parameter' => [false]];
 
-$SectionID = array(
-    'name'=> 'Section',
-    'values'=> array(),
-    'class' => 'eZSection',
-    'function' => 'fetchList',
-    'parameter' => array( false )
-    );
+$SectionID = ['name'=> 'Section', 'values'=> [], 'class' => 'eZSection', 'function' => 'fetchList', 'parameter' => [false]];
 
-$Assigned = array(
-    'name'=> 'Owner',
-    'values'=> array(
-        array(
-            'Name' => 'Self',
-            'value' => '1')
-        )
-    );
+$Assigned = ['name'=> 'Owner', 'values'=> [['Name' => 'Self', 'value' => '1']]];
 
-$FunctionList = array();
-$FunctionList['assign'] = array( 'Class' => $ClassID,
-                                 'Section' => $SectionID,
-                                 'Owner' => $Assigned,
-                                 'NewSection' => $NewSectionID );
-$FunctionList['edit'] = array();
-$FunctionList['view'] = array();
+$FunctionList = [];
+$FunctionList['assign'] = ['Class' => $ClassID, 'Section' => $SectionID, 'Owner' => $Assigned, 'NewSection' => $NewSectionID];
+$FunctionList['edit'] = [];
+$FunctionList['view'] = [];
 
 ?>

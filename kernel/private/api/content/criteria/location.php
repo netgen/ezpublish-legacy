@@ -12,7 +12,7 @@
  * This class allows for configuration of a location based criteria
  * @package API
  */
-class ezpContentLocationCriteria implements ezpContentCriteriaInterface
+class ezpContentLocationCriteria implements ezpContentCriteriaInterface, \Stringable
 {
     /**
      * Sets a subtree criteria.
@@ -33,17 +33,14 @@ class ezpContentLocationCriteria implements ezpContentCriteriaInterface
      */
     public function translate()
     {
-        return array( 'type' => 'location', 'value' => $this->subtree->node_id );
+        return ['type' => 'location', 'value' => $this->subtree->node_id];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "part of subtree " . $this->subtree->node_id;
     }
 
-    /**
-     * @var ezpContentLocation
-     */
-    private $subtree;
+    private ?\ezpContentLocation $subtree = null;
 }
 ?>

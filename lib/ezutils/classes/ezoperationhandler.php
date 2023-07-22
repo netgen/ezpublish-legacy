@@ -28,7 +28,7 @@ class eZOperationHandler
     {
         if ( !isset( $GLOBALS['eZGlobalModuleOperationList'] ) )
         {
-            $GLOBALS['eZGlobalModuleOperationList'] = array();
+            $GLOBALS['eZGlobalModuleOperationList'] = [];
         }
         if ( isset( $GLOBALS['eZGlobalModuleOperationList'][$moduleName] ) )
         {

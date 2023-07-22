@@ -43,9 +43,7 @@ elseif ( $cacheType == 'Ini' )
 elseif ( $cacheType == 'Static' )
 {
     // get staticCacheHandler instance
-    $optionArray = array( 'iniFile'      => 'site.ini',
-                          'iniSection'   => 'ContentSettings',
-                          'iniVariable'  => 'StaticCacheHandler' );
+    $optionArray = ['iniFile'      => 'site.ini', 'iniSection'   => 'ContentSettings', 'iniVariable'  => 'StaticCacheHandler'];
 
     $options = new ezpExtensionOptions( $optionArray );
     $staticCacheHandler = eZExtension::getHandlerClass( $options );
@@ -63,7 +61,7 @@ elseif ( $cacheType == 'ContentNode' )
         $contentModule->setActionParameter( 'NodeID', $nodeID, 'action' );
         $contentModule->setActionParameter( 'ObjectID', $objectID, 'action' );
 
-        $contentModule->run( 'action', array( $nodeID, $objectID) );
+        $contentModule->run( 'action', [$nodeID, $objectID] );
     }
 }
 elseif ( $cacheType == 'ContentSubtree' )
@@ -76,7 +74,7 @@ elseif ( $cacheType == 'ContentSubtree' )
         $contentModule->setActionParameter( 'NodeID', $nodeID, 'action' );
         $contentModule->setActionParameter( 'ObjectID', $objectID, 'action' );
 
-        $contentModule->run( 'action', array( $nodeID, $objectID) );
+        $contentModule->run( 'action', [$nodeID, $objectID] );
     }
 }
 

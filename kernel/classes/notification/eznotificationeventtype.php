@@ -50,7 +50,7 @@ class eZNotificationEventType
             $className = $types[$notificationEventTypeString];
             $def =& $GLOBALS["eZNotificationEventTypeObjects"][$notificationEventTypeString];
 
-            if ( !is_object( $def ) || strtolower( get_class( $def ) ) != $className )
+            if ( !is_object( $def ) || strtolower( $def::class ) != $className )
             {
                 $def = new $className();
             }
@@ -61,8 +61,7 @@ class eZNotificationEventType
 
     function attributes()
     {
-        return array_merge( array( 'description' ),
-                            array_keys( $this->Attributes ) );
+        return ['description', ...array_keys( $this->Attributes )];
     }
 
     function hasAttribute( $attr )
@@ -122,6 +121,7 @@ class eZNotificationEventType
 
     static function loadAndRegisterType( $type )
     {
+        $includeFile = null;
         $types = $GLOBALS["eZNotificationEventTypes"];
         if ( isset( $types[$type] ) )
         {
@@ -162,7 +162,7 @@ class eZNotificationEventType
     {
         if ( !isset( $GLOBALS["eZNotificationEventTypes"] ) || !is_array( $GLOBALS["eZNotificationEventTypes"] ) )
         {
-            $types = array();
+            $types = [];
         }
         $GLOBALS["eZNotificationEventTypes"][$notificationTypeString] = $className;
     }

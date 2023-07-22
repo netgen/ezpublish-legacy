@@ -29,13 +29,17 @@ class eZContentUploadHandler
     /**
      * Initialises the handler with the name.
      *
-     * @param string $name
-     * @param string $identifier
+     * @param string $Name
+     * @param string $Identifier
      */
-    public function __construct( $name, $identifier )
+    public function __construct(
+        /// \privatesection
+        /// The name of the handler, can be displayed to the end user.
+        public $Name,
+        /// The identifier of the handler.
+        public $Identifier
+    )
     {
-        $this->Name = $name;
-        $this->Identifier = $identifier;
     }
 
     /**
@@ -70,12 +74,6 @@ class eZContentUploadHandler
     {
         return false;
     }
-
-    /// \privatesection
-    /// The name of the handler, can be displayed to the end user.
-    public $Name;
-    /// The identifier of the handler.
-    public $Identifier;
 }
 
 ?>

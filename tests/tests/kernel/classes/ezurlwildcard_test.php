@@ -18,19 +18,18 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
      *  - source_url
      *  - destination_url
      *  - type
-     * @var array
      */
-    private $wildcardRow;
+    private ?array $wildcardRow = null;
 
     /**
      * @var eZURLWildcard[]
      */
-    private $wildcards;
+    private ?array $wildcards = null;
 
     /**
      * @var eZURLWildcard[]
      */
-    private $wildcardObjects;
+    private ?array $wildcardObjects = null;
 
     /**
      * Test case setup
@@ -41,11 +40,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         parent::setUp();
 
-        $this->wildcardRow[0] = array(
-            'source_url' => 'test/*',
-            'destination_url' => '/',
-            'type' => eZURLWildcard::TYPE_DIRECT,
-        );
+        $this->wildcardRow[0] = ['source_url' => 'test/*', 'destination_url' => '/', 'type' => eZURLWildcard::TYPE_DIRECT];
 
         $this->wildcards[0] = new eZURLWildcard( $this->wildcardRow[0] );
 
@@ -88,10 +83,10 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     public function testConstructor()
     {
         $wildcard = new eZURLWildcard( $this->wildcardRow[0] );
-        $this->assertSame( 'test/*', $wildcard->attribute( 'source_url' ), "Source URL doesn't match" );
-        $this->assertSame( '/', $wildcard->attribute( 'destination_url' ), "Destination URL doens't match" );
-        $this->assertEquals( eZURLWildcard::TYPE_DIRECT, $wildcard->attribute( 'type' ), "Type doesn't match" );
-        $this->assertSame( null, $wildcard->attribute( 'id' ), "ID should be NULL" );
+        static::assertSame('test/*', $wildcard->attribute( 'source_url' ), "Source URL doesn't match");
+        static::assertSame('/', $wildcard->attribute( 'destination_url' ), "Destination URL doens't match");
+        static::assertEquals(eZURLWildcard::TYPE_DIRECT, $wildcard->attribute( 'type' ), "Type doesn't match");
+        static::assertSame(null, $wildcard->attribute( 'id' ), "ID should be NULL");
     }
 
     /**
@@ -104,10 +99,10 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         $wildcard = $this->wildcards[0];
         $wildcard->store();
 
-        $this->assertSame( 'test/*', $wildcard->attribute( 'source_url' ), "Source URL doesn't match" );
-        $this->assertSame( '/', $wildcard->attribute( 'destination_url' ), "Destination URL doens't match" );
-        $this->assertEquals( eZURLWildcard::TYPE_DIRECT, $wildcard->attribute( 'type' ), "Type doesn't match" );
-        $this->assertInternalType( 'int', $wildcard->attribute( 'id' ), "ID is not an integer" );
+        static::assertSame('test/*', $wildcard->attribute( 'source_url' ), "Source URL doesn't match");
+        static::assertSame('/', $wildcard->attribute( 'destination_url' ), "Destination URL doens't match");
+        static::assertEquals(eZURLWildcard::TYPE_DIRECT, $wildcard->attribute( 'type' ), "Type doesn't match");
+        static::assertInternalType('int', $wildcard->attribute( 'id' ), "ID is not an integer");
     }
 
     /**
@@ -118,11 +113,11 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         $array = $this->wildcards[0]->asArray();
 
-        $this->assertInternalType( 'array', $array );
-        $this->assertSame( 'test/*', $array['source_url'] );
-        $this->assertSame( '/', $array['destination_url'] );
-        $this->assertEquals( eZURLWildcard::TYPE_DIRECT, $array['type'] );
-        $this->assertSame( null, $array['id'] );
+        static::assertInternalType('array', $array);
+        static::assertSame('test/*', $array['source_url']);
+        static::assertSame('/', $array['destination_url']);
+        static::assertEquals(eZURLWildcard::TYPE_DIRECT, $array['type']);
+        static::assertSame(null, $array['id']);
     }
 
     /**
@@ -140,14 +135,14 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         $fetchedWildcards = eZURLWildcard::fetchList();
 
         // 2. Check if every fetched wildcard is in the creation list, and the opposite
-        $this->assertSame( count( $this->wildcardObjects ), count( $fetchedWildcards ), "Mismatch between created and fetched wildcards count" );
+        static::assertSame(count( (array) $this->wildcardObjects ), is_countable($fetchedWildcards) ? count( $fetchedWildcards ) : 0, "Mismatch between created and fetched wildcards count");
         foreach ( $fetchedWildcards as $fetchedWildcard )
         {
             $wildcard = $this->wildcardObjects[$fetchedWildcard->attribute( 'source_url' )];
-            $this->assertEquals( $wildcard->attribute( 'source_url' ), $fetchedWildcard->attribute( 'source_url' ) );
-            $this->assertEquals( $wildcard->attribute( 'destination_url' ),  $fetchedWildcard->attribute( 'destination_url' ) );
-            $this->assertEquals( $wildcard->attribute( 'type' ), $fetchedWildcard->attribute( 'type' ) );
-            $this->assertEquals( $wildcard->attribute( 'id' ), $fetchedWildcard->attribute( 'id' ) );
+            static::assertEquals($wildcard->attribute( 'source_url' ), $fetchedWildcard->attribute( 'source_url' ));
+            static::assertEquals($wildcard->attribute( 'destination_url' ), $fetchedWildcard->attribute( 'destination_url' ));
+            static::assertEquals($wildcard->attribute( 'type' ), $fetchedWildcard->attribute( 'type' ));
+            static::assertEquals($wildcard->attribute( 'id' ), $fetchedWildcard->attribute( 'id' ));
         }
     }
 
@@ -158,11 +153,11 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         $fetchedWildcard = eZURLWildcard::fetch( $id = $this->wildcardObjects['testPair/0/*']->attribute( 'id' ) );
 
-        $this->assertTrue( is_object( $fetchedWildcard ), "Failed fetching the wildcard object by ID" );
-        $this->assertSame( 'testPair/0/*', $fetchedWildcard->attribute( 'source_url' ) );
-        $this->assertEquals( '/', $fetchedWildcard->attribute( 'destination_url' ) );
-        $this->assertEquals( eZURLWildcard::TYPE_DIRECT, $fetchedWildcard->attribute( 'type' ) );
-        $this->assertEquals( $id, $fetchedWildcard->attribute( 'id' ) );
+        static::assertTrue(is_object( $fetchedWildcard ), "Failed fetching the wildcard object by ID");
+        static::assertSame('testPair/0/*', $fetchedWildcard->attribute( 'source_url' ));
+        static::assertEquals('/', $fetchedWildcard->attribute( 'destination_url' ));
+        static::assertEquals(eZURLWildcard::TYPE_DIRECT, $fetchedWildcard->attribute( 'type' ));
+        static::assertEquals($id, $fetchedWildcard->attribute( 'id' ));
     }
 
     /**
@@ -175,8 +170,8 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         eZURLWildcard::cleanup( 'testPair/0' );
 
         // Test if matching wildcards were removed, and non-matching ones were kept
-        $this->assertNull( eZURLWildcard::fetch( $this->wildcardObjects['testPair/0/*']->attribute( 'id' ) ), "Matching wildcard still exists" );
-        $this->assertTrue( is_object( eZURLWildcard::fetch( $this->wildcardObjects['testOdd/1/*']->attribute( 'id' ) ) ), "Non matching wildcard was removed" );
+        static::assertNull(eZURLWildcard::fetch( $this->wildcardObjects['testPair/0/*']->attribute( 'id' ) ), "Matching wildcard still exists");
+        static::assertTrue(is_object( eZURLWildcard::fetch( $this->wildcardObjects['testOdd/1/*']->attribute( 'id' ) ) ), "Non matching wildcard was removed");
     }
 
     /**
@@ -186,6 +181,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
      */
     public function testRemoveByIDs()
     {
+        $wildcardsToRemove = [];
         // Removing odd wildcards
         for ( $i = 0; $i < $this->generatedWildcards; ++$i )
         {
@@ -201,11 +197,11 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         {
             if ( $i % 2 )
             {
-                $this->assertNull( eZURLWildcard::fetch( $this->wildcardObjects["testOdd/$i/*"]->attribute( 'id' ) ), "A removed wildcard entry still exists" );
+                static::assertNull(eZURLWildcard::fetch( $this->wildcardObjects["testOdd/$i/*"]->attribute( 'id' ) ), "A removed wildcard entry still exists");
             }
             else
             {
-                $this->assertTrue( is_object( eZURLWildcard::fetch( $this->wildcardObjects["testPair/$i/*"]->attribute( 'id' ) ) ), "A kept wildcard entry no longer exists" );
+                static::assertTrue(is_object( eZURLWildcard::fetch( $this->wildcardObjects["testPair/$i/*"]->attribute( 'id' ) ) ), "A kept wildcard entry no longer exists");
             }
         }
     }
@@ -217,7 +213,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         $wildcard = eZURLWildcard::fetchBySourceURL( 'testPair/0/*' );
 
-        $this->assertEquals( $this->wildcardObjects['testPair/0/*'], $wildcard );
+        static::assertEquals($this->wildcardObjects['testPair/0/*'], $wildcard);
     }
 
     /**
@@ -227,10 +223,10 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         $fetchedWildcard = eZURLWildcard::fetchBySourceURL( 'testPair/0/*', false );
 
-        $this->assertInternalType( 'array', $fetchedWildcard, "Failed fetching the wildcard object as an array" );
-        $this->assertSame( 'testPair/0/*', $fetchedWildcard['source_url'] );
-        $this->assertSame( '/', $fetchedWildcard['destination_url'] );
-        $this->assertEquals( eZURLWildcard::TYPE_DIRECT, $fetchedWildcard['type'] );
+        static::assertInternalType('array', $fetchedWildcard, "Failed fetching the wildcard object as an array");
+        static::assertSame('testPair/0/*', $fetchedWildcard['source_url']);
+        static::assertSame('/', $fetchedWildcard['destination_url']);
+        static::assertEquals(eZURLWildcard::TYPE_DIRECT, $fetchedWildcard['type']);
     }
 
     /**
@@ -238,8 +234,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
      */
     public function testFetchListCount()
     {
-        $this->assertEquals( count( $this->wildcardObjects ), eZURLWildcard::fetchListCount(),
-            "The return value from fetchListCount doesn't match the number of created wildcards" );
+        static::assertEquals(count( (array) $this->wildcardObjects ), eZURLWildcard::fetchListCount(), "The return value from fetchListCount doesn't match the number of created wildcards");
     }
 
     /**
@@ -251,7 +246,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     {
         eZURLWildcard::removeAll();
 
-        $this->assertEquals( 0, $count = eZURLWildcard::fetchListCount(), $count . " wildcards still exist in the database" );
+        static::assertEquals(0, $count = eZURLWildcard::fetchListCount(), $count . " wildcards still exist in the database");
     }
 
     /**
@@ -260,8 +255,8 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     public function testTranslateDirect()
     {
         $uri = eZURI::instance( 'testTranslate1/foo/bar' );
-        $this->assertTrue( eZURLWildcard::translate( $uri ) );
-        $this->assertEquals( 'content/view/full/2', $uri->URI );
+        static::assertTrue(eZURLWildcard::translate( $uri ));
+        static::assertEquals('content/view/full/2', $uri->URI);
     }
 
     /**
@@ -273,8 +268,8 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         //  - the return should contain the forward URL
         //  - the return value should be the transformed URI
         $uri = eZURI::instance( 'testTranslate2/xyz/abc' );
-        $this->assertEquals( 'foobar/xyz', eZURLWildcard::translate( $uri ) );
-        $this->assertEquals( 'error/301', $uri->URI );
+        static::assertEquals('foobar/xyz', eZURLWildcard::translate( $uri ));
+        static::assertEquals('error/301', $uri->URI);
     }
 
     /**
@@ -283,8 +278,8 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
     public function testTranslateUnknownURI()
     {
         $uri = eZURI::instance( 'unknownURI/foobar' );
-        $this->assertFalse( eZURLWildcard::translate( $uri ) );
-        $this->assertEquals( 'unknownURI/foobar', $uri->URI );
+        static::assertFalse(eZURLWildcard::translate( $uri ));
+        static::assertEquals('unknownURI/foobar', $uri->URI);
     }
 
     /**
@@ -313,7 +308,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
         $uri = eZURI::instance( 'testDoubleTranslation1/foobar' );
 
         // will fail
-        $this->assertFalse( eZURLWildcard::translate( $uri ) );
+        static::assertFalse(eZURLWildcard::translate( $uri ));
     }
 
     /**
@@ -326,9 +321,7 @@ class eZURLWildcardTest extends ezpDatabaseTestCase
      */
     static public function createWildcard( $sourceURL, $destinationURL, $type )
     {
-        $row = array( 'source_url' => $sourceURL,
-                      'destination_url' => $destinationURL,
-                      'type' => $type );
+        $row = ['source_url' => $sourceURL, 'destination_url' => $destinationURL, 'type' => $type];
         $wildcard = new eZURLWildcard( $row );
         $wildcard->store();
 

@@ -21,17 +21,13 @@ class eZCountryTypeTest extends ezpDatabaseTestCase
      */
     public function testFetchTranslatedNamesSort()
     {
-        $translatedCountriesList = array(
-            'FR' => 'France',
-            'GB' => 'Royaume-uni',
-            'DE' => 'Allemagne',
-            'NO' => 'Norvège' );
+        $translatedCountriesList = ['FR' => 'France', 'GB' => 'Royaume-uni', 'DE' => 'Allemagne', 'NO' => 'Norvège'];
 
-        ezpINIHelper::setINISetting( array( 'fre-FR.ini', 'share/locale' ), 'CountryNames', 'Countries', $translatedCountriesList );
+        ezpINIHelper::setINISetting( ['fre-FR.ini', 'share/locale'], 'CountryNames', 'Countries', $translatedCountriesList );
         ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'Locale', 'fre-FR' );
 
         $countries = eZCountryType::fetchCountryList();
-        $this->assertInternalType( 'array', $countries, "eZCountryType::fetchCountryList() didn't return an array" );
+        static::assertInternalType('array', $countries, "eZCountryType::fetchCountryList() didn't return an array");
 
         $countryListIsSorted = true;
         foreach( $countries as $country )
@@ -42,7 +38,7 @@ class eZCountryTypeTest extends ezpDatabaseTestCase
                 continue;
             }
 
-            if ( strcoll( $previousCountry['Name'], $country['Name'] ) > 0 )
+            if ( strcoll( (string) $previousCountry['Name'], (string) $country['Name'] ) > 0 )
             {
                 $countryListIsSorted = false;
                 break;
@@ -50,7 +46,7 @@ class eZCountryTypeTest extends ezpDatabaseTestCase
         }
 
         ezpINIHelper::restoreINISettings();
-        $this->assertTrue( $countryListIsSorted, "Country list isn't sorted" );
+        static::assertTrue($countryListIsSorted, "Country list isn't sorted");
     }
 }
 

@@ -6,26 +6,16 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZInfo",
-                 "variable_params" => true );
+$Module = ["name" => "eZInfo", "variable_params" => true];
 
-$ViewList = array();
-$ViewList["copyright"] = array(
-    "functions" => array( 'read' ),
-    "script" => "copyright.php",
-    "params" => array() );
+$ViewList = [];
+$ViewList["copyright"] = ["functions" => ['read'], "script" => "copyright.php", "params" => []];
 
-$ViewList["about"] = array(
-    "functions" => array( 'read' ),
-    "script" => "about.php",
-    "params" => array() );
+$ViewList["about"] = ["functions" => ['read'], "script" => "about.php", "params" => []];
 
-$ViewList["is_alive"] = array(
-    "functions" => array( 'read' ),
-    "script" => "isalive.php",
-    "params" => array() );
+$ViewList["is_alive"] = ["functions" => ['read'], "script" => "isalive.php", "params" => []];
 
-$FunctionList = array();
-$FunctionList['read'] = array();
+$FunctionList = [];
+$FunctionList['read'] = [];
 
 ?>

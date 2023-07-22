@@ -14,7 +14,7 @@ $allSettingsList = $module->actionParameter( 'AllSettingsList' );
 if ( $module->hasActionParameter( 'SelectedList' ) )
     $selectedList = $module->actionParameter( 'SelectedList' );
 else
-    $selectedList=array();
+    $selectedList=[];
 
 $siteAccess = $module->actionParameter( 'SiteAccess' );
 if ( !$siteAccess )
@@ -22,16 +22,16 @@ if ( !$siteAccess )
 
 eZPreferences::setValue( 'admin_quicksettings_siteaccess', $siteAccess );
 
-$iniFiles = array();
+$iniFiles = [];
 
 foreach( $allSettingsList as $index => $setting )
 {
-    $settingArray = explode( ';', $setting );
+    $settingArray = explode( ';', (string) $setting );
 
     if ( !array_key_exists( $settingArray[2], $iniFiles ) )
-        $iniFiles[$settingArray[2]] = array();
+        $iniFiles[$settingArray[2]] = [];
 
-    $iniFiles[$settingArray[2]][] = array ( $settingArray[0], $settingArray[1], in_array( $index, $selectedList ) );
+    $iniFiles[$settingArray[2]][] = [$settingArray[0], $settingArray[1], in_array( $index, $selectedList )];
 }
 unset( $setting );
 

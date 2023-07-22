@@ -49,15 +49,13 @@ class eZMailEzcTest extends ezpTestCase
      */
     public function testTipAFriend()
     {
-        $this->markTestSkipped(
-            'smtp.ez.no is down for now'
-        );
+        static::markTestSkipped('smtp.ez.no is down for now');
         $mail = new eZMail();
         $mail->setSender( $this->adminEmail, $this->adminName );
         $mail->setReceiver( $this->adminEmail, $this->adminName );
         $mail->setSubject( __FUNCTION__ );
         $mail->setBody( __FUNCTION__ );
-        $this->assertEquals( true, eZMailTransport::send( $mail ) );
+        static::assertEquals(true, eZMailTransport::send( $mail ));
     }
 
     public function testRegressionToEmail()
@@ -66,9 +64,9 @@ class eZMailEzcTest extends ezpTestCase
         $mail->setReceiver( $this->adminEmail, $this->adminName );
 
         $result = $mail->receiverEmailText();
-        $expected = $mail->composeEmailItems( array( array( 'email' => $this->adminEmail, 'name' => $this->adminName ) ), true, 'email', true );
+        $expected = $mail->composeEmailItems( [['email' => $this->adminEmail, 'name' => $this->adminName]], true, 'email', true );
 
-        $this->assertEquals( $expected, $result );
+        static::assertEquals($expected, $result);
     }
 
     public function testRegressionToAll()
@@ -78,11 +76,11 @@ class eZMailEzcTest extends ezpTestCase
 
         $ezpResult = $mail->receiverText();
         $ezcResult = $mail->Mail->to;
-        $ezpExpected = $mail->composeEmailItems( array( array( 'email' => $this->adminEmail, 'name' => $this->adminName ) ), true, false, true );
-        $ezcExpected = array( new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() ) );
+        $ezpExpected = $mail->composeEmailItems( [['email' => $this->adminEmail, 'name' => $this->adminName]], true, false, true );
+        $ezcExpected = [new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() )];
 
-        $this->assertEquals( $ezpExpected, $ezpResult );
-        $this->assertEquals( $ezcExpected, $ezcResult );
+        static::assertEquals($ezpExpected, $ezpResult);
+        static::assertEquals($ezcExpected, $ezcResult);
     }
 
     public function testRegressionCcEmail()
@@ -91,9 +89,9 @@ class eZMailEzcTest extends ezpTestCase
         $mail->addCc( $this->adminEmail, $this->adminName );
 
         $result = $mail->ccReceiverTextList();
-        $expected = array( 'ezp-unittests-01@ez.no' );
+        $expected = ['ezp-unittests-01@ez.no'];
 
-        $this->assertEquals( $expected, $result );
+        static::assertEquals($expected, $result);
     }
 
     public function testRegressionCcAll()
@@ -104,11 +102,11 @@ class eZMailEzcTest extends ezpTestCase
         $ezpResult = $mail->ccElements();
         $ezcResult = $mail->Mail->cc;
         $ezpExpected =
-        array( array( 'email' => $this->adminEmail, 'name' => $this->adminName ) );
-        $ezcExpected = array( new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() ) );
+        [['email' => $this->adminEmail, 'name' => $this->adminName]];
+        $ezcExpected = [new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() )];
 
-        $this->assertEquals( $ezpExpected, $ezpResult );
-        $this->assertEquals( $ezcExpected, $ezcResult );
+        static::assertEquals($ezpExpected, $ezpResult);
+        static::assertEquals($ezcExpected, $ezcResult);
     }
 
     public function testRegressionBccEmail()
@@ -117,9 +115,9 @@ class eZMailEzcTest extends ezpTestCase
         $mail->addBcc( $this->adminEmail, $this->adminName );
 
         $result = $mail->bccReceiverTextList();
-        $expected = array( 'ezp-unittests-01@ez.no' );
+        $expected = ['ezp-unittests-01@ez.no'];
 
-        $this->assertEquals( $expected, $result );
+        static::assertEquals($expected, $result);
     }
 
     public function testRegressionBccAll()
@@ -130,11 +128,11 @@ class eZMailEzcTest extends ezpTestCase
         $ezpResult = $mail->bccElements();
         $ezcResult = $mail->Mail->bcc;
         $ezpExpected =
-        array( array( 'email' => $this->adminEmail, 'name' => $this->adminName ) );
-        $ezcExpected = array( new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() ) );
+        [['email' => $this->adminEmail, 'name' => $this->adminName]];
+        $ezcExpected = [new ezcMailAddress( $this->adminEmail, $this->adminName, $mail->usedCharset() )];
 
-        $this->assertEquals( $ezpExpected, $ezpResult );
-        $this->assertEquals( $ezcExpected, $ezcResult );
+        static::assertEquals($ezpExpected, $ezpResult);
+        static::assertEquals($ezcExpected, $ezcResult);
     }
 
     public function testRegressionSubject()
@@ -146,8 +144,8 @@ class eZMailEzcTest extends ezpTestCase
         $ezcResult = $mail->Mail->subject;
         $expected = __FUNCTION__;
 
-        $this->assertEquals( $expected, $ezpResult );
-        $this->assertEquals( $expected, $ezcResult );
+        static::assertEquals($expected, $ezpResult);
+        static::assertEquals($expected, $ezcResult);
     }
 
     public function testRegressionUserAgent()
@@ -159,8 +157,8 @@ class eZMailEzcTest extends ezpTestCase
         $ezcResult = $mail->Mail->getHeader( 'User-Agent' );
         $expected = __FUNCTION__;
 
-        $this->assertEquals( $expected, $ezpResult );
-        $this->assertEquals( $expected, $ezcResult );
+        static::assertEquals($expected, $ezpResult);
+        static::assertEquals($expected, $ezcResult);
     }
 
     public function testRegressionBodyString()
@@ -173,15 +171,13 @@ class eZMailEzcTest extends ezpTestCase
         $ezpExpected = __FUNCTION__;
         $ezcExpected = new ezcMailText( __FUNCTION__, 'utf-8' );
 
-        $this->assertEquals( $ezpExpected, $ezpResult );
-        $this->assertEquals( $ezcExpected, $ezcResult );
+        static::assertEquals($ezpExpected, $ezpResult);
+        static::assertEquals($ezcExpected, $ezcResult);
     }
 
     public function testRegressionWrongPasswordCatchException()
     {
-        $this->markTestSkipped(
-            'smtp.ez.no is down for now'
-        );
+        static::markTestSkipped('smtp.ez.no is down for now');
         ezpINIHelper::setINISetting( 'site.ini', 'MailSettings', 'TransportPassword', 'wrong password' );
         $mail = new eZMail();
         $mail->setSender( $this->adminEmail, $this->adminName );
@@ -190,7 +186,7 @@ class eZMailEzcTest extends ezpTestCase
         $mail->setBody( __FUNCTION__ );
 
         // catching the exception of wrong password and turning it into return false
-        $this->assertEquals( false, eZMailTransport::send( $mail ) );
+        static::assertEquals(false, eZMailTransport::send( $mail ));
     }
 
     /**
@@ -206,7 +202,7 @@ class eZMailEzcTest extends ezpTestCase
         $ezcResult = $mail->Mail->generate();
 
         preg_match( "/Content-Type: text\/html/", $ezcResult, $matches );
-        $this->assertEquals( 1, count( $matches ) );
+        static::assertEquals(1, count( $matches ));
     }
 
     /**
@@ -224,7 +220,7 @@ class eZMailEzcTest extends ezpTestCase
         $ezcResult = $mail->Mail->generate();
 
         preg_match( "/Content-Type: text\/plain; charset=custom-charset/", $ezcResult, $matches );
-        $this->assertEquals( 1, count( $matches ) );
+        static::assertEquals(1, count( $matches ));
     }
 }
 

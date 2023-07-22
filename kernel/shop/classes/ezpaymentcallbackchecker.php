@@ -34,7 +34,7 @@ class eZPaymentCallbackChecker
     function createDataFromPOST()
     {
         $this->logger->writeTimedString( 'createDataFromPOST' );
-        $this->callbackData = array();
+        $this->callbackData = [];
 
         foreach( $_POST as $key => $value )
         {
@@ -51,12 +51,12 @@ class eZPaymentCallbackChecker
     function createDataFromGET()
     {
         $this->logger->writeTimedString( 'createDataFromGET' );
-        $this->callbackData = array();
+        $this->callbackData = [];
 
         $query_string = eZSys::serverVariable( 'QUERY_STRING' );
         if( $query_string )
         {
-            $key_value_pairs = explode( '&', $query_string );
+            $key_value_pairs = explode( '&', (string) $query_string );
 
             foreach( $key_value_pairs as $key_value )
             {
@@ -75,9 +75,9 @@ class eZPaymentCallbackChecker
     */
     function sendPOSTRequest( $server, $port, $serverMethod, $request, $timeout=30)
     {
-        $pos = strpos($server, '://');
+        $pos = strpos((string) $server, '://');
         if( $pos !== false )
-            $server = substr($server, $pos+3);
+            $server = substr((string) $server, $pos+3);
 
         $fp = fsockopen( $server, $port, $errno, $errstr, $timeout );
 
@@ -86,7 +86,7 @@ class eZPaymentCallbackChecker
             $theCall    =   "POST $serverMethod HTTP/1.0\r\n"                       .
                             "Host: $server\r\n"                                   .
                             "Content-Type: application/x-www-form-urlencoded\r\n"   .
-                            "Content-Length: ".strlen( $request )."\r\n\r\n"     .
+                            "Content-Length: ".strlen( (string) $request )."\r\n\r\n"     .
                             $request."\r\n\r\n";
 
             if ( !fputs( $fp, "$theCall", strlen( $theCall ) ) )

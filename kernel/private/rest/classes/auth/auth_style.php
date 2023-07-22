@@ -36,7 +36,6 @@ interface ezpRestAuthenticationStyleInterface
     /**
      * Registers the user that has been authenticated
      * @return void
-     * @param eZUser $user
      */
     public function setUser( eZUser $user );
 }

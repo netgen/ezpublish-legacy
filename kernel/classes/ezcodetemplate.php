@@ -17,13 +17,13 @@
 class eZCodeTemplate
 {
     /// There are errors in the template code
-    const STATUS_FAILED = 0;
+    final public const STATUS_FAILED = 0;
 
     /// Code files was succesfully updated
-    const STATUS_OK = 1;
+    final public const STATUS_OK = 1;
 
     /// Code file was updated, but no new elements has been added
-    const STATUS_NO_CHANGE = 2;
+    final public const STATUS_NO_CHANGE = 2;
 
     /**
      *
@@ -31,11 +31,10 @@ class eZCodeTemplate
     public function __construct()
     {
         $ini = eZINI::instance( 'codetemplate.ini' );
-        $this->Templates = array();
         $templates = $ini->variable( 'Files', 'Templates' );
         foreach ( $templates as $key => $template )
         {
-            $this->Templates[$key] = array( 'filepath' => $template );
+            $this->Templates[$key] = ['filepath' => $template];
         }
 
         // The default limit has to be increased to avoid PREG_BACKTRACK_LIMIT_ERROR
@@ -60,7 +59,7 @@ class eZCodeTemplate
         }
 
         $text = file_get_contents( $filePath );
-        $tempFile = dirname( $filePath ) . '/#' . basename( $filePath ) . '#';
+        $tempFile = dirname( (string) $filePath ) . '/#' . basename( (string) $filePath ) . '#';
         $fd = fopen( $tempFile, 'wb' );
         if ( !$fd )
         {
@@ -161,10 +160,10 @@ class eZCodeTemplate
 
                 $split = preg_split( $tagSplit, $templateText, -1, PREG_SPLIT_DELIM_CAPTURE );
 
-                $currentBlocks = array();
-                $blocks = array();
+                $currentBlocks = [];
+                $blocks = [];
                 $currentTag = false;
-                for ( $i = 0; $i < count( $split ); ++$i )
+                for ( $i = 0; $i < (is_countable($split) ? count( $split ) : 0); ++$i )
                 {
                     $part = $split[$i];
                     if ( ( $i % 2 ) == 1 )
@@ -183,8 +182,8 @@ class eZCodeTemplate
                             else
                             {
                                 if ( count( $currentBlocks ) > 0 )
-                                    $blocks[] = array( 'blocks' => $currentBlocks );
-                                $currentBlocks = array();
+                                    $blocks[] = ['blocks' => $currentBlocks];
+                                $currentBlocks = [];
                             }
                         }
                         else
@@ -196,10 +195,9 @@ class eZCodeTemplate
                                 if ( $tag == $currentTag )
                                 {
                                     if ( count( $currentBlocks ) > 0 )
-                                        $blocks[] = array( 'tag' => $currentTag,
-                                                           'blocks' => $currentBlocks );
+                                        $blocks[] = ['tag' => $currentTag, 'blocks' => $currentBlocks];
                                     $currentTag = false;
-                                    $currentBlocks = array();
+                                    $currentBlocks = [];
                                 }
                                 else
                                 {
@@ -223,13 +221,12 @@ class eZCodeTemplate
                 if ( $currentTag === false )
                 {
                     if ( count( $currentBlocks ) > 0 )
-                        $blocks[] = array( 'blocks' => $currentBlocks );
+                        $blocks[] = ['blocks' => $currentBlocks];
                 }
                 else
                 {
                     if ( count( $currentBlocks ) > 0 )
-                        $blocks[] = array( 'tag' => $currentTag,
-                                           'blocks' => $currentBlocks );
+                        $blocks[] = ['tag' => $currentTag, 'blocks' => $currentBlocks];
                 }
 
                 // Build new code with blocks to include
@@ -239,7 +236,7 @@ class eZCodeTemplate
                     if ( isset( $block['tag'] ) )
                     {
                         $tagText = $block['tag'];
-                        if ( strpos( $tagText, '&' ) !== false )
+                        if ( str_contains( $tagText, '&' ) )
                         {
                             $tags = explode( '&', $tagText );
                             // Check if all tags are present in parameters (and match)
@@ -248,7 +245,7 @@ class eZCodeTemplate
                                 $resultText .= implode( '', $block['blocks'] );
                             }
                         }
-                        else if ( strpos( $tagText, '|' ) !== false )
+                        else if ( str_contains( $tagText, '|' ) )
                         {
                             $tags = explode( '|', $tagText );
                             // Check if at least one tag is present in parameters (or match)
@@ -362,7 +359,7 @@ class eZCodeTemplate
     }
 
     /// \privatesection
-    public $Templates;
+    public $Templates = [];
 }
 
 ?>

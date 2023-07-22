@@ -79,7 +79,7 @@ $Module->setTitle( ezpI18n::tr( 'kernel/workflow', 'Edit workflow group' ) . ' '
 $tpl = eZTemplate::factory();
 
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array( "workflow_group", $workflowGroup->attribute( "id" ) ) ) ); // WorkflowGroup ID
+$res->setKeys( [["workflow_group", $workflowGroup->attribute( "id" )]] ); // WorkflowGroup ID
 
 $tpl->setVariable( "http", $http );
 $tpl->setVariable( "require_fixup", $requireFixup );
@@ -87,12 +87,9 @@ $tpl->setVariable( "module", $Module );
 $tpl->setVariable( "workflow_group", $workflowGroup );
 //$tpl->setVariable( "assigned_workflow_list", $assignedWorkflows );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:workflow/groupedit.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Group edit' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/workflow', 'Group edit' ), 'url' => false]];
 
 
 ?>

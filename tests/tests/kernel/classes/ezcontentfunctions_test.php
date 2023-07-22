@@ -33,31 +33,27 @@ class eZContentFunctionsTest extends ezpDatabaseTestCase
             $sectionID = 3;
             $remoteID  = md5( $now );
 
-            $attributeList = array( 'name'              => 'name ' . $now,
-                                    'short_name'        => 'short_name ' . $now,
-                                    'short_description' => 'short_description' . $now,
-                                    'description'       => 'description' . $now,
-                                    'show_children'     => false );
+            $attributeList = ['name'              => 'name ' . $now, 'short_name'        => 'short_name ' . $now, 'short_description' => 'short_description' . $now, 'description'       => 'description' . $now, 'show_children'     => false];
 
-            $params               = array();
+            $params               = [];
             $params['attributes'] = $attributeList;
             $params['remote_id']  = $remoteID;
             $params['section_id'] = $sectionID;
 
             $result = eZContentFunctions::updateAndPublishObject( $object, $params );
 
-            $this->assertTrue( $result );
+            static::assertTrue($result);
 
             $object = eZContentObject::fetch( $contentObjectID );
-            $this->assertEquals( $object->attribute( 'section_id' ), $sectionID );
-            $this->assertEquals( $object->attribute( 'remote_id' ) , $remoteID );
+            static::assertEquals($object->attribute( 'section_id' ), $sectionID);
+            static::assertEquals($object->attribute( 'remote_id' ), $remoteID);
 
             $dataMap = $object->dataMap();
-            $this->assertEquals( $attributeList['name']             , $dataMap['name']->content() );
-            $this->assertEquals( $attributeList['short_name']       , $dataMap['short_name']->content() );
-            $this->assertEquals( $attributeList['short_description'], $dataMap['short_description']->content() );
-            $this->assertEquals( $attributeList['description']      , $dataMap['description']->content() );
-            $this->assertEquals( $attributeList['show_children']    , (bool)$dataMap['show_children']->content() );
+            static::assertEquals($attributeList['name'], $dataMap['name']->content());
+            static::assertEquals($attributeList['short_name'], $dataMap['short_name']->content());
+            static::assertEquals($attributeList['short_description'], $dataMap['short_description']->content());
+            static::assertEquals($attributeList['description'], $dataMap['description']->content());
+            static::assertEquals($attributeList['show_children'], (bool)$dataMap['show_children']->content());
         }
     }
 }

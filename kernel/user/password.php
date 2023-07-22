@@ -72,7 +72,7 @@ if ( $http->hasPostVariable( "OKButton" ) )
         {
             $minPasswordLength = $ini->hasVariable( 'UserSettings', 'MinPasswordLength' ) ? $ini->variable( 'UserSettings', 'MinPasswordLength' ) : 3;
 
-            if ( strlen( $newPassword ) < $minPasswordLength )
+            if ( strlen( (string) $newPassword ) < $minPasswordLength )
             {
                 $newPasswordTooShort = 1;
             }
@@ -82,8 +82,7 @@ if ( $http->hasPostVariable( "OKButton" ) )
                 if ( eZOperationHandler::operationIsAvailable( 'user_password' ) )
                 {
                     $operationResult = eZOperationHandler::execute( 'user',
-                                                                    'password', array( 'user_id'    => $UserID,
-                                                                                       'new_password'  => $newPassword ) );
+                                                                    'password', ['user_id'    => $UserID, 'new_password'  => $newPassword] );
                 }
                 else
                 {
@@ -138,11 +137,8 @@ $tpl->setVariable( "newPasswordNotMatch", $newPasswordNotMatch );
 $tpl->setVariable( "newPasswordTooShort", $newPasswordTooShort );
 $tpl->setVariable( "message", $message );
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Change password' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Change password' ), 'url' => false]];
 $Result['content'] = $tpl->fetch( "design:user/password.tpl" );
 
 ?>

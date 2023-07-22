@@ -32,7 +32,7 @@ class eZFileExtensionBlackListValidator extends eZInputValidator
     function validate( $filename )
     {
         if (
-            pathinfo($filename, PATHINFO_BASENAME) !== $filename ||
+            pathinfo((string) $filename, PATHINFO_BASENAME) !== $filename ||
             in_array(strtolower(pathinfo($filename, PATHINFO_EXTENSION)), $this->constraints['extensionsBlackList'], true)
         ) {
             return eZInputValidator::STATE_INVALID;
@@ -50,7 +50,5 @@ class eZFileExtensionBlackListValidator extends eZInputValidator
     }
 
     /// \privatesection
-    protected $constraints = array(
-        'extensionsBlackList' => array(),
-    );
+    protected $constraints = ['extensionsBlackList' => []];
 }

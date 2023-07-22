@@ -14,7 +14,7 @@ $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
 
 $valid = true;
-$validationErrors = array();
+$validationErrors = [];
 
 if ( isset( $Params['RSSExportID'] ) )
     $RSSExportID = $Params['RSSExportID'];
@@ -57,10 +57,8 @@ else if ( $Module->isCurrentAction( 'Cancel' ) )
 else if ( $Module->isCurrentAction( 'BrowseImage' ) )
 {
     eZRSSEditFunction::storeRSSExport( $Module, $http );
-    eZContentBrowse::browse( array( 'action_name' => 'RSSExportImageBrowse',
-                                    'description_template' => 'design:rss/browse_image.tpl',
-                                    'from_page' => '/rss/edit_export/'. $RSSExportID .'/0/ImageSource' ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'RSSExportImageBrowse', 'description_template' => 'design:rss/browse_image.tpl', 'from_page' => '/rss/edit_export/'. $RSSExportID .'/0/ImageSource'] );
 }
 else if ( $Module->isCurrentAction( 'RemoveImage' ) )
 {
@@ -81,10 +79,8 @@ if ( $http->hasPostVariable( 'Item_Count' ) )
         {
             $skipValues = $http->hasPostVariable( 'Ignore_Values_On_Browse_' . $itemCount ) && $http->postVariable( 'Ignore_Values_On_Browse_' . $itemCount );
             eZRSSEditFunction::storeRSSExport( $Module, $http, false, $skipValues ? $http->postVariable( 'Item_ID_'.$itemCount ) : null );//
-            eZContentBrowse::browse( array( 'action_name' => 'RSSObjectBrowse',
-                                            'description_template' => 'design:rss/browse_source.tpl',
-                                            'from_page' => '/rss/edit_export/'. $RSSExportID .'/'. $http->postVariable( 'Item_ID_'.$itemCount ) .'/NodeSource' ),
-                                     $Module );
+            eZContentBrowse::browse( $Module,
+                                     ['action_name' => 'RSSObjectBrowse', 'description_template' => 'design:rss/browse_source.tpl', 'from_page' => '/rss/edit_export/'. $RSSExportID .'/'. $http->postVariable( 'Item_ID_'.$itemCount ) .'/NodeSource'] );
             break;
         }
 
@@ -128,10 +124,9 @@ if ( is_numeric( $RSSExportID ) )
             $tpl->setVariable( 'rss_export_id', $rssExportID );
             $tpl->setVariable( 'lock_timeout', $timeOut );
 
-            $Result = array();
+            $Result = [];
             $Result['content'] = $tpl->fetch( 'design:rss/edit_export_denied.tpl' );
-            $Result['path'] = array( array( 'url' => false,
-                                            'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' ) ) );
+            $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' )]];
             return $Result;
         }
         else if ( $timeOut > 0 && $rssExport->attribute( 'modified' ) + $timeOut < time() )
@@ -239,10 +234,9 @@ $tpl->setVariable( 'validaton', !$valid );
 $tpl->setVariable( 'valid', $valid );
 $tpl->setVariable( 'validation_errors', $validationErrors );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:rss/edit_export.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' )]];
 
 
 ?>

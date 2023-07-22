@@ -22,7 +22,7 @@ if ( $module->isCurrentAction( 'NewCurrency' ) )
 }
 else if ( $module->isCurrentAction( 'RemoveCurrency' ) )
 {
-    $currencyList = $module->hasActionParameter( 'DeleteCurrencyList' ) ? $module->actionParameter( 'DeleteCurrencyList' ) : array();
+    $currencyList = $module->hasActionParameter( 'DeleteCurrencyList' ) ? $module->actionParameter( 'DeleteCurrencyList' ) : [];
 
     eZShopFunctions::removeCurrency( $currencyList );
 
@@ -30,7 +30,7 @@ else if ( $module->isCurrentAction( 'RemoveCurrency' ) )
 }
 else if ( $module->isCurrentAction( 'ApplyChanges' ) )
 {
-    $updateDataList = $module->hasActionParameter( 'CurrencyList' ) ? $module->actionParameter( 'CurrencyList' ) : array();
+    $updateDataList = $module->hasActionParameter( 'CurrencyList' ) ? $module->actionParameter( 'CurrencyList' ) : [];
 
     $currencyList = eZCurrencyData::fetchList();
     $db = eZDB::instance();
@@ -60,8 +60,7 @@ else if ( $module->isCurrentAction( 'ApplyChanges' ) )
     }
     $db->commit();
 
-    $error = array( 'code' => 0,
-                    'description' => ezpI18n::tr( 'kernel/shop', 'Changes were stored successfully.' ) );
+    $error = ['code' => 0, 'description' => ezpI18n::tr( 'kernel/shop', 'Changes were stored successfully.' )];
 }
 else if ( $module->isCurrentAction( 'UpdateAutoprices' ) )
 {
@@ -82,18 +81,17 @@ if ( $error !== false )
         $error['style'] = 'message-feedback';
 }
 
-switch ( eZPreferences::value( 'currencies_list_limit' ) )
-{
-    case '2': { $limit = 25; } break;
-    case '3': { $limit = 50; } break;
-    default:  { $limit = 10; } break;
-}
+$limit = match (eZPreferences::value( 'currencies_list_limit' )) {
+    '2' => 25,
+    '3' => 50,
+    default => 10,
+};
 
 // fetch currencies
 $currencyList = eZCurrencyData::fetchList( null, true, $offset, $limit );
 $currencyCount = eZCurrencyData::fetchListCount();
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 
 $tpl = eZTemplate::factory();
 
@@ -104,9 +102,8 @@ $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'show_error_message', $error !== false );
 $tpl->setVariable( 'error', $error );
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Available currency list' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Available currency list' ), 'url' => false]];
 $Result['content'] = $tpl->fetch( "design:shop/currencylist.tpl" );
 
 

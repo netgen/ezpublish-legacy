@@ -84,9 +84,7 @@ foreach ( $rssImportArray as $rssImport )
 
 if ( eZINI::instance( 'site.ini' )->variable( 'ContentSettings', 'StaticCache' ) == 'enabled' )
 {
-    $optionArray = array( 'iniFile' => 'site.ini',
-                          'iniSection' => 'ContentSettings',
-                          'iniVariable' => 'StaticCacheHandler' );
+    $optionArray = ['iniFile' => 'site.ini', 'iniSection' => 'ContentSettings', 'iniVariable' => 'StaticCacheHandler'];
 
     $options = new ezpExtensionOptions( $optionArray );
     $staticCacheHandler = eZExtension::getHandlerClass( $options );
@@ -183,11 +181,11 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
         $cli->output( 'RSSImport '.$rssImport->attribute( 'name' ).': Item has no unique identifier. RSS guid or link missing.' );
         return 0;
     }
-    $md5Sum = md5( $rssId );
+    $md5Sum = md5( (string) $rssId );
 
     // Try to fetch RSSImport object with md5 sum matching link.
     $existingObject = eZPersistentObject::fetchObject( eZContentObject::definition(), null,
-                                                       array( 'remote_id' => 'RSSImport_'.$rssImportID.'_'.$md5Sum ) );
+                                                       ['remote_id' => 'RSSImport_'.$rssImportID.'_'.$md5Sum] );
 
     // if object exists, continue to next import item
     if ( $existingObject != null )
@@ -209,10 +207,7 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
     $contentObjectID = $contentObject->attribute( 'id' );
 
     // Create node assignment
-    $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObjectID,
-                                                       'contentobject_version' => $contentObject->attribute( 'current_version' ),
-                                                       'is_main' => 1,
-                                                       'parent_node' => $parentContentObjectTreeNode->attribute( 'node_id' ) ) );
+    $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $contentObjectID, 'contentobject_version' => $contentObject->attribute( 'current_version' ), 'is_main' => 1, 'parent_node' => $parentContentObjectTreeNode->attribute( 'node_id' )] );
     $nodeAssignment->store();
 
     $version = $contentObject->version( 1 );
@@ -235,7 +230,7 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
                 continue;
             }
 
-            $importDescriptionArray = explode( ' - ', $importDescription['class_attributes'][$classAttributeID] );
+            $importDescriptionArray = explode( ' - ', (string) $importDescription['class_attributes'][$classAttributeID] );
             if ( count( $importDescriptionArray ) < 1 )
             {
                 $cli->output( 'RSSImport '.$rssImport->attribute( 'name' ).': Invalid import definition. Please redit.' );
@@ -269,9 +264,7 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
 
     // Publish new object. The user id is sent to make sure any workflow
     // requiring the user id has access to it.
-    $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObject->attribute( 'id' ),
-                                                                                 'version' => 1,
-                                                                                 'user_id' => $rssOwnerID ) );
+    $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObject->attribute( 'id' ), 'version' => 1, 'user_id' => $rssOwnerID] );
 
     if ( !isset( $operationResult['status'] ) || $operationResult['status'] != eZModuleOperationInfo::STATUS_CONTINUE )
     {
@@ -297,7 +290,7 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
             continue;
         }
 
-        $importDescriptionArray = explode( ' - ', $objectAttributeDefinition );
+        $importDescriptionArray = explode( ' - ', (string) $objectAttributeDefinition );
 
         $elementType = $importDescriptionArray[0];
         array_shift( $importDescriptionArray );
@@ -325,8 +318,8 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
                 {
                     break;
                 }
-                $contentObject->setAttribute( $identifier, strtotime( $dateTime ) );
-                $version->setAttribute( $identifier, strtotime( $dateTime ) );
+                $contentObject->setAttribute( $identifier, strtotime( (string) $dateTime ) );
+                $version->setAttribute( $identifier, strtotime( (string) $dateTime ) );
             } break;
 
             case 'published':
@@ -337,8 +330,8 @@ function importRSSItem( $item, $rssImport, $cli, $channel )
                 {
                     break;
                 }
-                $contentObject->setAttribute( $identifier, strtotime( $dateTime ) );
-                $version->setAttribute( 'created', strtotime( $dateTime ) );
+                $contentObject->setAttribute( $identifier, strtotime( (string) $dateTime ) );
+                $version->setAttribute( 'created', strtotime( (string) $dateTime ) );
             } break;
         }
     }
@@ -415,14 +408,14 @@ function setObjectAttributeValue( $objectAttribute, $value )
 
         case 'ezdate':
         {
-            $timestamp = strtotime( $value );
+            $timestamp = strtotime( (string) $value );
             if ( $timestamp )
                 $objectAttribute->setAttribute( 'data_int', $timestamp );
         } break;
 
         case 'ezdatetime':
         {
-            $objectAttribute->setAttribute( 'data_int', strtotime($value) );
+            $objectAttribute->setAttribute( 'data_int', strtotime((string) $value) );
         } break;
 
         default:
@@ -439,7 +432,7 @@ function setEZXMLAttribute( $attribute, $attributeValue, $link = false )
     $contentObjectID = $attribute->attribute( "contentobject_id" );
     $parser = new eZSimplifiedXMLInputParser( $contentObjectID, false, 0, false );
 
-    $attributeValue = str_replace( "\r", '', $attributeValue );
+    $attributeValue = str_replace( "\r", '', (string) $attributeValue );
     $attributeValue = str_replace( "\n", '', $attributeValue );
     $attributeValue = str_replace( "\t", ' ', $attributeValue );
 

@@ -19,20 +19,10 @@ class eZStylePackageCreator extends eZPackageCreationHandler
 {
     public function __construct( $id )
     {
-        $steps = array();
+        $steps = [];
         $steps[] = $this->packageThumbnailStep();
-        $steps[] = array( 'id' => 'cssfile',
-                          'name' => ezpI18n::tr( 'kernel/package', 'CSS files' ),
-                          'methods' => array( 'initialize' => 'initializeCSSFile',
-                                              'validate' => 'validateCSSFile',
-                                              'commit' => 'commitCSSFile' ),
-                          'template' => 'cssfile.tpl' );
-        $steps[] = array( 'id' => 'imagefiles',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Image files' ),
-                          'methods' => array( 'initialize' => 'initializeImageFiles',
-                                              'validate' => 'validateImageFiles',
-                                              'commit' => 'commitImageFiles' ),
-                          'template' => 'imagefiles.tpl' );
+        $steps[] = ['id' => 'cssfile', 'name' => ezpI18n::tr( 'kernel/package', 'CSS files' ), 'methods' => ['initialize' => 'initializeCSSFile', 'validate' => 'validateCSSFile', 'commit' => 'commitCSSFile'], 'template' => 'cssfile.tpl'];
+        $steps[] = ['id' => 'imagefiles', 'name' => ezpI18n::tr( 'kernel/package', 'Image files' ), 'methods' => ['initialize' => 'initializeImageFiles', 'validate' => 'validateImageFiles', 'commit' => 'commitImageFiles'], 'template' => 'imagefiles.tpl'];
         $steps[] = $this->packageInformationStep();
         $steps[] = $this->packageMaintainerStep();
         $steps[] = $this->packageChangelogStep();
@@ -41,21 +31,13 @@ class eZStylePackageCreator extends eZPackageCreationHandler
 
     function finalize( &$package, $http, &$persistentData )
     {
-        $cleanupFiles = array();
+        $cleanupFiles = [];
         $this->createPackage( $package, $http, $persistentData, $cleanupFiles, false );
 
-        $collections = array();
+        $collections = [];
 
         $siteCssfile = $persistentData['sitecssfile'];
-        $fileItem = array( 'file' => $siteCssfile['filename'],
-                           'type' => 'file',
-                           'role' => false,
-                           'design' => false,
-                           'path' => $siteCssfile['url'],
-                           'collection' => 'default',
-                           'file-type' => false,
-                           'role-value' => false,
-                           'variable-name' => 'sitecssfile' );
+        $fileItem = ['file' => $siteCssfile['filename'], 'type' => 'file', 'role' => false, 'design' => false, 'path' => $siteCssfile['url'], 'collection' => 'default', 'file-type' => false, 'role-value' => false, 'variable-name' => 'sitecssfile'];
 
         $package->appendFile( $fileItem['file'], $fileItem['type'], $fileItem['role'],
                               $fileItem['design'], $fileItem['path'], $fileItem['collection'],
@@ -64,15 +46,7 @@ class eZStylePackageCreator extends eZPackageCreationHandler
         $cleanupFiles[] = $fileItem['path'];
 
         $classesCssfile = $persistentData['classescssfile'];
-        $fileItem = array( 'file' => $classesCssfile['filename'],
-                           'type' => 'file',
-                           'role' => false,
-                           'design' => false,
-                           'path' => $classesCssfile['url'],
-                           'collection' => 'default',
-                           'file-type' => false,
-                           'role-value' => false,
-                           'variable-name' => 'classescssfile' );
+        $fileItem = ['file' => $classesCssfile['filename'], 'type' => 'file', 'role' => false, 'design' => false, 'path' => $classesCssfile['url'], 'collection' => 'default', 'file-type' => false, 'role-value' => false, 'variable-name' => 'classescssfile'];
 
         $package->appendFile( $fileItem['file'], $fileItem['type'], $fileItem['role'],
                               $fileItem['design'], $fileItem['path'], $fileItem['collection'],
@@ -86,16 +60,7 @@ class eZStylePackageCreator extends eZPackageCreationHandler
         $imageFiles = $persistentData['imagefiles'];
         foreach ( $imageFiles as $imageFile )
         {
-            $fileItem = array( 'file' => $imageFile['filename'],
-                               'type' => 'file',
-                               'role' => false,
-                               'design' => false,
-                               'subdirectory' => 'images',
-                               'path' => $imageFile['url'],
-                               'collection' => 'default',
-                               'file-type' => false,
-                               'role-value' => false,
-                               'variable-name' => 'imagefiles' );
+            $fileItem = ['file' => $imageFile['filename'], 'type' => 'file', 'role' => false, 'design' => false, 'subdirectory' => 'images', 'path' => $imageFile['url'], 'collection' => 'default', 'file-type' => false, 'role-value' => false, 'variable-name' => 'imagefiles'];
 
             $package->appendFile( $fileItem['file'], $fileItem['type'], $fileItem['role'],
                                   $fileItem['design'], $fileItem['path'], $fileItem['collection'],
@@ -110,24 +75,20 @@ class eZStylePackageCreator extends eZPackageCreationHandler
         foreach ( $collections as $collection )
         {
             $installItems = $package->installItemsList( 'ezfile', false, $collection, true );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, true,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
             $dependencyItems = $package->dependencyItems( 'provides',
-                                                          array( 'type'  => 'ezfile',
-                                                                 'name'  => 'collection',
-                                                                 'value' => $collection ) );
-            if ( count( $dependencyItems ) == 0 )
+                                                          ['type'  => 'ezfile', 'name'  => 'collection', 'value' => $collection] );
+            if ( (is_countable($dependencyItems) ? count( $dependencyItems ) : 0) == 0 )
                 $package->appendDependency( 'provides',
-                                            array( 'type'  => 'ezfile',
-                                                   'name'  => 'collection',
-                                                   'value' => $collection ) );
+                                            ['type'  => 'ezfile', 'name'  => 'collection', 'value' => $collection] );
             $installItems = $package->installItemsList( 'ezfile', false, $collection, false );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, false,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
         }
 
         $package->setAttribute( 'is_active', true );
@@ -179,18 +140,16 @@ class eZStylePackageCreator extends eZPackageCreationHandler
         $result = true;
         if ( !$hasSiteFile or !$hasClassesFile )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'CSS file' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must upload both CSS files' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'CSS file' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must upload both CSS files' )];
             return false;
         }
 
         $siteFile = eZHTTPFile::fetch( 'PackageSiteCSSFile' );
         $classesFile = eZHTTPFile::fetch( 'PackageClassesCSSFile' );
-        if ( !preg_match( "#\.css$#", strtolower( $siteFile->attribute( 'original_filename' ) ) ) or
-             !preg_match( "#\.css$#", strtolower( $classesFile->attribute( 'original_filename' ) ) ) )
+        if ( !preg_match( "#\.css$#", strtolower( (string) $siteFile->attribute( 'original_filename' ) ) ) or
+             !preg_match( "#\.css$#", strtolower( (string) $classesFile->attribute( 'original_filename' ) ) ) )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'CSS file' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'File did not have a .css suffix, this is most likely not a CSS file' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'CSS file' ), 'description' => ezpI18n::tr( 'kernel/package', 'File did not have a .css suffix, this is most likely not a CSS file' )];
             $result = false;
         }
         return $result;
@@ -214,7 +173,7 @@ class eZStylePackageCreator extends eZPackageCreationHandler
 
     function initializeImageFiles( $package, $http, $step, &$persistentData, $tpl )
     {
-        $persistentData['imagefiles'] = array();
+        $persistentData['imagefiles'] = [];
     }
 
     /*!

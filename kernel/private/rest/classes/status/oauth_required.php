@@ -13,34 +13,28 @@
  */
 class ezpOauthRequired implements ezcMvcResultStatusObject
 {
-    const DEFAULT_REALM = 'eZ Publish REST';
+    final public const DEFAULT_REALM = 'eZ Publish REST';
 
     /**
-     * The realm is the unique ID to identify a login area
-     *
-     * @var string
+     * @param string $realm
+     * @param string $errorType
+     * @param string $errorMessage
      */
-    public $realm;
-
-    /**
-     * The error type identifier as defined per section 5.2.1 of oauth2.0 #10
-     *
-     * @var string
-     */
-    public $errorType;
-
-    /**
-     * An optional human-readable error message.
-     *
-     * @var string
-     */
-    public $errorMessage;
-
-    public function __construct( $realm, $errorType = null, $errorMessage = null )
+    public function __construct(
+        /**
+         * The realm is the unique ID to identify a login area
+         */
+        public $realm,
+        /**
+         * The error type identifier as defined per section 5.2.1 of oauth2.0 #10
+         */
+        public $errorType = null,
+        /**
+         * An optional human-readable error message.
+         */
+        public $errorMessage = null
+    )
     {
-        $this->realm = $realm;
-        $this->errorType = $errorType;
-        $this->errorMessage = $errorMessage;
     }
 
     /**
@@ -59,12 +53,12 @@ class ezpOauthRequired implements ezcMvcResultStatusObject
         if ( isset( $this->errorType) )
         {
             $writer->headers['Content-Type'] = 'application/json; charset=UTF-8';
-            $body = array( 'error' => $this->errorType );
+            $body = ['error' => $this->errorType];
 
             if ( isset( $this->errorMessage ) )
                 $body['error_description'] = $this->errorMessage;
 
-            $writer->response->body = json_encode( $body );
+            $writer->response->body = json_encode( $body, JSON_THROW_ON_ERROR );
         }
     }
 

@@ -10,8 +10,8 @@
 $Offset = (int)$Params['Offset'];
 $Module = $Params['Module'];
 
-$success = array();
-$errors = array();
+$success = [];
+$errors = [];
 
 $tpl = eZTemplate::factory();
 if ( $Module->isCurrentAction( 'ActivateUsers' ) )
@@ -28,11 +28,7 @@ if ( $Module->isCurrentAction( 'ActivateUsers' ) )
                 $operationResult = eZOperationHandler::execute(
                     'user',
                     'activation',
-                    array(
-                        'user_id'    => $id,
-                        'user_hash'  => $accountKey->attribute( 'hash_key' ),
-                        'is_enabled' => true
-                    )
+                    ['user_id'    => $id, 'user_hash'  => $accountKey->attribute( 'hash_key' ), 'is_enabled' => true]
                 );
             }
             else
@@ -42,7 +38,7 @@ if ( $Module->isCurrentAction( 'ActivateUsers' ) )
                 );
             }
             eZOperationHandler::execute(
-                'user', 'register', array( 'user_id' => $id )
+                'user', 'register', ['user_id' => $id]
             );
             $success[] = $id;
         }
@@ -88,33 +84,19 @@ else if ( $Module->isCurrentAction( 'RemoveUsers' ) )
 
 
 $limitPreference = 'admin_user_actions_list_limit';
-switch ( eZPreferences::value( $limitPreference ) )
-{
-    case 2:
-        $limit = 25;
-        break;
-    case 3:
-        $limit = 50;
-        break;
-    case 1:
-    default:
-        $limit = 10;
-}
+$limit = match (eZPreferences::value( $limitPreference )) {
+    2 => 25,
+    3 => 50,
+    default => 10,
+};
 
 
 $unactivatedCount = eZUserAccountKey::count( eZUserAccountKey::definition() );
-$unactivated = array();
+$unactivated = [];
 
-$availableSortFields = array(
-    'time' => 'time',
-    'login' => 'login',
-    'email' => 'email',
-);
+$availableSortFields = ['time' => 'time', 'login' => 'login', 'email' => 'email'];
 
-$availableSortOrders = array(
-    'asc' => 'asc',
-    'desc' => 'desc'
-);
+$availableSortOrders = ['asc' => 'asc', 'desc' => 'desc'];
 
 // default sort field/sort order
 $SortField = 'time';
@@ -135,7 +117,7 @@ if ( isset( $Params['SortOrder'] ) && $availableSortOrders[$Params['SortOrder']]
 if ( $unactivatedCount > 0 )
 {
     $unactivated = eZUser::fetchUnactivated(
-        array( $SortField => $SortOrder ), $limit, $Offset
+        [$SortField => $SortOrder], $limit, $Offset
     );
 }
 
@@ -145,20 +127,11 @@ $tpl->setVariable( 'sort_field', $SortField );
 $tpl->setVariable( 'sort_order', $SortOrder );
 $tpl->setVariable( 'limit_preference', $limitPreference );
 $tpl->setVariable( 'number_of_items', $limit );
-$tpl->setVariable( 'view_parameters', array( 'offset' => $Offset ) );
+$tpl->setVariable( 'view_parameters', ['offset' => $Offset] );
 $tpl->setVariable( 'module', $Module );
 
 $functions = $Module->attribute( 'functions' );
-$Result['path'] = array(
-    array(
-        'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-        'url' => false
-    ),
-    array(
-        'text' => ezpI18n::tr( 'kernel/user', 'Unactivated users' ),
-        'url' => $functions['unactivated']['uri']
-    )
-);
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Unactivated users' ), 'url' => $functions['unactivated']['uri']]];
 $Result['content'] = $tpl->fetch( 'design:user/unactivated.tpl' );
 
 return $Result;

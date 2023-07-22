@@ -34,17 +34,12 @@ class eZMimeType
 {
     public function __construct()
     {
-        $this->SuffixList = array();
-        $this->PrefixList = array();
-        $this->MIMEList = array();
-
         $ini = eZINI::instance( 'mime.ini' );
-        $this->QuickMIMETypes = array();
         foreach ( $ini->groups() as $extension => $blockValues )
         {
             foreach ( $blockValues['Types'] as $type )
             {
-                $this->QuickMIMETypes[] = array( $extension, $type );
+                $this->QuickMIMETypes[] = [$extension, $type];
             }
         }
 
@@ -52,8 +47,7 @@ class eZMimeType
         {
             $mimeEntry =& $this->MIMEList[$quickMIMEType[1]];
             if ( !isset( $mimeEntry ) )
-                $mimeEntry = array( 'suffixes' => array(),
-                                    'prefixes' => false );
+                $mimeEntry = ['suffixes' => [], 'prefixes' => false];
             $mimeEntry['suffixes'][] = $quickMIMEType[0];
         }
 
@@ -67,16 +61,7 @@ class eZMimeType
     */
     static function defaultMimeType()
     {
-        return array( 'name' => 'application/octet-stream',
-                      'url' => false,
-                      'filename' => false,
-                      'dirpath' => false,
-                      'basename' => false,
-                      'suffix' => false,
-                      'prefix' => false,
-                      'suffixes' => false,
-                      'prefixes' => false,
-                      'is_valid' => true );
+        return ['name' => 'application/octet-stream', 'url' => false, 'filename' => false, 'dirpath' => false, 'basename' => false, 'suffix' => false, 'prefix' => false, 'suffixes' => false, 'prefixes' => false, 'is_valid' => true];
     }
 
     /*!
@@ -89,13 +74,13 @@ class eZMimeType
         {
             $mime = eZMimeType::defaultMimeType();
             $mime['url'] = $url;
-            $suffixPos = strpos( $url, '.' );
+            $suffixPos = strpos( (string) $url, '.' );
 
             if ( $suffixPos !== false )
             {
-                $mime['suffix'] = substr( $url, $suffixPos + 1 );
-                $mime['dirpath'] = dirname( $url );
-                $mime['basename'] = basename( $url, '.' . $mime['suffix'] );
+                $mime['suffix'] = substr( (string) $url, $suffixPos + 1 );
+                $mime['dirpath'] = dirname( (string) $url );
+                $mime['basename'] = basename( (string) $url, '.' . $mime['suffix'] );
                 $mime['filename'] = $mime['basename'] . '.' . $mime['suffix'];
             }
             else
@@ -123,10 +108,10 @@ class eZMimeType
         $mimeInfo['suffix'] = $newMimeInfo['suffix'];
         $mimeInfo['prefix'] = $newMimeInfo['prefix'];
         $filename = $mimeInfo['filename'];
-        $dotPosition = strrpos( $filename, '.' );
+        $dotPosition = strrpos( (string) $filename, '.' );
         $basename = $filename;
         if ( $dotPosition !== false )
-            $basename = substr( $filename, 0, $dotPosition );
+            $basename = substr( (string) $filename, 0, $dotPosition );
         $mimeInfo['filename'] = $basename . '.' . $mimeInfo['suffix'];
         if ( $mimeInfo['dirpath'] )
             $mimeInfo['url'] = $mimeInfo['dirpath'] . '/' . $mimeInfo['filename'];
@@ -226,22 +211,23 @@ class eZMimeType
     */
     static function findByURL( $url, $returnDefault = true )
     {
+        $subURL = null;
         $instance = eZMimeType::instance();
 
         $file = $url;
-        $dirPosition = strrpos( $url, '/' );
+        $dirPosition = strrpos( (string) $url, '/' );
         if ( $dirPosition !== false )
-            $file = substr( $url, $dirPosition + 1 );
-        $suffixPosition = strrpos( $file, '.' );
+            $file = substr( (string) $url, $dirPosition + 1 );
+        $suffixPosition = strrpos( (string) $file, '.' );
         $suffix = false;
         $prefix = false;
         $mimeName = false;
         if ( $suffixPosition !== false )
         {
-            $suffix = strtolower( substr( $file, $suffixPosition + 1 ) );
+            $suffix = strtolower( substr( (string) $file, $suffixPosition + 1 ) );
             if ( $suffix )
             {
-                $subURL = substr( $file, 0, $suffixPosition );
+                $subURL = substr( (string) $file, 0, $suffixPosition );
                 $suffixList =& $instance->SuffixList;
                 if ( array_key_exists( $suffix, $suffixList ) )
                 {
@@ -250,14 +236,14 @@ class eZMimeType
             }
             if ( !$mimeName )
             {
-                $prefixPosition = strpos( $file, '.' );
+                $prefixPosition = strpos( (string) $file, '.' );
                 if ( $prefixPosition !== false )
                 {
-                    $prefix = strtolower( substr( $file, 0, $prefixPosition ) );
+                    $prefix = strtolower( substr( (string) $file, 0, $prefixPosition ) );
                 }
                 if ( $prefix )
                 {
-                    $subURL = substr( $file, $suffixPosition + 1 );
+                    $subURL = substr( (string) $file, $suffixPosition + 1 );
                     $prefixList =& $instance->PrefixList;
                     if ( array_key_exists( $prefix, $prefixList ) )
                     {
@@ -270,13 +256,13 @@ class eZMimeType
                 $mimeList =& $instance->MIMEList;
                 if ( array_key_exists( $mimeName, $mimeList ) )
                 {
-                    $lastDirPosition = strrpos( $url, '/' );
+                    $lastDirPosition = strrpos( (string) $url, '/' );
                     $filename = $url;
                     $dirpath = false;
                     if ( $lastDirPosition !== false )
                     {
-                        $filename = substr( $url, $lastDirPosition + 1 );
-                        $dirpath = substr( $url, 0, $lastDirPosition );
+                        $filename = substr( (string) $url, $lastDirPosition + 1 );
+                        $dirpath = substr( (string) $url, 0, $lastDirPosition );
                     }
                     $lastDirPosition = strrpos( $subURL, '/' );
                     $basename = $subURL;
@@ -381,18 +367,15 @@ class eZMimeType
     /// \privatesection
 
     /// An associative array which maps from suffix name to MIME type name.
-    public $SuffixList;
+    public $SuffixList = [];
     /// An associative array which maps from prefix name to MIME type name.
-    public $PrefixList;
+    public $PrefixList = [];
     /// An associative array which maps MIME type name to MIME structure.
-    public $MIMEList;
+    public $MIMEList = [];
 
-    public $QuickContentMatch = array(
-        array( array( 0, 'string', 'GIF87a', 'image/gif' ),
-               array( 0, 'string', 'GIF89a', 'image/gif' ) )
-        );
+    public $QuickContentMatch = [[[0, 'string', 'GIF87a', 'image/gif'], [0, 'string', 'GIF89a', 'image/gif']]];
 
     /// A list of suffixes and their MIME types, this is used to quickly initialize the system.
-    public $QuickMIMETypes = array();
+    public $QuickMIMETypes = [];
 }
 ?>

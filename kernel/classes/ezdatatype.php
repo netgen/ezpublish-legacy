@@ -47,15 +47,15 @@ class eZDataType
     /**
      * Initializes the datatype with the string id $dataTypeString and the name $name.
      *
-     * @param string $dataTypeString
-     * @param string $name
+     * @param string $DataTypeString
+     * @param string $Name
      * @param array $properties
      */
-    public function __construct( $dataTypeString, $name, $properties = array() )
+    public function __construct( /// \privatesection
+    /// The datatype string ID, used for uniquely identifying a datatype
+    public $DataTypeString, /// The descriptive name of the datatype, usually used for displaying to the user
+    public $Name, $properties = [] )
     {
-        $this->DataTypeString = $dataTypeString;
-        $this->Name = $name;
-
         $translationAllowed = true;
         $serializeSupported = false;
         $objectSerializeMap = false;
@@ -66,15 +66,12 @@ class eZDataType
         if ( isset( $properties['object_serialize_map'] ) )
             $objectSerializeMap = $properties['object_serialize_map'];
 
-        $this->Attributes = array();
+        $this->Attributes = [];
         $this->Attributes["is_indexable"] = $this->isIndexable();
         $this->Attributes["is_information_collector"] = $this->isInformationCollector();
 
-        $this->Attributes["information"] = array( "string" => $this->DataTypeString,
-                                                  "name" => $this->Name );
-        $this->Attributes["properties"] = array( "translation_allowed" => $translationAllowed,
-                                                 'serialize_supported' => $serializeSupported,
-                                                 'object_serialize_map' => $objectSerializeMap );
+        $this->Attributes["information"] = ["string" => $this->DataTypeString, "name" => $this->Name];
+        $this->Attributes["properties"] = ["translation_allowed" => $translationAllowed, 'serialize_supported' => $serializeSupported, 'object_serialize_map' => $objectSerializeMap];
     }
 
     /**
@@ -83,7 +80,7 @@ class eZDataType
      * @param string $name
      * @param array $properties
      */
-    public function eZDataType( $dataTypeString, $name, $properties = array() )
+    public function eZDataType( $dataTypeString, $name, $properties = [] )
     {
         self::__construct( $dataTypeString, $name, $properties );
 
@@ -160,7 +157,7 @@ class eZDataType
             $className = $GLOBALS['eZDataTypes'][$dataTypeString];
 
             if ( !isset( $GLOBALS["eZDataTypeObjects"][$dataTypeString] ) ||
-                 get_class( $GLOBALS["eZDataTypeObjects"][$dataTypeString] ) != $className )
+                 $GLOBALS["eZDataTypeObjects"][$dataTypeString]::class != $className )
             {
                 $GLOBALS["eZDataTypeObjects"][$dataTypeString] = new $className();
             }
@@ -177,7 +174,7 @@ class eZDataType
     */
     static function registeredDataTypes()
     {
-        $types = isset( $GLOBALS["eZDataTypes"] ) ? $GLOBALS["eZDataTypes"] : null;
+        $types = $GLOBALS["eZDataTypes"] ?? null;
         if ( isset( $types ) )
         {
             foreach ( $types as $dataTypeString => $className )
@@ -187,7 +184,7 @@ class eZDataType
                     $GLOBALS["eZDataTypeObjects"][$dataTypeString] = new $className( $dataTypeString, $className );
                 }
             }
-            uasort( $GLOBALS["eZDataTypeObjects"], function ( $a, $b ) { return strcmp( $a->Name, $b->Name); } );
+            uasort( $GLOBALS["eZDataTypeObjects"], fn($a, $b) => strcmp( (string) $a->Name, (string) $b->Name) );
         return $GLOBALS["eZDataTypeObjects"];
         }
         return null;
@@ -203,7 +200,7 @@ class eZDataType
     {
         $types =& $GLOBALS["eZDataTypes"];
         if ( !is_array( $types ) )
-            $types = array();
+            $types = [];
         $types[$dataTypeString] = $className;
     }
 
@@ -321,7 +318,7 @@ class eZDataType
                              $objectAttribute, $httpFile, $mimeData,
                              &$result )
     {
-        eZDebug::writeWarning( "The datatype " . get_class( $this ) . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of HTTP files", __METHOD__ );
+        eZDebug::writeWarning( "The datatype " . static::class . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of HTTP files", __METHOD__ );
         return null;
     }
 
@@ -348,7 +345,7 @@ class eZDataType
                                 $objectAttribute, $filePath,
                                 &$result )
     {
-        eZDebug::writeWarning( "The datatype " . get_class( $this ) . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of regular files", __METHOD__ );
+        eZDebug::writeWarning( "The datatype " . static::class . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of regular files", __METHOD__ );
         return null;
     }
 
@@ -375,7 +372,7 @@ class eZDataType
                                  $objectAttribute, $string,
                                  &$result )
     {
-        eZDebug::writeWarning( "The datatype " . get_class( $this ) . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of simple strings", __METHOD__ );
+        eZDebug::writeWarning( "The datatype " . static::class . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support insertion of simple strings", __METHOD__ );
         return null;
     }
 
@@ -460,7 +457,7 @@ class eZDataType
     */
     function productOptionInformation( $objectAttribute, $optionID, $productItem )
     {
-        eZDebug::writeWarning( "The datatype " . get_class( $this ) . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support product options", __METHOD__ );
+        eZDebug::writeWarning( "The datatype " . static::class . " for attribute ID " . $objectAttribute->attribute( 'id' ) . " does not support product options", __METHOD__ );
         return null;
     }
 
@@ -501,11 +498,8 @@ class eZDataType
         $resultGrouped = in_array( $datatype, $ini->variable( 'ResultSettings', 'GroupedInput' ) );
         $collectionGrouped = in_array( $datatype, $ini->variable( 'CollectionSettings', 'GroupedInput' ) );
 
-        $info = array( 'edit' => array( 'grouped_input' => false ),
-                       'view' => array( 'grouped_input' => false),
-                       'collection' => array( 'grouped_input' => false ),
-                       'result' => array( 'grouped_input' => false ) );
-        $override = array();
+        $info = ['edit' => ['grouped_input' => false], 'view' => ['grouped_input' => false], 'collection' => ['grouped_input' => false], 'result' => ['grouped_input' => false]];
+        $override = [];
         if ( $editGrouped )
             $override['edit']['grouped_input'] = true;
         if ( $collectionGrouped )
@@ -518,7 +512,7 @@ class eZDataType
         if ( $mergeInfo )
         {
             // All entries in $mergeInfo will override the defaults
-            foreach ( array( 'edit', 'view', 'collection', 'result' ) as $view )
+            foreach ( ['edit', 'view', 'collection', 'result'] as $view )
             {
                 if ( isset( $mergeInfo[$view] ) )
                     $info[$view] = array_merge( $info[$view], $mergeInfo[$view] );
@@ -529,7 +523,7 @@ class eZDataType
         else
         {
             // All entries in $override will override the defaults
-            foreach ( array( 'edit', 'view', 'collection', 'result' ) as $view )
+            foreach ( ['edit', 'view', 'collection', 'result'] as $view )
             {
                 if ( isset( $override[$view] ) )
                     $info[$view] = array_merge( $info[$view], $override[$view] );
@@ -565,16 +559,15 @@ class eZDataType
         $ini = eZINI::instance( 'datatype.ini' );
         $editGrouped = in_array( $datatype, $ini->variable( 'ClassEditSettings', 'GroupedInput' ) );
 
-        $info = array( 'edit' => array( 'grouped_input' => false ),
-                       'view' => array() );
-        $override = array();
+        $info = ['edit' => ['grouped_input' => false], 'view' => []];
+        $override = [];
         if ( $editGrouped )
             $override['edit']['grouped_input'] = true;
 
         if ( $mergeInfo )
         {
             // All entries in $mergeInfo will override the defaults
-            foreach ( array( 'edit', 'view' ) as $view )
+            foreach ( ['edit', 'view'] as $view )
             {
                 if ( isset( $mergeInfo[$view] ) )
                     $info[$view] = array_merge( $info[$view], $mergeInfo[$view] );
@@ -585,10 +578,10 @@ class eZDataType
         else
         {
             // All entries in $override will override the defaults
-            foreach ( array( 'edit', 'view' ) as $view )
+            foreach ( ['edit', 'view'] as $view )
             {
                 if ( isset( $override[$view] ) )
-                    $info[$view] = array_merge( $info[$view], $override[$view] );
+                    $info[$view] = [...$info[$view], ...$override[$view]];
             }
         }
         return $info;
@@ -796,7 +789,7 @@ class eZDataType
     */
     function fetchActionValue( $action, $actionName, &$value )
     {
-        if ( preg_match( "#^" . $actionName . "_(.+)$#", $action, $matches ) )
+        if ( preg_match( "#^" . $actionName . "_(.+)$#", (string) $action, $matches ) )
         {
             $value = $matches[1];
             return true;
@@ -967,8 +960,6 @@ class eZDataType
     /**
      * Clean up stored class attribute for content class that is not versioned.
      * Note: Default implementation does nothing
-     *
-     * @param eZContentClassAttribute $classAttribute
      */
     function deleteNotVersionedStoredClassAttribute( eZContentClassAttribute $classAttribute )
     {
@@ -984,13 +975,12 @@ class eZDataType
     */
     function contentActionList( $classAttribute )
     {
-        $actionList = array();
+        $actionList = [];
         if ( $classAttribute instanceof eZContentClassAttribute )
         {
             if ( $classAttribute->attribute( 'is_information_collector' ) == true )
             {
-                $actionList[] = array( 'name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Send', 'Datatype information collector action' ),
-                                       'action' => 'ActionCollectInformation' );
+                $actionList[] = ['name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Send', 'Datatype information collector action' ), 'action' => 'ActionCollectInformation'];
             }
         }
         else
@@ -1059,7 +1049,7 @@ class eZDataType
     function isClassAttributeRemovable( $classAttribute )
     {
         $info = $this->classAttributeRemovableInformation( $classAttribute, false );
-        return ( $info === false or count( $info['list'] ) == 0 );
+        return ( $info === false or (is_countable($info['list']) ? count( $info['list'] ) : 0) == 0 );
     }
 
     /*!
@@ -1295,6 +1285,7 @@ class eZDataType
 
     static function loadAndRegisterType( $type )
     {
+        $includeFile = null;
         $types =& $GLOBALS["eZDataTypes"];
         if ( isset( $types[$type] ) )
         {
@@ -1476,8 +1467,7 @@ class eZDataType
                     {
                         // This will insert the data and
                         // run any sequence value correction SQL if required
-                        $result = $dbSchema->insertSchema( array( 'schema' => false,
-                                                                  'data' => true ) );
+                        $result = $dbSchema->insertSchema( ['schema' => false, 'data' => true] );
                     }
                 }
             }
@@ -1501,19 +1491,13 @@ class eZDataType
 
     function batchInitializeObjectAttributeData( $classAttribute )
     {
-        return array();
+        return [];
     }
 
     function supportsBatchInitializeObjectAttribute()
     {
         return false;
     }
-
-    /// \privatesection
-    /// The datatype string ID, used for uniquely identifying a datatype
-    public $DataTypeString;
-    /// The descriptive name of the datatype, usually used for displaying to the user
-    public $Name;
 
     
 }

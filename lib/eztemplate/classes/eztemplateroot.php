@@ -27,11 +27,13 @@ class eZTemplateRoot
     /**
      * Constructor
      *
-     * @param array $children
+     * @param array $Children
      */
-    public function __construct( $children = array() )
+    public function __construct(
+        /// The child array
+        public $Children = []
+    )
     {
-        $this->Children = $children;
     }
 
     /*!
@@ -44,9 +46,7 @@ class eZTemplateRoot
 
     function serializeData()
     {
-        return array( 'class_name' => 'eZTemplateRoot',
-                      'parameters' => array( 'children' ),
-                      'variables' => array( 'children' => 'Children' ) );
+        return ['class_name' => 'eZTemplateRoot', 'parameters' => ['children'], 'variables' => ['children' => 'Children']];
     }
 
     /*!
@@ -65,7 +65,7 @@ class eZTemplateRoot
     */
     function clear()
     {
-        $this->Children = array();
+        $this->Children = [];
     }
 
     /*!
@@ -83,9 +83,6 @@ class eZTemplateRoot
     {
         $this->Children[] =& $node;
     }
-
-    /// The child array
-    public $Children = array();
 }
 
 ?>

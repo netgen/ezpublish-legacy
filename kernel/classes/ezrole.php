@@ -33,12 +33,9 @@
 */
 class eZRole extends eZPersistentObject
 {
-    public function __construct( $row = array() )
+    public function __construct( $row = [] )
     {
         parent::__construct( $row );
-        $this->PolicyArray = 0;
-        $this->LimitIdentifier = false;
-        $this->LimitValue = false;
         if ( isset( $row['limit_identifier'] ) )
             $this->LimitIdentifier = $row['limit_identifier'];
         if ( isset( $row['limit_value'] ) )
@@ -49,31 +46,7 @@ class eZRole extends eZPersistentObject
 
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "version" => array( 'name' => "Version",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "is_new" => array( 'name' => "IsNew",
-                                                            'datatype' => 'integer',
-                                                            'default' => '0',
-                                                            'required' => false ) ),
-                      "function_attributes" => array( "policies" => "policyList",
-                                                      'limit_identifier' => 'limitIdentifier',
-                                                      'limit_value' => 'limitValue',
-                                                      'user_role_id' => 'userRoleID' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZRole",
-                      "name" => "ezrole" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "version" => ['name' => "Version", 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true], "is_new" => ['name' => "IsNew", 'datatype' => 'integer', 'default' => '0', 'required' => false]], "function_attributes" => ["policies" => "policyList", 'limit_identifier' => 'limitIdentifier', 'limit_value' => 'limitValue', 'user_role_id' => 'userRoleID'], "keys" => ["id"], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZRole", "name" => "ezrole"];
         return $definition;
     }
 
@@ -120,7 +93,7 @@ class eZRole extends eZPersistentObject
         $newRole = eZRole::createNew();
         $this->copyPolicies( $newRole->attribute( 'id' ) );
         $newRole->setAttribute( 'name', ezpI18n::tr( 'kernel/role/edit', 'Copy of %rolename', null,
-                                                array( '%rolename' => $this->attribute( 'name' ) ) ) );
+                                                ['%rolename' => $this->attribute( 'name' )] ) );
         $newRole->store();
         $db->commit();
         return $newRole;
@@ -153,8 +126,7 @@ class eZRole extends eZPersistentObject
     */
     static function createNew()
     {
-        $role = new eZRole( array( 'name' => ezpI18n::tr( 'kernel/role/edit', 'New role' ),
-                                   'is_new' => 1 ) );
+        $role = new eZRole( ['name' => ezpI18n::tr( 'kernel/role/edit', 'New role' ), 'is_new' => 1] );
         $role->store();
         return $role;
     }
@@ -166,9 +138,7 @@ class eZRole extends eZPersistentObject
     */
     static function create( $roleName, $version = 0 )
     {
-        $row = array( 'id' => null,
-                      'name' => $roleName,
-                      'version' => 0 );
+        $row = ['id' => null, 'name' => $roleName, 'version' => 0];
         $role = new eZRole( $row );
         return $role;
     }
@@ -192,19 +162,19 @@ class eZRole extends eZPersistentObject
      \note Transaction unsafe. If you call several transaction unsafe methods you must enclose
      the calls within a db transaction; thus within db->begin and db->commit.
     */
-    function appendPolicy( $module, $function, $limitations = array() )
+    function appendPolicy( $module, $function, $limitations = [] )
     {
         $policy = eZPolicy::create( $this->ID, $module, $function );
 
         $db = eZDB::instance();
         $db->begin();
         $policy->store();
-        if ( count( $limitations ) > 0 )
+        if ( (is_countable($limitations) ? count( $limitations ) : 0) > 0 )
         {
             foreach ( $limitations as $limitationIdentifier => $limitationValues )
             {
                 if ( !is_array( $limitationValues ) )
-                    $limitationValues = array( $limitationValues );
+                    $limitationValues = [$limitationValues];
                 $policy->appendLimitation( $limitationIdentifier, $limitationValues );
             }
         }
@@ -395,12 +365,12 @@ class eZRole extends eZPersistentObject
         foreach( $limitationsToFix as $limitation )
         {
             $values = $limitation->attribute( 'values' );
-            $valueCount = count( $values );
+            $valueCount = is_countable($values) ? count( $values ) : 0;
             if ( $valueCount > 0 )
             {
                 foreach ( $values as $value )
                 {
-                    if ( strpos( $value->attribute( 'value' ), $node->attribute( 'path_string' ) ) === 0 )
+                    if ( str_starts_with((string) $value->attribute( 'value' ), (string) $node->attribute( 'path_string' )) )
                     {
                         $value->remove();
                         $valueCount--;
@@ -422,7 +392,7 @@ class eZRole extends eZPersistentObject
         foreach( $limitationsToFixNode as $limitation )
         {
             $values = $limitation->attribute( 'values' );
-            $valueCount = count( $values );
+            $valueCount = is_countable($values) ? count( $values ) : 0;
             if ( $valueCount > 0 )
             {
                 foreach ( $values as $value )
@@ -464,7 +434,7 @@ class eZRole extends eZPersistentObject
     {
         if ( count( $idArray ) < 1 )
         {
-            return array();
+            return [];
         }
 
         $db = eZDB::instance();
@@ -484,7 +454,7 @@ class eZRole extends eZPersistentObject
         }
         else
         {
-            $userNodeIDArray = array();
+            $userNodeIDArray = [];
             foreach( $idArray as $id )
             {
                 $nodeDefinition = eZContentObjectTreeNode::fetchByContentObjectID( $id );
@@ -496,7 +466,7 @@ class eZRole extends eZPersistentObject
 
             if ( count( $userNodeIDArray ) < 1 )
             {
-                return array();
+                return [];
             }
 
             $roleTreeINSQL = $db->generateSQLINStatement( $userNodeIDArray, 'role_tree.node_id', false, false, 'int' );
@@ -515,7 +485,7 @@ class eZRole extends eZPersistentObject
 
         $roleArray = $db->arrayQuery( $query );
 
-        $roles = array();
+        $roles = [];
         foreach ( $roleArray as $roleRow )
         {
             $role = new eZRole( $roleRow );
@@ -552,7 +522,7 @@ class eZRole extends eZPersistentObject
         $roles = eZRole::fetchByUser( $idArray, $recursive );
         $userLimitation = false;
 
-        $accessArray = array();
+        $accessArray = [];
         foreach ( array_keys ( $roles )  as $roleKey )
         {
             $accessArray = array_merge_recursive( $accessArray, $roles[$roleKey]->accessArray() );
@@ -592,7 +562,7 @@ class eZRole extends eZPersistentObject
     */
     function accessArray( $ignoreLimitIdentifier = false )
     {
-        $accessArray = array();
+        $accessArray = [];
 
         $policies = $this->attribute( 'policies' );
         foreach ( array_keys( $policies ) as $policyKey )
@@ -607,11 +577,11 @@ class eZRole extends eZPersistentObject
     {
         if ( !isset( $this->Policies ) )
         {
-            $sorting = array( 'module_name' => 'asc', 'function_name' => 'asc' );
+            $sorting = ['module_name' => 'asc', 'function_name' => 'asc'];
             $policies = eZPersistentObject::fetchObjectList(
                 eZPolicy::definition(),
                 null,
-                array( 'role_id' => $this->attribute( 'id' ), 'original_id' => 0 ),
+                ['role_id' => $this->attribute( 'id' ), 'original_id' => 0],
                 $sorting, null, true );
 
             if ( $this->LimitIdentifier )
@@ -648,7 +618,7 @@ class eZRole extends eZPersistentObject
                   WHERE $groupINSQL AND
                         ezuser_role.role_id = ezrole.id ORDER BY ezrole.id";
 
-        $retArray = array();
+        $retArray = [];
         foreach( $db->arrayQuery( $query ) as $resultSet )
         {
             $retArray[] = $resultSet['id'];
@@ -673,10 +643,7 @@ class eZRole extends eZPersistentObject
         $object = eZContentObject::fetch( $userID );
         $objectName = $object ? $object->attribute( 'name' ) : 'null';
 
-        eZAudit::writeAudit( 'role-assign', array( 'Role ID' => $this->ID, 'Role name' => $this->attribute( 'name' ),
-                                                   'Assign to content object ID' => $userID,
-                                                   'Content object name' => $objectName,
-                                                   'Comment' => 'Assigned the current role to user or user group identified by the id: eZRole::assignToUser()' ) );
+        eZAudit::writeAudit( 'role-assign', ['Role ID' => $this->ID, 'Role name' => $this->attribute( 'name' ), 'Assign to content object ID' => $userID, 'Content object name' => $objectName, 'Comment' => 'Assigned the current role to user or user group identified by the id: eZRole::assignToUser()'] );
 
         switch( $limitIdent )
         {
@@ -777,10 +744,10 @@ class eZRole extends eZPersistentObject
                     ezuser_role.role_id = '$this->ID'";
 
         $userRoleArray = $db->arrayQuery( $query );
-        $userRoles = array();
+        $userRoles = [];
         foreach ( $userRoleArray as $userRole )
         {
-            $role = array();
+            $role = [];
             $role['user_object'] = eZContentObject::fetch( $userRole['user_id'] );
             $role['user_role_id'] = $userRole['id'];
             $role['limit_ident'] = $userRole['limit_identifier'];
@@ -806,10 +773,10 @@ class eZRole extends eZPersistentObject
                      ezuser_role.limit_identifier = '$limit_identifier'";
 
         $userRoleArray = $db->arrayQuery( $query );
-        $userRoles = array();
+        $userRoles = [];
         foreach ( $userRoleArray as $userRole )
         {
-            $role = array();
+            $role = [];
             $role['user'] = eZContentObject::fetch( $userRole['user_id'] );
             $role['role'] = eZRole::fetch( $userRole['role_id'] );
             $userRoles[] = $role;
@@ -827,10 +794,10 @@ class eZRole extends eZPersistentObject
         if ( $version != 0 )
         {
             return eZPersistentObject::fetchObject( eZRole::definition(),
-                                                    null, array( 'version' => $version ), true );
+                                                    null, ['version' => $version], true );
         }
         return eZPersistentObject::fetchObject( eZRole::definition(),
-                                                null, array('id' => $roleID ), true );
+                                                null, ['id' => $roleID], true );
     }
 
     /*!
@@ -840,8 +807,7 @@ class eZRole extends eZPersistentObject
     static function fetchByName( $roleName, $version = 0 )
     {
         return eZPersistentObject::fetchObject( eZRole::definition(),
-                                                null, array( 'name' => $roleName,
-                                                             'version' => $version ), true );
+                                                null, ['name' => $roleName, 'version' => $version], true );
     }
 
     static function fetchList( $tempVersions = false )
@@ -849,13 +815,13 @@ class eZRole extends eZPersistentObject
         if ( !$tempVersions )
         {
             return eZPersistentObject::fetchObjectList( eZRole::definition(),
-                                                        null, array( 'version' => '0'), null,null,
+                                                        null, ['version' => '0'], null,null,
                                                         true );
         }
         else
         {
             return eZPersistentObject::fetchObjectList( eZRole::definition(),
-                                                        null, array( 'version' => array( '>', '0') ), null,null,
+                                                        null, ['version' => ['>', '0']], null,null,
                                                         true);
         }
     }
@@ -864,20 +830,19 @@ class eZRole extends eZPersistentObject
     {
 
         if ( $ignoreTemp && $ignoreNew )
-            $igTemp = array( 'version' => '0',
-                             'is_new' => '0' );
+            $igTemp = ['version' => '0', 'is_new' => '0'];
         elseif ( $ignoreTemp )
-            $igTemp = array( 'version' => '0' );
+            $igTemp = ['version' => '0'];
         elseif ( $ignoreNew )
-            $igTemp = array( 'is_new' => '0' );
+            $igTemp = ['is_new' => '0'];
         else
             $igTemp = null;
 
         return eZPersistentObject::fetchObjectList( eZRole::definition(),
                                                     null,
                                                     $igTemp,
-                                                    array( 'name' => 'ASC' ),
-                                                    array( 'offset' => $offset, 'length' => $limit ),
+                                                    ['name' => 'ASC'],
+                                                    ['offset' => $offset, 'length' => $limit],
                                                     $asObject );
     }
 
@@ -891,7 +856,7 @@ class eZRole extends eZPersistentObject
      */
     static function roleCount( $ignoreNew = true )
     {
-        $conds = array( 'version' => 0 );
+        $conds = ['version' => 0];
         if ( $ignoreNew === true )
         {
             $conds['is_new'] = 0;
@@ -921,10 +886,10 @@ class eZRole extends eZPersistentObject
     public $Name;
     public $Modules;
     public $Functions;
-    public $LimitValue;
-    public $LimitIdentifier;
+    public $LimitValue = false;
+    public $LimitIdentifier = false;
     public $UserRoleID;
-    public $PolicyArray;
+    public $PolicyArray = 0;
     public $Sets;
     public $Policies;
     public $AccessArray;

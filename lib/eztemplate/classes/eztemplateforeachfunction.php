@@ -44,14 +44,14 @@
 
 class eZTemplateForeachFunction
 {
-    const FUNCTION_NAME = 'foreach';
+    final public const FUNCTION_NAME = 'foreach';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions().
      */
     function functionList()
     {
-        $functionList = array( eZTemplateForeachFunction::FUNCTION_NAME );
+        $functionList = [eZTemplateForeachFunction::FUNCTION_NAME];
         return $functionList;
     }
 
@@ -62,10 +62,7 @@ class eZTemplateForeachFunction
      */
     function attributeList()
     {
-        return array( 'delimiter' => true,
-                      'break'     => false,
-                      'continue'  => false,
-                      'skip'      => false );
+        return ['delimiter' => true, 'break'     => false, 'continue'  => false, 'skip'      => false];
     }
 
 
@@ -74,10 +71,7 @@ class eZTemplateForeachFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateForeachFunction::FUNCTION_NAME => array( 'parameters' => true,
-                                                                  'static' => false,
-                                                                  'transform-parameters' => true,
-                                                                  'tree-transformation' => true ) );
+        return [eZTemplateForeachFunction::FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -96,9 +90,9 @@ class eZTemplateForeachFunction
         */
 
         $tpl->ForeachCounter++;
-        $newNodes            = array();
+        $newNodes            = [];
         $nodePlacement       = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-        $uniqid              =  md5( $nodePlacement[2] ) . "_" . $tpl->ForeachCounter;
+        $uniqid              =  md5( (string) $nodePlacement[2] ) . "_" . $tpl->ForeachCounter;
 
         $loop = new eZTemplateCompiledLoop( eZTemplateForeachFunction::FUNCTION_NAME,
                                             $newNodes, $parameters, $nodePlacement, $uniqid,
@@ -124,12 +118,12 @@ class eZTemplateForeachFunction
         $lastVal         = "fe_last_val_$uniqid";
 
         $variableStack   = "fe_variable_stack_$uniqid";
-        $namesArray = array( $array, $arrayKeys, $nItems, $nItemsProcessed, $i, $key, $val, $offset, $max, $reverse, $firstVal, $lastVal );
+        $namesArray = [$array, $arrayKeys, $nItems, $nItemsProcessed, $i, $key, $val, $offset, $max, $reverse, $firstVal, $lastVal];
 
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( !isset( \$$variableStack ) ) \$$variableStack = [];" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$" . $variableStack ."[] = @compact( '" . implode( "', '", $namesArray ) . "' );" );
 
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['array'], $nodePlacement, array( 'text-result' => false ), $array );
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['array'], $nodePlacement, ['text-result' => false], $array );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$arrayKeys = is_array( \$$array ) ? array_keys( \$$array ) : [];" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$nItems = count( \$$arrayKeys );" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$nItemsProcessed = 0;" );
@@ -137,17 +131,17 @@ class eZTemplateForeachFunction
 
         // process offset, max and reverse parameters
         if ( isset( $parameters['offset'] ) )
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['offset'], $nodePlacement, array( 'text-result' => false ), $offset );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['offset'], $nodePlacement, ['text-result' => false], $offset );
         else
             $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$offset = 0;" );
 
         if ( isset( $parameters['max'] ) )
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['max'], $nodePlacement, array( 'text-result' => false ), $max );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['max'], $nodePlacement, ['text-result' => false], $max );
         else
             $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$max = \$$nItems - \$$offset;" );
 
         if ( isset( $parameters['reverse'] ) )
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['reverse'], $nodePlacement, array( 'text-result' => false ), $reverse );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['reverse'], $nodePlacement, ['text-result' => false], $reverse );
         else
             $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$reverse = false;" );
 
@@ -186,14 +180,14 @@ class eZTemplateForeachFunction
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$val = \$${array}[\$$key];" );
 
         // export $itemVar
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "$val", $nodePlacement, array(),
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "$val", $nodePlacement, [],
                                                               $parameters['item_var'][0][1],
                                                               false, true, true );
 
         // export $keyVar (if specified)
         if ( isset( $parameters['key_var'] ) )
         {
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "$key", $nodePlacement, array(),
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "$key", $nodePlacement, [],
                                                                   $parameters['key_var'][0][1],
                                                                   false, true, true );
         }

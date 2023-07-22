@@ -19,13 +19,12 @@ class eZRSSFunctionCollection
     static function hasExportByNode( $nodeID )
     {
         if ( !$nodeID )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
 
         $db = eZDB::instance();
         $res = $db->arrayQuery( "SELECT id FROM ezrss_export WHERE node_id = " . (int)$nodeID . " AND status = " . eZRSSExport::STATUS_VALID );
 
-        return array( 'result' => isset( $res[0] ) ? true : false );
+        return ['result' => isset( $res[0] ) ? true : false];
     }
 
     /**
@@ -37,16 +36,14 @@ class eZRSSFunctionCollection
     static function exportByNode( $nodeID )
     {
         if ( !$nodeID )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
 
         $rssExport = eZPersistentObject::fetchObject( eZRSSExport::definition(),
                                                 null,
-                                                array( 'node_id' => $nodeID,
-                                                       'status' => eZRSSExport::STATUS_VALID ),
+                                                ['node_id' => $nodeID, 'status' => eZRSSExport::STATUS_VALID],
                                                 true );
 
-        return array( 'result' => $rssExport );
+        return ['result' => $rssExport];
     }
 }
 

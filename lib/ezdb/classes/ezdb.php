@@ -141,8 +141,8 @@ class eZDB
 
             $server = $user = $pwd = $db = $usePersistentConnection = $port = false;
             if ( $useDefaults )
-                list( $server, $port, $user, $pwd, $db, $usePersistentConnection ) =
-                    $ini->variableMulti( 'DatabaseSettings', array( 'Server', 'Port', 'User', 'Password', 'Database', 'UsePersistentConnection', ) );
+                [$server, $port, $user, $pwd, $db, $usePersistentConnection] =
+                    $ini->variableMulti( 'DatabaseSettings', ['Server', 'Port', 'User', 'Password', 'Database', 'UsePersistentConnection'] );
 
             $socketPath = false;
             if ( $useDefaults )
@@ -168,10 +168,10 @@ class eZDB
                 $slaveServerUsers = $ini->variable( 'DatabaseSettings', 'SlaverServerUser' );
                 $slaveServerPasswords = $ini->variable( 'DatabaseSettings', 'SlaverServerPassword' );
                 $slaveServerDatabases = $ini->variable( 'DatabaseSettings', 'SlaverServerDatabase' );
-                $numberServers = count( $slaveServers );
+                $numberServers = is_countable($slaveServers) ? count( $slaveServers ) : 0;
                 if ( $numberServers > 1 )
                 {
-                    $index = mt_rand( 1, $numberServers ) - 1;
+                    $index = random_int( 1, $numberServers ) - 1;
                 }
                 else
                     $index = 0;
@@ -182,11 +182,11 @@ class eZDB
                 $slaveServerDatabase = $slaveServerDatabases[$index];
             }
 
-            list( $charset, $retries ) =
-                $ini->variableMulti( 'DatabaseSettings', array( 'Charset', 'ConnectRetries' ) );
+            [$charset, $retries] =
+                $ini->variableMulti( 'DatabaseSettings', ['Charset', 'ConnectRetries'] );
 
             $isInternalCharset = false;
-            if ( trim( $charset ) == '' )
+            if ( trim( (string) $charset ) == '' )
             {
                 $charset = eZTextCodec::internalCharset();
                 $isInternalCharset = true;
@@ -198,24 +198,7 @@ class eZDB
             $useSlaveServer = false;
             if ( $useSlave == "enabled" )
                 $useSlaveServer = true;
-            $defaultDatabaseParameters = array( 'server' => $server,
-                                                'port' => $port,
-                                                'user' => $user,
-                                                'password' => $pwd,
-                                                'database' => $db,
-                                                'use_slave_server' => $useSlaveServer,
-                                                'slave_server' => $slaveServer,
-                                                'slave_port' => $slaveServerPort,
-                                                'slave_user' => $slaveServerUser,
-                                                'slave_password' => $slaveServerPassword,
-                                                'slave_database' => $slaveServerDatabase,
-                                                'charset' => $charset,
-                                                'is_internal_charset' => $isInternalCharset,
-                                                'socket' => $socketPath,
-                                                'builtin_encoding' => $builtinEncoding,
-                                                'connect_retries' => $retries,
-                                                'use_persistent_connection' => $usePersistentConnection,
-                                                'show_errors' => true );
+            $defaultDatabaseParameters = ['server' => $server, 'port' => $port, 'user' => $user, 'password' => $pwd, 'database' => $db, 'use_slave_server' => $useSlaveServer, 'slave_server' => $slaveServer, 'slave_port' => $slaveServerPort, 'slave_user' => $slaveServerUser, 'slave_password' => $slaveServerPassword, 'slave_database' => $slaveServerDatabase, 'charset' => $charset, 'is_internal_charset' => $isInternalCharset, 'socket' => $socketPath, 'builtin_encoding' => $builtinEncoding, 'connect_retries' => $retries, 'use_persistent_connection' => $usePersistentConnection, 'show_errors' => true];
             /* This looks funny, but is needed to fix a crash in PHP */
             $b = $databaseParameters;
             $databaseParameters = $defaultDatabaseParameters;
@@ -257,11 +240,7 @@ class eZDB
             if ( isset( $b['show_errors'] ) )
                 $databaseParameters['show_errors'] = $b['show_errors'];
 
-            $optionArray = array( 'iniFile'       => 'site.ini',
-                                  'iniSection'    => 'DatabaseSettings',
-                                  'iniVariable'   => 'ImplementationAlias',
-                                  'handlerIndex'  => $databaseImplementation,
-                                  'handlerParams' => array( $databaseParameters ) );
+            $optionArray = ['iniFile'       => 'site.ini', 'iniSection'    => 'DatabaseSettings', 'iniVariable'   => 'ImplementationAlias', 'handlerIndex'  => $databaseImplementation, 'handlerParams' => [$databaseParameters]];
 
             $options = new ezpExtensionOptions( $optionArray );
 
@@ -302,7 +281,7 @@ class eZDB
 
         if ( $db->transactionCounter() > 0 )
         {
-            $result = array();
+            $result = [];
             $result['error'] = "Internal transaction counter mismatch : " . $db->transactionCounter() . ". Should be zero.";
             eZDebug::writeError( $result['error'] );
             $stack = $db->generateFailedTransactionStack();
@@ -357,8 +336,8 @@ class eZDB
     /**
      * Error handling mode
      */
-    const ERROR_HANDLING_STANDARD = 1;
-    const ERROR_HANDLING_EXCEPTIONS = 2;
+    final public const ERROR_HANDLING_STANDARD = 1;
+    final public const ERROR_HANDLING_EXCEPTIONS = 2;
 
     protected static $errorHandling = self::ERROR_HANDLING_STANDARD;
 }

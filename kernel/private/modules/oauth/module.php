@@ -10,14 +10,11 @@
 
 include_once 'kernel/private/rest/classes/lazy.php';
 
-$Module = array( 'name' => 'Rest client authorization',
-                 'variable_params' => true );
+$Module = ['name' => 'Rest client authorization', 'variable_params' => true];
 
-$ViewList = array();
+$ViewList = [];
 
-$ViewList['authorize'] = array(
-    'script' => 'authorize.php',
-);
+$ViewList['authorize'] = ['script' => 'authorize.php'];
 
-$FunctionList = array( );
+$FunctionList = [];
 ?>

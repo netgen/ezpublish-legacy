@@ -33,14 +33,14 @@
 
 class eZTemplateDoFunction
 {
-    const FUNCTION_NAME = 'do';
+    final public const FUNCTION_NAME = 'do';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions().
      */
     function functionList()
     {
-        $functionList = array( eZTemplateDoFunction::FUNCTION_NAME );
+        $functionList = [eZTemplateDoFunction::FUNCTION_NAME];
         return $functionList;
     }
 
@@ -51,10 +51,7 @@ class eZTemplateDoFunction
      */
     function attributeList()
     {
-        return array( 'delimiter' => true,
-                      'break'     => false,
-                      'continue'  => false,
-                      'skip'      => false );
+        return ['delimiter' => true, 'break'     => false, 'continue'  => false, 'skip'      => false];
     }
 
 
@@ -63,10 +60,7 @@ class eZTemplateDoFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateDoFunction::FUNCTION_NAME => array( 'parameters' => true,
-                                                             'static' => false,
-                                                             'transform-parameters' => true,
-                                                             'tree-transformation' => true ) );
+        return [eZTemplateDoFunction::FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -78,9 +72,9 @@ class eZTemplateDoFunction
         // {/do while <condition> [sequence <sequence_array> as $<sequence_var>]}
 
         $tpl->DoCounter++;
-        $newNodes      = array();
+        $newNodes      = [];
         $nodePlacement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-        $uniqid        = md5( $nodePlacement[2] ) . "_" . $tpl->DoCounter;
+        $uniqid        = md5( (string) $nodePlacement[2] ) . "_" . $tpl->DoCounter;
 
         // initialize loop
         $loop = new eZTemplateCompiledLoop( eZTemplateDoFunction::FUNCTION_NAME,
@@ -96,7 +90,7 @@ class eZTemplateDoFunction
         $loop->processBody();
 
         // loop footer
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, array( 'treat-value-as-non-object' => true ), 'do_cond' );
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, ['treat-value-as-non-object' => true], 'do_cond' );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( ! \$do_cond ) break;" );
         $newNodes[] = eZTemplateNodeTool::createSpacingDecreaseNode();
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "} // do..while" );

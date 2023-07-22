@@ -102,7 +102,7 @@ else if ( $http->hasPostVariable( 'eZSetup_next_button' ) || $http->hasPostVaria
     $currentStep = $stepData->step( $http->postVariable( 'eZSetup_current_step' ) );
 
     $includeFile = $baseDir .'steps/ezstep_'.$currentStep['file'].'.php';
-    $result = array();
+    $result = [];
 
     if ( file_exists( $includeFile ) )
     {
@@ -140,7 +140,7 @@ while( !$done && $step != null )
 {
     // Some common variables for all steps
     $uriPrefix = '';
-    if ( strpos( eZSys::serverVariable( 'PHP_SELF' ), '/ezsetup' ) )
+    if ( strpos( (string) eZSys::serverVariable( 'PHP_SELF' ), '/ezsetup' ) )
         $uriPrefix = '/ezsetup';
 
     $siteBasics = $GLOBALS['eZSiteBasics'];
@@ -152,11 +152,7 @@ while( !$done && $step != null )
         $script = eZSys::indexFile() . "$uriPrefix/setup/$partName";
     $tpl->setVariable( 'script', $script );
 
-    $tpl->setVariable( "version", array( "text" => eZPublishSDK::version(),
-                                         "major" => eZPublishSDK::majorVersion(),
-                                         "minor" => eZPublishSDK::minorVersion(),
-                                         "release" => eZPublishSDK::release(),
-                                         "alias" => eZPublishSDK::alias() ) );
+    $tpl->setVariable( "version", ["text" => eZPublishSDK::version(), "major" => eZPublishSDK::majorVersion(), "minor" => eZPublishSDK::minorVersion(), "release" => eZPublishSDK::release(), "alias" => eZPublishSDK::alias()] );
 
     if ( $persistenceList === null )
         $persistenceList = eZSetupFetchPersistenceList();

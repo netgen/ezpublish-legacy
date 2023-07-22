@@ -15,7 +15,7 @@
  */
 class ezpContentPublishingBehaviour extends ezcBaseOptions
 {
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->disableAsynchronousPublishing = true;
         $this->isTemporary = false;
@@ -42,7 +42,6 @@ class ezpContentPublishingBehaviour extends ezcBaseOptions
     /**
      * Sets the publishing behaviour
      *
-     * @param ezpContentPublishingBehaviour $behaviour
      * @return void
      */
     public static function setBehaviour( ezpContentPublishingBehaviour $behaviour )
@@ -72,9 +71,6 @@ class ezpContentPublishingBehaviour extends ezcBaseOptions
         return $return;
     }
 
-    /**
-     * @var ezpContentPublishingBehaviour
-     */
-    private static $behaviour = null;
+    private static ?\ezpContentPublishingBehaviour $behaviour = null;
 }
 ?>

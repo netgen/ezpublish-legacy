@@ -27,20 +27,17 @@
 require 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "Fixes eZImageAliasHandler bug (http://issues.ez.no/15155)" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => ( "Fixes eZImageAliasHandler bug (http://issues.ez.no/15155)" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[n]",
                                 "",
-                                array( 'n' => 'Do not wait the 10 safety seconds before starting' ) );
+                                ['n' => 'Do not wait the 10 safety seconds before starting'] );
 $script->initialize();
 
 $output = new ezcConsoleOutput();
-$output->formats->error->style = array( 'bold' );
+$output->formats->error->style = ['bold'];
 $output->formats->error->color = 'red';
 
 if ( !isset( $options['n'] ) )
@@ -56,22 +53,19 @@ try
 
     // Fetch all image files in ezimagefile table
     $aImageFiles = eZPersistentObject::fetchObjectList( eZImageFile::definition() );
-    $nbImageFiles = count( $aImageFiles );
+    $nbImageFiles = count( (array) $aImageFiles );
 
     if( $nbImageFiles > 0 )
     {
         // Progress bar initialization
-        $progressBarOptions = array(
-            'emptyChar'     => ' ',
-            'barChar'       => '='
-        );
+        $progressBarOptions = ['emptyChar'     => ' ', 'barChar'       => '='];
         $progressBar = new ezcConsoleProgressbar( $output, $nbImageFiles, $progressBarOptions );
 
         // Loop the image files and check if it is still used by a content object attribute. If not, delete it.
         foreach( $aImageFiles as $image )
         {
             $filePath = $image->attribute( 'filepath' );
-            $dirpath = dirname( $filePath );
+            $dirpath = dirname( (string) $filePath );
             $contentObjectAttributeID = $image->attribute( 'contentobject_attribute_id' );
             $dbResult = eZImageFile::fetchImageAttributesByFilepath( $filePath, $contentObjectAttributeID );
             if( count( $dbResult ) == 0 )

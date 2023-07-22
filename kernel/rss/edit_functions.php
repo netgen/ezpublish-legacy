@@ -21,7 +21,7 @@ class eZRSSEditFunction
     static function storeRSSExport( $Module, $http, $publish = false, $skipValuesID = null )
     {
         $valid = true;
-        $validationErrors = array();
+        $validationErrors = [];
 
         /* Kill the RSS cache in all siteaccesses */
         $config = eZINI::instance( 'site.ini' );
@@ -85,21 +85,21 @@ class eZRSSEditFunction
                     $valid = false;
                     $validationErrors[] = ezpI18n::tr( 'kernel/rss/edit_export',
                                                   'Invalid selection for title class %1 does not have attribute "%2"', null,
-                                                  array( $class->attribute( 'name'), $titleClassAttributeIdentifier ) );
+                                                  [$class->attribute( 'name'), $titleClassAttributeIdentifier] );
                 }
                 if ( $descriptionClassAttributeIdentifier != '' && !isset( $dataMap[$descriptionClassAttributeIdentifier] ) )
                 {
                     $valid = false;
                     $validationErrors[] = ezpI18n::tr( 'kernel/rss/edit_export',
                                                   'Invalid selection for description class %1 does not have attribute "%2"', null,
-                                                  array( $class->attribute( 'name'), $descriptionClassAttributeIdentifier ) );
+                                                  [$class->attribute( 'name'), $descriptionClassAttributeIdentifier] );
                 }
                 if ( $categoryClassAttributeIdentifier != '' && !isset( $dataMap[$categoryClassAttributeIdentifier] ) )
                 {
                     $valid = false;
                     $validationErrors[] = ezpI18n::tr( 'kernel/rss/edit_export',
                                                   'Invalid selection for category class %1 does not have attribute "%2"', null,
-                                                  array( $class->attribute( 'name'), $categoryClassAttributeIdentifier ) );
+                                                  [$class->attribute( 'name'), $categoryClassAttributeIdentifier] );
                 }
             }
 
@@ -139,7 +139,7 @@ class eZRSSEditFunction
         {
             $rssExport->setAttribute( 'active', 0 );
         }
-        $rssExport->setAttribute( 'access_url', str_replace( array( '/', '?', '&', '>', '<' ), '',  $http->postVariable( 'Access_URL' ) ) );
+        $rssExport->setAttribute( 'access_url', str_replace( ['/', '?', '&', '>', '<'], '',  (string) $http->postVariable( 'Access_URL' ) ) );
         if ( $http->hasPostVariable( 'MainNodeOnly' ) )
         {
             $rssExport->setAttribute( 'main_node_only', 1 );
@@ -162,15 +162,12 @@ class eZRSSEditFunction
             $rssExport->store();
         }
         $db->commit();
-        return array( 'valid' => $valid,
-                      'published' => $published,
-                      'validation_errors' => $validationErrors );
+        return ['valid' => $valid, 'published' => $published, 'validation_errors' => $validationErrors];
     }
 
     /**
      * Set RSSExportItem defaults based on site.ini [RSSSettings] settings
      *
-     * @param eZRSSExportItem $rssExportItem
      * @return bool True if changes where made
      */
     static function setItemDefaults( eZRSSExportItem $rssExportItem )
@@ -187,13 +184,13 @@ class eZRSSEditFunction
         if ( !isset( $defaultFeedItemClasses[$nodeClassIdentifier] ) )
             return false;
 
-        $feedItemClasses = explode( ';', $defaultFeedItemClasses[$nodeClassIdentifier] );
+        $feedItemClasses = explode( ';', (string) $defaultFeedItemClasses[$nodeClassIdentifier] );
         $iniSection = 'RSSSettings_' . $feedItemClasses[0];
         if ( !$config->hasVariable( $iniSection, 'FeedObjectAttributeMap' ) )
             return false;
 
         $feedObjectAttributeMap = $config->variable( $iniSection, 'FeedObjectAttributeMap' );
-        $subNodesMap = $config->hasVariable( $iniSection, 'Subnodes' ) ? $config->variable( $iniSection, 'Subnodes' ) : array();
+        $subNodesMap = $config->hasVariable( $iniSection, 'Subnodes' ) ? $config->variable( $iniSection, 'Subnodes' ) : [];
 
         $rssExportItem->setAttribute( 'class_id', eZContentObjectTreeNode::classIDByIdentifier( $feedItemClasses[0] ) );
         $rssExportItem->setAttribute( 'title', $feedObjectAttributeMap['title'] );

@@ -29,20 +29,16 @@ class eZPolicyTest extends ezpDatabaseTestCase
 
         // The first fetch should create the temporary copy
         $temporaryPolicy = eZPolicy::fetchTemporaryCopy( $policy->attribute( 'id' ) );
-        $this->assertInstanceOf( 'eZPolicy', $temporaryPolicy,
-            'The temporary policy isn\'t an eZPolicy' );
-        $this->assertEquals( $policy->attribute( 'id' ), $temporaryPolicy->attribute( 'original_id' ),
-            'The temporary policy\'s original_id should matche the ID of the attribute it was fetch as a copy of' );
+        static::assertInstanceOf('eZPolicy', $temporaryPolicy, 'The temporary policy isn\'t an eZPolicy');
+        static::assertEquals($policy->attribute( 'id' ), $temporaryPolicy->attribute( 'original_id' ), 'The temporary policy\'s original_id should matche the ID of the attribute it was fetch as a copy of');
         $temporaryPolicyID = $temporaryPolicy->attribute( 'id' );
         unset( $temporaryPolicy );
 
         // The second one should transparently fetch it
         $temporaryPolicy = eZPolicy::fetchTemporaryCopy( $policy->attribute( 'id' ) );
-        $this->assertInstanceOf( 'eZPolicy', $temporaryPolicy,
-            'The temporary policy isn\'t an eZPolicy' );
-        $this->assertEquals( $policy->attribute( 'id' ), $temporaryPolicy->attribute( 'original_id' ),
-            'The temporary policy\'s original_id should matche the ID of the attribute it was fetch as a copy of' );
-        $this->assertEquals( $temporaryPolicyID, $temporaryPolicy->attribute( 'id' ) );
+        static::assertInstanceOf('eZPolicy', $temporaryPolicy, 'The temporary policy isn\'t an eZPolicy');
+        static::assertEquals($policy->attribute( 'id' ), $temporaryPolicy->attribute( 'original_id' ), 'The temporary policy\'s original_id should matche the ID of the attribute it was fetch as a copy of');
+        static::assertEquals($temporaryPolicyID, $temporaryPolicy->attribute( 'id' ));
     }
 
     /**
@@ -61,11 +57,11 @@ class eZPolicyTest extends ezpDatabaseTestCase
         $temporaryPolicy->saveTemporary();
 
         // Check that the temporary policy has been moved to original
-        $this->assertEquals( 0, $temporaryPolicy->attribute( 'original_id' ) );
+        static::assertEquals(0, $temporaryPolicy->attribute( 'original_id' ));
 
         // Check that the source policy has been removed
         $oldPolicy = eZPolicy::fetch( $originalPolicyID );
-        $this->assertNull( $oldPolicy );
+        static::assertNull($oldPolicy);
     }
 
     /**

@@ -45,7 +45,7 @@ class eZWebDAVContentBackendAuth implements ezcWebdavAnonymousAuthenticator, ezc
 
         eZWebDAVContentBackend::appendLogEntry( "Got username: {$data->username}" );
         // added by @ds to fix problems with IE6 SP2
-        if ( preg_match( '(^' . preg_quote( $_SERVER['SERVER_NAME'] ) . '(.+))', $data->username, $matches ) > 0 )
+        if ( preg_match( '(^' . preg_quote( (string) $_SERVER['SERVER_NAME'] ) . '(.+))', $data->username, $matches ) > 0 )
         {
             $data->username = $matches[1];
         }
@@ -99,6 +99,7 @@ class eZWebDAVContentBackendAuth implements ezcWebdavAnonymousAuthenticator, ezc
      */
     public function authorize( $user, $path, $access = self::ACCESS_READ )
     {
+        $hasAccess = null;
         $fullPath = $path;
         if ( $fullPath === '' )
         {

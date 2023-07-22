@@ -79,7 +79,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
     public function getFileInfo()
     {
         $upload = new eZContentUpload();
-        $errors = array();
+        $errors = [];
         $mimeData = $file = '';
         $result = $upload->fetchHTTPFile( 'UploadFile', $errors, $file, $mimeData );
 
@@ -89,14 +89,11 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
                 ezpI18n::tr(
                     'extension/ezjscore/ajaxuploader',
                     'Unable to retrieve the uploaded file: %message',
-                    null, array( '%message' => $errors[0]['description'] )
+                    null, ['%message' => $errors[0]['description']]
                 )
             );
         }
-        return array(
-            'file' => $file,
-            'mime' => $mimeData
-        );
+        return ['file' => $file, 'mime' => $mimeData];
     }
 
     /**
@@ -121,7 +118,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
                     'extension/ezjscore/ajaxuploader',
                     'Unable to load the class which identifier is "%class",' .
                     ' this is probably a configuration issue in upload.ini.',
-                    null, array( '%class' => $classIdentifier )
+                    null, ['%class' => $classIdentifier]
                 )
             );
         }
@@ -136,7 +133,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
                     'extension/ezjscore/ajaxuploader', 'The file cannot be processed because' .
                     ' it would result in a \'%class\' object and this relation' .
                     ' does not accept this type of object.',
-                    null, array( '%class' => $class->attribute( 'name' ) )
+                    null, ['%class' => $class->attribute( 'name' )]
                 )
             );
         }
@@ -151,7 +148,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
      */
     public function getDefaultParentNodeId( eZContentClass $class )
     {
-        $parentNodes = array();
+        $parentNodes = [];
         $parentMainNode = null;
         $upload = new eZContentUpload();
         $upload->detectLocations(
@@ -173,7 +170,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
      */
     public function createObject( $file, $parentNodeId, $name = '' )
     {
-        $result = array();
+        $result = [];
         $parentNode = eZContentObjectTreeNode::fetch( $parentNodeId );
         if ( !$parentNode instanceof eZContentObjectTreeNode )
         {
@@ -195,7 +192,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
                 ezpI18n::tr(
                     'extension/ezjscore/ajaxuploader',
                     'Unable to create the content object to add to the relation: %detail',
-                    null, array( '%detail' => $result['errors'][0]['description'] )
+                    null, ['%detail' => $result['errors'][0]['description']]
                 )
             );
         }
@@ -212,15 +209,7 @@ class ezpRelationListAjaxUploader implements ezpAjaxUploaderHandlerInterface
     public function serializeObject( eZContentObject $contentObject )
     {
         $section = eZSection::fetch( $contentObject->attribute( 'section_id' ) );
-        return array(
-            'object_info' => array(
-                'id' => $contentObject->attribute( 'id' ),
-                'name' => $contentObject->attribute( 'name' ),
-                'class_name' => $contentObject->attribute( 'class_name' ),
-                'section_name' => $section->attribute( 'name' ),
-                'published' => ezpI18n::tr( 'design/standard/content/datatype', 'Yes' ),
-            )
-        );
+        return ['object_info' => ['id' => $contentObject->attribute( 'id' ), 'name' => $contentObject->attribute( 'name' ), 'class_name' => $contentObject->attribute( 'class_name' ), 'section_name' => $section->attribute( 'name' ), 'published' => ezpI18n::tr( 'design/standard/content/datatype', 'Yes' )]];
     }
 }
 

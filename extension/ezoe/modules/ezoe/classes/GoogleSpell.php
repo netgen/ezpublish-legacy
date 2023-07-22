@@ -17,9 +17,9 @@ class GoogleSpell extends SpellChecker {
 	function &checkWords($lang, $words) {
 		$wordstr = implode(' ', $words);
 		$matches = $this->_getMatches($lang, $wordstr);
-		$words = array();
+		$words = [];
 
-		for ($i=0; $i<count($matches); $i++)
+		for ($i=0; $i<(is_countable($matches) ? count($matches) : 0); $i++)
 			$words[] = $this->_unhtmlentities(mb_substr($wordstr, $matches[$i][1], $matches[$i][2], "UTF-8"));
 
 		return $words;
@@ -33,12 +33,12 @@ class GoogleSpell extends SpellChecker {
 	 * @return {Array} Array of suggestions for the specified word.
 	 */
 	function &getSuggestions($lang, $word) {
-		$sug = array();
-		$osug = array();
+		$sug = [];
+		$osug = [];
 		$matches = $this->_getMatches($lang, $word);
 
-		if (count($matches) > 0)
-			$sug = explode("\t", $this->_unhtmlentities($matches[0][4]));
+		if ((is_countable($matches) ? count($matches) : 0) > 0)
+			$sug = explode("\t", (string) $this->_unhtmlentities($matches[0][4]));
 
 		// Remove empty
 		foreach ($sug as $item) {
@@ -98,15 +98,15 @@ class GoogleSpell extends SpellChecker {
 		}
 
 		// Grab and parse content
-		$matches = array();
+		$matches = [];
 		preg_match_all('/<c o="([^"]*)" l="([^"]*)" s="([^"]*)">([^<]*)<\/c>/', $xml, $matches, PREG_SET_ORDER);
 
 		return $matches;
 	}
 
 	function _unhtmlentities($string) {
-		$string = preg_replace_callback('~&#x([0-9a-f]+);~i', function($m) {return chr(hexdec($m[1]));}, $string);
-		$string = preg_replace_callback('~&#([0-9]+);~', function($m) {return chr($m[1]);}, $string);
+		$string = preg_replace_callback('~&#x([0-9a-f]+);~i', fn($m) => chr(hexdec((string) $m[1])), (string) $string);
+		$string = preg_replace_callback('~&#([0-9]+);~', fn($m) => chr($m[1]), $string);
 
 		$trans_tbl = get_html_translation_table(HTML_ENTITIES);
 		$trans_tbl = array_flip($trans_tbl);
@@ -118,7 +118,7 @@ class GoogleSpell extends SpellChecker {
 // Patch in multibyte support
 if (!function_exists('mb_substr')) {
 	function mb_substr($str, $start, $len = '', $encoding="UTF-8"){
-		$limit = strlen($str);
+		$limit = strlen((string) $str);
 
 		for ($s = 0; $start > 0;--$start) {// found the real start
 			if ($s >= $limit)
@@ -135,7 +135,7 @@ if (!function_exists('mb_substr')) {
 		}
 
 		if ($len == '')
-			return substr($str, $s);
+			return substr((string) $str, $s);
 		else
 			for ($e = $s; $len > 0; --$len) {//found the real end
 				if ($e >= $limit)
@@ -151,7 +151,7 @@ if (!function_exists('mb_substr')) {
 				}
 			}
 
-		return substr($str, $s, $e - $s);
+		return substr((string) $str, $s, $e - $s);
 	}
 }
 

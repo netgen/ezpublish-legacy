@@ -21,16 +21,16 @@
 
 class eZBinaryFileHandler
 {
-    const HANDLE_UPLOAD = 0x1;
-    const HANDLE_DOWNLOAD = 0x2;
+    public const HANDLE_UPLOAD = 0x1;
+    public const HANDLE_DOWNLOAD = 0x2;
 
-    const HANDLE_ALL = 0x3; // HANDLE_UPLOAD | HANDLE_DOWNLOAD
+    public const HANDLE_ALL = 0x3; // HANDLE_UPLOAD | HANDLE_DOWNLOAD
 
-    const TYPE_FILE = 'file';
-    const TYPE_MEDIA = 'media';
+    public const TYPE_FILE = 'file';
+    public const TYPE_MEDIA = 'media';
 
-    const RESULT_OK = 1;
-    const RESULT_UNAVAILABLE = 2;
+    public const RESULT_OK = 1;
+    public const RESULT_UNAVAILABLE = 2;
 
     /**
      * Constructor
@@ -41,7 +41,6 @@ class eZBinaryFileHandler
      */
     public function __construct( $identifier, $name, $handleType )
     {
-        $this->Info = array();
         $this->Info['identifier'] = $identifier;
         $this->Info['name'] = $name;
         $this->Info['handle-type'] = $handleType;
@@ -148,7 +147,7 @@ class eZBinaryFileHandler
 
     function repositories()
     {
-        return array( 'kernel/classes/binaryhandlers' );
+        return ['kernel/classes/binaryhandlers'];
     }
 
     /**
@@ -168,9 +167,7 @@ class eZBinaryFileHandler
         $instance =& $GLOBALS['eZBinaryFileHandlerInstance-' . $identifier];
         if ( !isset( $instance ) )
         {
-            $optionArray = array( 'iniFile'     => 'file.ini',
-                                  'iniSection'  => 'BinaryFileSettings',
-                                  'iniVariable' => 'Handler'  );
+            $optionArray = ['iniFile'     => 'file.ini', 'iniSection'  => 'BinaryFileSettings', 'iniVariable' => 'Handler'];
 
             $options = new ezpExtensionOptions( $optionArray );
 
@@ -185,7 +182,7 @@ class eZBinaryFileHandler
     }
 
     /// \privatesection
-    public $Info;
+    public $Info = [];
 }
 
 ?>

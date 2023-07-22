@@ -13,11 +13,7 @@ $ini = eZINI::instance( 'site.ini' );
 $error = false;
 $canEdit = true;
 $originalCurrencyCode = $Params['Currency'];
-$currencyParams = array( 'code' => false,
-                         'symbol' => false,
-                         'locale' => $ini->variable( 'RegionalSettings', 'Locale' ),
-                         'custom_rate_value' => '0.0000',
-                         'rate_factor' => '1.0000' );
+$currencyParams = ['code' => false, 'symbol' => false, 'locale' => $ini->variable( 'RegionalSettings', 'Locale' ), 'custom_rate_value' => '0.0000', 'rate_factor' => '1.0000'];
 
 if ( $module->isCurrentAction( 'Cancel' ) )
 {
@@ -86,7 +82,7 @@ else if ( $module->isCurrentAction( 'StoreChanges' ) )
 }
 
 $pathText = '';
-if ( strlen( $originalCurrencyCode ) > 0 )
+if ( strlen( (string) $originalCurrencyCode ) > 0 )
 {
     // going to edit existing currency
     $pathText = ezpI18n::tr( 'kernel/shop', 'Edit currency' );
@@ -125,10 +121,9 @@ $tpl->setVariable( 'can_edit', $canEdit );
 $tpl->setVariable( 'original_currency_code', $originalCurrencyCode );
 $tpl->setVariable( 'currency_data', $currencyParams );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/editcurrency.tpl" );
-$Result['path'] = array( array( 'text' => $pathText,
-                                'url' => false ) );
+$Result['path'] = [['text' => $pathText, 'url' => false]];
 
 /**
  * Validates currency data:
@@ -146,14 +141,14 @@ function validateCurrencyData( &$currencyData )
     if ( $floatValidator->validate( $currencyData['custom_rate_value'] ) == eZInputValidator::STATE_INVALID )
     {
         $return = ezpI18n::tr( 'kernel/shop', "'%value' is not a valid custom rate value (positive number expected)",
-            'Error message', array( '%value' => $currencyData['custom_rate_value'] ) );
+            'Error message', ['%value' => $currencyData['custom_rate_value']] );
         $currencyData['custom_rate_value'] = '';
     }
     if ( $floatValidator->validate( $currencyData['rate_factor'] ) == eZInputValidator::STATE_INVALID )
     {
         if ( $return === false )
             $return = ezpI18n::tr( 'kernel/shop', "'%value' is not a valid rate_factor value (positive number expected)",
-                'Error message', array( '%value' => $currencyData['rate_factor'] ) );
+                'Error message', ['%value' => $currencyData['rate_factor']] );
         $currencyData['rate_factor'] = '';
     }
 

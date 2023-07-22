@@ -11,34 +11,21 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Updates non-break space encoding in ezxml contents. See issue EZP-18220\n",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Updates non-break space encoding in ezxml contents. See issue EZP-18220\n", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[dry-run][n][v][iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'dry-run' => 'Dry run',
-        'iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)',
-        'iteration-limit' => 'Batch size (default: 100)',
-        'n' => 'Do not wait 30 seconds before starting',
-    )
+    ['dry-run' => 'Dry run', 'iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)', 'iteration-limit' => 'Batch size (default: 100)', 'n' => 'Do not wait 30 seconds before starting']
 );
 $optDryRun = (bool)$options['dry-run'];
 $optIterationSleep = $options['iteration-sleep'] ? (int)$options['iteration-sleep'] : 1;
 $optIterationLimit = $options['iteration-limit'] ? (int)$options['iteration-limit'] : 100;
 $verboseLevel = $script->verboseOutputLevel();
 
-$limit = array(
-    "offset" => 0,
-    "limit" => $optIterationLimit,
-);
+$limit = ["offset" => 0, "limit" => $optIterationLimit];
 
 $script->initialize();
 $db = eZDB::instance();
@@ -60,12 +47,12 @@ function updateEzxmlNonbreakSpaces( $attribute, $optDryRun, $verbose )
     $version = $attribute['version'];
     $xmlData = $attribute['data_text'];
 
-    $matchTags = implode('|', array( 'paragraph', 'header') );
+    $matchTags = implode('|', ['paragraph', 'header'] );
     $pattern = '/(<(?<tag>' . $matchTags . ')[^>]*\>)(.*)&amp;nbsp;(.*)(<\/(?P=tag)>)/';
     $replace = "\\1\\3\xC2\xA0\\4\\5";
 
     do {
-        $xmlData = preg_replace( $pattern, $replace, $xmlData, -1, $countReplaced );
+        $xmlData = preg_replace( $pattern, $replace, (string) $xmlData, -1, $countReplaced );
     } while ($countReplaced > 0);
 
     if ( $verbose ) {

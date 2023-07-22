@@ -36,7 +36,7 @@ if ( !$object->attribute( 'can_read' ) )
 if ( $Module->isCurrentAction( 'Cancel' ) )
 {
     $mainParentNodeID = $object->attribute( 'main_parent_node_id' );
-    return $Module->redirectToView( 'view', array( 'full', $mainParentNodeID ) );
+    return $Module->redirectToView( 'view', ['full', $mainParentNodeID] );
 }
 
 $contentINI = eZINI::instance( 'content.ini' );
@@ -47,11 +47,11 @@ $contentINI = eZINI::instance( 'content.ini' );
 function copyObject( $Module, $object, $allVersions, $newParentNodeID )
 {
     if ( !$newParentNodeID )
-        return $Module->redirectToView( 'view', array( 'full', 2 ) );
+        return $Module->redirectToView( 'view', ['full', 2] );
 
     // check if we can create node under the specified parent node
     if( ( $newParentNode = eZContentObjectTreeNode::fetch( $newParentNodeID ) ) === null )
-        return $Module->redirectToView( 'view', array( 'full', 2 ) );
+        return $Module->redirectToView( 'view', ['full', 2] );
 
     $classID = $object->attribute('contentclass_id');
 
@@ -84,23 +84,17 @@ function copyObject( $Module, $object, $allVersions, $newParentNodeID )
     }
 
     // and create a new one
-    $nodeAssignment = eZNodeAssignment::create( array(
-                                                     'contentobject_id' => $newObject->attribute( 'id' ),
-                                                     'contentobject_version' => $curVersion,
-                                                     'parent_node' => $newParentNodeID,
-                                                     'is_main' => 1
-                                                     ) );
+    $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $newObject->attribute( 'id' ), 'contentobject_version' => $curVersion, 'parent_node' => $newParentNodeID, 'is_main' => 1] );
     $nodeAssignment->store();
 
     // publish the newly created object
-    eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newObject->attribute( 'id' ),
-                                                              'version'   => $curVersion ) );
+    eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion] );
     // Update "is_invisible" attribute for the newly created node.
     $newNode = $newObject->attribute( 'main_node' );
     eZContentObjectTreeNode::updateNodeVisibility( $newNode, $newParentNode );
 
     $db->commit();
-    return $Module->redirectToView( 'view', array( 'full', $newParentNodeID ) );
+    return $Module->redirectToView( 'view', ['full', $newParentNodeID] );
 }
 
 /*!
@@ -119,8 +113,8 @@ function browse( $Module, $object )
     $node     = $object->attribute( 'main_node' );
     $class    = $object->contentClass();
 
-    $ignoreNodesSelect = array();
-    $ignoreNodesClick = array();
+    $ignoreNodesSelect = [];
+    $ignoreNodesClick = [];
     foreach ( $object->assignedNodes( false ) as $element )
     {
         $ignoreNodesSelect[] = $element['node_id'];
@@ -135,24 +129,9 @@ function browse( $Module, $object )
 
 
     $sourceParentNodeID = $node->attribute( 'parent_node_id' );
-    eZContentBrowse::browse( array( 'action_name' => 'CopyNode',
-                                    'description_template' => 'design:content/browse_copy_node.tpl',
-                                    'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                     'class_id' => $class->attribute( 'identifier' ),
-                                                     'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                     'section' => $object->attribute( 'section_id' ) ),
-                                    'ignore_nodes_select' => $ignoreNodesSelect,
-                                    'ignore_nodes_click'  => $ignoreNodesClick,
-                                    'persistent_data' => array( 'ObjectID' => $objectID ),
-                                    'permission' => array( 'access' => 'create', 'contentclass_id' => $class->attribute( 'id' ) ),
-                                    'content' => array( 'object_id' => $objectID,
-                                                        'object_version' => $object->attribute( 'current_version' ),
-                                                        'object_language' => $languageCode ),
-                                    'start_node' => $sourceParentNodeID,
-                                    'cancel_page' => $Module->redirectionURIForModule( $Module, 'view',
-                                                                                       array( $viewMode, $sourceParentNodeID, $languageCode ) ),
-                                    'from_page' => "/content/copy" ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'CopyNode', 'description_template' => 'design:content/browse_copy_node.tpl', 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'ignore_nodes_select' => $ignoreNodesSelect, 'ignore_nodes_click'  => $ignoreNodesClick, 'persistent_data' => ['ObjectID' => $objectID], 'permission' => ['access' => 'create', 'contentclass_id' => $class->attribute( 'id' )], 'content' => ['object_id' => $objectID, 'object_version' => $object->attribute( 'current_version' ), 'object_language' => $languageCode], 'start_node' => $sourceParentNodeID, 'cancel_page' => $Module->redirectionURIForModule( $Module, 'view',
+                                                                                [$viewMode, $sourceParentNodeID, $languageCode] ), 'from_page' => "/content/copy"] );
 }
 
 /*!
@@ -167,10 +146,7 @@ function chooseObjectVersionsToCopy( $Module, &$Result, $object )
         $tpl->setVariable( 'object', $object );
         $tpl->setVariable( 'selected_node_id', $selectedNodeIDArray[0] );
         $Result['content'] = $tpl->fetch( 'design:content/copy.tpl' );
-        $Result['path'] = array( array( 'url' => false,
-                                        'text' => ezpI18n::tr( 'kernel/content', 'Content' ) ),
-                                 array( 'url' => false,
-                                        'text' => ezpI18n::tr( 'kernel/content', 'Copy' ) ) );
+        $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/content', 'Content' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/content', 'Copy' )]];
 }
 
 /*
@@ -208,7 +184,7 @@ else if ( $Module->isCurrentAction( 'CopyNode' ) )
     if( $chooseVersions )
     {
         // redirect to the page with choice of versions to copy
-        $Result = array();
+        $Result = [];
         chooseObjectVersionsToCopy( $Module, $Result, $object );
     }
     else

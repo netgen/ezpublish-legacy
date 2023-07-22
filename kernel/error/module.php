@@ -6,11 +6,9 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZError" );
+$Module = ["name" => "eZError"];
 
-$ViewList = array();
-$ViewList["view"] = array(
-    "script" => "view.php",
-    "params" => array( 'Type', 'Number', 'ExtraParameters' ) );
+$ViewList = [];
+$ViewList["view"] = ["script" => "view.php", "params" => ['Type', 'Number', 'ExtraParameters']];
 
 ?>

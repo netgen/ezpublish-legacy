@@ -19,11 +19,11 @@
 
 class eZISBN13
 {
-    const PREFIX_LENGTH = 3;
-    const CHECK_LENGTH = 1;
-    const LENGTH = 13;
-    const PREFIX_978 = 978;
-    const PREFIX_979 = 979;
+    final public const PREFIX_LENGTH = 3;
+    final public const CHECK_LENGTH = 1;
+    final public const LENGTH = 13;
+    final public const PREFIX_978 = 978;
+    final public const PREFIX_979 = 979;
 
     /**
      * Constructor
@@ -35,7 +35,7 @@ class eZISBN13
     {
         if ( $isbnNr !== null )
         {
-            $this->extractISBNNumber( $isbnNr, $separator );
+            $this->extractISBNNumber( $separator, $isbnNr );
         }
         else
         {
@@ -53,9 +53,7 @@ class eZISBN13
     */
     function attributes()
     {
-        return array( 'has_content',
-                      'group_ranges',
-                      'groups' );
+        return ['has_content', 'group_ranges', 'groups'];
     }
 
     /*!
@@ -69,21 +67,19 @@ class eZISBN13
         {
             case "has_content":
             {
-                return eZISBN13::hasRangeData();
+                return (new eZISBN13())->hasRangeData();
             }break;
 
             case "groups":
             {
                 $groupList = eZISBNGroup::fetchList();
-                return array( 'group_list' => $groupList,
-                              'count' => count(  $groupList ) );
+                return ['group_list' => $groupList, 'count' => is_countable($groupList) ? count(  $groupList ) : 0];
             }break;
 
             case "group_ranges":
             {
                 $groupList = eZISBNGroupRange::fetchList();
-                return array( 'group_list' => $groupList,
-                              'count' => count( $groupList ) );
+                return ['group_list' => $groupList, 'count' => is_countable($groupList) ? count( $groupList ) : 0];
             }break;
         }
         return null;
@@ -96,7 +92,7 @@ class eZISBN13
     */
     function hasAttribute( $value )
     {
-        return in_array( $value, eZISBN13::attributes() );
+        return in_array( $value, (new eZISBN13())->attributes() );
     }
 
     /*!
@@ -135,52 +131,52 @@ class eZISBN13
      \param $separator is the separator used to make the ISBN number visible. Could be either a space or hyphen.
      \return A formated ISBN number or the original value if it was not possible to find the structure.
     */
-    function formatedISBNValue( $isbnNr = false, &$error, $separator = '-' )
+    function formatedISBNValue( &$error, $isbnNr = false, $separator = '-' )
     {
         if ( $isbnNr !== false )
         {
-            $formatedISBN13 = preg_replace( "/[\s|\-]+/", "-", $isbnNr );
-            $status = $this->extractISBNNumber( $isbnNr, $error );
+            $formatedISBN13 = preg_replace( "/[\s|\-]+/", "-", (string) $isbnNr );
+            $status = $this->extractISBNNumber( $error, $isbnNr );
 
             if ( $status === false )
             {
-                $formatedISBN13 = substr( $isbnNr, 0, self::PREFIX_LENGTH );
-                if ( strlen( $this->RegistrationGroup ) > 0 )
+                $formatedISBN13 = substr( (string) $isbnNr, 0, self::PREFIX_LENGTH );
+                if ( strlen( (string) $this->RegistrationGroup ) > 0 )
                 {
                     $formatedISBN13 .= $separator . $this->RegistrationGroup;
-                    if ( strlen( $this->RegistrantElement ) > 0 )
+                    if ( strlen( (string) $this->RegistrantElement ) > 0 )
                     {
                         $formatedISBN13 .= $separator . $this->RegistrantElement . $separator .
                                            $this->PublicationElement . $separator;
                     }
                     else
                     {
-                        $offset = strlen( $this->RegistrationGroup ) + self::PREFIX_LENGTH;
-                        $length = strlen( $isbnNr ) - $offset - self::CHECK_LENGTH;
-                        $originalValue = substr( $isbnNr, $offset, $length );
+                        $offset = strlen( (string) $this->RegistrationGroup ) + self::PREFIX_LENGTH;
+                        $length = strlen( (string) $isbnNr ) - $offset - self::CHECK_LENGTH;
+                        $originalValue = substr( (string) $isbnNr, $offset, $length );
                         $formatedISBN13 .= $originalValue;
                     }
                 }
                 else
                 {
                     $offset = self::PREFIX_LENGTH;
-                    $length = strlen( $isbnNr ) - $offset - self::CHECK_LENGTH;
-                    $originalValue = substr( $isbnNr, $offset, $length );
+                    $length = strlen( (string) $isbnNr ) - $offset - self::CHECK_LENGTH;
+                    $originalValue = substr( (string) $isbnNr, $offset, $length );
                     $formatedISBN13 .= $originalValue;
                 }
 
-                $length = strlen( $isbnNr );
-                $formatedISBN13 .= substr( $isbnNr, $length - self::CHECK_LENGTH, $length );
+                $length = strlen( (string) $isbnNr );
+                $formatedISBN13 .= substr( (string) $isbnNr, $length - self::CHECK_LENGTH, $length );
                 return $formatedISBN13;
             }
         }
         else
         {
             $formatedISBN13 = $this->Prefix . $separator;
-            if ( strlen( $this->RegistrationGroup ) > 0 )
+            if ( strlen( (string) $this->RegistrationGroup ) > 0 )
             {
                 $formatedISBN13 .= $this->RegistrationGroup . $separator;
-                if ( strlen( $this->RegistrantElement ) > 0 )
+                if ( strlen( (string) $this->RegistrantElement ) > 0 )
                 {
                     $formatedISBN13 .= $this->RegistrantElement . $separator .
                          $this->PublicationElement . $separator;
@@ -222,10 +218,10 @@ class eZISBN13
 
       \return true if the ISBN-13 number was successfully extracted and false if not.
     */
-    function extractISBNNumber( $isbnNr = false, &$error )
+    function extractISBNNumber( &$error, $isbnNr = false )
     {
         $ini = eZINI::instance( 'content.ini' );
-        $ean = preg_replace( "/[\s|\-]+/", "", $isbnNr );
+        $ean = preg_replace( "/[\s|\-]+/", "", (string) $isbnNr );
         if ( is_numeric( $ean ) and strlen( $ean ) == self::LENGTH )
         {
             $prefix = substr( $ean, 0, self::PREFIX_LENGTH );
@@ -304,7 +300,7 @@ class eZISBN13
                 $strictValidation = $ini->variable( 'ISBNSettings', 'StrictValidation' );
                 if ( $strictValidation == 'true' )
                 {
-                    $error = ezpI18n::tr( 'kernel/classes/datatypes', '%1 is not a valid prefix of the ISBN number.', null, array( $prefix ) );
+                    $error = ezpI18n::tr( 'kernel/classes/datatypes', '%1 is not a valid prefix of the ISBN number.', null, [$prefix] );
                     return false;
                 }
             }
@@ -329,7 +325,7 @@ class eZISBN13
         $valid = $this->validateISBN13Checksum( $isbnNr, $error );
         if ( $valid == true )
         {
-            $valid = $this->extractISBNNumber( $isbnNr, $error );
+            $valid = $this->extractISBNNumber( $error, $isbnNr );
         }
         return $valid;
     }
@@ -346,7 +342,7 @@ class eZISBN13
     {
         if ( !$isbnNr )
             return false;
-        $isbnNr = preg_replace( "/[\s|\-]+/", "", $isbnNr );
+        $isbnNr = preg_replace( "/[\s|\-]+/", "", (string) $isbnNr );
         if ( substr( $isbnNr, 0, self::PREFIX_LENGTH ) != self::PREFIX_978 and
              substr( $isbnNr, 0, self::PREFIX_LENGTH ) != self::PREFIX_979 )
         {
@@ -367,8 +363,8 @@ class eZISBN13
         $val = 0;
         for ( $i = 0; $i < self::LENGTH; $i++ )
         {
-            $val = $isbnNr{$i};
-            if ( !is_numeric( $isbnNr{$i} ) )
+            $val = $isbnNr[$i];
+            if ( !is_numeric( $isbnNr[$i] ) )
             {
                 $error = ezpI18n::tr( 'kernel/classes/datatypes', 'All ISBN 13 characters need to be numeric' );
                 return false;
@@ -381,7 +377,7 @@ class eZISBN13
             // Calculate the last digit from the 12 first numbers.
             $checkDigit = ( 10 - ( ( $checksum13 - ( ( $weight13 + 2 ) % 4 ) * $val ) % 10 ) ) % 10;
             //bad checksum
-            $error = ezpI18n::tr( 'kernel/classes/datatypes', 'Bad checksum, last digit should be %1', null, array( $checkDigit ) );
+            $error = ezpI18n::tr( 'kernel/classes/datatypes', 'Bad checksum, last digit should be %1', null, [$checkDigit] );
             return false;
         }
 

@@ -20,7 +20,7 @@ $tpl = eZTemplate::factory();
 $limit = 20;
 
 $infoCode = 'no-errors'; // This will be modified if info/warning is given to user.
-$infoData = array(); // Extra parameters can be added to this array
+$infoData = []; // Extra parameters can be added to this array
 $wildcardSrcText = false;
 $wildcardDstText = false;
 $wildcardType = false;
@@ -48,10 +48,10 @@ else if ( $Module->isCurrentAction( 'RemoveWildcard' ) )
 }
 else if ( $Module->isCurrentAction( 'NewWildcard' ) )
 {
-    $wildcardSrcText = trim( $Module->actionParameter( 'WildcardSourceText' ) );
+    $wildcardSrcText = trim( (string) $Module->actionParameter( 'WildcardSourceText' ) );
     $wildcardSrcText = ltrim( $wildcardSrcText, '/' );
-    $wildcardDstText = trim( $Module->actionParameter( 'WildcardDestinationText' ) );
-    $wildcardType = $http->hasPostVariable( 'WildcardType' ) && strlen( trim( $http->postVariable( 'WildcardType' ) ) ) > 0;
+    $wildcardDstText = trim( (string) $Module->actionParameter( 'WildcardDestinationText' ) );
+    $wildcardType = $http->hasPostVariable( 'WildcardType' ) && strlen( trim( (string) $http->postVariable( 'WildcardType' ) ) ) > 0;
 
     if ( strlen( $wildcardSrcText ) == 0 )
     {
@@ -73,10 +73,7 @@ else if ( $Module->isCurrentAction( 'NewWildcard' ) )
         }
         else
         {
-            $row = array(
-                'source_url' => $wildcardSrcText,
-                'destination_url' => $wildcardDstText,
-                'type' => $wildcardType ? eZURLWildcard::TYPE_FORWARD : eZURLWildcard::TYPE_DIRECT );
+            $row = ['source_url' => $wildcardSrcText, 'destination_url' => $wildcardDstText, 'type' => $wildcardType ? eZURLWildcard::TYPE_FORWARD : eZURLWildcard::TYPE_DIRECT];
 
             $wildcard = new eZURLWildcard( $row );
             $wildcard->store();
@@ -96,16 +93,9 @@ else if ( $Module->isCurrentAction( 'NewWildcard' ) )
 }
 
 // User preferences
-$limitList = array( array( 'id'    => 1,
-                           'value' => 10 ),
-                    array( 'id'    => 2,
-                           'value' => 25 ),
-                    array( 'id'    => 3,
-                           'value' => 50 ),
-                    array( 'id'    => 4,
-                           'value' => 100 ) );
+$limitList = [['id'    => 1, 'value' => 10], ['id'    => 2, 'value' => 25], ['id'    => 3, 'value' => 50], ['id'    => 4, 'value' => 100]];
 $limitID = eZPreferences::value( 'admin_urlwildcard_list_limit' );
-$limitValues = array();
+$limitValues = [];
 foreach ( $limitList as $limitEntry )
 {
     $limitIDs[]                     = $limitEntry['id'];
@@ -126,12 +116,11 @@ if ( $Offset >= $wildcardsCount )
 }
 $wildcardList = eZURLWildcard::fetchList( $Offset, $wildcardsLimit );
 
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 
-$path = array();
-$path[] = array( 'url'  => false,
-                 'text' => ezpI18n::tr( 'kernel/content/urlalias_wildcard', 'URL wildcard aliases' ) );
+$path = [];
+$path[] = ['url'  => false, 'text' => ezpI18n::tr( 'kernel/content/urlalias_wildcard', 'URL wildcard aliases' )];
 
 $tpl->setVariable( 'wildcard_list', $wildcardList );
 $tpl->setVariable( 'wildcards_limit', $wildcardsLimit );
@@ -145,7 +134,7 @@ $tpl->setVariable( 'limitList', $limitList );
 $tpl->setVariable( 'limitID', $limitID );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/urlalias_wildcard.tpl' );
 $Result['path'] = $path;
 

@@ -34,15 +34,15 @@ class eZXMLTextTest extends ezpTestCase
         $parser = new eZSimplifiedXMLInputParser( 2, eZXMLInputParser::ERROR_ALL, eZXMLInputParser::ERROR_ALL, true );
 
         $document = $parser->process( '<header level="-1">Fatal error test</header>' );
-        $this->assertTrue( $document instanceof DOMDocument, 'Parser error: ' . join( ", ", $parser->getMessages() ) );
+        static::assertTrue($document instanceof DOMDocument, 'Parser error: ' . join( ", ", $parser->getMessages() ));
 
         $root = $document->documentElement;        
-        $this->assertTrue( $root->hasChildNodes(), 'Content missing, xml document is empty' );
+        static::assertTrue($root->hasChildNodes(), 'Content missing, xml document is empty');
 
         $xmlString = eZXMLTextType::domString( $document );
-        $this->assertEquals( '<?xml version="1.0" encoding="utf-8"?>
+        static::assertEquals('<?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><section><header>Fatal error test</header></section></section>
-', $xmlString );
+', $xmlString);
     }
 }
 

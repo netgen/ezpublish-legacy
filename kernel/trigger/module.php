@@ -6,13 +6,9 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZTrigger" );
+$Module = ["name" => "eZTrigger"];
 
-$ViewList = array();
-$ViewList["list"] = array(
-    "script" => "list.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    "params" => array( ) );
+$ViewList = [];
+$ViewList["list"] = ["script" => "list.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', "params" => []];
 
 ?>

@@ -31,32 +31,32 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     /**
      * The name of the content folder in eZ Publish.
      */
-    const VIRTUAL_CONTENT_FOLDER_NAME = 'Content';
+    final public const VIRTUAL_CONTENT_FOLDER_NAME = 'Content';
 
     /**
      * The name of the media folder in eZ Publish.
      */
-    const VIRTUAL_MEDIA_FOLDER_NAME = 'Media';
+    final public const VIRTUAL_MEDIA_FOLDER_NAME = 'Media';
 
     /**
      * The ini file which holds settings for WebDAV.
      */
-    const WEBDAV_INI_FILE = "webdav.ini";
+    final public const WEBDAV_INI_FILE = "webdav.ini";
 
     /**
      * Mimetype for directories.
      */
-    const DIRECTORY_MIMETYPE = 'httpd/unix-directory';
+    final public const DIRECTORY_MIMETYPE = 'httpd/unix-directory';
 
     /**
      * Mimetype for eZ Publish objects which don't have a mimetype.
      */
-    const DEFAULT_MIMETYPE = "application/octet-stream";
+    final public const DEFAULT_MIMETYPE = "application/octet-stream";
 
     /**
      * Default size in bytes for eZ Publish objects which don't have a size.
      */
-    const DEFAULT_SIZE = 0;
+    final public const DEFAULT_SIZE = 0;
 
     /**
      * Names of live properties from the DAV: namespace which will be handled
@@ -64,17 +64,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      *
      * @var array(string)
      */
-    protected $handledLiveProperties = array(
-        'getcontentlength',
-        'getlastmodified',
-        'creationdate',
-        'displayname',
-        'getetag',
-        'getcontenttype',
-        'resourcetype',
-        'supportedlock',
-        'lockdiscovery',
-    );
+    protected $handledLiveProperties = ['getcontentlength', 'getlastmodified', 'creationdate', 'displayname', 'getetag', 'getcontenttype', 'resourcetype', 'supportedlock', 'lockdiscovery'];
 
     /**
      * Contains an array with classes that are considered folder.
@@ -88,21 +78,21 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      *
      * @var array(string)
      */
-    protected $availableSites = array();
+    protected $availableSites = [];
 
     /**
      * Holds the retrieved nodes to allow for faster retrieval on subsequent requests.
      *
      * @var array(string=>array())
      */
-    protected $cachedNodes = array();
+    protected $cachedNodes = [];
 
     /**
      * Holds the retrieved properties to allow for faster retrieval on subsequent requests.
      *
      * @var array(string=>array())
      */
-    protected $cachedProperties = array();
+    protected $cachedProperties = [];
 
     /**
      * Specifies weather to log with appendLogEntry().
@@ -121,7 +111,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         // @as @todo check how to make Article class to be handled as a resource (document) instead of a collection
         $webdavINI = eZINI::instance( self::WEBDAV_INI_FILE );
 
-        $folderClasses = array();
+        $folderClasses = [];
         if ( $webdavINI->hasGroup( 'GeneralSettings' ) and
              $webdavINI->hasVariable( 'GeneralSettings', 'FolderClasses' ) )
         {
@@ -211,23 +201,23 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
         if ( !$nodeInfo['nodeExists'] )
         {
-            return array();
+            return [];
         }
 
         // No special handling for plain resources
         if ( !$nodeInfo['isCollection'] )
         {
-            return array( new ezcWebdavResource( $source, $this->getAllProperties( $source ) ) );
+            return [new ezcWebdavResource( $source, $this->getAllProperties( $source ) )];
         }
 
         // For zero depth just return the collection
         if ( $depth === ezcWebdavRequest::DEPTH_ZERO )
         {
-            return array( new ezcWebdavCollection( $source, $this->getAllProperties( $source ) ) );
+            return [new ezcWebdavCollection( $source, $this->getAllProperties( $source ) )];
         }
 
-        $nodes = array( new ezcWebdavCollection( $source, $this->getAllProperties( $source ) ) );
-        $recurseCollections = array( $source );
+        $nodes = [new ezcWebdavCollection( $source, $this->getAllProperties( $source ) )];
+        $recurseCollections = [$source];
 
         // Collect children for all collections listed in $recurseCollections.
         for ( $i = 0; $i < count( $recurseCollections ); ++$i )
@@ -235,7 +225,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             $source = $recurseCollections[$i];
 
             // add the slash at the end of the path if it is missing
-            if ( $source{strlen( $source ) - 1} !== '/' )
+            if ( $source[strlen( $source ) - 1] !== '/' )
             {
                 $source .= '/';
             }
@@ -270,7 +260,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function getResourceContents( $target )
     {
-        $result = array( 'data' => false, 'file' => false );
+        $result = ['data' => false, 'file' => false];
         $fullPath = $target;
         $target = $this->splitFirstPathElement( $fullPath, $currentSite );
 
@@ -315,7 +305,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             $entries = $this->getVirtualFolderCollection( $currentSite, $collection, $fullPath, $depth, $properties );
         }
 
-        $contents = array();
+        $contents = [];
 
         foreach ( $entries as $entry )
         {
@@ -334,7 +324,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             {
                 // If this is not a collection, don't leave a trailing '/'
                 // on the href. If you do, Goliath gets confused.
-                $entry['href'] = rtrim( $entry['href'], '/' );
+                $entry['href'] = rtrim( (string) $entry['href'], '/' );
 
                 // Add files without content
                 $contents[] = new ezcWebdavResource( $entry['href'], $this->getAllProperties( $path ) );
@@ -357,14 +347,14 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function getNodeInfo( $requestUri, $source = null )
     {
-        $path = ( $source === null ) ? $requestUri : $source;
+        $path = $source ?? $requestUri;
 
         $fullPath = $path;
         $target = $this->splitFirstPathElement( $path, $currentSite );
 
         if ( !$currentSite )
         {
-            $data = $this->fetchSiteListContent( $fullPath, 0, array() );
+            $data = $this->fetchSiteListContent( $fullPath, 0, [] );
             $data = $data[0];
             $data['nodeExists'] = true;
             $data['isCollection'] = true;
@@ -373,7 +363,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         {
             if ( !in_array( $currentSite, $this->availableSites ) )
             {
-                $data = array();
+                $data = [];
                 $data['nodeExists'] = false;
                 $data['isCollection'] = false;
             }
@@ -381,15 +371,15 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             {
                 if ( $target === "" )
                 {
-                    $data = $this->fetchVirtualSiteContent( $fullPath, $currentSite, 0, array() );
+                    $data = $this->fetchVirtualSiteContent( $fullPath, $currentSite, 0, [] );
                 }
-                else if ( in_array( $target, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+                else if ( in_array( $target, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
                 {
                     $data = $this->fetchContainerNodeInfo( $fullPath, $currentSite, $target );
                 }
                 else
                 {
-                    $data = $this->getCollectionContent( $fullPath, 0, array() );
+                    $data = $this->getCollectionContent( $fullPath, 0, [] );
                 }
 
                 if ( is_array( $data ) )
@@ -401,7 +391,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
                 }
                 else
                 {
-                    $data = array();
+                    $data = [];
                     $data['nodeExists'] = false;
                     $data['isCollection'] = false;
                 }
@@ -424,6 +414,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     public function getProperty( $path, $propertyName, $namespace = 'DAV:' )
     {
+        $name = null;
         $storage = $this->getPropertyStorage( $path );
 
         // Handle dead propreties
@@ -445,8 +436,8 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         {
             case 'getcontentlength':
                 $property = new ezcWebdavGetContentLengthProperty();
-                $mimetype = isset( $item['mimetype'] ) ? $item['mimetype'] : self::DEFAULT_MIMETYPE;
-                $size = isset( $item['size'] ) ? $item['size'] : self::DEFAULT_SIZE;
+                $mimetype = $item['mimetype'] ?? self::DEFAULT_MIMETYPE;
+                $size = $item['size'] ?? self::DEFAULT_SIZE;
                 $property->length = ( $mimetype === self::DIRECTORY_MIMETYPE ) ?
                     ezcWebdavGetContentLengthProperty::COLLECTION :
                     (string) $size;
@@ -454,40 +445,40 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
             case 'getlastmodified':
                 $property = new ezcWebdavGetLastModifiedProperty();
-                $timestamp = isset( $item['mtime'] ) ? $item['mtime'] : time();
+                $timestamp = $item['mtime'] ?? time();
                 $property->date = new ezcWebdavDateTime( '@' . $timestamp );
                 break;
 
             case 'creationdate':
                 $property = new ezcWebdavCreationDateProperty();
-                $timestamp = isset( $item['ctime'] ) ? $item['ctime'] : time();
+                $timestamp = $item['ctime'] ?? time();
                 $property->date = new ezcWebdavDateTime( '@' . $timestamp );
                 break;
 
             case 'displayname':
                 $property = new ezcWebdavDisplayNameProperty();
-                $property->displayName = isset( $item['name'] ) ? $item['name'] : 'Unknown displayname';
+                $property->displayName = $item['name'] ?? 'Unknown displayname';
                 break;
 
             case 'getcontenttype':
                 $property = new ezcWebdavGetContentTypeProperty();
-                $property->mime = isset( $item['mimetype'] ) ? $item['mimetype'] : self::DEFAULT_MIMETYPE;
+                $property->mime = $item['mimetype'] ?? self::DEFAULT_MIMETYPE;
                 break;
 
             case 'getetag':
                 $property = new ezcWebdavGetEtagProperty();
-                $mimetype = isset( $item['mimetype'] ) ? $item['mimetype'] : self::DEFAULT_MIMETYPE;
-                $size = isset( $item['size'] ) ? $item['size'] : self::DEFAULT_SIZE;
+                $mimetype = $item['mimetype'] ?? self::DEFAULT_MIMETYPE;
+                $size = $item['size'] ?? self::DEFAULT_SIZE;
                 $size = ( $mimetype === self::DIRECTORY_MIMETYPE ) ?
                     ezcWebdavGetContentLengthProperty::COLLECTION :
                     (string) $size;
-                $timestamp = isset( $item['mtime'] ) ? $item['mtime'] : time();
+                $timestamp = $item['mtime'] ?? time();
                 $property->etag = md5( $path . $size . date( 'c', $timestamp ) );
                 break;
 
             case 'resourcetype':
                 $property = new ezcWebdavResourceTypeProperty();
-                $mimetype = isset( $item['mimetype'] ) ? $item['mimetype'] : self::DEFAULT_MIMETYPE;
+                $mimetype = $item['mimetype'] ?? self::DEFAULT_MIMETYPE;
                 $property->type = ( $mimetype === self::DIRECTORY_MIMETYPE ) ?
                     ezcWebdavResourceTypeProperty::TYPE_COLLECTION :
                     ezcWebdavResourceTypeProperty::TYPE_RESOURCE;
@@ -928,7 +919,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     public function checkDeleteRecursive( $target )
     {
-        $errors = array();
+        $errors = [];
 
         $fullPath = $target;
         $target = $this->splitFirstPathElement( $target, $currentSite );
@@ -936,23 +927,19 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         if ( !$currentSite )
         {
             // Cannot delete root folder
-            return array(
-                new ezcWebdavErrorResponse(
-                    ezcWebdavResponse::STATUS_403,
-                    $fullPath
-                ),
-            );
+            return [new ezcWebdavErrorResponse(
+                ezcWebdavResponse::STATUS_403,
+                $fullPath
+            )];
         }
 
         if ( $target === "" )
         {
             // Cannot delete entries in site list
-            return array(
-                new ezcWebdavErrorResponse(
-                    ezcWebdavResponse::STATUS_403,
-                    $fullPath
-                ),
-            );
+            return [new ezcWebdavErrorResponse(
+                ezcWebdavResponse::STATUS_403,
+                $fullPath
+            )];
         }
 
         return $errors;
@@ -1060,24 +1047,11 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function performCopy( $source, $destination, $depth = ezcWebdavRequest::DEPTH_INFINITY )
     {
-        switch ( $_SERVER['REQUEST_METHOD'] )
-        {
-            case 'MOVE':
-                // in case performCopy() was called from a MOVE operation,
-                // do a real move operation, because the move() function
-                // from ezcWebdavSimpleBackend calls performCopy() and
-                // performDelete()
-                $errors = $this->moveRecursive( $source, $destination, $depth );
-                break;
-
-            case 'COPY':
-                $errors = $this->copyRecursive( $source, $destination, $depth );
-                break;
-
-            default:
-                $errors = $this->moveRecursive( $source, $destination, $depth );
-                break;
-        }
+        $errors = match ($_SERVER['REQUEST_METHOD']) {
+            'MOVE' => $this->moveRecursive( $source, $destination, $depth ),
+            'COPY' => $this->copyRecursive( $source, $destination, $depth ),
+            default => $this->moveRecursive( $source, $destination, $depth ),
+        };
 
         // Transform errors
         foreach ( $errors as $nr => $error )
@@ -1118,7 +1092,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     public function copyRecursive( $source, $destination, $depth = ezcWebdavRequest::DEPTH_INFINITY )
     {
-        $errors = array();
+        $errors = [];
         $fullSource = $source;
         $fullDestination = $destination;
         $source = $this->splitFirstPathElement( $source, $sourceSite );
@@ -1131,14 +1105,14 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             //       if so allow the copy as a simple object copy
             //       If not we will have to do an object export from
             //       $sourceSite and import it in $destinationSite
-            return array(); // @as self::FAILED_FORBIDDEN;
+            return []; // @as self::FAILED_FORBIDDEN;
         }
 
         if ( !$sourceSite or
              !$destinationSite )
         {
             // Cannot copy entries in site list
-            return array( $fullSource ); // @as self::FAILED_FORBIDDEN;
+            return [$fullSource]; // @as self::FAILED_FORBIDDEN;
         }
 
         $this->copyVirtualFolder( $sourceSite, $destinationSite,
@@ -1147,7 +1121,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         if ( $depth === ezcWebdavRequest::DEPTH_ZERO || !$this->isCollection( $fullSource ) )
         {
             // Do not recurse (any more)
-            return array();
+            return [];
         }
 
         // Recurse
@@ -1190,7 +1164,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     public function moveRecursive( $source, $destination, $depth = ezcWebdavRequest::DEPTH_INFINITY )
     {
-        $errors = array();
+        $errors = [];
         $fullSource = $source;
         $fullDestination = $destination;
         $source = $this->splitFirstPathElement( $source, $sourceSite );
@@ -1203,14 +1177,14 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             //       if so allow the copy as a simple object copy
             //       If not we will have to do an object export from
             //       $sourceSite and import it in $destinationSite
-            return array(); // @as self::FAILED_FORBIDDEN;
+            return []; // @as self::FAILED_FORBIDDEN;
         }
 
         if ( !$sourceSite or
              !$destinationSite )
         {
             // Cannot copy entries in site list
-            return array( $fullSource ); // @as self::FAILED_FORBIDDEN;
+            return [$fullSource]; // @as self::FAILED_FORBIDDEN;
         }
 
         $this->moveVirtualFolder( $sourceSite, $destinationSite,
@@ -1220,7 +1194,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         if ( $depth === ezcWebdavRequest::DEPTH_ZERO || !$this->isCollection( $fullSource ) )
         {
             // Do not recurse (any more)
-            return array();
+            return [];
         }
 
         // Recurse
@@ -1356,8 +1330,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     public function setCurrentSite( $site )
     {
         eZWebDAVContentBackend::appendLogEntry( __FUNCTION__ . '1:' . $site );
-        $access = array( 'name' => $site,
-                         'type' => eZSiteAccess::TYPE_STATIC );
+        $access = ['name' => $site, 'type' => eZSiteAccess::TYPE_STATIC];
 
         $access = eZSiteAccess::change( $access );
         eZWebDAVContentBackend::appendLogEntry( __FUNCTION__ . '2:' . $site );
@@ -1392,7 +1365,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         foreach ( $this->availableSites as $site )
         {
             // Check if given path starts with this site-name, if so: return it.
-            if ( preg_match( "#^/" . preg_quote( $site ) . "(.*)$#", $path, $matches ) )
+            if ( preg_match( "#^/" . preg_quote( (string) $site ) . "(.*)$#", $path, $matches ) )
             {
                 return $site;
             }
@@ -1423,7 +1396,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     protected function fetchNodeInfo( $target, &$node )
     {
         // When finished, we'll return an array of attributes/properties.
-        $entry = array();
+        $entry = [];
 
         $classIdentifier = $node->attribute( 'class_identifier' );
 
@@ -1432,7 +1405,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
         // By default, everything is displayed as a folder:
         // Trim the name of the node, it is in some cases whitespace in eZ Publish
-        $name = trim( $node->attribute( 'name' ) );
+        $name = trim( (string) $node->attribute( 'name' ) );
 
         // @as 2009-03-09: return node_id as displayname in case name is missing
         // displayname is not actually used by WebDAV clients
@@ -1489,7 +1462,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
                 $suffix = $mimeInfo['suffix'];
 
-                if ( strlen( $suffix ) > 0 )
+                if ( strlen( (string) $suffix ) > 0 )
                 {
                     $entry["name"] .= '.' . $suffix;
                 }
@@ -1506,7 +1479,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
                     $suffix = $mimeInfo['suffix'];
                 }
 
-                if ( strlen( $suffix ) > 0 )
+                if ( strlen( (string) $suffix ) > 0 )
                 {
                     $entry["name"] .= '.' . $suffix;
                 }
@@ -1562,7 +1535,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             else if ( $virtualFolder === self::virtualMediaFolderName() )
             {
                 $startURL = '/' . $siteAccess . '/' . $virtualFolder . '/';
-                $urlAlias = substr( $urlAlias, strpos( $urlAlias, '/' ) + 1 );
+                $urlAlias = substr( (string) $urlAlias, strpos( (string) $urlAlias, '/' ) + 1 );
             }
             else
             {
@@ -1578,7 +1551,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         // Set the href attribute (note that it doesn't just equal the name).
         if ( !isset( $entry['href'] ) )
         {
-            if ( strlen( $suffix ) > 0 )
+            if ( strlen( (string) $suffix ) > 0 )
             {
                 $suffix = '.' . $suffix;
             }
@@ -1615,7 +1588,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             return false; // self::FAILED_NOT_FOUND;
         }
 
-        if ( !in_array( $virtualFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $virtualFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // self::FAILED_NOT_FOUND;
         }
@@ -1740,7 +1713,8 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function fetchContainerNodeInfo( $fullPath, $site, $nodeName )
     {
-        $contentEntry             = array();
+        $entries = [];
+        $contentEntry             = [];
         $contentEntry["name"]     = $nodeName;
         $contentEntry["size"]     = 0;
         $contentEntry["mimetype"] = self::DIRECTORY_MIMETYPE;
@@ -1778,12 +1752,13 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function fetchVirtualSiteContent( $target, $site, $depth, $properties )
     {
+        $entries = [];
         $requestUri = $target;
 
         // Always add the current collection
-        $contentEntry = array();
+        $contentEntry = [];
         $scriptURL = $requestUri;
-        if ( $scriptURL{strlen( $scriptURL ) - 1} !== '/' )
+        if ( $scriptURL[strlen( $scriptURL ) - 1] !== '/' )
         {
             $scriptURL .= "/";
         }
@@ -1801,15 +1776,15 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         if ( $depth > 0 )
         {
             $scriptURL = $requestUri;
-            if ( $scriptURL{strlen( $scriptURL ) - 1} !== '/' )
+            if ( $scriptURL[strlen( $scriptURL ) - 1] !== '/' )
             {
                 $scriptURL .= "/";
             }
 
             // Set up attributes for the virtual content folder:
-            foreach ( array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) as $name )
+            foreach ( [self::virtualContentFolderName(), self::virtualMediaFolderName()] as $name )
             {
-                $entry             = array();
+                $entry             = [];
                 $entry["name"]     = $name;
                 $entry["size"]     = 0;
                 $entry["mimetype"] = self::DIRECTORY_MIMETYPE;
@@ -1856,7 +1831,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
         $collection = $this->splitFirstPathElement( $collection, $virtualFolder );
 
-        if ( !in_array( $virtualFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $virtualFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // self::FAILED_NOT_FOUND;
         }
@@ -1869,7 +1844,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
 
         if ( $prefix )
         {
-            $escapedPrefix = preg_quote( $prefix, '#' );
+            $escapedPrefix = preg_quote( (string) $prefix, '#' );
             // Only prepend the path prefix if it's not already the first element of the url.
             if ( !preg_match( "#^$escapedPrefix(/.*)?$#i", $collection )  )
             {
@@ -1879,7 +1854,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
                 $breakInternalURI = false;
                 foreach ( $exclude as $item )
                 {
-                    $escapedItem = preg_quote( $item, '#' );
+                    $escapedItem = preg_quote( (string) $item, '#' );
                     if ( preg_match( "#^$escapedItem(/.*)?$#i", $collection )  )
                     {
                         $breakInternalURI = true;
@@ -1968,13 +1943,13 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     protected function fetchContentList( $fullPath, &$node, $target, $depth, $properties )
     {
         // We'll return an array of entries (which is an array of attributes).
-        $entries = array();
+        $entries = [];
 
         if ( $depth === ezcWebdavRequest::DEPTH_ONE || $depth === ezcWebdavRequest::DEPTH_INFINITY )
             // @as added || $depth === ezcWebdavRequest::DEPTH_INFINITY
         {
             // Get all the children of the target node.
-            $subTree = $node->subTree( array ( 'Depth' => 1 ) );
+            $subTree = $node->subTree( ['Depth' => 1] );
 
             // Build the entries array by going through all the
             // nodes in the subtree and getting their attributes:
@@ -1988,7 +1963,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         $thisNodeInfo = $this->fetchNodeInfo( $fullPath, $node );
 
         $scriptURL = $fullPath;
-        if ( $scriptURL{strlen( $scriptURL ) - 1} !== '/' )
+        if ( $scriptURL[strlen( $scriptURL ) - 1] !== '/' )
         {
             $scriptURL .= "/";
         }
@@ -2020,16 +1995,17 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function fetchSiteListContent( $target, $depth, $properties )
     {
+        $thisNodeInfo = [];
         // At the end: we'll return an array of entry-arrays.
-        $entries = array();
+        $entries = [];
 
         // An entry consists of several attributes (name, size, etc).
-        $contentEntry = array();
-        $entries = array();
+        $contentEntry = [];
+        $entries = [];
 
         // add a slash at the end of the path, if it is missing
         $scriptURL = $target;
-        if ( $scriptURL{strlen( $scriptURL ) - 1} !== '/' )
+        if ( $scriptURL[strlen( $scriptURL ) - 1] !== '/' )
         {
             $scriptURL .= "/";
         }
@@ -2135,6 +2111,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      */
     protected function fetchParentNodeByTranslation( $nodePathString )
     {
+        $nodeID = null;
         // Strip extensions. E.g. .jpg
         $nodePathString = $this->fileBasename( $nodePathString );
 
@@ -2166,7 +2143,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         }
 
         // Get the ID of the node (which is the last part of the translated path).
-        if ( preg_match( "#^content/view/full/([0-9]+)$#", $nodePathString, $matches ) )
+        if ( preg_match( "#^content/view/full/([0-9]+)$#", (string) $nodePathString, $matches ) )
         {
             $nodeID = $matches[1];
         }
@@ -2219,7 +2196,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     {
         $target = $this->splitFirstPathElement( $target, $virtualFolder );
 
-        if ( !in_array( $virtualFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $virtualFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // @as self::FAILED_NOT_FOUND;
         }
@@ -2307,8 +2284,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             $contentObjectAttributes[0]->store();
             $db->commit();
 
-            $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                         'version' => 1 ) );
+            $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => 1] );
             return true; // @as self::OK_CREATED;
         }
         else
@@ -2331,7 +2307,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
     {
         $target = $this->splitFirstPathElement( $target, $virtualFolder );
 
-        if ( !in_array( $virtualFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $virtualFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // @as self::FAILED_NOT_FOUND;
         }
@@ -2420,7 +2396,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             return false; // @as self::FAILED_FORBIDDEN;
         }
 
-        if ( !in_array( $virtualFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $virtualFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // @as self::FAILED_CONFLICT;
         }
@@ -2504,12 +2480,12 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         $source = $this->splitFirstPathElement( $source, $sourceVFolder );
         $destination = $this->splitFirstPathElement( $destination, $destinationVFolder );
 
-        if ( !in_array( $sourceVFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $sourceVFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // @as self::FAILED_NOT_FOUND;
         }
 
-        if ( !in_array( $destinationVFolder, array( self::virtualContentFolderName(), self::virtualMediaFolderName() ) ) )
+        if ( !in_array( $destinationVFolder, [self::virtualContentFolderName(), self::virtualMediaFolderName()] ) )
         {
             return false; // @as self::FAILED_NOT_FOUND;
         }
@@ -2659,17 +2635,11 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         }
 
         // and create a new one
-        $nodeAssignment = eZNodeAssignment::create( array(
-                                                         'contentobject_id' => $newObject->attribute( 'id' ),
-                                                         'contentobject_version' => $curVersion,
-                                                         'parent_node' => $newParentNodeID,
-                                                         'is_main' => 1
-                                                         ) );
+        $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $newObject->attribute( 'id' ), 'contentobject_version' => $curVersion, 'parent_node' => $newParentNodeID, 'is_main' => 1] );
         $nodeAssignment->store();
 
         // publish the newly created object
-        eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newObject->attribute( 'id' ),
-                                                                  'version'   => $curVersion ) );
+        eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion] );
         // Update "is_invisible" attribute for the newly created node.
         $newNode = $newObject->attribute( 'main_node' );
         eZContentObjectTreeNode::updateNodeVisibility( $newNode, $newParentNode );
@@ -2710,7 +2680,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         // (this was causing problems with nodes disappearing after renaming)
         $newName = $destinationName;
         if ( $destinationName === null
-             || strtolower( $destinationName ) === strtolower( $object->attribute( 'name' ) ) )
+             || strtolower( $destinationName ) === strtolower( (string) $object->attribute( 'name' ) ) )
         {
             $newName = 'Copy of ' . $object->attribute( 'name' );
         }
@@ -2734,17 +2704,11 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         }
 
         // and create a new one
-        $nodeAssignment = eZNodeAssignment::create( array(
-                                                         'contentobject_id' => $newObject->attribute( 'id' ),
-                                                         'contentobject_version' => $curVersion,
-                                                         'parent_node' => $newParentNodeID,
-                                                         'is_main' => 1
-                                                         ) );
+        $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $newObject->attribute( 'id' ), 'contentobject_version' => $curVersion, 'parent_node' => $newParentNodeID, 'is_main' => 1] );
         $nodeAssignment->store();
 
         // publish the newly created object
-        eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newObject->attribute( 'id' ),
-                                                                  'version'   => $curVersion ) );
+        eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion] );
         // Update "is_invisible" attribute for the newly created node.
         $newNode = $newObject->attribute( 'main_node' );
         eZContentObjectTreeNode::updateNodeVisibility( $newNode, $newParentNode );
@@ -2828,7 +2792,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         // Can we move the node from $sourceNode
         if ( !$sourceNode->canMoveFrom() )
         {
-            $this->appendLogEntry( "No access to move the node '$sourceSite':'$nodePath'", 'CS:moveContent' );
+            static::appendLogEntry("No access to move the node '$sourceSite':'$nodePath'", 'CS:moveContent');
             return false; // @as self::FAILED_FORBIDDEN;
         }
 
@@ -2839,7 +2803,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         $destination = $this->fileBasename( $destination );
 
         $destinationNode = $this->fetchNodeByTranslation( $destinationNodePath );
-        $this->appendLogEntry( "Destination: $destinationNodePath", 'CS:moveContent' );
+        static::appendLogEntry("Destination: $destinationNodePath", 'CS:moveContent');
 
         if ( $destinationNode )
         {
@@ -2851,7 +2815,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         // Can we move the node to $destinationNode
         if ( !$destinationNode->canMoveTo( $classID ) )
         {
-            $this->appendLogEntry( "No access to move the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent' );
+            static::appendLogEntry("No access to move the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent');
             return false; // @as self::FAILED_FORBIDDEN;
         }
 
@@ -2863,7 +2827,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             $dstNodeName = $this->fileBasename( $dstNodeName );
             if( !$object->rename( $dstNodeName ) )
             {
-                $this->appendLogEntry( "Unable to rename the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent' );
+                static::appendLogEntry("Unable to rename the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent');
                 return false; // @as self::FAILED_FORBIDDEN;
             }
         }
@@ -2871,7 +2835,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         {
             if( !eZContentObjectTreeNodeOperations::move( $sourceNode->attribute( 'node_id' ), $destinationNode->attribute( 'node_id' ) ) )
             {
-                $this->appendLogEntry( "Unable to move the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent' );
+                static::appendLogEntry("Unable to move the node '$sourceSite':'$nodePath' to '$destinationSite':'$destinationNodePath'", 'CS:moveContent');
                 return false; // @as self::FAILED_FORBIDDEN;
             }
         }
@@ -3144,7 +3108,6 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
      * Encodes the path stored in $response in order to be displayed properly
      * in WebDAV clients.
      *
-     * @param ezcWebdavResponse $response
      * @return ezcWebdavResponse
      */
     protected function encodeResponse( ezcWebdavResponse $response )

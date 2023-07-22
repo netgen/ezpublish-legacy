@@ -88,7 +88,7 @@ class eZSession
      *
      * @var array
      */
-    static protected $callbackFunctions = array();
+    static protected $callbackFunctions = [];
 
     /**
      * Current session handler or false, see {@link eZSession::getHandlerInstance()}.
@@ -124,7 +124,7 @@ class eZSession
         if ( self::$namespace !== null )
         {
             if ( !isset( $_SESSION[self::$namespace] ) )
-                $_SESSION[self::$namespace] = array();
+                $_SESSION[self::$namespace] = [];
             return $_SESSION[self::$namespace];
         }
         return $_SESSION;
@@ -283,7 +283,7 @@ class eZSession
             {
                 $access = $GLOBALS['eZCurrentAccess'];
                 // Use md5 to make sure name is only consistent of alphanumeric characters
-                $sessionName .=  md5( $access['name'] );
+                $sessionName .=  md5( (string) $access['name'] );
             }
             if ( $sessionName !== session_name() ) {
                 session_name( $sessionName );
@@ -585,12 +585,7 @@ class eZSession
                 $ini = eZINI::instance();
                 if ( $ini->variable( 'Session', 'Handler' ) !== '' )
                 {
-                    $optionArray = array(
-                        'iniFile'       => 'site.ini',
-                        'iniSection'    => 'Session',
-                        'iniVariable'   => 'Handler',
-                        'handlerParams' => array( self::$hasSessionCookie )
-                    );
+                    $optionArray = ['iniFile'       => 'site.ini', 'iniSection'    => 'Session', 'iniVariable'   => 'Handler', 'handlerParams' => [self::$hasSessionCookie]];
 
                     $options = new ezpExtensionOptions( $optionArray );
                     self::$handlerInstance = eZExtension::getHandlerClass( $options );
@@ -622,7 +617,7 @@ class eZSession
     {
         if ( !isset( self::$callbackFunctions[$type] ) )
         {
-            self::$callbackFunctions[$type] = array();
+            self::$callbackFunctions[$type] = [];
         }
         self::$callbackFunctions[$type][] = $callback;
     }

@@ -8,9 +8,8 @@
 
 // Operator autoloading
 
-$eZTemplateOperatorArray = array();
+$eZTemplateOperatorArray = [];
 
-$eZTemplateOperatorArray[] = array( 'class' => 'eZPDF',
-                                    'operator_names' => array( 'pdf' ) );
+$eZTemplateOperatorArray[] = ['class' => 'eZPDF', 'operator_names' => ['pdf']];
 
 ?>

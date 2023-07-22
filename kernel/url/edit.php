@@ -52,8 +52,7 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( "Module", $Module );
 $tpl->setVariable( "url", $url );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:url/edit.tpl" );
-$Result['path'] = array( array( 'url' => '/url/edit/',
-                                'text' => ezpI18n::tr( 'kernel/url', 'URL edit' ) ) );
+$Result['path'] = [['url' => '/url/edit/', 'text' => ezpI18n::tr( 'kernel/url', 'URL edit' )]];
 ?>

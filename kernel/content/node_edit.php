@@ -34,7 +34,7 @@ function checkNodeAssignments( $module, $class, $object, $version, $contentObjec
     {
         $selectedNodeIDArray = eZContentBrowse::result( 'AddNodeAssignment' );
         $assignedNodes = $version->nodeAssignments();
-        $assignedIDArray = array();
+        $assignedIDArray = [];
         $setMainNode = false;
         $hasMainNode = false;
         foreach ( $assignedNodes as $assignedNode )
@@ -49,7 +49,7 @@ function checkNodeAssignments( $module, $class, $object, $version, $contentObjec
 
         // prevent PHP warning
         if ( !isset( $selectedNodeIDArray ) || !is_array( $selectedNodeIDArray ) )
-             $selectedNodeIDArray = array();
+             $selectedNodeIDArray = [];
 
         foreach ( $selectedNodeIDArray as $nodeID )
         {
@@ -67,7 +67,7 @@ function checkNodeAssignments( $module, $class, $object, $version, $contentObjec
                 {
                     $canCreateClassList = $newNodeObject->attribute( 'can_create_class_list' );
                     $objectClassID = $object->attribute( 'contentclass_id' );
-                    $canCreateClassIDList = array();
+                    $canCreateClassIDList = [];
                     foreach ( array_keys( $canCreateClassList ) as $key )
                     {
                         $canCreateClassIDList[] = $canCreateClassList[$key]['id'];
@@ -78,7 +78,7 @@ function checkNodeAssignments( $module, $class, $object, $version, $contentObjec
                 if ( !$isPermitted )
                 {
                     eZDebug::writeError( $newNode->pathWithNames(), "You are not allowed to place this object under:" );
-                    $validation[ 'placement' ][] = array( 'text' => ezpI18n::tr( 'kernel/content', 'You are not allowed to place this object under: %1', null, array( $newNode->pathWithNames() ) ) );
+                    $validation[ 'placement' ][] = ['text' => ezpI18n::tr( 'kernel/content', 'You are not allowed to place this object under: %1', null, [$newNode->pathWithNames()] )];
                     $validation[ 'processed' ] = true;
                     // Error message.
                 }
@@ -133,7 +133,7 @@ function checkNodeMovements( $module, $class, $object, $version, $contentObjectA
         if ( $selectedNodeIDArray != null )
         {
             $assignedNodes = $version->nodeAssignments();
-            $assignedIDArray = array();
+            $assignedIDArray = [];
             foreach ( $assignedNodes as  $assignedNode )
             {
                 $assignedNodeID = $assignedNode->attribute( 'parent_node' );
@@ -157,7 +157,7 @@ function checkNodeMovements( $module, $class, $object, $version, $contentObjectA
                     else
                     {
                         $canCreateClassList = $newNodeObject->attribute( 'can_create_class_list' );
-                        $canCreateClassIDList = array();
+                        $canCreateClassIDList = [];
                         foreach ( array_keys( $canCreateClassList ) as $key )
                         {
                             $canCreateClassIDList[] = $canCreateClassList[$key]['id'];
@@ -169,7 +169,7 @@ function checkNodeMovements( $module, $class, $object, $version, $contentObjectA
                     if ( !$isPermitted )
                     {
                         eZDebug::writeError( $newNode->pathWithNames(), "You are not allowed to place this object under:" );
-                        $validation[ 'placement' ][] = array( 'text' => ezpI18n::tr( 'kernel/content', "You are not allowed to place this object under: %1", null, array( $newNode->pathWithNames() ) ) );
+                        $validation[ 'placement' ][] = ['text' => ezpI18n::tr( 'kernel/content', "You are not allowed to place this object under: %1", null, [$newNode->pathWithNames()] )];
                         $validation[ 'processed' ] = true;
                         // Error message.
                     }
@@ -177,10 +177,7 @@ function checkNodeMovements( $module, $class, $object, $version, $contentObjectA
                     {
                         $oldAssignment = eZPersistentObject::fetchObject( eZNodeAssignment::definition(),
                                                                            null,
-                                                                           array( 'contentobject_id' => $object->attribute( 'id' ),
-                                                                                  'parent_node' => $oldAssignmentParentID,
-                                                                                  'contentobject_version' => $version->attribute( 'version' )
-                                                                                  ),
+                                                                           ['contentobject_id' => $object->attribute( 'id' ), 'parent_node' => $oldAssignmentParentID, 'contentobject_version' => $version->attribute( 'version' )],
                                                                            true );
 
                         $realNode = eZContentObjectTreeNode::fetchNode( $version->attribute( 'contentobject_id' ), $oldAssignment->attribute( 'parent_node' ) );
@@ -235,7 +232,7 @@ function storeNodeAssignments( $module, $class, $object, $version, $contentObjec
     if ( !$useNodeAssigments )
         return;
 
-    $setPlacementNodeIDArray = array();
+    $setPlacementNodeIDArray = [];
     if ( $http->hasPostVariable( 'SetPlacementNodeIDArray' ) )
         $setPlacementNodeIDArray = $http->postVariable( 'SetPlacementNodeIDArray' );
 
@@ -248,7 +245,7 @@ function storeNodeAssignments( $module, $class, $object, $version, $contentObjec
     $mainNodeID = false;
     if ( $http->hasPostVariable( 'MainNodeID' ) )
     {
-        $mainNodeID = trim( $http->postVariable( 'MainNodeID' ) );
+        $mainNodeID = trim( (string) $http->postVariable( 'MainNodeID' ) );
         if ( strlen( $mainNodeID ) == 0 )
             return;
     }
@@ -270,10 +267,10 @@ function storeNodeAssignments( $module, $class, $object, $version, $contentObjec
 
     $setPlacementNodeIDArray = array_unique( $setPlacementNodeIDArray );
     eZDebugSetting::writeDebug( 'kernel-content-edit', $setPlacementNodeIDArray, '$setPlacementNodeIDArray' );
-    $remoteIDFieldMap = array();
+    $remoteIDFieldMap = [];
     if ( $http->hasPostVariable( 'SetRemoteIDFieldMap' ) )
         $remoteIDFieldMap = $http->postVariable( 'SetRemoteIDFieldMap' );
-    $remoteIDOrderMap = array();
+    $remoteIDOrderMap = [];
     if ( $http->hasPostVariable( 'SetRemoteIDOrderMap' ) )
         $remoteIDOrderMap = $http->postVariable( 'SetRemoteIDOrderMap' );
 
@@ -346,23 +343,12 @@ function storeNodeAssignments( $module, $class, $object, $version, $contentObjec
         $hiddenStatePostVarName = 'FutureNodeHiddenState_' . $nodeAssignment->attribute( 'parent_node' );
         if ( $http->hasPostVariable( $hiddenStatePostVarName ) )
         {
-            switch ( $http->postVariable( $hiddenStatePostVarName ) )
-            {
-                case 'visible':
-                    $isHidden = 0;
-                    break;
-                case 'hidden':
-                    $isHidden = 1;
-                    break;
-                case 'unchanged':
-                    // Node assignment operations are allowed only for content object in draft state,
-                    // meaning having no published version.
-                    // In this case no node exists for it either, so 'unchanged' is handled as 'visible'.
-                    $isHidden = 0;
-                    break;
-                default:
-                    $isHidden = 0;
-            }
+            $isHidden = match ($http->postVariable( $hiddenStatePostVarName )) {
+                'visible' => 0,
+                'hidden' => 1,
+                'unchanged' => 0,
+                default => 0,
+            };
 
             $nodeAssignment->setAttribute( 'is_hidden', $isHidden );
         }
@@ -384,6 +370,7 @@ function storeNodeAssignments( $module, $class, $object, $version, $contentObjec
 
 function checkNodeActions( $module, $class, $object, $version, $contentObjectAttributes, $editVersion, $editLanguage, $fromLanguage )
 {
+    $nodeID = null;
     // If the object has been previously published we do not allow node assignment operations
     if ( $object->attribute( 'status' ) != eZContentObject::STATUS_DRAFT )
     {
@@ -401,8 +388,8 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
         // Remove custom actions from attribute editing.
         $http->removeSessionVariable( 'BrowseCustomAction' );
 
-        $ignoreNodesSelect = array();
-        $ignoreNodesClick  = array();
+        $ignoreNodesSelect = [];
+        $ignoreNodesClick  = [];
         $assigned = $version->nodeAssignments();
         $publishedAssigned = $object->assignedNodes( false );
         $isTopLevel = false;
@@ -426,7 +413,7 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
              * the previous published version is assignned to.
              * Thus we avoid fatal errors in eZ Publish.
              */
-            if ( count($assigned) == 0 )
+            if ( (is_countable($assigned) ? count($assigned) : 0) == 0 )
             {
                 $ignoreNodesSelect[] = $element['node_id'];
                 $ignoreNodesClick[]  = $element['node_id'];
@@ -448,19 +435,8 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
             {
                 $action = 'AddPrimaryNodeAssignment';
             }
-            eZContentBrowse::browse( array( 'action_name' => $action,
-                                            'description_template' => 'design:content/browse_placement.tpl',
-                                            'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                             'class_id' => $class->attribute( 'identifier' ),
-                                                             'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                             'section' => $object->attribute( 'section_id' ) ),
-                                            'ignore_nodes_select' => $ignoreNodesSelect,
-                                            'ignore_nodes_click'  => $ignoreNodesClick,
-                                            'content' => array( 'object_id' => $objectID,
-                                                                'object_version' => $editVersion,
-                                                                'object_language' => $editLanguage ),
-                                            'from_page' => "/content/edit/$objectID/$editVersion/$editLanguage/$fromLanguage" ),
-                                     $module );
+            eZContentBrowse::browse( $module,
+                                     ['action_name' => $action, 'description_template' => 'design:content/browse_placement.tpl', 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'ignore_nodes_select' => $ignoreNodesSelect, 'ignore_nodes_click'  => $ignoreNodesClick, 'content' => ['object_id' => $objectID, 'object_version' => $editVersion, 'object_language' => $editLanguage], 'from_page' => "/content/edit/$objectID/$editVersion/$editLanguage/$fromLanguage"] );
 
             return eZModule::HOOK_STATUS_CANCEL_RUN;
         }
@@ -508,7 +484,7 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
                     $childrenCount = $publishedNode->childrenCount();
                     if ( $childrenCount != 0 )
                     {
-                        $module->redirectToView( 'removenode', array( $objectID, $editVersion, $editLanguage, $nodeID ) );
+                        $module->redirectToView( 'removenode', [$objectID, $editVersion, $editLanguage, $nodeID] );
                         return eZModule::HOOK_STATUS_CANCEL_RUN;
                     }
                     else
@@ -531,7 +507,7 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
                         $childrenCount = $publishedNode->childrenCount();
                     if ( $childrenCount != 0 )
                     {
-                        $module->redirectToView( 'removenode', array( $objectID, $editVersion, $editLanguage, $nodeID ) );
+                        $module->redirectToView( 'removenode', [$objectID, $editVersion, $editLanguage, $nodeID] );
                         return eZModule::HOOK_STATUS_CANCEL_RUN;
                     }
                 }
@@ -551,8 +527,8 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
             $objectID       = $object->attribute( 'id' );
             $versionInt     = $version->attribute( 'version' );
             $hasChildren    = false;
-            $assignmentsIDs = array();
-            $assignments    = array();
+            $assignmentsIDs = [];
+            $assignments    = [];
 
             // Determine if at least one node of ones we remove assignments for has children.
             foreach ( $selected as $parentNodeID )
@@ -596,11 +572,7 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
                 // We need user confirmation if at least one node we want to remove assignment for contains children.
                 // Aactual removal is done in content/removeassignment in this case.
                 $http->setSessionVariable( 'AssignmentRemoveData',
-                                           array( 'remove_list'   => $assignmentsIDs,
-                                                  'object_id'     => $objectID,
-                                                  'edit_version'  => $versionInt,
-                                                  'edit_language' => $editLanguage,
-                                                  'from_language' => $fromLanguage ) );
+                                           ['remove_list'   => $assignmentsIDs, 'object_id'     => $objectID, 'edit_version'  => $versionInt, 'edit_language' => $editLanguage, 'from_language' => $fromLanguage] );
                 $module->redirectToView( 'removeassignment' );
                 return eZModule::HOOK_STATUS_CANCEL_RUN;
 
@@ -653,10 +625,10 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
                 $objectAssignedNodes = $object->attribute( 'assigned_nodes' );
 
                 // nodes that are not allowed to select (via checkbox or radiobutton) when browsing
-                $ignoreNodesSelectArray = array();
+                $ignoreNodesSelectArray = [];
 
                 // nodes that are not allowed to click on
-                $ignoreNodesClickArray  = array();
+                $ignoreNodesClickArray  = [];
                 foreach( $objectAssignedNodes as $curAN )
                 {
                     // current node should be neither selectable, nor clickable
@@ -667,23 +639,8 @@ function checkNodeActions( $module, $class, $object, $version, $contentObjectAtt
                     $ignoreNodesSelectArray[] = $curAN->ParentNodeID;
                 }
 
-                eZContentBrowse::browse( array( 'action_name' => 'MoveNodeAssignment',
-                                                'description_template' => 'design:content/browse_move_placement.tpl',
-                                                'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                                 'class_id' => $class->attribute( 'identifier' ),
-                                                                 'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                                 'section' => $object->attribute( 'section_id' ) ),
-                                                'start_node' => $fromNodeID,
-                                                'persistent_data' => array( 'FromNodeID' => $fromNodeID,
-                                                                            'OldAssignmentParentID' => $oldAssignmentParentID ),
-                        'ignore_nodes_select' => $ignoreNodesSelectArray,
-                        'ignore_nodes_click'  => $ignoreNodesClickArray,
-                                                'content' => array( 'object_id' => $objectID,
-                                                                    'previous_node_id' => $fromNodeID,
-                                                                    'object_version' => $editVersion,
-                                                                    'object_language' => $editLanguage ),
-                                                'from_page' => "/content/edit/$objectID/$editVersion/$editLanguage" ),
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         ['action_name' => 'MoveNodeAssignment', 'description_template' => 'design:content/browse_move_placement.tpl', 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'start_node' => $fromNodeID, 'persistent_data' => ['FromNodeID' => $fromNodeID, 'OldAssignmentParentID' => $oldAssignmentParentID], 'ignore_nodes_select' => $ignoreNodesSelectArray, 'ignore_nodes_click'  => $ignoreNodesClickArray, 'content' => ['object_id' => $objectID, 'previous_node_id' => $fromNodeID, 'object_version' => $editVersion, 'object_language' => $editLanguage], 'from_page' => "/content/edit/$objectID/$editVersion/$editLanguage"] );
 
                 return eZModule::HOOK_STATUS_CANCEL_RUN;
             }
@@ -697,22 +654,14 @@ function handleNodeTemplate( $module, $class, $object, $version, $contentObjectA
     // node-assignments by faking the list, this is required since new
     // version of the object does not have node-assignments/
     // When the object is a draft we use the normal node-assignment list
-    $assignedNodeArray = array();
+    $assignedNodeArray = [];
     $versionedAssignedNodeArray = $version->attribute( 'parent_nodes' );
-    $parentNodeIDMap = array();
+    $parentNodeIDMap = [];
     $nodes = $object->assignedNodes();
     $i = 0;
     foreach ( $nodes as $node )
     {
-        $data = array( 'id' => null,
-                       'contentobject_id' => $object->attribute( 'id' ),
-                       'contentobject_version' => $version->attribute( 'version' ),
-                       'parent_node' => $node->attribute( 'parent_node_id' ),
-                       'sort_field' => $node->attribute( 'sort_field' ),
-                       'sort_order' => $node->attribute( 'sort_order' ),
-                       'is_main' => ( $node->attribute( 'main_node_id' ) == $node->attribute( 'node_id' ) ? 1 : 0 ),
-                       'parent_remote_id' => $node->attribute( 'remote_id' ),
-                       'op_code' => eZNodeAssignment::OP_CODE_NOP );
+        $data = ['id' => null, 'contentobject_id' => $object->attribute( 'id' ), 'contentobject_version' => $version->attribute( 'version' ), 'parent_node' => $node->attribute( 'parent_node_id' ), 'sort_field' => $node->attribute( 'sort_field' ), 'sort_order' => $node->attribute( 'sort_order' ), 'is_main' => ( $node->attribute( 'main_node_id' ) == $node->attribute( 'node_id' ) ? 1 : 0 ), 'parent_remote_id' => $node->attribute( 'remote_id' ), 'op_code' => eZNodeAssignment::OP_CODE_NOP];
         $assignment = eZNodeAssignment::create( $data );
         $assignedNodeArray[$i] = $assignment;
         $parentNodeIDMap[$node->attribute( 'parent_node_id' )] = $i;
@@ -751,7 +700,7 @@ function handleNodeTemplate( $module, $class, $object, $version, $contentObjectA
         ++$i;
     }
     eZDebugSetting::writeDebug( 'kernel-content-edit', $assignedNodeArray, "assigned nodes array" );
-    $remoteMap = array();
+    $remoteMap = [];
 
     $db = eZDB::instance();
     $db->begin();
@@ -773,7 +722,7 @@ function handleNodeTemplate( $module, $class, $object, $version, $contentObjectA
                     {
                         $currentRemote = $remoteMap[$remoteID];
                         unset( $remoteMap[$remoteID] );
-                        $remoteMap[$remoteID] = array();
+                        $remoteMap[$remoteID] = [];
                         $remoteMap[$remoteID][] = $currentRemote;
                         $remoteMap[$remoteID][] = $assignedNode;
                     }
@@ -795,7 +744,7 @@ function handleNodeTemplate( $module, $class, $object, $version, $contentObjectA
     eZDebugSetting::writeDebug( 'kernel-content-edit', $assignedNodeArray, "assigned nodes array" );
 
     $currentVersion = $object->version( $editVersion );
-    $publishedNodeArray = array();
+    $publishedNodeArray = [];
     if ( $currentVersion )
         $publishedNodeArray = $currentVersion->attribute( 'parent_nodes' );
     $mainParentNodeID = $version->attribute( 'main_parent_node_id' );

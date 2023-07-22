@@ -16,7 +16,7 @@
 
 class eZPublishType extends eZNotificationEventType
 {
-    const NOTIFICATION_TYPE_STRING = 'ezpublish';
+    final public const NOTIFICATION_TYPE_STRING = 'ezpublish';
 
     public function __construct()
     {

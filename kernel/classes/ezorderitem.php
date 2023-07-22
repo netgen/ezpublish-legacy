@@ -27,50 +27,14 @@ class eZOrderItem extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'order_id' => array( 'name' => 'OrderID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZOrder',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         'description' => array( 'name' => 'Description',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'price' => array( 'name' => 'Price',
-                                                           'datatype' => 'float',
-                                                           'default' => 0,
-                                                           'required' => true ),
-                                         'vat_value' => array( 'name' => 'VATValue',
-                                                               'datatype' => 'float',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'is_vat_inc' => array( 'name' => 'IsVATIncluded',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         'type' => array( 'name' => 'Type',
-                                                          'datatype' => 'string',
-                                                          'required' => false ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'vat_value' => 'vatValue',
-                                                      'price_inc_vat' => 'priceIncVat',
-                                                      'price_ex_vat' => 'priceExVAT' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZOrderItem',
-                      'name' => 'ezorder_item' );
+        return ["fields" => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'order_id' => ['name' => 'OrderID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZOrder', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'description' => ['name' => 'Description', 'datatype' => 'string', 'default' => '', 'required' => true], 'price' => ['name' => 'Price', 'datatype' => 'float', 'default' => 0, 'required' => true], 'vat_value' => ['name' => 'VATValue', 'datatype' => 'float', 'default' => 0, 'required' => true], 'is_vat_inc' => ['name' => 'IsVATIncluded', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'type' => ['name' => 'Type', 'datatype' => 'string', 'required' => false]], 'keys' => ['id'], 'function_attributes' => ['vat_value' => 'vatValue', 'price_inc_vat' => 'priceIncVat', 'price_ex_vat' => 'priceExVAT'], 'increment_key' => 'id', 'class_name' => 'eZOrderItem', 'name' => 'ezorder_item'];
     }
 
     static function fetchList( $orderID, $asObject = true )
     {
         return eZPersistentObject::fetchObjectList( eZOrderItem::definition(),
                                                     null,
-                                                    array( "order_id" => $orderID ),
+                                                    ["order_id" => $orderID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -80,7 +44,7 @@ class eZOrderItem extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZOrderItem::definition(),
                                                     null,
-                                                    array( 'order_id' => $orderID, 'type' => $itemType ),
+                                                    ['order_id' => $orderID, 'type' => $itemType],
                                                     null,
                                                     null,
                                                     $asObject );

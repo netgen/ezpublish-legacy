@@ -74,7 +74,7 @@ if ( $http->hasPostVariable( 'SelectedNodeIDArray' ) && !$http->hasPostVariable(
     $pdfExport->store();
 }
 
-$validation = array();
+$validation = [];
 $inputValidated = true;
 
 if ( $Module->isCurrentAction( 'BrowseSource' ) || // Store PDF export objects
@@ -87,8 +87,8 @@ if ( $Module->isCurrentAction( 'BrowseSource' ) || // Store PDF export objects
     $pdfExport->setAttribute( 'export_structure', $Module->actionParameter( 'ExportType' ) );
     if ( $Module->actionParameter( 'ExportType' ) == 'tree' && $Module->hasActionParameter( 'ClassList' ) )
         $pdfExport->setAttribute( 'export_classes', implode( ':', $Module->actionParameter( 'ClassList' ) ) );
-    $pdfExport->setAttribute( 'pdf_filename', basename( $Module->actionParameter( 'DestinationFile' ) ) );
-    $pdfExport->setAttribute( 'status', ( basename( $Module->actionParameter( 'DestinationType' ) ) != 'download' ) ?
+    $pdfExport->setAttribute( 'pdf_filename', basename( (string) $Module->actionParameter( 'DestinationFile' ) ) );
+    $pdfExport->setAttribute( 'status', ( basename( (string) $Module->actionParameter( 'DestinationType' ) ) != 'download' ) ?
                               eZPDFExport::CREATE_ONCE : eZPDFExport::CREATE_ONFLY );
 
     if ( $Module->isCurrentAction( 'Export' ) )
@@ -98,7 +98,7 @@ if ( $Module->isCurrentAction( 'BrowseSource' ) || // Store PDF export objects
         if ( $pdfExport->attribute( 'status' ) == eZPDFExport::CREATE_ONCE
              && $pdfExport->countGeneratingOnceExports() > 0 )
         {
-            $validation[ 'placement' ][] = array( 'text' => ezpI18n::tr( 'kernel/pdf', 'An export with such filename already exists.' ) );
+            $validation[ 'placement' ][] = ['text' => ezpI18n::tr( 'kernel/pdf', 'An export with such filename already exists.' )];
             $validation[ 'processed' ] = true;
             $inputValidated = false;
         }
@@ -114,10 +114,8 @@ $setWarning = false; // used to set missing options during export
 
 if ( $Module->isCurrentAction( 'BrowseSource' ) )
 {
-    eZContentBrowse::browse( array( 'action_name' => 'ExportSourceBrowse',
-                                    'description_template' => 'design:content/browse_export.tpl',
-                                    'from_page' => '/pdf/edit/'. $pdfExport->attribute( 'id' ) ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'ExportSourceBrowse', 'description_template' => 'design:content/browse_export.tpl', 'from_page' => '/pdf/edit/'. $pdfExport->attribute( 'id' )] );
 }
 else if ( $Module->isCurrentAction( 'Export' ) && $inputValidated )
 {
@@ -167,10 +165,9 @@ if ( !$inputValidated )
     $tpl->setVariable( 'validation', $validation );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:pdf/edit.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'pdf/edit', 'PDF Export' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'pdf/edit', 'PDF Export' )]];
 
 /*!
  \generate and output PDF data, either to file or stream
@@ -196,7 +193,7 @@ function generatePDF( $pdfExport, $toFile = false )
 
         $tpl->setVariable( 'tree_traverse',
                            $pdfExport->attribute( 'export_structure' ) == 'tree' ? 1 : 0 );
-        $tpl->setVariable( 'class_array', explode( ':', $pdfExport->attribute( 'export_classes' ) ) );
+        $tpl->setVariable( 'class_array', explode( ':', (string) $pdfExport->attribute( 'export_classes' ) ) );
         $tpl->setVariable( 'show_frontpage', $pdfExport->attribute( 'show_frontpage' ) );
         if ( $pdfExport->attribute( 'show_frontpage' ) == 1 )
         {
@@ -215,25 +212,15 @@ function generatePDF( $pdfExport, $toFile = false )
         }
 
         $res = eZTemplateDesignResource::instance();
-        $res->setKeys( array( array( 'object', $object->attribute( 'id' ) ),
-                              array( 'node', $node->attribute( 'node_id' ) ),
-                              array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                              array( 'class', $object->attribute( 'contentclass_id' ) ),
-                              array( 'class_identifier', $object->attribute( 'class_identifier' ) ),
-                              array( 'depth', $node->attribute( 'depth' ) ),
-                              array( 'url_alias', $node->attribute( 'url_alias' ) )
-                              ) );
+        $res->setKeys( [['object', $object->attribute( 'id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $object->attribute( 'class_identifier' )], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )]] );
 
-        $textElements = array();
+        $textElements = [];
         $uri = 'design:node/view/pdf.tpl';
         $tpl->setVariable( 'pdf_root_template', 1 );
         eZTemplateIncludeFunction::handleInclude( $textElements, $uri, $tpl, '', '' );
         $pdf_definition = implode( '', $textElements );
 
-        $pdf_definition = str_replace( array( ' ',
-                                              "\r\n",
-                                              "\t",
-                                              "\n" ),
+        $pdf_definition = str_replace( [' ', "\r\n", "\t", "\n"],
                                        '',
                                        $pdf_definition );
 

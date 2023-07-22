@@ -19,7 +19,7 @@ class ezpMvcRegexpRoute extends ezcMvcRegexpRoute
      *
      * @var array
      */
-    protected $protocolActionMap = array();
+    protected $protocolActionMap = [];
 
     /**
      * Constructs a new ezpMvcRegexpRoute with $pattern for protocols used as
@@ -47,11 +47,11 @@ class ezpMvcRegexpRoute extends ezcMvcRegexpRoute
      * @param array|string $protocolActionMap
      * @param array $defaultValues
      */
-    public function __construct( $pattern, $controllerClassName, $protocolActionMap, array $defaultValues = array() )
+    public function __construct( $pattern, $controllerClassName, $protocolActionMap, array $defaultValues = [] )
     {
         if ( is_string( $protocolActionMap ) )
         {
-            $protocolActionMap = array( 'http-get' => $protocolActionMap );
+            $protocolActionMap = ['http-get' => $protocolActionMap];
         }
         if ( !isset( $protocolActionMap['http-options'] ) )
         {

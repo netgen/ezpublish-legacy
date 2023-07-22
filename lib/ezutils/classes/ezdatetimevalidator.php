@@ -30,9 +30,9 @@ class eZDateTimeValidator extends eZInputValidator
 
     static function validateTime( $hour, $minute, $second = 0 )
     {
-        if ( preg_match( '/\d+/', trim( $hour )   ) &&
-             preg_match( '/\d+/', trim( $minute ) ) &&
-             preg_match( '/\d+/', trim( $second ) ) &&
+        if ( preg_match( '/\d+/', trim( (string) $hour )   ) &&
+             preg_match( '/\d+/', trim( (string) $minute ) ) &&
+             preg_match( '/\d+/', trim( (string) $second ) ) &&
              $hour >= 0 && $minute >= 0 && $second >= 0 &&
              $hour < 24 && $minute < 60 && $second < 60 )
         {

@@ -34,58 +34,7 @@ class eZPathElement extends eZPersistentObject
 
     static public function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "parent" => array( 'name' => 'Parent',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         "lang_mask" => array( 'name' => 'LangMask',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "text" => array( 'name' => 'Text',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "text_md5" => array( 'name' => 'TextMD5',
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ),
-                                         "action" => array( 'name' => 'Action',
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => true ),
-                                         "action_type" => array( 'name' => 'ActionType',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         "link" => array( 'name' => 'Link',
-                                                          'datatype' => 'integer',
-                                                          'default' => 0,
-                                                          'required' => true ),
-                                         "is_alias" => array( 'name' => 'IsAlias',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "is_original" => array( 'name' => 'IsOriginal',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "alias_redirects" => array( 'name' => 'AliasRedirects',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 1,
-                                                                     'required' => true ) ),
-                      "keys" => array( "parent", "text" ),
-                      "function_attributes" => array( "language_object" => "getLanguage",
-                                                      "action_url" => "actionURL",
-                                                      "path" => "getPath",
-                                                      "always_available" => "alwaysAvailable",
-                                                      "path_array" => "getPathArray" ),
-                      "class_name" => "eZURLAliasML",
-                      "name" => "ezurlalias_ml" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "parent" => ['name' => 'Parent', 'datatype' => 'integer', 'default' => 0, 'required' => true], "lang_mask" => ['name' => 'LangMask', 'datatype' => 'integer', 'default' => 0, 'required' => true], "text" => ['name' => 'Text', 'datatype' => 'string', 'default' => '', 'required' => true], "text_md5" => ['name' => 'TextMD5', 'datatype' => 'string', 'default' => '', 'required' => true], "action" => ['name' => 'Action', 'datatype' => 'string', 'default' => '', 'required' => true], "action_type" => ['name' => 'ActionType', 'datatype' => 'string', 'default' => '', 'required' => true], "link" => ['name' => 'Link', 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_alias" => ['name' => 'IsAlias', 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_original" => ['name' => 'IsOriginal', 'datatype' => 'integer', 'default' => 0, 'required' => true], "alias_redirects" => ['name' => 'AliasRedirects', 'datatype' => 'integer', 'default' => 1, 'required' => true]], "keys" => ["parent", "text"], "function_attributes" => ["language_object" => "getLanguage", "action_url" => "actionURL", "path" => "getPath", "always_available" => "alwaysAvailable", "path_array" => "getPathArray"], "class_name" => "eZURLAliasML", "name" => "ezurlalias_ml"];
         return $definition;
     }
 
@@ -149,7 +98,7 @@ class eZPathElement extends eZPersistentObject
             return $this->Path;
 
         // Fetch path 'text' elements of correct parent path
-        $path = array( $this->Text );
+        $path = [$this->Text];
         $id = (int)$this->Parent;
         $db = eZDB::instance();
         while ( $id != 0 )
@@ -178,7 +127,7 @@ class eZPathElement extends eZPersistentObject
             return $this->PathArray;
 
         // Fetch path 'text' elements of correct parent path
-        $path = array( $this );
+        $path = [$this];
         $id = (int)$this->Parent;
         $db = eZDB::instance();
         while ( $id != 0 )

@@ -40,21 +40,14 @@ set_time_limit( 0 );
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish ISBN-10 to ISBN-13 converter\n\n" .
-                                                        "Converts an ISBN-10 number to ISBN-13\n" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => ( "eZ Publish ISBN-10 to ISBN-13 converter\n\n" .
+                                                        "Converts an ISBN-10 number to ISBN-13\n" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[class-id:][attribute-id:][all-classes][f|force]",
                                 "",
-                                array( 'class-id' => 'The class id for the ISBN attribute.',
-                                       'attribute-id' => 'The attribute id for the ISBN attribute which should be converted.',
-                                       'all-classes' => 'Will convert all ISBN attributes in all content classes.',
-                                       'f' => 'Short alias for force.',
-                                       'force' => 'Will convert all attributes even if the class is set to ISBN.' ) );
+                                ['class-id' => 'The class id for the ISBN attribute.', 'attribute-id' => 'The attribute id for the ISBN attribute which should be converted.', 'all-classes' => 'Will convert all ISBN attributes in all content classes.', 'f' => 'Short alias for force.', 'force' => 'Will convert all attributes even if the class is set to ISBN.'] );
 $script->initialize();
 
 $classID = $options['class-id'];
@@ -62,7 +55,7 @@ $attributeID = $options['attribute-id'];
 $allClasses = $options['all-classes'];
 $force = $options['force'];
 
-$params = array( 'force' => $force );
+$params = ['force' => $force];
 $converter = new eZISBN10To13Converter( $script, $cli, $params );
 
 $found = false;

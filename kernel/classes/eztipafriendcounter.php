@@ -18,34 +18,18 @@ class eZTipafriendCounter extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'node_id' => array( 'name' => 'NodeID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZContentObjectTreeNode',
-                                                             'foreign_attribute' => 'node_id',
-                                                             'multiplicity' => '1..*' ),
-                                         'count' => array( 'name' => 'Count', // deprecated column, must not be used
-                                                           'datatype' => 'integer',
-                                                           'default' => 0,
-                                                           'required' => true ),
-                                         'requested' => array( 'name' => 'Requested',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ) ),
-                      'keys' => array( 'node_id', 'requested' ),
-                      'relations' => array( 'node_id' => array( 'class' => 'eZContentObjectTreeNode',
-                                                                'field' => 'node_id' ) ),
-                      'class_name' => 'eZTipafriendCounter',
-                      'sort' => array( 'count' => 'desc' ),
-                      'name' => 'eztipafriend_counter' );
+        return ['fields' => ['node_id' => ['name' => 'NodeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], 'count' => [
+            'name' => 'Count',
+            // deprecated column, must not be used
+            'datatype' => 'integer',
+            'default' => 0,
+            'required' => true,
+        ], 'requested' => ['name' => 'Requested', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['node_id', 'requested'], 'relations' => ['node_id' => ['class' => 'eZContentObjectTreeNode', 'field' => 'node_id']], 'class_name' => 'eZTipafriendCounter', 'sort' => ['count' => 'desc'], 'name' => 'eztipafriend_counter'];
     }
 
     static function create( $nodeID )
     {
-        return new eZTipafriendCounter( array( 'node_id' => $nodeID,
-                                               'count' => 0,
-                                               'requested' => time() ) );
+        return new eZTipafriendCounter( ['node_id' => $nodeID, 'count' => 0, 'requested' => time()] );
     }
 
     /*!
@@ -55,14 +39,14 @@ class eZTipafriendCounter extends eZPersistentObject
     static function removeForNode( $nodeID )
     {
         eZPersistentObject::removeObject( eZTipafriendCounter::definition(),
-                                          array( 'node_id' => $nodeID ) );
+                                          ['node_id' => $nodeID] );
     }
 
     static function fetch( $nodeID, $asObject = true )
     {
         return eZPersistentObject::fetchObject( eZTipafriendCounter::definition(),
                                                 null,
-                                                array( 'node_id' => $nodeID ),
+                                                ['node_id' => $nodeID],
                                                 $asObject );
     }
 

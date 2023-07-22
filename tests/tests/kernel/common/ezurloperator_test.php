@@ -12,12 +12,12 @@ class eZURLOperatorTest extends ezpTestCase
 {
     public function setUp()
     {
-        $_POST = $_GET = $_COOKIE = array();
+        $_POST = $_GET = $_COOKIE = [];
     }
 
     public function tearDown()
     {
-        $_POST = $_GET = $_COOKIE = array();
+        $_POST = $_GET = $_COOKIE = [];
     }
 
     public function testeZHTTPOperatorGet()
@@ -62,21 +62,15 @@ class eZURLOperatorTest extends ezpTestCase
                 break;
         }
 
-        $operatorParameters = array(
-            array( array( 1, $argument, false, ), ),
-            array( array( 1, $method, false, ), ),
-        );
+        $operatorParameters = [[[1, $argument, false]], [[1, $method, false]]];
 
-        $namedParameters = array(
-            'quote_val'  => $argument,
-            'server_url' => $method
-        );
+        $namedParameters = ['quote_val'  => $argument, 'server_url' => $method];
 
         $operator->modify(
             $tpl, $operatorName, $operatorParameters, '', '', $operatorValue, $namedParameters, false
         );
 
-        $this->assertEquals( $expectedResult, $operatorValue );
+        static::assertEquals($expectedResult, $operatorValue);
     }
 }
 

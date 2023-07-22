@@ -16,14 +16,14 @@
 */
 class eZRangeOptionType extends eZDataType
 {
-    const DEFAULT_NAME_VARIABLE = "_ezrangeoption_default_name_";
+    final public const DEFAULT_NAME_VARIABLE = "_ezrangeoption_default_name_";
 
-    const DATA_TYPE_STRING = "ezrangeoption";
+    final public const DATA_TYPE_STRING = "ezrangeoption";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Range option", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     function validateObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
@@ -76,7 +76,7 @@ class eZRangeOptionType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_rangeoption_id_" . $contentObjectAttribute->attribute( "id" ) ) )
             $optionIDArray = $http->postVariable( $base . "_data_rangeoption_id_" . $contentObjectAttribute->attribute( "id" ) );
         else
-            $optionIDArray = array();
+            $optionIDArray = [];
         $optionStartValue = $http->postVariable( $base . "_data_rangeoption_start_value_" . $contentObjectAttribute->attribute( "id" ) );
         $optionStopValue = $http->postVariable( $base . "_data_rangeoption_stop_value_" . $contentObjectAttribute->attribute( "id" ) );
         $optionStepValue = $http->postVariable( $base . "_data_rangeoption_step_value_" . $contentObjectAttribute->attribute( "id" ) );
@@ -116,7 +116,7 @@ class eZRangeOptionType extends eZDataType
     {
 
         $option = $contentObjectAttribute->attribute( 'content' );
-        $optionArray = array();
+        $optionArray = [];
         $optionArray[] = $option->attribute( 'name' );
         $optionArray[] = $option->attribute( 'start_value' );
         $optionArray[] = $option->attribute( 'stop_value' );
@@ -131,7 +131,7 @@ class eZRangeOptionType extends eZDataType
         if ( $string == '' )
             return true;
 
-        $optionArray = explode( '|', $string );
+        $optionArray = explode( '|', (string) $string );
 
         $option = new eZRangeOption( '' );
 
@@ -157,10 +157,7 @@ class eZRangeOptionType extends eZDataType
         {
             if ( $optionArray['id'] == $optionID )
             {
-                return array( 'id' => $optionArray['id'],
-                              'name' => $option->attribute( 'name' ),
-                              'value' => $optionArray['value'],
-                              'additional_price' => $optionArray['additional_price'] );
+                return ['id' => $optionArray['id'], 'name' => $option->attribute( 'name' ), 'value' => $optionArray['value'], 'additional_price' => $optionArray['additional_price']];
             }
         }
         return false;
@@ -264,7 +261,7 @@ class eZRangeOptionType extends eZDataType
     function batchInitializeObjectAttributeData( $classAttribute )
     {
         $option = new eZRangeOption( $classAttribute->attribute( 'data_text1' ) );
-        return array( 'data_text' => "'" . $option->xmlString() . "'");
+        return ['data_text' => "'" . $option->xmlString() . "'"];
     }
 }
 

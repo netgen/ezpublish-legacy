@@ -9,7 +9,7 @@
 $ini = eZINI::instance( 'dashboard.ini' );
 $currentUser = eZUser::currentUser();
 
-$orderedBlocks = array();
+$orderedBlocks = [];
 
 $dashboardBlocks = $ini->variable( 'DashboardSettings', 'DashboardBlocks' );
 
@@ -26,9 +26,9 @@ foreach( $dashboardBlocks as $blockIdentifier )
         foreach( $policyList as $policy )
         {
             // Value is either "<node_id>" or "<module>/<function>"
-            if ( strpos( $policy, '/' ) !== false )
+            if ( str_contains( (string) $policy, '/' ) )
             {
-                list( $module, $function ) = explode( '/', $policy );
+                [$module, $function] = explode( '/', (string) $policy );
                     $result = $currentUser->hasAccessTo( $module, $function );
 
                 if ( $result['accessWord'] === 'no' )
@@ -67,15 +67,13 @@ foreach( $dashboardBlocks as $blockIdentifier )
     while( isset( $orderedBlocks[$priority]  ) )
         $priority++;
 
-    $orderedBlocks[$priority] = array( 'identifier' => $blockIdentifier,
-                                       'template' => $template,
-                                       'number_of_items' => $numberOfItems );
+    $orderedBlocks[$priority] = ['identifier' => $blockIdentifier, 'template' => $template, 'number_of_items' => $numberOfItems];
 }
 
 // Sort $orderedBlocks by key, starting from the lowest priority
 ksort( $orderedBlocks );
 
-$contentInfoArray = array();
+$contentInfoArray = [];
 
 $tpl = eZTemplate::factory();
 
@@ -83,10 +81,9 @@ $tpl->setVariable( 'blocks', $orderedBlocks );
 $tpl->setVariable( 'user', $currentUser );
 $tpl->setVariable( 'persistent_variable', false );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/dashboard.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Dashboard' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Dashboard' ), 'url' => false]];
 
 $contentInfoArray['persistent_variable'] = false;
 if ( $tpl->variable( 'persistent_variable' ) !== false )

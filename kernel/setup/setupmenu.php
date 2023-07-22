@@ -15,9 +15,8 @@ $contentIni = eZINI::instance( 'content.ini' );
 $Module->setTitle( ezpI18n::tr( 'kernel/setup', 'Setup menu' ) );
 $tpl = eZTemplate::factory();
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:setup/setupmenu.tpl' );
-$Result['path'] = array( array( 'url' => '/setup/menu',
-                                'text' => ezpI18n::tr( 'kernel/setup', 'Setup menu' ) ) );
+$Result['path'] = [['url' => '/setup/menu', 'text' => ezpI18n::tr( 'kernel/setup', 'Setup menu' )]];
 
 ?>

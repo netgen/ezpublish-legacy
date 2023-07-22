@@ -18,20 +18,17 @@ class ezpContentCriteriaSet implements ArrayAccess, Countable, Iterator
      * Array offset setter
      * Called when a criteria is added. Expects an empty array index syntax.
      *
-     * @param mixed $offset
      * @param eZContentCriteria $value
      */
-    public function offsetSet( $offset, $value )
+    public function offsetSet( mixed $offset, $value )
     {
         $this->criteria[] = $value;
     }
 
     /**
      * Array offset getter
-     *
-     * @param mixed $offset
      */
-    public function offsetGet( $offset ){}
+    public function offsetGet( mixed $offset ){}
 
     public function offsetExists( $offset ){}
 
@@ -74,12 +71,11 @@ class ezpContentCriteriaSet implements ArrayAccess, Countable, Iterator
         return isset( $this->criteria[$this->pointer] );
     }
 
-    private $criteria = array();
+    private array $criteria = [];
 
     /**
      * Iterator interface pointer
-     * @var int
      */
-    private $pointer = 0;
+    private int $pointer = 0;
 }
 ?>

@@ -19,37 +19,37 @@ class eZNotificationFunctionCollection
     function handlerList()
     {
         $availableHandlers = eZNotificationEventFilter::availableHandlers();
-        return array( 'result' => $availableHandlers );
+        return ['result' => $availableHandlers];
     }
 
     function digestHandlerList( $time, $address )
     {
         $handlers = eZGeneralDigestHandler::fetchHandlersForUser( $time, $address );
-        return array( 'result' => $handlers );
+        return ['result' => $handlers];
     }
 
     function digestItems( $time, $address, $handler )
     {
         $items = eZGeneralDigestHandler::fetchItemsForUser( $time, $address, $handler );
-        return array( 'result' => $items );
+        return ['result' => $items];
     }
 
     function eventContent( $eventID )
     {
         $event = eZNotificationEvent::fetch( $eventID );
-        return array( 'result' => $event->content() );
+        return ['result' => $event->content()];
     }
 
     function subscribedNodesCount()
     {
         $count = eZSubTreeHandler::rulesCount();
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     function subscribedNodes( $offset = false, $limit = false )
     {
         $nodes = eZSubTreeHandler::rules( false, $offset, $limit );
-        return array( 'result' => $nodes );
+        return ['result' => $nodes];
     }
 }
 

@@ -72,14 +72,7 @@ class ezpRestToken implements ezcPersistentObject
      */
      public function getState()
      {
-         return array(
-             'id' => $this->id,
-             'refresh_token' => $this->refresh_token,
-             'expirytime' => $this->expirytime,
-             'client_id' => $this->client_id,
-             'user_id' => $this->user_id,
-             'scope' => $this->scope,
-         );
+         return ['id' => $this->id, 'refresh_token' => $this->refresh_token, 'expirytime' => $this->expirytime, 'client_id' => $this->client_id, 'user_id' => $this->user_id, 'scope' => $this->scope];
      }
 
     /**
@@ -91,9 +84,9 @@ class ezpRestToken implements ezcPersistentObject
      */
      public static function generateToken( $vary )
      {
-         mt_srand( base_convert( substr( md5( $vary ), 0, 6 ), 36, 10 ) * microtime( true ) );
-         $a = base_convert( mt_rand(), 10, 36 );
-         $b = base_convert( mt_rand(), 10, 36 );
+         mt_srand( base_convert( substr( md5( (string) $vary ), 0, 6 ), 36, 10 ) * microtime( true ) );
+         $a = base_convert( random_int(0, mt_getrandmax()), 10, 36 );
+         $b = base_convert( random_int(0, mt_getrandmax()), 10, 36 );
          $token = substr( $b . $a, 1, 8 );
          $tokenHash = sha1( $token );
 
@@ -110,7 +103,7 @@ class ezpRestToken implements ezcPersistentObject
     {
         $tokenInfo = null;
         $session = ezcPersistentSessionInstance::get();
-        $q = $session->createFindQuery( __CLASS__ );
+        $q = $session->createFindQuery( self::class );
         $e = $q->expr;
 
         $q->innerJoin( 'ezprest_clients', 'ezprest_token.client_id', 'ezprest_clients.client_id' );

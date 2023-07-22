@@ -19,13 +19,13 @@ class eZInstallScriptPackageHandler extends eZPackageHandler
 {
     public function __construct()
     {
-        parent::__construct( 'ezinstallscript', array( 'extract-install-content' => false ) );
+        parent::__construct( 'ezinstallscript', ['extract-install-content' => false] );
     }
 
     /*!
      Returns an explanation for the extension install item.
     */
-    function explainInstallItem( $package, $installItem, $requestedInfo = array() )
+    function explainInstallItem( $package, $installItem, $requestedInfo = [] )
     {
         $itemPath = $package->path() . '/' . $installItem['sub-directory'];
         $xmlPath = $itemPath . '/' . $installItem['filename'] . '.xml';
@@ -40,8 +40,8 @@ class eZInstallScriptPackageHandler extends eZPackageHandler
         if ( !$description )
             return false;
 
-        return array( 'description' => ezpI18n::tr( 'kernel/package', 'Install script: %description', false,
-                                               array( '%description' => $description ) ) );
+        return ['description' => ezpI18n::tr( 'kernel/package', 'Install script: %description', false,
+                                               ['%description' => $description] )];
     }
 
     /*!
@@ -84,14 +84,14 @@ class eZInstallScriptPackageHandler extends eZPackageHandler
 
             $package->appendInstall( 'ezinstallscript', false, false, true,
                                      $scriptItem['filename'], $scriptItem['sub-directory'],
-                                     array( 'content' => false ) );
+                                     ['content' => false] );
         }
     }
 
     function handleAddParameters( $packageType, $package, $cli, $arguments )
     {
         $scriptArgumentList = array_chunk( $arguments, 3 );
-        $params = array();
+        $params = [];
 
         foreach ( $scriptArgumentList as $scriptArguments )
         {
@@ -100,11 +100,7 @@ class eZInstallScriptPackageHandler extends eZPackageHandler
                 break;
             }
 
-            $script = array(
-                'sub-directory' => $scriptArguments[0],
-                'filename' => $scriptArguments[1],
-                'source-directory' => $scriptArguments[2]
-            );
+            $script = ['sub-directory' => $scriptArguments[0], 'filename' => $scriptArguments[1], 'source-directory' => $scriptArguments[2]];
 
             if ( !file_exists( $script['source-directory'] ) )
             {

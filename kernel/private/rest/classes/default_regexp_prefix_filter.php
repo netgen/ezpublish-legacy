@@ -67,10 +67,10 @@ class ezpRestDefaultRegexpPrefixFilter extends ezpRestPrefixFilterInterface
      */
     public function filter( )
     {
-        if ( preg_match( $this->getPrefixPattern(), $this->request->uri, $tokenMatches ) )
+        if ( preg_match( $this->getPrefixPattern(), (string) $this->request->uri, $tokenMatches ) )
         {
-            $this->versionToken = isset( $tokenMatches['version'] ) ? $tokenMatches['version'] : '';
-            $this->apiProviderToken = isset( $tokenMatches['provider'] ) ? $tokenMatches['provider'] : '';
+            $this->versionToken = $tokenMatches['version'] ?? '';
+            $this->apiProviderToken = $tokenMatches['provider'] ?? '';
 
             self::$version = $this->parseVersionValue();
             self::$apiProvider = empty( $this->apiProviderToken ) ? null : $this->apiProviderToken;

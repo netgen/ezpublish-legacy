@@ -33,10 +33,9 @@ if( $module->isCurrentAction( 'RemoveObjectCollection' ) && $http->hasPostVariab
     $tpl->setVariable( 'collections', $collections );
     $tpl->setVariable( 'remove_type', 'objects' );
 
-    $Result = array();
+    $Result = [];
     $Result['content'] = $tpl->fetch( 'design:infocollector/confirmremoval.tpl' );
-    $Result['path'] = array( array( 'url' => false,
-                                    'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' ) ) );
+    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' )]];
     return;
 }
 
@@ -58,12 +57,11 @@ if( $module->isCurrentAction( 'ConfirmRemoval' ) )
 
 if( eZPreferences::value( 'admin_infocollector_list_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_infocollector_list_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_infocollector_list_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -86,8 +84,7 @@ $objects = $db->arrayQuery( 'SELECT DISTINCT ezcontentobject.id AS contentobject
                                    AND ezcontentobject.id IN
                                    ( SELECT DISTINCT ezinfocollection.contentobject_id FROM ezinfocollection )
                              ORDER BY ezcontentobject.name ASC',
-                             array( 'limit'  => (int)$limit,
-                                    'offset' => (int)$offset ) );
+                             ['limit'  => (int)$limit, 'offset' => (int)$offset] );
 
 $infoCollectorObjectsQuery = $db->arrayQuery( 'SELECT COUNT( DISTINCT ezinfocollection.contentobject_id ) as count
                                                FROM ezinfocollection,
@@ -108,8 +105,8 @@ foreach ( array_keys( $objects ) as $i )
     $firstCollections = eZInformationCollection::fetchCollectionsList( (int)$objects[$i]['contentobject_id'], /* object id */
                                                                        false, /* creator id */
                                                                        false, /* user identifier */
-                                                                       array( 'limit' => 1, 'offset' => 0 ), /* limitArray */
-                                                                       array( 'created', true ), /* sortArray */
+                                                                       ['limit' => 1, 'offset' => 0], /* limitArray */
+                                                                       ['created', true], /* sortArray */
                                                                        false  /* asObject */
                                                                      );
     $objects[$i]['first_collection'] = $firstCollections[0]['created'];
@@ -117,8 +114,8 @@ foreach ( array_keys( $objects ) as $i )
     $lastCollections = eZInformationCollection::fetchCollectionsList( (int)$objects[$i]['contentobject_id'], /* object id */
                                                                       false, /* creator id */
                                                                       false, /* user identifier */
-                                                                      array( 'limit' => 1, 'offset' => 0 ), /* limitArray */
-                                                                      array( 'created', false ), /* sortArray */
+                                                                      ['limit' => 1, 'offset' => 0], /* limitArray */
+                                                                      ['created', false], /* sortArray */
                                                                       false  /* asObject */
                                                                     );
     $objects[$i]['last_collection'] = $lastCollections[0]['created'];
@@ -127,7 +124,7 @@ foreach ( array_keys( $objects ) as $i )
     $objects[$i]['collections']= eZInformationCollection::fetchCollectionCountForObject( $objects[$i]['contentobject_id'] );
 }
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'module', $module );
@@ -136,9 +133,8 @@ $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'object_array', $objects );
 $tpl->setVariable( 'object_count', $numberOfInfoCollectorObjects );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:infocollector/overview.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' )]];
 
 ?>

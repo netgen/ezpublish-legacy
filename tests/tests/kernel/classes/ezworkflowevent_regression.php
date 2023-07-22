@@ -83,13 +83,11 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         // STEP 3: run content/edit again in order to simulate a POST from the custom TPL
-        $result = $contentModule->run( 'edit', array(
-            $objectID, $EditVersion = 1,
-            $EditLanguage = eZINI::instance('site.ini')->variable( 'RegionalSettings', 'ContentObjectLocale' ) )
+        $result = $contentModule->run( 'edit', [$objectID, $EditVersion = 1, $EditLanguage = eZINI::instance('site.ini')->variable( 'RegionalSettings', 'ContentObjectLocale' )]
         );
 
         // Before this fix, a redirection to content/history was performed
-        $this->assertNotEquals( $contentModule->ExitStatus, eZModule::STATUS_REDIRECT, "A redirection was performed by content/edit" );
+        static::assertNotEquals($contentModule->ExitStatus, eZModule::STATUS_REDIRECT, "A redirection was performed by content/edit");
 
         $this->removeWorkflow( $this->workflow );
 
@@ -146,12 +144,10 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
         $_POST['CompletePublishing'] = 1;
 
         // STEP 3: run content/edit again in order to simulate a POST from the custom TPL
-        $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $objectID,
-                                                                                     'version'   => 1 ) );
+        $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $objectID, 'version'   => 1] );
 
-        $this->assertInternalType( 'array', $operationResult );
-        $this->assertEquals( $operationResult['status'], eZModuleOperationInfo::STATUS_CONTINUE,
-            "The operation result wasn't CONTINUE" );
+        static::assertInternalType('array', $operationResult);
+        static::assertEquals($operationResult['status'], eZModuleOperationInfo::STATUS_CONTINUE, "The operation result wasn't CONTINUE");
 
         $this->removeWorkflow( $this->workflow );
 
@@ -173,7 +169,7 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
             'tests/toolkit/extras/tests-files/workflowevent_regression_fetchtemplaterepeat.php' );
         if ( $registerResult == false )
         {
-            $this->markTestSkipped( "Unable to register the workflow event" );
+            static::markTestSkipped("Unable to register the workflow event");
         }
 
         $workflow = eZWorkflow::create( $adminUserID );
@@ -193,7 +189,7 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
         $regressionEventType->initializeEvent( $regressionEvent );
         $regressionEvent->store();
 
-        $eventList = array( $regressionEvent );
+        $eventList = [$regressionEvent];
 
         $workflow->store( $eventList );
 
@@ -239,9 +235,9 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
      * @param mixed $includeFile Relative path to the workflow definition (class) file
      * @return bool false if an error occurs
      */
-    protected function registerCustomWorkflowEvent( $workflowTypeString, $includeFile )
+    protected function registerCustomWorkflowEvent( $workflowTypeString, mixed $includeFile )
     {
-        static $includedFiles = array();
+        static $includedFiles = [];
 
         // include the file if it hasn't been included yet
         if ( !in_array( $includeFile, $includedFiles ) )
@@ -274,7 +270,6 @@ class eZWorkflowEventRegression extends ezpDatabaseTestCase
      * Helper function used to remove a workflow.
      * Will remove the workflow, its events, its triggers and its group link.
      *
-     * @param eZWorkflow $workflow
      * @return void
      */
     protected function removeWorkflow( eZWorkflow $workflow )

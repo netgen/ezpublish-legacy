@@ -22,7 +22,7 @@ $classCopy->store();
 $mainGroupID = false;
 $classGroups = eZContentClassClassGroup::fetchGroupList( $class->attribute( 'id' ),
                                                           $class->attribute( 'version' ) );
-for ( $i = 0; $i < count( $classGroups ); ++$i )
+for ( $i = 0; $i < (is_countable($classGroups) ? count( $classGroups ) : 0); ++$i )
 {
     $classGroup =& $classGroups[$i];
     $classGroup->setAttribute( 'contentclass_id', $classCopy->attribute( 'id' ) );
@@ -32,7 +32,7 @@ for ( $i = 0; $i < count( $classGroups ); ++$i )
         $mainGroupID = $classGroup->attribute( 'group_id' );
 }
 
-$classAttributeCopies = array();
+$classAttributeCopies = [];
 $classAttributes = $class->fetchAttributes();
 foreach ( array_keys( $classAttributes ) as $classAttributeKey )
 {
@@ -56,26 +56,26 @@ foreach ( array_keys( $classAttributes ) as $classAttributeKey )
 }
 
 $ini = eZINI::instance( 'content.ini' );
-$classRedirect = strtolower( trim( $ini->variable( 'CopySettings', 'ClassRedirect' ) ) );
+$classRedirect = strtolower( trim( (string) $ini->variable( 'CopySettings', 'ClassRedirect' ) ) );
 
 switch ( $classRedirect )
 {
     case 'grouplist':
     {
         $classCopy->storeDefined( $classAttributeCopies );
-        return $Module->redirectToView( 'grouplist', array() );
+        return $Module->redirectToView( 'grouplist', [] );
     } break;
 
     case 'classlist':
     {
         $classCopy->storeDefined( $classAttributeCopies );
-        return $Module->redirectToView( 'classlist', array( $mainGroupID ) );
+        return $Module->redirectToView( 'classlist', [$mainGroupID] );
     } break;
 
     case 'classview':
     {
         $classCopy->storeDefined( $classAttributeCopies );
-        return $Module->redirectToView( 'view', array( $classCopy->attribute( 'id' ) ) );
+        return $Module->redirectToView( 'view', [$classCopy->attribute( 'id' )] );
     } break;
 
     default:
@@ -85,7 +85,7 @@ switch ( $classRedirect )
 
     case 'classedit':
     {
-        return $Module->redirectToView( 'edit', array( $classCopy->attribute( 'id' ) ) );
+        return $Module->redirectToView( 'edit', [$classCopy->attribute( 'id' )] );
     } break;
 }
 

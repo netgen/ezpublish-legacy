@@ -13,7 +13,7 @@ $role = eZRole::fetch( $roleID );
 if ( $role )
 {
     $newRole = $role->copy();
-    return $Module->redirectToView( 'edit', array( $newRole->attribute( 'id' ) ) );
+    return $Module->redirectToView( 'edit', [$newRole->attribute( 'id' )] );
 }
 else
 {

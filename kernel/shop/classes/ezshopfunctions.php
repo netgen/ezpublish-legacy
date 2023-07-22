@@ -116,15 +116,12 @@ class eZShopFunctions
         if ( $ini->hasVariable( 'ShopSettings', 'ProductDatatypeStringList' ) )
             return eZINI::instance()->variable('ShopSettings', 'ProductDatatypeStringList' );
 
-        return array(
-            'ezprice',
-            'ezmultiprice'
-        );
+        return ['ezprice', 'ezmultiprice'];
     }
 
     static function productClassList()
     {
-        $productClassList = array();
+        $productClassList = [];
         $classList = eZContentClass::fetchList();
         foreach ( $classList as $class )
         {
@@ -286,7 +283,7 @@ class eZShopFunctions
     {
         $errCode = eZCurrencyData::ERROR_OK;
 
-        if ( strcmp( $oldCurrencyCode, $newCurrencyCode ) !== 0 )
+        if ( strcmp( (string) $oldCurrencyCode, (string) $newCurrencyCode ) !== 0 )
         {
             $errCode = eZCurrencyData::canCreate( $newCurrencyCode );
             if ( $errCode === eZCurrencyData::ERROR_OK )
@@ -334,8 +331,7 @@ class eZShopFunctions
 
     static function updateAutoRates()
     {
-        $error = array( 'code' => eZExchangeRatesUpdateHandler::OK,
-                        'description' => '' );
+        $error = ['code' => eZExchangeRatesUpdateHandler::OK, 'description' => ''];
 
         $handler = eZExchangeRatesUpdateHandler::create();
         if ( $handler )
@@ -400,7 +396,7 @@ class eZShopFunctions
                         else
                         {
                             $error['code'] = eZExchangeRatesUpdateHandler::INVALID_BASE_CROSS_RATE;
-                            $error['description'] = ezpI18n::tr( 'kernel/shop', "Unable to calculate cross-rate for currency-pair '%1'/'%2'", null, array( $handlerBaseCurrency, $shopBaseCurrency ) );
+                            $error['description'] = ezpI18n::tr( 'kernel/shop', "Unable to calculate cross-rate for currency-pair '%1'/'%2'", null, [$handlerBaseCurrency, $shopBaseCurrency] );
                         }
                     }
                     else

@@ -27,7 +27,7 @@ class eZPDF
      */
     public function __construct( $name = "pdf" )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
         $this->Config = eZINI::instance( 'pdf.ini' );
     }
 
@@ -44,9 +44,7 @@ class eZPDF
     */
     function namedParameterList()
     {
-        return array( 'operation' => array( 'type' => 'string',
-                                            'required' => true,
-                                            'default' => '' ) );
+        return ['operation' => ['type' => 'string', 'required' => true, 'default' => '']];
     }
 
     /*!
@@ -62,7 +60,7 @@ class eZPDF
             {
                 $operatorValue = '<C:callTOC';
 
-                if ( count( $operatorParameters ) > 1 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                 {
                     $params = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
@@ -109,7 +107,7 @@ class eZPDF
             {
                 $operatorValue = '<ezGroup:callTable';
 
-                if ( count( $operatorParameters > 2 ) )
+                if ( is_countable($operatorParameters > 2) ? count( $operatorParameters > 2 ) : 0 )
                 {
                     $tableSettings = $tpl->elementValue( $operatorParameters[2], $rootNamespace, $currentNamespace );
 
@@ -117,22 +115,10 @@ class eZPDF
                     {
                         foreach( array_keys( $tableSettings ) as $key )
                         {
-                            switch( $key )
-                            {
-                                case 'headerCMYK':
-                                case 'cellCMYK':
-                                case 'textCMYK':
-                                case 'titleCellCMYK':
-                                case 'titleTextCMYK':
-                                {
-                                    $operatorValue .= ':' . $key . ':' . implode( ',', $tableSettings[$key] );
-                                } break;
-
-                                default:
-                                {
-                                    $operatorValue .= ':' . $key . ':' . $tableSettings[$key];
-                                } break;
-                            }
+                            match ($key) {
+                                'headerCMYK', 'cellCMYK', 'textCMYK', 'titleCellCMYK', 'titleTextCMYK' => $operatorValue .= ':' . $key . ':' . implode( ',', $tableSettings[$key] ),
+                                default => $operatorValue .= ':' . $key . ':' . $tableSettings[$key],
+                            };
                         }
                     }
                 }
@@ -141,9 +127,9 @@ class eZPDF
 
                 $rows = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                $rows = str_replace( array( ' ', "\t", "\r\n", "\n" ),
+                $rows = str_replace( [' ', "\t", "\r\n", "\n"],
                                                           '',
-                                                          $rows );
+                                                          (string) $rows );
                 $httpCharset = eZTextCodec::internalCharset();
                 $outputCharset = $config->hasVariable( 'PDFGeneral', 'OutputCharset' )
                                  ? $config->variable( 'PDFGeneral', 'OutputCharset' )
@@ -152,7 +138,7 @@ class eZPDF
                 // Convert current text to $outputCharset (by default iso-8859-1)
                 $rows = $codec->convertString( $rows );
 
-                $operatorValue .= urlencode( $rows );
+                $operatorValue .= urlencode( (string) $rows );
 
                 $operatorValue .= '</ezGroup:callTable><C:callNewLine>';
 
@@ -163,9 +149,9 @@ class eZPDF
             {
                 $header = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                $header['text'] = str_replace( array( ' ', "\t", "\r\n", "\n" ),
+                $header['text'] = str_replace( [' ', "\t", "\r\n", "\n"],
                                                '',
-                                               $header['text'] );
+                                               (string) $header['text'] );
 
                 $operatorValue = '<ezCall:callHeader:level:'. $header['level'] .':size:'. $header['size'];
 
@@ -211,10 +197,10 @@ class eZPDF
             {
                 $image = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                $width = isset( $image['width'] ) ? $image['width']: 100;
-                $height = isset( $image['height'] ) ? $image['height']: 100;
+                $width = $image['width'] ?? 100;
+                $height = $image['height'] ?? 100;
 
-                $operatorValue = '<C:callImage:src:'. rawurlencode( $image['src'] ) .':width:'. $width .':height:'. $height;
+                $operatorValue = '<C:callImage:src:'. rawurlencode( (string) $image['src'] ) .':width:'. $width .':height:'. $height;
 
                 if ( isset( $image['static'] ) )
                 {
@@ -260,9 +246,9 @@ class eZPDF
 
                 $link['text'] = str_replace( '&quot;',
                                              '"',
-                                             $link['text'] );
+                                             (string) $link['text'] );
 
-                $operatorValue = '<c:alink:'. rawurlencode( $link['url'] ) .'>'. $link['text'] .'</c:alink>';
+                $operatorValue = '<c:alink:'. rawurlencode( (string) $link['url'] ) .'>'. $link['text'] .'</c:alink>';
                 eZDebug::writeNotice( 'PDF: Added link: '. $link['text'] .', url: '.$link['url'], __METHOD__ );
             } break;
 
@@ -295,12 +281,12 @@ class eZPDF
             {
                 $text = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                if ( count ( $operatorParameters ) > 2 )
+                if ( (is_countable($operatorParameters) ? count ( $operatorParameters ) : 0) > 2 )
                 {
                     $options = $tpl->elementValue( $operatorParameters[2], $rootNamespace, $currentNamespace );
 
-                    $size = isset( $options['size'] ) ? $options['size'] : $config->variable( 'PDFGeneral', 'Format' );
-                    $orientation = isset( $options['orientation'] ) ? $options['orientation'] : $config->variable( 'PDFGeneral', 'Orientation' );
+                    $size = $options['size'] ?? $config->variable( 'PDFGeneral', 'Format' );
+                    $orientation = $options['orientation'] ?? $config->variable( 'PDFGeneral', 'Orientation' );
 
                     $this->createPDF( $size, $orientation );
                 }
@@ -309,7 +295,7 @@ class eZPDF
                     $this->createPDF( $config->variable( 'PDFGeneral', 'Format' ), $config->variable( 'PDFGeneral', 'Orientation' ) );
                 }
 
-                $text = str_replace( array( ' ', "\n", "\t" ), '', $text );
+                $text = str_replace( [' ', "\n", "\t"], '', (string) $text );
                 $httpCharset = eZTextCodec::internalCharset();
                 $outputCharset = $config->hasVariable( 'PDFGeneral', 'OutputCharset' )
                                  ? $config->variable( 'PDFGeneral', 'OutputCharset' )
@@ -319,7 +305,7 @@ class eZPDF
                 $text = $codec->convertString( $text );
 
                 $this->PDF->ezText( $text );
-                eZDebug::writeNotice( 'Execute text in PDF, length: "'. strlen( $text ) .'"', __METHOD__ );
+                eZDebug::writeNotice( 'Execute text in PDF, length: "'. strlen( (string) $text ) .'"', __METHOD__ );
             } break;
 
             case 'page_number':
@@ -366,7 +352,7 @@ class eZPDF
                 $operatorValue .= ':y1:' . $lineDesc['y1'];
                 $operatorValue .= ':y2:' . $lineDesc['y2'];
 
-                $operatorValue .= ':thickness:' . ( isset( $lineDesc['thickness'] ) ? $lineDesc['thickness'] : '1' );
+                $operatorValue .= ':thickness:' . ( $lineDesc['thickness'] ?? '1' );
 
                 $operatorValue .= '>';
 
@@ -396,7 +382,7 @@ class eZPDF
                     $codec = eZTextCodec::instance( $httpCharset, $outputCharset );
                     // Convert current text to $outputCharset (by default iso-8859-1)
                     $frameDesc['block_code'] = $codec->convertString( $frameDesc['block_code'] );
-                    $operatorValue .= urlencode( $frameDesc['block_code'] );
+                    $operatorValue .= urlencode( (string) $frameDesc['block_code'] );
                 }
 
                 $operatorValue .= '</ezGroup:callBlockFrame>';
@@ -438,7 +424,7 @@ class eZPDF
                     $operatorValue .= ':page:all';
                 }
 
-                $operatorValue .= ':newline:' . ( isset( $frameDesc['newline'] ) ? $frameDesc['newline'] : 0 );
+                $operatorValue .= ':newline:' . ( $frameDesc['newline'] ?? 0 );
 
                 $operatorValue .= ':pageOffset:';
                 if ( isset( $frameDesc['pageOffset'] ) )
@@ -471,7 +457,7 @@ class eZPDF
                     $codec = eZTextCodec::instance( $httpCharset, $outputCharset );
                     // Convert current text to $outputCharset (by default iso-8859-1)
                     $frameDesc['text'] = $codec->convertString( $frameDesc['text'] );
-                    $operatorValue .= urlencode( $frameDesc['text'] );
+                    $operatorValue .= urlencode( (string) $frameDesc['text'] );
                 }
 
                 $operatorValue .= '</ezGroup:callFrame>';
@@ -598,9 +584,9 @@ class eZPDF
             {
                 $pageDesc = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                $align = isset( $pageDesc['align'] ) ? $pageDesc['align'] : 'center';
-                $text = isset( $pageDesc['text'] ) ? $pageDesc['text'] : '';
-                $top_margin = isset( $pageDesc['top_margin'] ) ? $pageDesc['top_margin'] : 100;
+                $align = $pageDesc['align'] ?? 'center';
+                $text = $pageDesc['text'] ?? '';
+                $top_margin = $pageDesc['top_margin'] ?? 100;
 
                 $operatorValue = '<ezGroup:callFrontpage:justification:'. $align .':top_margin:'. $top_margin;
 
@@ -609,9 +595,9 @@ class eZPDF
                     $operatorValue .= ':size:'. $pageDesc['size'];
                 }
 
-                $text = str_replace( array( ' ', "\t", "\r\n", "\n" ),
+                $text = str_replace( [' ', "\t", "\r\n", "\n"],
                                      '',
-                                     $text );
+                                     (string) $text );
                 $httpCharset = eZTextCodec::internalCharset();
                 $outputCharset = $config->hasVariable( 'PDFGeneral', 'OutputCharset' )
                              ? $config->variable( 'PDFGeneral', 'OutputCharset' )
@@ -620,7 +606,7 @@ class eZPDF
                 // Convert current text to $outputCharset (by default iso-8859-1)
                 $text = $codec->convertString( $text );
 
-                $operatorValue .= '>'. urlencode( $text ) .'</ezGroup:callFrontpage>';
+                $operatorValue .= '>'. urlencode( (string) $text ) .'</ezGroup:callFrontpage>';
 
                 eZDebug::writeNotice( 'Added content to frontpage: '. $operatorValue, __METHOD__ );
             } break;
@@ -652,7 +638,7 @@ class eZPDF
             {
                 $text = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
 
-                $text = str_replace( array( ' ', "\n", "\t" ), '', $text );
+                $text = str_replace( [' ', "\n", "\t"], '', (string) $text );
                 $httpCharset = eZTextCodec::internalCharset();
                 $outputCharset = $config->hasVariable( 'PDFGeneral', 'OutputCharset' )
                              ? $config->variable( 'PDFGeneral', 'OutputCharset' )
@@ -661,7 +647,7 @@ class eZPDF
                 // Convert current text to $outputCharset (by default iso-8859-1)
                 $text = $codec->convertString( $text );
 
-                $operatorValue = '<C:callKeyword:'. rawurlencode( $text ) .'>';
+                $operatorValue = '<C:callKeyword:'. rawurlencode( (string) $text ) .'>';
             } break;
 
             /* add Keyword index to pdf document */
@@ -676,13 +662,13 @@ class eZPDF
             case 'ul':
             {
                 $text = $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace );
-                if ( count( $operatorParameters ) > 2 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 2 )
                 {
                     $params = $tpl->elementValue( $operatorParameters[2], $rootNamespace, $currentNamespace );
                 }
                 else
                 {
-                    $params = array();
+                    $params = [];
                 }
 
                 if ( isset( $params['rgb'] ) )
@@ -914,7 +900,7 @@ class eZPDF
                 $operatorValue = '';
                 $changeFont = false;
 
-                if ( count( $operatorParameters ) >= 3)
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) >= 3)
                 {
                     $textSettings = $tpl->elementValue( $operatorParameters[2], $rootNamespace, $currentNamespace );
 
@@ -972,7 +958,7 @@ class eZPDF
                 {
                     if ( $key != 'text' )
                     {
-                        $operatorValue .= ':' . $key . ':' . urlencode( $parameters[$key] );
+                        $operatorValue .= ':' . $key . ':' . urlencode( (string) $parameters[$key] );
                     }
                 }
 
@@ -985,7 +971,7 @@ class eZPDF
                 $parameters['text'] = $codec->convertString( $parameters['text'] );
 
                 $operatorValue .= '>';
-                $operatorValue .= urlencode( $parameters['text'] );
+                $operatorValue .= urlencode( (string) $parameters['text'] );
                 $operatorValue .= '</ezGroup:callTextBox>';
 
                 return $operatorValue;
@@ -998,7 +984,7 @@ class eZPDF
                 $operatorValue = '';
                 $changeFont = false;
 
-                if ( count( $operatorParameters ) >= 3)
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) >= 3)
                 {
                     $textSettings = $tpl->elementValue( $operatorParameters[2], $rootNamespace, $currentNamespace );
 
@@ -1043,7 +1029,7 @@ class eZPDF
                         // Convert current text to $outputCharset (by default iso-8859-1)
                         $text = $codec->convertString( $text );
 
-                        $operatorValue .= '>' . urlencode( $text ) . '</ezGroup::callTextFrame>';
+                        $operatorValue .= '>' . urlencode( (string) $text ) . '</ezGroup::callTextFrame>';
 
                     }
                 }

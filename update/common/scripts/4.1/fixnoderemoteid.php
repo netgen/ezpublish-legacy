@@ -20,7 +20,7 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Fix non-unique usage of tree node remote ID\'s';
 $scriptSettings['use-session'] = false;
 $scriptSettings['use-modules'] = false;
@@ -31,7 +31,7 @@ $script->startup();
 
 $config = '[mode:]';
 $argumentConfig = '';
-$optionHelp = array( 'mode' => "the fixing mode to use, either d (detailed) or a (automatic)" );
+$optionHelp = ['mode' => "the fixing mode to use, either d (detailed) or a (automatic)"];
 $arguments = false;
 $useStandardOptions = true;
 
@@ -40,7 +40,7 @@ $script->initialize();
 
 if ( isset( $options['mode'] ) )
 {
- if ( !in_array( $options['mode'], array( 'a', 'd' ) ) )
+ if ( !in_array( $options['mode'], ['a', 'd'] ) )
  {
  $script->shutdown( 1, 'Invalid mode. Use either d for detailed or a for automatic.' );
  }
@@ -82,7 +82,7 @@ foreach ( $nonUniqueRemoteIDDataList as $nonUniqueRemoteIDData )
     {
         $action = readline( "Remote ID '$nonUniqueRemoteIDData[remote_id]' is used for $nonUniqueRemoteIDData[cnt] different tree nodes. Do you want to see the details (d) or do you want this inconsistency to be fixed automatically (a) ?" );
 
-        while ( !in_array( $action, array( 'a', 'd' ) ) )
+        while ( !in_array( $action, ['a', 'd'] ) )
         {
             $action = readline( 'Invalid option. Type either d for details or a to fix automatically.' );
         }
@@ -90,8 +90,8 @@ foreach ( $nonUniqueRemoteIDDataList as $nonUniqueRemoteIDData )
 
     $treeNodes = eZPersistentObject::fetchObjectList( eZContentObjectTreeNode::definition(),
         null,
-        array( 'remote_id' => $nonUniqueRemoteIDData['remote_id'] ),
-        array( 'modified_subnode' => 'asc' ) );
+        ['remote_id' => $nonUniqueRemoteIDData['remote_id']],
+        ['modified_subnode' => 'asc'] );
 
     switch ( $action )
     {
@@ -168,8 +168,8 @@ if ( $nonUniqueRemoteIDDataListCount )
         // fetch nodes with eZPersistentObject to avoid object cache
         $treeNodes = eZPersistentObject::fetchObjectList( eZContentObjectTreeNode::definition(),
                                                         null,
-                                                        array( 'node_id' => $nonUniqueRemoteIDData['node_id'] ),
-                                                        array( 'modified_subnode' => 'asc' ) );
+                                                        ['node_id' => $nonUniqueRemoteIDData['node_id']],
+                                                        ['modified_subnode' => 'asc'] );
         foreach ( $treeNodes as $i => $treeNode )
         {
             $treeNode->setAttribute( 'remote_id', eZRemoteIdUtility::generate( 'node' ) );

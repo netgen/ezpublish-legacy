@@ -89,9 +89,9 @@ class eZContentFunctions
     {
         $parentNodeID = $params['parent_node_id'];
         $classIdentifier = $params['class_identifier'];
-        $creatorID = isset( $params['creator_id'] ) ? $params['creator_id'] : false;
-        $attributesData = isset( $params['attributes'] ) ? $params['attributes'] : false;
-        $storageDir = isset( $params['storage_dir'] ) ? $params['storage_dir'] : '';
+        $creatorID = $params['creator_id'] ?? false;
+        $attributesData = $params['attributes'] ?? false;
+        $storageDir = $params['storage_dir'] ?? '';
 
         $contentObject = false;
 
@@ -105,8 +105,8 @@ class eZContentFunctions
                 $db = eZDB::instance();
                 $db->begin();
 
-                $languageCode = isset( $params['language'] ) ? $params['language'] : false;
-                $sectionID = isset( $params['section_id'] ) ? $params['section_id'] : 0;
+                $languageCode = $params['language'] ?? false;
+                $sectionID = $params['section_id'] ?? 0;
                 $contentObject = $contentClass->instantiate( $creatorID , $sectionID, false, $languageCode );
 
                 if ( array_key_exists( 'remote_id', $params ) )
@@ -114,12 +114,7 @@ class eZContentFunctions
 
                 $contentObject->store();
 
-                $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObject->attribute( 'id' ),
-                                                                   'contentobject_version' => $contentObject->attribute( 'current_version' ),
-                                                                   'parent_node' => $parentNodeID,
-                                                                   'is_main' => 1,
-                                                                   'sort_field' => $contentClass->attribute( 'sort_field' ),
-                                                                   'sort_order' => $contentClass->attribute( 'sort_order' ) ) );
+                $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $contentObject->attribute( 'id' ), 'contentobject_version' => $contentObject->attribute( 'current_version' ), 'parent_node' => $parentNodeID, 'is_main' => 1, 'sort_field' => $contentClass->attribute( 'sort_field' ), 'sort_order' => $contentClass->attribute( 'sort_order' )] );
                 $nodeAssignment->store();
 
                 $version = $contentObject->version( 1 );
@@ -157,8 +152,7 @@ class eZContentFunctions
 
                 $db->commit();
 
-                $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObject->attribute( 'id' ),
-                                                                                             'version' => 1 ) );
+                $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObject->attribute( 'id' ), 'version' => 1] );
             }
             else
             {
@@ -226,7 +220,7 @@ class eZContentFunctions
      */
     public static function updateAndPublishObject( eZContentObject $object, array $params )
     {
-        if ( !array_key_exists( 'attributes', $params ) and !is_array( $params['attributes'] ) and count( $params['attributes'] ) > 0 )
+        if ( !array_key_exists( 'attributes', $params ) and !is_array( $params['attributes'] ) and (is_countable($params['attributes']) ? count( $params['attributes'] ) : 0) > 0 )
         {
             eZDebug::writeError( 'No attributes specified for object' . $object->attribute( 'id' ), __METHOD__ );
             return false;
@@ -311,8 +305,7 @@ class eZContentFunctions
 
         $db->commit();
 
-        $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newVersion->attribute( 'contentobject_id' ),
-                                                                                     'version'   => $newVersion->attribute( 'version' ) ) );
+        $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newVersion->attribute( 'contentobject_id' ), 'version'   => $newVersion->attribute( 'version' )] );
 
         if( $operationResult['status'] == eZModuleOperationInfo::STATUS_CONTINUE )
             return true;

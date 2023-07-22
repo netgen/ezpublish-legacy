@@ -17,13 +17,10 @@ class ezpDsn
 
     public function __get( $name )
     {
-        switch ( $name )
-        {
-            case 'parts':
-                return $this->parts;
-            default:
-                return $this->parts[$name];
-        }
+        return match ($name) {
+            'parts' => $this->parts,
+            default => $this->parts[$name],
+        };
     }
 
     public function __set( $name, $value )

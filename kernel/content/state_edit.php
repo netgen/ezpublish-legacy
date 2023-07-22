@@ -27,14 +27,13 @@ function stateEditActionCheck( $module, $class, $object, $version, $contentObjec
             if ( eZOperationHandler::operationIsAvailable( 'content_updateobjectstate' ) )
             {
                 $operationResult = eZOperationHandler::execute( 'content', 'updateobjectstate',
-                                                                array( 'object_id'     => $objectID,
-                                                                       'state_id_list' => $selectedStateIDList ) );
+                                                                ['object_id'     => $objectID, 'state_id_list' => $selectedStateIDList] );
             }
             else
             {
                 eZContentOperationCollection::updateObjectState( $objectID, $selectedStateIDList );
             }
-            $module->redirectToView( 'edit', array( $object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage ) );
+            $module->redirectToView( 'edit', [$object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage] );
         }
     }
 }

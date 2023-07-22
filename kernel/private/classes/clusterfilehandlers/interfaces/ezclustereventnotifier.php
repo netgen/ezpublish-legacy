@@ -16,7 +16,6 @@ interface eZClusterEventNotifier
     /**
      * Registers $listener as the cluster event listener.
      *
-     * @param eZClusterEventListener $listener
      * @return void
      */
     public function registerListener( eZClusterEventListener $listener );

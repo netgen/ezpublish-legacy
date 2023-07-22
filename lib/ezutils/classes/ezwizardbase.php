@@ -16,25 +16,22 @@
 
 class eZWizardBase
 {
-    const STAGE_PRE = 0;
-    const STAGE_POST = 1;
+    final public const STAGE_PRE = 0;
+    final public const STAGE_POST = 1;
 
     /**
      * Constructor
      *
-     * @param eZTemplate $tpl
-     * @param eZModule $module
+     * @param eZTemplate $Tpl
+     * @param eZModule $Module
      * @param string|bool $storageName
      */
-    public function __construct( $tpl, &$module, $storageName = false )
+    public function __construct( public $Tpl, public $Module, $storageName = false )
     {
         if ( $storageName )
         {
             $this->StorageName = $storageName;
         }
-
-        $this->TPL = $tpl;
-        $this->Module = $module;
         $this->HTTP = eZHTTPTool::instance();
         $this->VariableList = $this->HTTP->sessionVariable( $this->StorageName . $this->VariableListName );
         $this->MetaData = $this->HTTP->sessionVariable( $this->StorageName . $this->MetaDataName );
@@ -60,13 +57,7 @@ class eZWizardBase
 
     function attributes()
     {
-        return array( 'error_count',
-                      'error_list',
-                      'warning_count',
-                      'warning_list',
-                      'step_template',
-                      'variable_list',
-                      'url' );
+        return ['error_count', 'error_list', 'warning_count', 'warning_list', 'step_template', 'variable_list', 'url'];
     }
 
     function hasAttribute( $attr )
@@ -317,8 +308,8 @@ class eZWizardBase
     {
         $this->HTTP->removeSessionVariable( $this->StorageName . $this->MetaDataName );
         $this->HTTP->removeSessionVariable( $this->StorageName . $this->VariableListName );
-        $this->MetaData = array();
-        $this->VariableList = array();
+        $this->MetaData = [];
+        $this->VariableList = [];
     }
 
     /*!
@@ -363,20 +354,18 @@ class eZWizardBase
     }
 
     /* Private messages */
-    public $ErrorList = array();
-    public $WarningList = array();
+    public $ErrorList = [];
+    public $WarningList = [];
 
     /* Step list, used to determine wizard steps */
-    public $StepList = array();
+    public $StepList = [];
 
     public $HTTP;
-    public $Tpl;
-    public $Module;
     public $WizardURL = ''; /* url to wizard */
 
     /* Array used to store wizzard values */
-    public $VariableList = array();
-    public $MetaData = array();
+    public $VariableList = [];
+    public $MetaData = [];
     public $StorageName = 'eZWizard';
     public $MetaDataName = '_meta';
     public $VariableListName = '_data';
@@ -385,7 +374,7 @@ class eZWizardBase
     public $StepTemplateBase = 'design:wizard/step';
 
     /* Array containing the wizard steps */
-    public $StepArray = array();
+    public $StepArray = [];
 }
 
 ?>

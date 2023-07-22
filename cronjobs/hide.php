@@ -16,10 +16,7 @@ $currentDate = time();
 
 eZINI::instance()->setVariable( 'SiteAccessSettings', 'ShowHiddenNodes', 'false' );
 
-$hiddenNodesParams = array(
-    'LoadDataMap' => false,
-    'Limit' => 50,
-    'SortBy' => array( array( 'published', true ) ) );
+$hiddenNodesParams = ['LoadDataMap' => false, 'Limit' => 50, 'SortBy' => [['published', true]]];
 
 foreach ( $rootNodeIDList as $nodeID )
 {
@@ -29,12 +26,7 @@ foreach ( $rootNodeIDList as $nodeID )
 
     foreach ( $hideAttributeArray as $hideClass => $attributeIdentifier )
     {
-        $countParams = array( 'ClassFilterType' => 'include',
-                              'ClassFilterArray' => array( $hideClass ),
-                              'Limitation' => array(),
-                              'AttributeFilter' => array( 'and',
-                                  array( "{$hideClass}/{$attributeIdentifier}", '<=', $currentDate ),
-                                  array( "{$hideClass}/$attributeIdentifier", '>', 0 ) ) );
+        $countParams = ['ClassFilterType' => 'include', 'ClassFilterArray' => [$hideClass], 'Limitation' => [], 'AttributeFilter' => ['and', ["{$hideClass}/{$attributeIdentifier}", '<=', $currentDate], ["{$hideClass}/$attributeIdentifier", '>', 0]]];
 
         $nodeArrayCount = $rootNode->subTreeCount( $countParams );
         if ( $nodeArrayCount > 0 )

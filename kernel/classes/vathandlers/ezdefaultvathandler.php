@@ -25,15 +25,14 @@ class eZDefaultVATHandler
      */
     function getVatPercent( $object, $country )
     {
-        $productCategory = eZDefaultVATHandler::getProductCategory( $object );
+        $productCategory = (new eZDefaultVATHandler())->getProductCategory($object);
 
         // If product category is not specified
         if ( $productCategory === null )
         {
             // Default to a fake product category (*) that will produce
             // weak match on category for any VAT rule.
-            $productCategory = new eZProductCategory( array( 'id' => -1,
-                                                             'name' => '*' ) );
+            $productCategory = new eZProductCategory( ['id' => -1, 'name' => '*'] );
         }
 
         // If country is not specified
@@ -44,7 +43,7 @@ class eZDefaultVATHandler
             $country = '*';
         }
 
-        $vatType = eZDefaultVATHandler::chooseVatType( $productCategory, $country );
+        $vatType = (new eZDefaultVATHandler())->chooseVatType($productCategory, $country);
 
         return $vatType->attribute( 'percentage' );
     }
@@ -137,7 +136,7 @@ class eZDefaultVATHandler
 
         $catID = $productCategory->attribute( 'id' );
 
-        $vatPriorities = array();
+        $vatPriorities = [];
         foreach ( $vatRules as $rule )
         {
             $ruleCountry = $rule->attribute( 'country_code' );
@@ -182,9 +181,7 @@ class eZDefaultVATHandler
                                  "for country '" . $country . "'" .
                                  " and category '" . $productCategory->attribute( 'name' ). "'." );
 
-            return new eZVatType( array( "id" => 0,
-                                         "name" => ezpI18n::tr( 'kernel/shop', 'None' ),
-                                         "percentage" => 0.0 ) );
+            return new eZVatType( ["id" => 0, "name" => ezpI18n::tr( 'kernel/shop', 'None' ), "percentage" => 0.0] );
         }
 
         $bestVatTypeID = array_shift( $vatPriorities );

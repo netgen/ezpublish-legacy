@@ -30,8 +30,6 @@ class eZStepRegistration extends eZStepInstaller
     }
 
     /**
-     * @param \eZTemplate $mailTpl
-     * @param array $userData
      *
      * @return array|null|string
      */
@@ -42,7 +40,7 @@ class eZStepRegistration extends eZStepInstaller
         $databaseInfo['info'] = $databaseMap[$databaseInfo['type']];
         $regionalInfo = $this->PersistenceList['regional_info'];
         if ( !isset( $regionalInfo['languages'] ) )
-            $regionalInfo['languages'] = array();
+            $regionalInfo['languages'] = [];
 
         $emailInfo = $this->PersistenceList['email_info'];
 
@@ -50,7 +48,7 @@ class eZStepRegistration extends eZStepInstaller
 
 
         $url = $siteType['url'];
-        if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", $url ) )
+        if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", (string) $url ) )
         {
             $url = 'http://' . $url;
         }
@@ -68,8 +66,8 @@ class eZStepRegistration extends eZStepInstaller
         }
         else if ( $siteType['access_type'] == 'port' )
         {
-            $url = eZHTTPTool::createRedirectURL( $currentURL, array( 'override_port' => $siteType['access_type_value'] ) );
-            $adminURL = eZHTTPTool::createRedirectURL( $currentURL, array( 'override_port' => $siteType['admin_access_type_value'] ) );
+            $url = eZHTTPTool::createRedirectURL( $currentURL, ['override_port' => $siteType['access_type_value']] );
+            $adminURL = eZHTTPTool::createRedirectURL( $currentURL, ['override_port' => $siteType['admin_access_type_value']] );
         }
         $siteType['url'] = $url;
         $siteType['admin_url'] = $adminURL;
@@ -84,11 +82,11 @@ class eZStepRegistration extends eZStepInstaller
         $webserverInfo = false;
         if ( function_exists( 'apache_get_version' ) )
         {
-            $webserverInfo = array( 'version' => apache_get_version() );
+            $webserverInfo = ['version' => apache_get_version()];
         }
         else if ( !empty( $_SERVER['SERVER_SOFTWARE'] ) )
         {
-            $webserverInfo = array( 'version' => $_SERVER['SERVER_SOFTWARE'] );
+            $webserverInfo = ['version' => $_SERVER['SERVER_SOFTWARE']];
         }
 
         $systemInfo = new eZSysInfo();
@@ -110,12 +108,9 @@ class eZStepRegistration extends eZStepInstaller
         $mailTpl->setVariable( 'phpversion', $phpVersion );
         $mailTpl->setVariable( 'webserver', $webserverInfo );
         $mailTpl->setVariable( 'system', $systemInfo );
-        $mailTpl->setVariable( 'os', array( 'name' => php_uname() ) );
+        $mailTpl->setVariable( 'os', ['name' => php_uname()] );
         $mailTpl->setVariable( 'optional_tests', $testResults );
-        $mailTpl->setVariable( "version", array( "text" => eZPublishSDK::version(),
-                                                 "major" => eZPublishSDK::majorVersion(),
-                                                 "minor" => eZPublishSDK::minorVersion(),
-                                                 "release" => eZPublishSDK::release() ) );
+        $mailTpl->setVariable( "version", ["text" => eZPublishSDK::version(), "major" => eZPublishSDK::majorVersion(), "minor" => eZPublishSDK::minorVersion(), "release" => eZPublishSDK::release()] );
 
         return $mailTpl->fetch( 'design:setup/registration_email.tpl' );
     }
@@ -125,6 +120,7 @@ class eZStepRegistration extends eZStepInstaller
      */
     function processPostData()
     {
+        $userData = [];
         if ( !$this->Http->hasPostVariable( 'eZSetupSendRegistration' ) )// skip site registration
         {
             return true;
@@ -146,14 +142,14 @@ class eZStepRegistration extends eZStepInstaller
         $this->PersistenceList['email_info']['user_data'] = $userData;
 
         // Make sure required data is present
-        $validationMessages = array();
+        $validationMessages = [];
         if ( !$userData['first_name'] )
         {
             $validationMessages[] = ezpI18n::tr(
                 'design/standard/setup/init',
                 'Registration field "%fieldName" is empty',
                 false,
-                array( '%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'First name' ) )
+                ['%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'First name' )]
             );
         }
 
@@ -163,7 +159,7 @@ class eZStepRegistration extends eZStepInstaller
                 'design/standard/setup/init',
                 'Registration field "%fieldName" is empty',
                 false,
-                array( '%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Last name' ) )
+                ['%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Last name' )]
             );
         }
 
@@ -173,7 +169,7 @@ class eZStepRegistration extends eZStepInstaller
                 'design/standard/setup/init',
                 'Registration field "%fieldName" is empty',
                 false,
-                array( '%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Your email' ) )
+                ['%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Your email' )]
             );
         }
         else if ( !eZMail::validate( $userData['email'] ) )
@@ -182,7 +178,7 @@ class eZStepRegistration extends eZStepInstaller
                 'design/standard/setup/init',
                 'Registration field "%fieldName" has wrong format',
                 false,
-                array( '%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Your email' ) )
+                ['%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Your email' )]
             );
         }
 
@@ -192,7 +188,7 @@ class eZStepRegistration extends eZStepInstaller
                 'design/standard/setup/init',
                 'Registration field "%fieldName" is empty',
                 false,
-                array( '%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Country' ) )
+                ['%fieldName' => ezpI18n::tr( 'design/standard/setup/init', 'Country' )]
             );
         }
 
@@ -230,7 +226,7 @@ class eZStepRegistration extends eZStepInstaller
             $data = $this->kickstartData();
 
             $this->PersistenceList['email_info']['send'] = isset( $data['Send'] ) ? ( $data['Send'] == 'true' ) : true;
-            $this->PersistenceList['email_info']['user_data'] = isset( $data['UserData'] ) ? $data['UserData'] : $this->defaultUserData;
+            $this->PersistenceList['email_info']['user_data'] = $data['UserData'] ?? $this->defaultUserData;
 
             if ( $this->kickstartContinueNextStep() )
             {
@@ -272,10 +268,10 @@ class eZStepRegistration extends eZStepInstaller
     {
         $mailTpl = eZTemplate::factory();
 
-        $userData = isset( $this->PersistenceList['email_info']['user_data'] ) ? $this->PersistenceList['email_info']['user_data'] : $this->defaultUserData;
+        $userData = $this->PersistenceList['email_info']['user_data'] ?? $this->defaultUserData;
 
         $bodyText = $this->generateRegistration( $mailTpl, $userData );// using default data
-        $send     = ( isset( $this->PersistenceList['email_info']['send'] ) )     ? $this->PersistenceList['email_info']['send'] : true;
+        $send     = $this->PersistenceList['email_info']['send'] ?? true;
 
 
         $this->Tpl->setVariable( 'email_body', $bodyText );
@@ -284,25 +280,16 @@ class eZStepRegistration extends eZStepInstaller
         $this->Tpl->setVariable( 'setup_previous_step', 'Registration' );
         $this->Tpl->setVariable( 'setup_next_step', 'DatabaseCreate' );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( "design:setup/init/registration.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Registration' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Registration' ), 'url' => false]];
         return $result;
     }
 
 
-    private $defaultUserData = array(
-            'first_name' => '',
-            'last_name' => '',
-            'email' => '',
-            'country' => '',
-            'company' => '',
-            'first_time_user' => false,
-            'include_tech_stats' => true,
-    );
+    private array $defaultUserData = ['first_name' => '', 'last_name' => '', 'email' => '', 'country' => '', 'company' => '', 'first_time_user' => false, 'include_tech_stats' => true];
 }
 
 ?>

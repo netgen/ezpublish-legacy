@@ -22,21 +22,16 @@ class eZPackageInstallationHandler
      *
      * @param eZPackage $package
      * @param string $type
-     * @param mixed $installItem
      * @param string $name
      * @param array $steps
      */
-    public function __construct( $package, $type, $installItem, $name = null, $steps = null )
+    public function __construct( $package, $type, mixed $installItem, $name = null, $steps = null )
     {
         $this->Package = $package;
-        $this->Attributes = array( 'type' => $type,
-                                   'name' => $name,
-                                   'steps' => $steps,
-                                   'step_map' => false,
-                                   'current_steps' => $steps );
-        $this->InitializeStepMethodMap = array();
-        $this->ValidateStepMethodMap = array();
-        $this->CommitStepMethodMap = array();
+        $this->Attributes = ['type' => $type, 'name' => $name, 'steps' => $steps, 'step_map' => false, 'current_steps' => $steps];
+        $this->InitializeStepMethodMap = [];
+        $this->ValidateStepMethodMap = [];
+        $this->CommitStepMethodMap = [];
         $this->InstallItem = $installItem;
     }
 
@@ -50,10 +45,10 @@ class eZPackageInstallationHandler
     function generateStepMap( $package, &$persistentData )
     {
         $steps = $this->attribute( 'steps' );
-        $map = array();
+        $map = [];
         $lastStep = false;
-        $currentSteps = array();
-        for ( $i = 0; $i < count( $steps ); ++$i )
+        $currentSteps = [];
+        for ( $i = 0; $i < (is_countable($steps) ? count( $steps ) : 0); ++$i )
         {
             $step =& $steps[$i];
             if ( !isset( $step['previous_step'] ) )
@@ -65,7 +60,7 @@ class eZPackageInstallationHandler
             }
             if ( !isset( $step['next_step'] ) )
             {
-                if ( $i + 1 < count( $steps ) )
+                if ( $i + 1 < (is_countable($steps) ? count( $steps ) : 0) )
                     $step['next_step'] = $steps[$i+1]['id'];
                 else
                     $step['next_step'] = false;
@@ -89,9 +84,7 @@ class eZPackageInstallationHandler
                 $currentSteps[] =& $step;
             }
         }
-        $this->StepMap = array( 'first' => &$steps[0],
-                                'map' => &$map,
-                                'steps' => &$steps );
+        $this->StepMap = ['first' => &$steps[0], 'map' => &$map, 'steps' => &$steps];
         $this->Attributes['step_map'] =& $this->StepMap;
         $this->Attributes['current_steps'] = $currentSteps;
     }
@@ -150,8 +143,7 @@ class eZPackageInstallationHandler
             $stepTemplatePath .= "create";
         else
             $stepTemplatePath .= "installers/" . $this->attribute( 'type' );
-        return array( 'name' => $stepTemplateName,
-                      'path' => $stepTemplatePath );
+        return ['name' => $stepTemplateName, 'path' => $stepTemplatePath];
     }
 
     /*!
@@ -162,7 +154,7 @@ class eZPackageInstallationHandler
     function initializeStep( $package, $http, $step, &$persistentData, $tpl, $module )
     {
         $methodMap = $this->initializeStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$step['id']] ) )
             {
@@ -203,7 +195,7 @@ class eZPackageInstallationHandler
     function validateAndAdvanceStep( $package, $http, $currentStepID, &$stepMap, &$persistentData, &$errorList )
     {
         $methodMap = $this->validateStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$currentStepID] ) )
             {
@@ -221,7 +213,7 @@ class eZPackageInstallationHandler
     function commitStep( $package, $http, $step, &$persistentData, $tpl )
     {
         $methodMap = $this->commitStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$step['id']] ) )
             {
@@ -267,7 +259,7 @@ class eZPackageInstallationHandler
 
         $handlers =& $GLOBALS['eZPackageCreationInstallers'];
         if ( !isset( $handlers ) )
-            $handlers = array();
+            $handlers = [];
         $handler = false;
 
         if( isset( $handlers[$handlerName] ) )
@@ -277,11 +269,7 @@ class eZPackageInstallationHandler
         }
         else
         {
-            $optionArray = array( 'iniFile'       => 'package.ini',
-                                  'iniSection'    => 'InstallerSettings',
-                                  'iniVariable'   => 'HandlerAlias',
-                                  'handlerIndex'  => $handlerName,
-                                  'handlerParams' => array( $package, $handlerName, $installItem ) );
+            $optionArray = ['iniFile'       => 'package.ini', 'iniSection'    => 'InstallerSettings', 'iniVariable'   => 'HandlerAlias', 'handlerIndex'  => $handlerName, 'handlerParams' => [$package, $handlerName, $installItem]];
 
             $options = new ezpExtensionOptions( $optionArray );
 

@@ -19,9 +19,9 @@ class eZCollaborationItemHandler
     /*
      Definitions for notification handling for collaboration handlers.
     */
-    const NOTIFICATION_COLLECTION_ONE_FOR_ALL = 1;
-    const NOTIFICATION_COLLECTION_PER_USER = 2;
-    const NOTIFICATION_COLLECTION_PER_PARTICIPATION_ROLE = 3;
+    final public const NOTIFICATION_COLLECTION_ONE_FOR_ALL = 1;
+    final public const NOTIFICATION_COLLECTION_PER_USER = 2;
+    final public const NOTIFICATION_COLLECTION_PER_PARTICIPATION_ROLE = 3;
 
     /*!
 
@@ -33,12 +33,9 @@ class eZCollaborationItemHandler
      * @param string $typeName
      * @param array $parameters
      */
-    public function __construct( $typeIdentifier, $typeName, $parameters = array() )
+    public function __construct( $typeIdentifier, $typeName, $parameters = [] )
     {
-        $parameters = array_merge( array( 'use-messages' => false,
-                                          'type-class-list' => array(),
-                                          'notification-collection-handling' => self::NOTIFICATION_COLLECTION_ONE_FOR_ALL,
-                                          'notification-types' => false ),
+        $parameters = array_merge( ['use-messages' => false, 'type-class-list' => [], 'notification-collection-handling' => self::NOTIFICATION_COLLECTION_ONE_FOR_ALL, 'notification-types' => false],
                                    $parameters );
         $typeClassList = $parameters['type-class-list'];
         $this->Info['type-identifier'] = $typeIdentifier;
@@ -53,8 +50,7 @@ class eZCollaborationItemHandler
 
     function attributes()
     {
-        return array( 'info',
-                      'notification_types' );
+        return ['info', 'notification_types'];
     }
 
     /*!
@@ -117,12 +113,10 @@ class eZCollaborationItemHandler
     */
     static function handleCollaborationEvent( $event, $item, &$parameters )
     {
-        $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( array( 'item_id' => $item->attribute( 'id' ),
-                                                                                             'participant_type' => eZCollaborationItemParticipantLink::TYPE_USER,
-                                                                                             'as_object' => false ) );
+        $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( ['item_id' => $item->attribute( 'id' ), 'participant_type' => eZCollaborationItemParticipantLink::TYPE_USER, 'as_object' => false] );
 
-        $userIDList = array();
-        $participantMap = array();
+        $userIDList = [];
+        $participantMap = [];
         foreach ( $participantList as $participant )
         {
             $userIDList[] = $participant['participant_id'];
@@ -132,12 +126,12 @@ class eZCollaborationItemHandler
 //         $collaborationIdentifier = $event->attribute( 'collaboration_identifier' );
         $collaborationIdentifier = $event->attribute( 'data_text1' );
         $ruleList = eZCollaborationNotificationRule::fetchItemTypeList( $collaborationIdentifier, $userIDList, false );
-        $userIDList = array();
+        $userIDList = [];
         foreach ( $ruleList as $rule )
         {
             $userIDList[] = $rule['user_id'];
         }
-        $userList = array();
+        $userList = [];
         if ( count( $userIDList ) > 0 )
         {
             $db = eZDB::instance();
@@ -185,16 +179,15 @@ class eZCollaborationItemHandler
         }
         else if ( $collectionHandling == self::NOTIFICATION_COLLECTION_PER_PARTICIPATION_ROLE )
         {
-            $userCollection = array();
+            $userCollection = [];
             foreach( $userList as $subscriber )
             {
                 $contentObjectID = $subscriber['contentobject_id'];
                 $participant = $participantMap[$contentObjectID];
                 $participantRole = $participant['participant_role'];
-                $userItem = array( 'participant' => $participant,
-                                   'email' => $subscriber['email'] );
+                $userItem = ['participant' => $participant, 'email' => $subscriber['email']];
                 if ( !isset( $userCollection[$participantRole] ) )
-                    $userCollection[$participantRole] = array();
+                    $userCollection[$participantRole] = [];
                 $userCollection[$participantRole][] = $userItem;
             }
 
@@ -477,7 +470,7 @@ class eZCollaborationItemHandler
         $extensionRoot = eZExtension::baseDirectory();
         foreach ( $extensions as $extension )
         {
-            $handlerPath = eZDir::path( array( $extensionRoot, $extension, 'collaboration' ) );
+            $handlerPath = eZDir::path( [$extensionRoot, $extension, 'collaboration'] );
             if ( file_exists( $handlerPath ) )
                 $repositories[] = $handlerPath;
         }
@@ -501,9 +494,11 @@ class eZCollaborationItemHandler
     */
     static function instantiate( $handler, $repositories = false )
     {
+        $handlerFile = null;
+        $handlerClass = null;
         $objectCache =& $GLOBALS["eZCollaborationHandlerObjectCache"];
         if ( !isset( $objectCache ) )
-            $objectCache = array();
+            $objectCache = [];
         if ( isset( $objectCache[$handler] ) )
             return $objectCache[$handler];
         if ( $repositories === false )
@@ -517,7 +512,7 @@ class eZCollaborationItemHandler
         {
             $handlerFile = $handler . 'collaborationhandler.php';
             $handlerClass = $handler . 'collaborationhandler';
-            $handlerPath = eZDir::path( array( $repository, $handler, $handlerFile ) );
+            $handlerPath = eZDir::path( [$repository, $handler, $handlerFile] );
             if ( file_exists( $handlerPath ) )
             {
                 $foundHandlerFile = true;
@@ -555,7 +550,7 @@ class eZCollaborationItemHandler
         $list =& $GLOBALS['eZCollaborationList'];
         if ( isset( $list ) )
             return $list;
-        $list = array();
+        $list = [];
         $activeHandlers = eZCollaborationItemHandler::activeHandlers();
         $repositories = eZCollaborationItemHandler::handlerRepositories();
         foreach ( $activeHandlers as $handler )

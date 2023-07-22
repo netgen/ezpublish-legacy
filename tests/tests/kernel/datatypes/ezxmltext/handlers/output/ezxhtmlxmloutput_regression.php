@@ -13,7 +13,7 @@ class eZXHTMLXMLOutputRegression extends ezpDatabaseTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->setName( __CLASS__ . " tests" );
+        $this->setName( self::class . " tests" );
     }
 
     /**
@@ -44,7 +44,7 @@ class eZXHTMLXMLOutputRegression extends ezpDatabaseTestCase
 </ul>
  ';
 
-        $this->assertEquals( $expectedResult, $result );
+        static::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -74,7 +74,7 @@ class eZXHTMLXMLOutputRegression extends ezpDatabaseTestCase
         $outputHandler = new eZXHTMLXMLOutput( $XMLString, false );
         $expectedResult = $outputHandler->outputText();
 
-        $this->assertEquals( $expectedResult, $result );
+        static::assertEquals($expectedResult, $result);
     }
 
     /**
@@ -106,7 +106,7 @@ class eZXHTMLXMLOutputRegression extends ezpDatabaseTestCase
 Haustsemesteret, <b>7,5 studiepoeng</b> <br /><b>FP 336 620 Naturfag, del 1</b>: Individuell, skriftleg mappe (HSF Oppdrag/betalingsemne)</p> <p>
 <b>FP334 620 Naturfag, del 2</b> : Individuell, skriftleg eksamen.<br />Tid: 4 timar </p>';
 
-        $this->assertEquals( $html, $result );
+        static::assertEquals($html, $result);
     }
 
     /**
@@ -131,7 +131,7 @@ Haustsemesteret, <b>7,5 studiepoeng</b> <br /><b>FP 336 620 Naturfag, del 1</b>:
         $html = '<p>
 Telephone #1<br />Telephone #2</p>';
 
-        $this->assertEquals( $html, $result );
+        static::assertEquals($html, $result);
     }
 
     /**
@@ -152,7 +152,7 @@ Telephone #1<br />Telephone #2</p>';
         $outputHandler = new eZXHTMLXMLOutput( $XMLString, false );
         $ezp4Result = $outputHandler->outputText();
 
-        $this->assertEquals( $ezp3Result, $ezp4Result );
+        static::assertEquals($ezp3Result, $ezp4Result);
     }
 
     /**
@@ -197,7 +197,7 @@ var_dump( $result );
 
         $expected = '<p><a href="/index.php?c=6&amp;kat=company" target="_self">My link</a></p>';
 
-        $this->assertEquals( $expected, $result );
+        static::assertEquals($expected, $result);
     }
 
     /**
@@ -213,7 +213,7 @@ var_dump( $result );
 
         $outputHandler = new eZXHTMLXMLOutput( $XMLString, false );
 
-        $this->assertEquals( '<a name="eztoc1" id="eztoc1"></a><h2>Heading 1</h2><a name="eztoc1_0_1" id="eztoc1_0_1"></a><h4>Heading 3</h4><a name="eztoc1_1" id="eztoc1_1"></a><h3>Heading 2</h3><table class="renderedtable" border="1" cellpadding="2" cellspacing="0" width="100%" style="width: 100%">
+        static::assertEquals('<a name="eztoc1" id="eztoc1"></a><h2>Heading 1</h2><a name="eztoc1_0_1" id="eztoc1_0_1"></a><h4>Heading 3</h4><a name="eztoc1_1" id="eztoc1_1"></a><h3>Heading 2</h3><table class="renderedtable" border="1" cellpadding="2" cellspacing="0" width="100%" style="width: 100%">
 <tr>
 <td valign="top" style="vertical-align: top">  <a name="eztoc2" id="eztoc2"></a><h2>Heading 1</h2><a name="eztoc2_2" id="eztoc2_2"></a><h3>Heading 2</h3>
   </td>
@@ -229,7 +229,7 @@ var_dump( $result );
 </tr>
 
 </table>
-<a name="eztoc3_3_3" id="eztoc3_3_3"></a><h4>Heading 3</h4><a name="eztoc3_4" id="eztoc3_4"></a><h3>Heading 2</h3>', $outputHandler->outputText() );
+<a name="eztoc3_3_3" id="eztoc3_3_3"></a><h4>Heading 3</h4><a name="eztoc3_4" id="eztoc3_4"></a><h3>Heading 2</h3>', $outputHandler->outputText());
     }
 
 
@@ -261,7 +261,7 @@ var_dump( $result );
 
 </table>
 ';
-        $this->assertEquals( $expected, $outputHandler->outputText() );
+        static::assertEquals($expected, $outputHandler->outputText());
         ezpINIHelper::restoreINISettings();
     }
 
@@ -294,7 +294,7 @@ var_dump( $result );
 
 </table>
 ';
-        $this->assertEquals( $expected, $outputHandler->outputText() );
+        static::assertEquals($expected, $outputHandler->outputText());
         ezpINIHelper::restoreINISettings();
     }
 
@@ -314,7 +314,7 @@ var_dump( $result );
 </section>';
         $outputHandler = new eZXHTMLXMLOutput( $xml, false );
         $expected = '<p>Test Text <i>one</i> <b>two</b> <i>three</i></p>';
-        $this->assertEquals( $expected, $outputHandler->outputText() );
+        static::assertEquals($expected, $outputHandler->outputText());
 
         $xml = '<?xml version="1.0" encoding="utf-8"?>
 <section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
@@ -322,6 +322,6 @@ var_dump( $result );
 </section>';
         $outputHandler = new eZXHTMLXMLOutput( $xml, false );
         $expected = '<p>Test Text <i>one</i><b>two</b><i>three</i></p>';
-        $this->assertEquals( $expected, $outputHandler->outputText() );
+        static::assertEquals($expected, $outputHandler->outputText());
     }
 }

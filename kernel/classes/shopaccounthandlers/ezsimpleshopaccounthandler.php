@@ -109,11 +109,7 @@ class eZSimpleShopAccountHandler
             }
         }
 
-        return array( 'first_name' => $firstName,
-                      'last_name' => $lastName,
-                      'email' => $email,
-                      'address' => $address
-                      );
+        return ['first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'address' => $address];
     }
 }
 

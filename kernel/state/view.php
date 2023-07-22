@@ -43,16 +43,6 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( 'group', $group );
 $tpl->setVariable( 'state', $state );
 
-$Result = array(
-    'content' => $tpl->fetch( 'design:state/view.tpl' ),
-    'path' => array(
-        array( 'url' => false,
-               'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-        array( 'url' => 'state/group/' . $group->attribute( 'identifier' ),
-               'text' => $group->attribute( 'identifier' ) ),
-        array( 'url' => false,
-               'text' => $state->attribute( 'identifier' ) )
-    )
-);
+$Result = ['content' => $tpl->fetch( 'design:state/view.tpl' ), 'path' => [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => 'state/group/' . $group->attribute( 'identifier' ), 'text' => $group->attribute( 'identifier' )], ['url' => false, 'text' => $state->attribute( 'identifier' )]]];
 
 ?>

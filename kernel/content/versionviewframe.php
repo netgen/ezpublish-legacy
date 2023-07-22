@@ -46,7 +46,7 @@ if ( $Module->isCurrentAction( 'Edit' ) and
      $contentObject->attribute( 'can_edit' ) and
      $isCreator )
 {
-    return $Module->redirectToView( 'edit', array( $ObjectID, $EditVersion, $LanguageCode ) );
+    return $Module->redirectToView( 'edit', [$ObjectID, $EditVersion, $LanguageCode] );
 }
 
 // If we have an archived version editing we cannot edit the version directly.
@@ -56,7 +56,7 @@ if ( $Module->isCurrentAction( 'Edit' ) and
      $contentObject->attribute( 'status' ) == eZContentObject::STATUS_ARCHIVED and
      $contentObject->attribute( 'can_edit' ) )
 {
-    return $Module->redirectToView( 'edit', array( $ObjectID, false, $LanguageCode, $FromLanguage ) );
+    return $Module->redirectToView( 'edit', [$ObjectID, false, $LanguageCode, $FromLanguage] );
 }
 
 if ( $Module->isCurrentAction( 'Publish' ) and
@@ -70,18 +70,14 @@ if ( $Module->isCurrentAction( 'Publish' ) and
         $tpl = eZTemplate::factory();
 
         $res = eZTemplateDesignResource::instance();
-        $res->setKeys( array( array( 'object', $contentObject->attribute( 'id' ) ),
-                            array( 'remote_id', $contentObject->attribute( 'remote_id' ) ),
-                            array( 'class', $class->attribute( 'id' ) ),
-                            array( 'class_identifier', $class->attribute( 'identifier' ) ),
-                            array( 'class_group', $class->attribute( 'match_ingroup_id_list' ) ) ) );
+        $res->setKeys( [['object', $contentObject->attribute( 'id' )], ['remote_id', $contentObject->attribute( 'remote_id' )], ['class', $class->attribute( 'id' )], ['class_identifier', $class->attribute( 'identifier' )], ['class_group', $class->attribute( 'match_ingroup_id_list' )]] );
 
         $tpl->setVariable( 'edit_language', $LanguageCode );
         $tpl->setVariable( 'current_version', $versionObject->attribute( 'version' ) );
         $tpl->setVariable( 'object', $contentObject );
         $tpl->setVariable( 'draft_versions', $conflictingVersions );
 
-        $Result = array();
+        $Result = [];
         $Result['content'] = $tpl->fetch( 'design:content/edit_conflict.tpl' );
         $section = eZSection::fetch( $contentObject->attribute( 'section_id' ) );
         if ( $section )
@@ -89,8 +85,7 @@ if ( $Module->isCurrentAction( 'Publish' ) and
             $Result['navigation_part'] = $section->attribute( 'navigation_part_identifier' );
             $Result['section_id'] = $section->attribute( 'id' );
         }
-        $Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Version preview' ),
-                                        'url' => false ) );
+        $Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Version preview' ), 'url' => false]];
         return $Result;
     }
 
@@ -99,8 +94,7 @@ if ( $Module->isCurrentAction( 'Publish' ) and
     $behaviour->disableAsynchronousPublishing = false;
     ezpContentPublishingBehaviour::setBehaviour( $behaviour );
 
-    $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $ObjectID,
-                                                                                 'version' => $EditVersion ) );
+    $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $ObjectID, 'version' => $EditVersion] );
     // redirect if requested by the publishing operation
     if ( isset( $operationResult['status'] ) && ( $operationResult['status'] == eZModuleOperationInfo::STATUS_HALTED ) )
     {
@@ -127,16 +121,16 @@ if ( $Module->isCurrentAction( 'Publish' ) and
         }
         else
         {
-            $Module->redirectToView( 'view', array( 'full', $object->attribute( 'main_parent_node_id' ) ) );
+            $Module->redirectToView( 'view', ['full', $object->attribute( 'main_parent_node_id' )] );
         }
     }
     else if ( $node instanceof eZContentObjectTreeNode && $node->attribute( 'parent_node_id' ) )
     {
-        $Module->redirectToView( 'view', array( 'full', $node->attribute( 'parent_node_id' ) ) );
+        $Module->redirectToView( 'view', ['full', $node->attribute( 'parent_node_id' )] );
     }
     else
     {
-        $Module->redirectToView( 'view', array( 'sitemap', 2 ) );
+        $Module->redirectToView( 'view', ['sitemap', 2] );
     }
 
     return;
@@ -172,7 +166,7 @@ if ( !$siteaccess )
 
 // Try to find a version that has the language we want, by going backwards in the version history
 // Also, gether unique list of translations in all versions up until this one
-$foundTranslationList = array();
+$foundTranslationList = [];
 $viewVersion = $EditVersion;
 $viewVersionObject = false;
 foreach ( array_reverse( $contentObject->versions( false ) ) as $versionHash ) // Loop all versions
@@ -185,7 +179,7 @@ foreach ( array_reverse( $contentObject->versions( false ) ) as $versionHash ) /
     // We only want archived and published versions, since other drafts will not be present in the eventually published version
     // The edit version is also acceptable, even if it is a draft
     if ( in_array( $tmpVersionObject->attribute( 'status' ),
-                   array( eZContentObjectVersion::STATUS_ARCHIVED, eZContentObjectVersion::STATUS_PUBLISHED ) ) or
+                   [eZContentObjectVersion::STATUS_ARCHIVED, eZContentObjectVersion::STATUS_PUBLISHED] ) or
          $viewVersion == $EditVersion )
     {
         $languageCodes = $tmpVersionObject->translations( false );
@@ -238,20 +232,7 @@ if ( $section )
 else
     $navigationPartIdentifier = null;
 
-$keyArray = array( array( 'object', $contentObject->attribute( 'id' ) ),
-                   array( 'node', $node->attribute( 'node_id' ) ),
-                   array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                   array( 'class', $contentObject->attribute( 'contentclass_id' ) ),
-                   array( 'class_identifier', $node->attribute( 'class_identifier' ) ),
-                   array( 'viewmode', 'full' ),
-                   array( 'remote_id', $contentObject->attribute( 'remote_id' ) ),
-                   array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                   array( 'navigation_part_identifier', $navigationPartIdentifier ),
-                   array( 'depth', $node->attribute( 'depth' ) ),
-                   array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                   array( 'class_group', $contentObject->attribute( 'match_ingroup_id_list' ) ),
-                   array( 'state', $contentObject->attribute( 'state_id_array' ) ),
-                   array( 'state_identifier', $contentObject->attribute( 'state_identifier_array' ) ) );
+$keyArray = [['object', $contentObject->attribute( 'id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $contentObject->attribute( 'contentclass_id' )], ['class_identifier', $node->attribute( 'class_identifier' )], ['viewmode', 'full'], ['remote_id', $contentObject->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['navigation_part_identifier', $navigationPartIdentifier], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )], ['class_group', $contentObject->attribute( 'match_ingroup_id_list' )], ['state', $contentObject->attribute( 'state_id_array' )], ['state_identifier', $contentObject->attribute( 'state_identifier_array' )]];
 
 $parentNode = $node->attribute( 'parent' );
 if ( is_object( $parentNode ) )
@@ -259,38 +240,30 @@ if ( is_object( $parentNode ) )
     $parentObject = $parentNode->attribute( 'object' );
     if ( is_object( $parentObject ) )
     {
-        $keyArray[] = array( 'parent_class', $parentObject->attribute( 'contentclass_id' ) );
-        $keyArray[] = array( 'parent_class_identifier', $parentObject->attribute( 'class_identifier' ) );
+        $keyArray[] = ['parent_class', $parentObject->attribute( 'contentclass_id' )];
+        $keyArray[] = ['parent_class_identifier', $parentObject->attribute( 'class_identifier' )];
     }
 }
 
 $parents = $node->attribute( 'path' );
-$path = array();
-$titlePath = array();
+$path = [];
+$titlePath = [];
 foreach ( $parents as $parent )
 {
-    $path[] = array( 'text' => $parent->attribute( 'name' ),
-                     'url' => '/content/view/full/' . $parent->attribute( 'node_id' ),
-                     'url_alias' => $parent->attribute( 'url_alias' ),
-                     'node_id' => $parent->attribute( 'node_id' ) );
+    $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/view/full/' . $parent->attribute( 'node_id' ), 'url_alias' => $parent->attribute( 'url_alias' ), 'node_id' => $parent->attribute( 'node_id' )];
 }
 
 $titlePath = $path;
-$path[] = array( 'text' => $contentObject->attribute( 'name' ),
-                 'url' => false,
-                 'url_alias' => false,
-                 'node_id' => $node->attribute( 'node_id' ) );
+$path[] = ['text' => $contentObject->attribute( 'name' ), 'url' => false, 'url_alias' => false, 'node_id' => $node->attribute( 'node_id' )];
 
-$titlePath[] = array( 'text' => $contentObject->attribute( 'name' ),
-                      'url' => false,
-                      'url_alias' => false );
+$titlePath[] = ['text' => $contentObject->attribute( 'name' ), 'url' => false, 'url_alias' => false];
 
 $tpl->setVariable( 'node_path', $path );
 
 
 $res->setKeys( $keyArray );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/view/versionview.tpl' );
 $Result['node_id'] = $node->attribute( 'node_id' );
 $Result['path'] = $path;

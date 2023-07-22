@@ -36,11 +36,8 @@ Further contact information is available at <a href="http://ez.no/About-eZ/Conta
 <p>Contact eZ Systems if any conditions of this licencing isn't clear to you.</p>
 COPYRIGHT;
 
-$Result = array();
+$Result = [];
 $Result['content'] = $text;
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/ezinfo', 'Info' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/ezinfo', 'Copyright' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/ezinfo', 'Info' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/ezinfo', 'Copyright' )]];
 
 ?>

@@ -27,7 +27,7 @@ if ( $http->hasPostVariable( "View" ) )
 }
 
 $statisticArray = eZOrder::orderStatistics( $year, $month );
-$yearList = array();
+$yearList = [];
 $currentDate = new eZDate();
 $currentYear = $currentDate->attribute( 'year' );
 for ( $index = 0; $index < 10; $index++ )
@@ -36,10 +36,10 @@ for ( $index = 0; $index < 10; $index++ )
 }
 
 $locale = eZLocale::instance();
-$monthList = array();
+$monthList = [];
 for ( $monthIndex = 1; $monthIndex <= 12; $monthIndex++ )
 {
-    $monthList[] = array( 'value' => $monthIndex, 'name' => $locale->longMonthName( $monthIndex ) );
+    $monthList[] = ['value' => $monthIndex, 'name' => $locale->longMonthName( $monthIndex )];
 }
 
 $tpl = eZTemplate::factory();
@@ -49,13 +49,11 @@ $tpl->setVariable( "year_list", $yearList );
 $tpl->setVariable( "month_list", $monthList );
 $tpl->setVariable( "statistic_result", $statisticArray );
 
-$path = array();
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop', 'Statistics' ),
-                 'url' => false );
+$path = [];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop', 'Statistics' ), 'url' => false];
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Statistics' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Statistics' ), 'url' => false]];
 
 $Result['content'] = $tpl->fetch( "design:shop/orderstatistics.tpl" );
 

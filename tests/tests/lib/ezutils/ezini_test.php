@@ -58,7 +58,7 @@ class eZINITest extends ezpTestCase
 
         $overrideDirs = $ini->overrideDirs( false );
         self::assertEquals( 4, count( $ini->overrideDirs() ), 'There should have been three override dirs in total in this ini instance.' );
-        self::assertEquals( 3, count( $overrideDirs['siteaccess'] ), 'There should have been two override dirs in siteaccess scope.' );
+        self::assertEquals( 3, is_countable($overrideDirs['siteaccess']) ? count( $overrideDirs['siteaccess'] ) : 0, 'There should have been two override dirs in siteaccess scope.' );
 
         self::assertTrue( $overrideDirs['siteaccess'][0][1], "This override dir '" . $overrideDirs['siteaccess'][0][0] . "' should have been global(true)" );
 
@@ -85,8 +85,8 @@ class eZINITest extends ezpTestCase
 
         $overrideDirs = $ini->overrideDirs( false );
         self::assertEquals( 4, count( $ini->overrideDirs() ), 'There should have been four override dirs in total in this ini instance.' );
-        self::assertEquals( 3, count( $overrideDirs['extension'] ), 'There should have been three override dirs in extension scope.' );
-        self::assertEquals( 1, count( $overrideDirs['sa-extension'] ), 'There should have been one override dir in sa-extension scope.' );
+        self::assertEquals( 3, is_countable($overrideDirs['extension']) ? count( $overrideDirs['extension'] ) : 0, 'There should have been three override dirs in extension scope.' );
+        self::assertEquals( 1, is_countable($overrideDirs['sa-extension']) ? count( $overrideDirs['sa-extension'] ) : 0, 'There should have been one override dir in sa-extension scope.' );
     }
 
     /**
@@ -108,8 +108,8 @@ class eZINITest extends ezpTestCase
 
         $overrideDirs = $ini->overrideDirs( false );
         self::assertEquals( 3, count( $ini->overrideDirs() ), 'There should have been three override dirs in total in this ini instance.' );
-        self::assertEquals( 2, count( $overrideDirs['extension'] ), 'There should have been two override dirs in extension scope.' );
-        self::assertEquals( 0, count( $overrideDirs['sa-extension'] ), 'There should have been 0 override dirs in sa-extension scope.' );
+        self::assertEquals( 2, is_countable($overrideDirs['extension']) ? count( $overrideDirs['extension'] ) : 0, 'There should have been two override dirs in extension scope.' );
+        self::assertEquals( 0, is_countable($overrideDirs['sa-extension']) ? count( $overrideDirs['sa-extension'] ) : 0, 'There should have been 0 override dirs in sa-extension scope.' );
         self::assertTrue( $success, '$ini->removeOverrideDir( \'extension:ext1\', \'sa-extension\' ) should have been returned true as identifier does exist.' );
         self::assertFalse( $failed, '$ini->removeOverrideDir( \'extension:ext8\' ) should have been returned false as identifier does not exist.' );
     }

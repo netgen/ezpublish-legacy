@@ -19,7 +19,7 @@ class eZRoleFunctionCollection
     function fetchRole( $roleID )
     {
         $role = eZRole::fetch( $roleID );
-        return array( 'result' => $role );
+        return ['result' => $role];
     }
 
 }

@@ -21,16 +21,14 @@ class ezpKernelRedirect extends ezpKernelResult
 
     /**
      * Redirection status code (e.g. 302).
-     *
-     * @var int
      */
-    private $statusCode;
+    private readonly int $statusCode;
 
     public function __construct( $url, $redirectStatus = null, $content = null )
     {
         $this->targetUrl = $url ?: '/';
-        $this->statusCode = $redirectStatus ? (int)substr( $redirectStatus, 0, 3 ) : 302;
-        parent::__construct( $content, array( 'status' => $redirectStatus ) );
+        $this->statusCode = $redirectStatus ? (int)substr( (string) $redirectStatus, 0, 3 ) : 302;
+        parent::__construct( $content, ['status' => $redirectStatus] );
     }
 
     /**

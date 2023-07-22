@@ -72,7 +72,7 @@ class eZPostgreSQLDBTest extends ezpDatabaseTestCase
 
         $relationList = $db->relationList( eZDBInterface::RELATION_TABLE );
         sort( $relationList );
-        $relationArray = array( "a", "b", "c" );
+        $relationArray = ["a", "b", "c"];
         self::assertEquals( $relationArray, $relationList );
     }
 }

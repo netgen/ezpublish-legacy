@@ -51,15 +51,15 @@ class eZTemplateAttributeOperatorTest extends ezpDatabaseTestCase
         $attrOp = new eZTemplateAttributeOperator();
         $outputTxt = '';
         $formatterMock = $this->getMock( 'ezpAttributeOperatorFormatterInterface' );
-        $formatterMock->expects( $this->any() )
+        $formatterMock->expects( static::any() )
                       ->method( 'line' )
-                      ->will( $this->returnValue( __METHOD__ ) );
+                      ->will( static::returnValue(__METHOD__) );
 
         try
         {
             $attrOp->displayVariable( $node, $formatterMock, true, 2, 0, $outputTxt );
         }
-        catch ( PHPUnit_Framework_Error $e )
+        catch ( PHPUnit_Framework_Error )
         {
             self::fail( "eZTemplateAttributeOperator raises an error when working with objects." );
         }

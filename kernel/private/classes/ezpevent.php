@@ -23,7 +23,7 @@ class ezpEvent
      *
      * @var array
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * Count of listeners, used to generate listener id
@@ -41,21 +41,13 @@ class ezpEvent
     protected static $instance = null;
 
     /**
-     * Load global events from ini settings or not
-     *
-     * @var bool
-     */
-    protected $loadGlobalEvents;
-
-    /**
      * Constructer
      * In most cases you would want to use {@see getInstance()} instead
      *
      * @param bool $loadGlobalEvents Load global events from ini settings
      */
-    public function __construct( $loadGlobalEvents = true )
+    public function __construct(protected $loadGlobalEvents = true)
     {
-        $this->loadGlobalEvents = $loadGlobalEvents;
     }
 
     /**
@@ -75,7 +67,7 @@ class ezpEvent
                 }
 
                 // format from ini is seperated by @
-                list( $event, $callback ) = explode( '@', $listener );
+                [$event, $callback] = explode( '@', (string) $listener );
                 $this->attach( $event, $callback );
             }
         }
@@ -92,7 +84,7 @@ class ezpEvent
     {
         $id = self::$listenerIdNumber++;
         // explode callback if static class string, workaround for PHP < 5.2.3
-        if ( is_string( $listener ) && strpos( $listener, '::' ) !== false )
+        if ( is_string( $listener ) && str_contains( $listener, '::' ) )
         {
             $listener = explode( '::', $listener );
         }
@@ -126,7 +118,7 @@ class ezpEvent
      * @param array $params The arguments for the specific event as simple array structure (not hash)
      * @return bool True if some listener where called
      */
-    public function notify( $name, array $params = array() )
+    public function notify( $name, array $params = [] )
     {
         if ( empty( $this->listeners[$name] ) )
         {

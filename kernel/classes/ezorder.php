@@ -18,111 +18,18 @@
 
 class eZOrder extends eZPersistentObject
 {
-    const SHOW_NORMAL = 0;
-    const SHOW_ARCHIVED = 1;
-    const SHOW_ALL = 2;
+    final public const SHOW_NORMAL = 0;
+    final public const SHOW_ARCHIVED = 1;
+    final public const SHOW_ALL = 2;
 
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Status = null;
     }
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "order_nr" => array( 'name' => "OrderNr",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         "is_temporary" => array( 'name' => "IsTemporary",
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 1,
-                                                                  'required' => true ),
-                                         "user_id" => array( 'name' => "UserID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "productcollection_id" => array( 'name' => "ProductCollectionID",
-                                                                          'datatype' => 'integer',
-                                                                          'default' => 0,
-                                                                          'required' => true,
-                                                                          'foreign_class' => 'eZProductCollection',
-                                                                          'foreign_attribute' => 'id',
-                                                                          'multiplicity' => '1..*' ),
-                                         "data_text_1" => array( 'name' => "DataText1",
-                                                                 'datatype' => 'text',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         "data_text_2" => array( 'name' => "DataText2",
-                                                                 'datatype' => 'text',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         "account_identifier" => array( 'name' => "AccountIdentifier",
-                                                                        'datatype' => 'string',
-                                                                        'default' => 'default',
-                                                                        'required' => true ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "ignore_vat" => array( 'name' => "IgnoreVAT",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         "email" => array( 'name' => "Email",
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         "status_id" => array( 'name' => 'StatusID',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => false,
-                                                               'foreign_class' => 'eZOrderStatus',
-                                                               'foreign_attribute' => 'id',
-                                                               'multiplicity' => '1..*' ),
-                                         "status_modified" => array( 'name' => "StatusModified",
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true ),
-                                         "status_modifier_id" => array( 'name' => "StatusModifierID",
-                                                                        'datatype' => 'integer',
-                                                                        'default' => 0,
-                                                                        'required' => true,
-                                                                        'foreign_class' => 'eZUser',
-                                                                        'foreign_attribute' => 'contentobject_id',
-                                                                        'multiplicity' => '1..*' ),
-                                         "is_archived" => array( 'name' => "IsArchived",
-                                                                        'datatype' => 'integer',
-                                                                        'default' => 0,
-                                                                        'required' => true ) ),
-                      'function_attributes' => array( 'status_name' => 'statusName',
-                                                      'status' => 'statusObject',
-                                                      'status_modification_list' => 'statusModificationList',
-                                                      'product_items' => 'productItems',
-                                                      'product_items_ordered' => 'productItemsOrdered',
-                                                      'order_items' => 'orderItems',
-                                                      'product_total_inc_vat' => 'productTotalIncVAT',
-                                                      'product_total_ex_vat' => 'productTotalExVAT',
-                                                      'total_inc_vat' => 'totalIncVAT',
-                                                      'total_ex_vat' => 'totalExVAT',
-                                                      'user' => 'user',
-                                                      'account_view_template' => 'accountViewTemplate',
-                                                      'account_information' => 'accountInformation',
-                                                      'account_name' => 'accountName',
-                                                      'account_email' => 'accountEmail',
-                                                      'productcollection' => 'productCollection',
-                                                      'order_info' => 'orderInfo' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZOrder",
-                      "name" => "ezorder" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "order_nr" => ['name' => "OrderNr", 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_temporary" => ['name' => "IsTemporary", 'datatype' => 'integer', 'default' => 1, 'required' => true], "user_id" => ['name' => "UserID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "productcollection_id" => ['name' => "ProductCollectionID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZProductCollection', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "data_text_1" => ['name' => "DataText1", 'datatype' => 'text', 'default' => '', 'required' => true], "data_text_2" => ['name' => "DataText2", 'datatype' => 'text', 'default' => '', 'required' => true], "account_identifier" => ['name' => "AccountIdentifier", 'datatype' => 'string', 'default' => 'default', 'required' => true], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], "ignore_vat" => ['name' => "IgnoreVAT", 'datatype' => 'integer', 'default' => 0, 'required' => true], "email" => ['name' => "Email", 'datatype' => 'string', 'default' => '', 'required' => true], "status_id" => ['name' => 'StatusID', 'datatype' => 'integer', 'default' => 0, 'required' => false, 'foreign_class' => 'eZOrderStatus', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "status_modified" => ['name' => "StatusModified", 'datatype' => 'integer', 'default' => 0, 'required' => true], "status_modifier_id" => ['name' => "StatusModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "is_archived" => ['name' => "IsArchived", 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'function_attributes' => ['status_name' => 'statusName', 'status' => 'statusObject', 'status_modification_list' => 'statusModificationList', 'product_items' => 'productItems', 'product_items_ordered' => 'productItemsOrdered', 'order_items' => 'orderItems', 'product_total_inc_vat' => 'productTotalIncVAT', 'product_total_ex_vat' => 'productTotalExVAT', 'total_inc_vat' => 'totalIncVAT', 'total_ex_vat' => 'totalExVAT', 'user' => 'user', 'account_view_template' => 'accountViewTemplate', 'account_information' => 'accountInformation', 'account_name' => 'accountName', 'account_email' => 'accountEmail', 'productcollection' => 'productCollection', 'order_info' => 'orderInfo'], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZOrder", "name" => "ezorder"];
     }
 
 
@@ -171,7 +78,7 @@ class eZOrder extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZOrder::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -179,7 +86,7 @@ class eZOrder extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZOrder::definition(),
                                                     null, null,
-                                                    array( "created" => "desc" ), null,
+                                                    ["created" => "desc"], null,
                                                     $asObject );
     }
 
@@ -187,9 +94,8 @@ class eZOrder extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZOrder::definition(),
                                                     null,
-                                                    array( "user_id" => $userID,
-                                                           'is_temporary' => 0 ),
-                                                    array( "created" => "desc" ), null,
+                                                    ["user_id" => $userID, 'is_temporary' => 0],
+                                                    ["created" => "desc"], null,
                                                     $asObject );
     }
 
@@ -197,26 +103,25 @@ class eZOrder extends eZPersistentObject
     {
         $table = ( $table === null ? '' : $table . '.' );
 
-        switch( $show )
-        {
-            case eZOrder::SHOW_NORMAL   : return $table."is_archived = '0'"; break;
-            case eZOrder::SHOW_ARCHIVED : return $table."is_archived = '1'"; break;
-            case eZOrder::SHOW_ALL      :
-            default                   : return $table."is_archived IN (0, 1)"; break;
-        }
+        return match ($show) {
+            eZOrder::SHOW_NORMAL => $table."is_archived = '0'",
+            eZOrder::SHOW_ARCHIVED => $table."is_archived = '1'",
+            default => $table."is_archived IN (0, 1)",
+        };
     }
 
 
     /*!
      \return the active orders
     */
-    static function active( $asObject = true, $offset, $limit, $sortField = "created", $sortOrder = "asc", $show = eZOrder::SHOW_NORMAL )
+    static function active( $offset, $limit, $asObject = true, $sortField = "created", $sortOrder = "asc", $show = eZOrder::SHOW_NORMAL )
     {
+        $where = [];
         if ( $sortField == "user_name" )
         {
             $db = eZDB::instance();
 
-            $db_params = array();
+            $db_params = [];
             $db_params["offset"] =(int) $offset;
             $db_params["limit"] =(int) $limit;
             $sortOrder = $db->escapeString( $sortOrder );
@@ -233,7 +138,7 @@ class eZOrder extends eZPersistentObject
             $orderArray = $db->arrayQuery( $query, $db_params );
             if ( $asObject )
             {
-                $retOrders = array();
+                $retOrders = [];
                 foreach ( $orderArray as $order )
                 {
                     $order = new eZOrder( $order );
@@ -257,9 +162,8 @@ class eZOrder extends eZPersistentObject
             return eZPersistentObject::fetchObjectList( eZOrder::definition(),
                                                         null,
                                                         $where ,
-                                                        array( $sortField => $sortOrder ),
-                                                        array( 'offset' => $offset,
-                                                               'length' => $limit ), $asObject );
+                                                        [$sortField => $sortOrder],
+                                                        ['offset' => $offset, 'length' => $limit], $asObject );
         }
     }
 
@@ -272,7 +176,7 @@ class eZOrder extends eZPersistentObject
 
         $query = 'SELECT count( * ) AS count FROM ezorder WHERE ' . eZOrder::getShowOrdersQuery( $show ) . ' AND is_temporary=\'0\'';
         $countArray = $db->arrayQuery( $query );
-        return isset( $countArray[0]['count'] ) ? $countArray[0]['count'] : 0;
+        return $countArray[0]['count'] ?? 0;
     }
 
     /*!
@@ -281,6 +185,8 @@ class eZOrder extends eZPersistentObject
     */
     static function orderStatistics( $year = false, $month = false )
     {
+        $startDate = null;
+        $stopDate = null;
         if ( $year == false )
         {
             $startDate = 0;
@@ -305,14 +211,14 @@ class eZOrder extends eZPersistentObject
                                                   AND ezorder.created >= '$startDate' AND ezorder.created < '$stopDate'
                                              ORDER BY contentobject_id, currency_code" );
         $currentContentObjectID = 0;
-        $productItemArray = array();
+        $productItemArray = [];
         $itemCount = 0;
         $name = false;
-        $productInfo = array();
-        $totalSumInfo = array();
+        $productInfo = [];
+        $totalSumInfo = [];
         $firstPass = true;
         // Hash of ContentObject ID, the value will be replaced by the correct object once all IDs are known.
-        $contentObjectIDHash = array();
+        $contentObjectIDHash = [];
         foreach( $productArray as $productItem )
         {
             $itemCount++;
@@ -327,13 +233,13 @@ class eZOrder extends eZPersistentObject
 
             if ( $currentContentObjectID != $contentObjectID && $itemCount != 1 )
             {
-                $productItemArray[] = array(
+                $productItemArray[] = [
                     'name' => $name,
                     // Reference to the entry that will contain the ContentObject at the end
                     'product' => &$contentObjectIDHash[$currentContentObjectID],
-                    'product_info' => $productInfo
-                );
-                $productInfo = array();
+                    'product_info' => $productInfo,
+                ];
+                $productInfo = [];
                 $name = $productItem['name'];
                 $currentContentObjectID = $contentObjectID;
                 $contentObjectIDHash[$currentContentObjectID] = true;
@@ -347,14 +253,11 @@ class eZOrder extends eZPersistentObject
 
             if ( !isset( $productInfo[$currencyCode] ) )
             {
-                $productInfo[$currencyCode] = array( 'sum_count' => 0,
-                                                     'sum_ex_vat' => 0,
-                                                     'sum_inc_vat' => 0 );
+                $productInfo[$currencyCode] = ['sum_count' => 0, 'sum_ex_vat' => 0, 'sum_inc_vat' => 0];
             }
             if ( !isset( $totalSumInfo[$currencyCode] ) )
             {
-                $totalSumInfo[$currencyCode] = array( 'sum_ex_vat' => 0,
-                                                      'sum_inc_vat' => 0 );
+                $totalSumInfo[$currencyCode] = ['sum_ex_vat' => 0, 'sum_inc_vat' => 0];
             }
 
             if ( $productItem['ignore_vat']== true )
@@ -395,26 +298,21 @@ class eZOrder extends eZPersistentObject
         // add last product info
         if ( !empty( $productArray ) )
         {
-            $productItemArray[] = array(
+            $productItemArray[] = [
                 'name' => $name,
                 // Reference to the entry that will contain the ContentObject at the end
                 'product' => &$contentObjectIDHash[$currentContentObjectID],
-                'product_info' => $productInfo
-            );
+                'product_info' => $productInfo,
+            ];
 
             // Fetching all ContentObject ids in one query, filling the hash with the corresponding ContentObject
-            foreach ( eZContentObject::fetchList( true, array( "id" => array( array_keys( $contentObjectIDHash ) ) ) ) as $contentObject )
+            foreach ( eZContentObject::fetchList( true, ["id" => [array_keys( $contentObjectIDHash )]] ) as $contentObject )
             {
                 $contentObjectIDHash[$contentObject->ID] = $contentObject;
             }
         }
 
-        return array(
-            array(
-                'product_list' => $productItemArray,
-                'total_sum_info' => $totalSumInfo
-            )
-        );
+        return [['product_list' => $productItemArray, 'total_sum_info' => $totalSumInfo]];
     }
 
     /*!
@@ -442,7 +340,7 @@ class eZOrder extends eZPersistentObject
                                               AND email='$Email'
                                          ORDER BY order_nr" );
         }
-        $retOrders = array();
+        $retOrders = [];
         foreach( $orderArray as $orderRows )
         {
             $retOrders[] = new eZOrder( $orderRows );
@@ -480,11 +378,11 @@ class eZOrder extends eZPersistentObject
                                              ORDER BY contentobject_id, currency_code" );
         }
         $currentContentObjectID = 0;
-        $productItemArray = array();
+        $productItemArray = [];
         $productObject = null;
         $itemCount = 0;
         $name = false;
-        $productInfo = array();
+        $productInfo = [];
 
         foreach( $productArray as $productItem )
         {
@@ -505,11 +403,9 @@ class eZOrder extends eZPersistentObject
             }
             if ( $currentContentObjectID != $contentObjectID && $itemCount != 1 )
             {
-                $productItemArray[] = array( 'name' => $name,
-                                             'product' => $productObject,
-                                             'product_info' => $productInfo );
+                $productItemArray[] = ['name' => $name, 'product' => $productObject, 'product_info' => $productInfo];
                 unset( $productObject );
-                $productInfo = array();
+                $productInfo = [];
                 $name = $productItem['name'];
                 $currentContentObjectID = $contentObjectID;
                 if ( $contentObjectID != 0 )
@@ -530,9 +426,7 @@ class eZOrder extends eZPersistentObject
 
             if ( !isset( $productInfo[$currencyCode] ) )
             {
-                $productInfo[$currencyCode] = array( 'sum_count' => 0,
-                                                     'sum_ex_vat' => 0,
-                                                     'sum_inc_vat' => 0 );
+                $productInfo[$currencyCode] = ['sum_count' => 0, 'sum_ex_vat' => 0, 'sum_inc_vat' => 0];
             }
 
             if ( $productItem['ignore_vat'] == true )
@@ -566,9 +460,7 @@ class eZOrder extends eZPersistentObject
         }
         if ( count( $productArray ) != 0 )
         {
-            $productItemArray[] = array( 'name' => $name,
-                                         'product' => $productObject,
-                                         'product_info' => $productInfo );
+            $productItemArray[] = ['name' => $name, 'product' => $productObject, 'product_info' => $productInfo];
         }
         return $productItemArray;
     }
@@ -590,12 +482,12 @@ class eZOrder extends eZPersistentObject
     {
         $db = eZDB::instance();
 
-        $db_params = array();
+        $db_params = [];
         $db_params["offset"] =(int) $offset;
         $db_params["limit"] =(int) $limit;
 
         $customEmailResult = $db->arrayQuery( "SELECT DISTINCT email FROM ezorder WHERE is_temporary='0' ORDER BY email", $db_params );
-        $customEmailArray = array();
+        $customEmailArray = [];
 
         foreach( $customEmailResult as $customEmailRow )
         {
@@ -624,12 +516,12 @@ class eZOrder extends eZPersistentObject
         $currentUserID = 0;
         $currentOrderID = 0;
         $currentUserEmail = "";
-        $customArray = array();
+        $customArray = [];
         $accountName = null;
         $itemCount = 0;
         $hash = 0;
         $currencyCode = '';
-        $ordersInfo = array();
+        $ordersInfo = [];
 
         foreach( $productItemArray as $productItem )
         {
@@ -646,12 +538,9 @@ class eZOrder extends eZPersistentObject
 
             if ( $currentUserID != $userID && $itemCount != 1 )
             {
-                $customArray[] = array( 'account_name' => $accountName,
-                                        'orders_info' => $ordersInfo,
-                                        'user_id' => $currentUserID,
-                                        'email' => urlencode( $currentUserEmail ) );
+                $customArray[] = ['account_name' => $accountName, 'orders_info' => $ordersInfo, 'user_id' => $currentUserID, 'email' => urlencode( (string) $currentUserEmail )];
 
-                $ordersInfo = array();
+                $ordersInfo = [];
                 $accountName = $order->attribute( 'account_name' );
                 $accountEmail = $order->attribute( 'account_email' );
             }
@@ -670,12 +559,9 @@ class eZOrder extends eZPersistentObject
 
                 if ( $currentUserEmail != $accountEmail )
                 {
-                    $customArray[] = array( 'account_name' => $accountName,
-                                            'orders_info' => $ordersInfo,
-                                            'user_id' => $currentUserID,
-                                            'email' => urlencode( $currentUserEmail ) );
+                    $customArray[] = ['account_name' => $accountName, 'orders_info' => $ordersInfo, 'user_id' => $currentUserID, 'email' => urlencode( (string) $currentUserEmail )];
 
-                    $ordersInfo = array();
+                    $ordersInfo = [];
                     $accountName = $order->attribute( 'account_name' );
                     $accountEmail = $order->attribute( 'account_email' );
                     $currentUserEmail = $accountEmail;
@@ -691,9 +577,7 @@ class eZOrder extends eZPersistentObject
 
             if ( !isset( $ordersInfo[$currencyCode] ) )
             {
-                $ordersInfo[$currencyCode] = array( 'order_count' => 0,
-                                                    'sum_ex_vat' => 0,
-                                                    'sum_inc_vat' => 0 );
+                $ordersInfo[$currencyCode] = ['order_count' => 0, 'sum_ex_vat' => 0, 'sum_inc_vat' => 0];
             }
 
             if (  $currentOrderID != $orderID )
@@ -730,10 +614,7 @@ class eZOrder extends eZPersistentObject
             $ordersInfo[$currencyCode]['sum_inc_vat'] += round( $count * $priceIncVAT * $realPricePercent, 2 );
         }
         if ( count( $productItemArray ) != 0 )
-            $customArray[] = array( 'account_name' => $accountName,
-                                    'orders_info' => $ordersInfo,
-                                    'user_id' => $currentUserID,
-                                    'email' => urlencode( $currentUserEmail ) );
+            $customArray[] = ['account_name' => $accountName, 'orders_info' => $ordersInfo, 'user_id' => $currentUserID, 'email' => urlencode( (string) $currentUserEmail )];
         return $customArray;
     }
 
@@ -744,11 +625,7 @@ class eZOrder extends eZPersistentObject
     {
         return eZDiscount::discountPercent(
             eZUser::fetch( $userID ),
-            array(
-                'contentclass_id' => $object->attribute( 'contentclass_id'),
-                'contentobject_id' => $object->attribute( 'id' ),
-                'section_id' => $object->attribute( 'section_id')
-            )
+            ['contentclass_id' => $object->attribute( 'contentclass_id'), 'contentobject_id' => $object->attribute( 'id' ), 'section_id' => $object->attribute( 'section_id')]
         );
     }
 
@@ -762,12 +639,12 @@ class eZOrder extends eZPersistentObject
     {
         $productItems = eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
                                                        null,
-                                                       array( 'productcollection_id' => $this->ProductCollectionID ),
+                                                       ['productcollection_id' => $this->ProductCollectionID],
                                                        $sorts,
                                                        null,
                                                        $asObject );
 
-        $addedProducts = array();
+        $addedProducts = [];
         foreach ( $productItems as  $productItem )
         {
             $contentObject = $productItem->attribute( 'contentobject' );
@@ -807,17 +684,7 @@ class eZOrder extends eZPersistentObject
             $count = $productItem->attribute( 'item_count' );
             $discountPercent = $productItem->attribute( 'discount' );
             $realPricePercent = ( 100 - $discountPercent ) / 100;
-            $addedProducts[] = array( "id" => $productItem->attribute( 'id' ),
-                                   "vat_value" => $vatValue,
-                                   "item_count" => $count,
-                                   "node_id" => $nodeID,
-                                   "object_name" => $objectName,
-                                   "price_ex_vat" => $priceExVAT,
-                                   "price_inc_vat" => $priceIncVAT,
-                                   "discount_percent" => $discountPercent,
-                                   "total_price_ex_vat" => round( $count * $priceExVAT * $realPricePercent, 2 ),
-                                   "total_price_inc_vat" => round( $count * $priceIncVAT * $realPricePercent, 2 ),
-                                   'item_object' => $productItem );
+            $addedProducts[] = ["id" => $productItem->attribute( 'id' ), "vat_value" => $vatValue, "item_count" => $count, "node_id" => $nodeID, "object_name" => $objectName, "price_ex_vat" => $priceExVAT, "price_inc_vat" => $priceIncVAT, "discount_percent" => $discountPercent, "total_price_ex_vat" => round( $count * $priceExVAT * $realPricePercent, 2 ), "total_price_inc_vat" => round( $count * $priceIncVAT * $realPricePercent, 2 ), 'item_object' => $productItem];
         }
         return $addedProducts;
     }
@@ -830,7 +697,7 @@ class eZOrder extends eZPersistentObject
      */
     function productItemsOrdered( $asObject = true, $order = true )
     {
-        return $this->productItems( $asObject, array( 'id' => ( $order ? 'asc' : 'desc' )) );
+        return $this->productItems( $asObject, ['id' => ( $order ? 'asc' : 'desc' )] );
     }
 
     function productTotalIncVAT()
@@ -862,7 +729,7 @@ class eZOrder extends eZPersistentObject
         $items = $this->orderItems();
 
         $total = 0.0;
-        if ( count( $items ) > 0 )
+        if ( (is_countable($items) ? count( $items ) : 0) > 0 )
         {
             foreach ( $items as $item )
             {
@@ -877,7 +744,7 @@ class eZOrder extends eZPersistentObject
         $items = $this->orderItems();
 
         $total = 0.0;
-        if ( count( $items ) > 0 )
+        if ( (is_countable($items) ? count( $items ) : 0) > 0 )
         {
             foreach ( $items as $item )
             {
@@ -1115,7 +982,7 @@ class eZOrder extends eZPersistentObject
 
         $currentStatusID = $this->attribute( "status_id" );
 
-        $statusList = array();
+        $statusList = [];
         if ( $accessWord == 'yes' )
         {
             // We have full access so we return all of them
@@ -1128,7 +995,7 @@ class eZOrder extends eZPersistentObject
             $limitationList = $accessResult['policies'];
             $access = true;
             // All 'to' statues will be appended to this array
-            $accessList = array();
+            $accessList = [];
             foreach ( $limitationList as $pid => $limit )
             {
                 $access = true;
@@ -1158,7 +1025,7 @@ class eZOrder extends eZPersistentObject
             }
             if ( count( $accessList ) > 0 )
             {
-                $accessList = array_unique( array_merge( $accessList, array( $currentStatusID ) ) );
+                $accessList = array_unique( array_merge( $accessList, [$currentStatusID] ) );
                 $statuses = eZOrderStatus::fetchOrderedList( true, false );
                 foreach ( $statuses as $status )
                 {
@@ -1345,8 +1212,7 @@ class eZOrder extends eZPersistentObject
         if ( count( $rows ) > 0 )
         {
             // Who deletes which order in shop should be logged.
-            eZAudit::writeAudit( 'order-delete', array( 'Order ID' => $orderID,
-                                                        'Comment' => 'Removed the order and its related data from the database: eZOrder::cleanupOrder()' ) );
+            eZAudit::writeAudit( 'order-delete', ['Order ID' => $orderID, 'Comment' => 'Removed the order and its related data from the database: eZOrder::cleanupOrder()'] );
 
             $productCollectionID = $rows[0]['productcollection_id'];
             $orderNr = (int)$rows[0]['order_nr'];
@@ -1401,7 +1267,7 @@ class eZOrder extends eZPersistentObject
         $db->begin();
         if ( count( $rows ) > 0 )
         {
-            $productCollectionIDList = array();
+            $productCollectionIDList = [];
             foreach ( $rows as $row )
             {
                 $productCollectionIDList[] = $row['productcollection_id'];
@@ -1409,9 +1275,9 @@ class eZOrder extends eZPersistentObject
             eZProductCollection::cleanupList( $productCollectionIDList );
         }
         // Who deletes which order in shop should be logged.
-        eZAudit::writeAudit( 'order-delete', array( 'Comment' => 'Removed all orders from the database: eZOrder::cleanup()' ) );
+        eZAudit::writeAudit( 'order-delete', ['Comment' => 'Removed all orders from the database: eZOrder::cleanup()'] );
 
-        eZOrderItem::cleanup();
+        (new eZOrderItem())->cleanup();
         $db->query( "DELETE FROM ezorder_status_history" );
         $db->query( "DELETE FROM ezorder" );
         $db->commit();
@@ -1419,7 +1285,7 @@ class eZOrder extends eZPersistentObject
 
     function orderInfo()
     {
-        $returnArray = array();
+        $returnArray = [];
 
         $items = $this->productItems();
         foreach ( $items as $item )
@@ -1456,7 +1322,7 @@ class eZOrder extends eZPersistentObject
         }
 
         $orderItems = $this->orderItems();
-        if ( count( $orderItems ) > 0 )
+        if ( (is_countable($orderItems) ? count( $orderItems ) : 0) > 0 )
         {
             foreach ( $orderItems as $orderItem )
             {
@@ -1528,7 +1394,7 @@ class eZOrder extends eZPersistentObject
         }
         else
         {
-            $returnArray['additional_info'] = array();
+            $returnArray['additional_info'] = [];
         }
 
         ksort( $returnArray['price_info']['items'] );
@@ -1580,7 +1446,7 @@ class eZOrder extends eZPersistentObject
 
     /// \privatesection
     /// The cached status object or \c null if not cached yet.
-    public $Status;
+    public $Status = null;
 
 }
 

@@ -55,16 +55,10 @@ class eZMath
         $min = min( $cya, $mag, $yel );
         if ( 1 - $min == 0 )
         {
-            return array( 'c' => 1,
-                          'm' => 1,
-                          'y' => 1,
-                          'k' => 0 );
+            return ['c' => 1, 'm' => 1, 'y' => 1, 'k' => 0];
         }
 
-        return array( 'c' => ( $cya - $min ) / ( 1 - $min ),
-                      'm' => ( $mag - $min ) / ( 1 - $min ),
-                      'y' => ( $yel - $min ) / ( 1 - $min ),
-                      'k' => $min );
+        return ['c' => ( $cya - $min ) / ( 1 - $min ), 'm' => ( $mag - $min ) / ( 1 - $min ), 'y' => ( $yel - $min ) / ( 1 - $min ), 'k' => $min];
     }
 
     /*!
@@ -80,9 +74,7 @@ class eZMath
     */
     static function rgbToCMYK2( $r, $g, $b )
     {
-        return eZMath::rgbToCMYK( array( 'r' => $r,
-                                         'g' => $g,
-                                         'b' => $b ) );
+        return eZMath::rgbToCMYK( ['r' => $r, 'g' => $g, 'b' => $b] );
     }
 }
 ?>

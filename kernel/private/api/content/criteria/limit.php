@@ -12,23 +12,20 @@
  * This class allows for configuration of an offset/limit based criteria
  * @package API
  */
-class ezpContentLimitCriteria implements ezpContentCriteriaInterface
+class ezpContentLimitCriteria implements ezpContentCriteriaInterface, \Stringable
 {
     /**
      * Current offset
-     * @var int
      */
-    private $offset;
+    private int $offset = 0;
 
     /**
      * Current limit
-     * @var int
      */
-    private $limit;
+    private ?int $limit = null;
 
     public function __construct()
     {
-        $this->offset = 0;
     }
 
     /**
@@ -61,16 +58,12 @@ class ezpContentLimitCriteria implements ezpContentCriteriaInterface
 
     public function translate()
     {
-        $aTranslation = array(
-            'type'      => 'param',
-            'name'      => array( 'Offset', 'Limit' ),
-            'value'     => array( $this->offset, $this->limit )
-        );
+        $aTranslation = ['type'      => 'param', 'name'      => ['Offset', 'Limit'], 'value'     => [$this->offset, $this->limit]];
 
         return $aTranslation;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return 'With offset : '.$this->offset.' / limit : '.$this->limit;
     }

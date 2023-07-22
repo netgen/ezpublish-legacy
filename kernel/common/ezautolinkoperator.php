@@ -17,7 +17,7 @@ class eZAutoLinkOperator
      */
     public function __construct( $name = 'autolink' )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -33,17 +33,15 @@ class eZAutoLinkOperator
     */
     function namedParameterList()
     {
-        return array( 'max_chars' => array( 'type' => 'integer',
-                                            'required' => false,
-                                            'default' => null ) );
+        return ['max_chars' => ['type' => 'integer', 'required' => false, 'default' => null]];
     }
 
     function formatUri( $url, $max )
     {
         $text = $url;
-        if (strlen($text) > $max)
+        if (strlen((string) $text) > $max)
         {
-            $text = substr($text, 0, ($max / 2) - 3). '...'. substr($text, strlen($text) - ($max / 2));
+            $text = substr((string) $text, 0, ($max / 2) - 3). '...'. substr((string) $text, strlen((string) $text) - ($max / 2));
         }
         return "<a href=\"$url\" title=\"$url\">$text</a>";
     }
@@ -55,8 +53,8 @@ class eZAutoLinkOperator
     {
         return preg_replace_callback(
             "`(?<!href=\"|href='|src=\"|src='|value=\"|value=')($methods):\/\/[\w]+(.[\w]+)([\w\-\.,@?^=%&:\/~\+#;*\(\)\!]*[\w\-\@?^=%&\/~\+#;*\(\)\!])?`",
-            function($matches) use ($max) { return eZAutoLinkOperator::formatUri( $matches[0], $max ); },
-            $text
+            fn($matches) => (new eZAutoLinkOperator())->formatUri($matches[0], $max),
+            (string) $text
         );
     }
 
@@ -74,10 +72,10 @@ class eZAutoLinkOperator
         $methodText = implode( '|', $methods );
 
         // Replace mail
-        $operatorValue = preg_replace( "#(([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+)#", "<a href='mailto:\\1'>\\1</a>", $operatorValue );
+        $operatorValue = preg_replace( "#(([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+)#", "<a href='mailto:\\1'>\\1</a>", (string) $operatorValue );
 
         // Replace http/ftp etc. links
-        $operatorValue = eZAutoLinkOperator::addURILinks($operatorValue, $max, $methodText);
+        $operatorValue = (new eZAutoLinkOperator())->addURILinks($operatorValue, $max, $methodText);
     }
 
     /// \privatesection

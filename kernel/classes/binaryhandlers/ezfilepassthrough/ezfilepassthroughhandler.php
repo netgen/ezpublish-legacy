@@ -16,7 +16,7 @@
 */
 class eZFilePassthroughHandler extends eZBinaryFileHandler
 {
-    const HANDLER_ID = 'ezfilepassthrough';
+    final public const HANDLER_ID = 'ezfilepassthrough';
 
     public function __construct()
     {
@@ -33,7 +33,7 @@ class eZFilePassthroughHandler extends eZBinaryFileHandler
         if ( $fileName != "" and $file->exists() )
         {
             $fileSize = $file->size();
-            if ( isset( $_SERVER['HTTP_RANGE'] ) && preg_match( "/^bytes=(\d+)-(\d+)?$/", trim( $_SERVER['HTTP_RANGE'] ), $matches ) )
+            if ( isset( $_SERVER['HTTP_RANGE'] ) && preg_match( "/^bytes=(\d+)-(\d+)?$/", trim( (string) $_SERVER['HTTP_RANGE'] ), $matches ) )
             {
                 $fileOffset = $matches[1];
                 $contentLength = isset( $matches[2] ) ? $matches[2] - $matches[1] + 1 : $fileSize - $matches[1];
@@ -92,13 +92,9 @@ class eZFilePassthroughHandler extends eZBinaryFileHandler
     {
         $ini = eZINI::instance( 'file.ini' );
 
-        $mimeTypes = $ini->variable( 'PassThroughSettings', 'ContentDisposition', array() );
-        if ( isset( $mimeTypes[$mimeType] ) )
-        {
-            return $mimeTypes[$mimeType];
-        }
+        $mimeTypes = $ini->variable( 'PassThroughSettings', 'ContentDisposition' );
 
-        return $ini->variable( 'PassThroughSettings', 'DefaultContentDisposition' );
+        return $mimeTypes[$mimeType] ?? $ini->variable( 'PassThroughSettings', 'DefaultContentDisposition' );
     }
 }
 

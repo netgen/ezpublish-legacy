@@ -65,20 +65,17 @@ $user = eZUser::currentUser();
 // login is like REALLY required here. But we can't use the standard policy check, as it won't redirect w/ GET parameters
 if ( !$user->isRegistered() )
 {
-    $redirectUri = str_replace( eZSys::indexDir(), '', $_SERVER['REQUEST_URI'] );
+    $redirectUri = str_replace( eZSys::indexDir(), '', (string) $_SERVER['REQUEST_URI'] );
 
     $tpl = eZTemplate::factory();
 
     $tpl->setVariable( 'redirect_uri', $redirectUri, 'User' );
-    $tpl->setVariable( 'site_access', array( 'allowed' => true ) );
+    $tpl->setVariable( 'site_access', ['allowed' => true] );
 
-    $result = array();
+    $result = [];
     $result['content'] = $tpl->fetch( 'design:user/login.tpl' );
     $result['pagelayout'] = false;
-    $result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                    'url' => false ),
-                             array( 'text' => ezpI18n::tr( 'kernel/user', 'Login' ),
-                                    'url' => false ) );
+    $result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Login' ), 'url' => false]];
     $result['pagelayout'] = 'oauthloginpagelayout.tpl';
 
     return $result;
@@ -115,19 +112,13 @@ if ( !$application->isAuthorizedByUser( $pScope, eZUser::currentUser() ) )
         $tpl->setVariable( 'application', $application );
         $tpl->setVariable( 'module', $module );
 
-        $parameters = array( 'client_id' => $pClientId,
-                             'response_type' => $pResponseType,
-                             'scope' => $pScope,
-                             'redirect_uri' => $pRedirectUri );
+        $parameters = ['client_id' => $pClientId, 'response_type' => $pResponseType, 'scope' => $pScope, 'redirect_uri' => $pRedirectUri];
         $tpl->setVariable( 'httpParameters', $parameters );
 
-        $result = array();
+        $result = [];
         $result['content'] = $tpl->fetch( 'design:oauth/authorize.tpl' );
         $result['pagelayout'] = 'oauthloginpagelayout.tpl';
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'oAuth' ),
-                                        'url' => false ),
-                                 array( 'text' => ezpI18n::tr( 'kernel/user', 'authorization' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'oAuth' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'authorization' ), 'url' => false]];
 
         return $result;
     }
@@ -158,7 +149,7 @@ if ( $pResponseType == 'token')
     // - expires_in, the token lifetime in seconds
     // - scope, the permission scope the provided code / token grants, if different from the requested one (not implemented yet)
     // - state, not implemented yet (state persistency related)
-    $parameters = array();
+    $parameters = [];
 
     $rExpiresIn = $tokenTTL;
 
@@ -191,7 +182,7 @@ elseif ( $pResponseType ==  'code')
     // - expires_in, the token lifetime in seconds
     // - scope, the permission scope the provided code / token grants, if different from the requested one (not implemented yet)
     // - state, not implemented yet (state persistency related)
-    $parameters = array();
+    $parameters = [];
 
     $rExpiresIn = $tokenTTL;
 

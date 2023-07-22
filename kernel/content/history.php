@@ -13,7 +13,7 @@ $ObjectID = $Params['ObjectID'];
 $EditVersion = $Params['EditVersion'];
 
 $Offset = $Params['Offset'];
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 if ( $http->hasPostVariable( 'BackButton' )  )
 {
@@ -56,13 +56,11 @@ $newestVersion = 1;
 if ( count( $object->versions() ) > 1 )
 {
     $versionArray = $object->versions( false );
-    $selectableVersions = array();
+    $selectableVersions = [];
     foreach( $versionArray as $versionItem )
     {
         //Only return version numbers of archived or published items
-        if ( in_array( $versionItem['status'], array( eZContentObjectVersion::STATUS_DRAFT,
-                                                      eZContentObjectVersion::STATUS_PUBLISHED,
-                                                      eZContentObjectVersion::STATUS_ARCHIVED ) ) )
+        if ( in_array( $versionItem['status'], [eZContentObjectVersion::STATUS_DRAFT, eZContentObjectVersion::STATUS_PUBLISHED, eZContentObjectVersion::STATUS_ARCHIVED] ) )
         {
             $selectableVersions[] = $versionItem['version'];
         }
@@ -75,7 +73,7 @@ $tpl->setVariable( 'selectOldVersion', $previousVersion );
 $tpl->setVariable( 'selectNewVersion', $newestVersion );
 $tpl->setVariable( 'module', $Module );
 
-$diff = array();
+$diff = [];
 
 if ( $http->hasPostVariable('DiffButton') && $http->hasPostVariable( 'FromVersion' ) && $http->hasPostVariable( 'ToVersion' ) )
 {
@@ -163,7 +161,7 @@ if ( $http->hasPostVariable( 'RemoveButton' )  )
         $db->begin();
 
         $deleteIDArray = $http->postVariable( 'DeleteIDArray' );
-        $versionArray = array();
+        $versionArray = [];
         foreach ( $deleteIDArray as $deleteID )
         {
             $version = eZContentObjectVersion::fetch( $deleteID );
@@ -202,7 +200,7 @@ if ( $Module->isCurrentAction( 'Edit' )  )
         $versionID = false;
 
     if ( $versionID !== false and
-         !in_array( $version->attribute( 'status' ), array( eZContentObjectVersion::STATUS_DRAFT, eZContentObjectVersion::STATUS_INTERNAL_DRAFT ) ) )
+         !in_array( $version->attribute( 'status' ), [eZContentObjectVersion::STATUS_DRAFT, eZContentObjectVersion::STATUS_INTERNAL_DRAFT] ) )
     {
         $editWarning = 1;
         $EditVersion = $versionID;
@@ -215,7 +213,7 @@ if ( $Module->isCurrentAction( 'Edit' )  )
     }
     else
     {
-        return $Module->redirectToView( 'edit', array( $ObjectID, $versionID, $version->initialLanguageCode() ) );
+        return $Module->redirectToView( 'edit', [$ObjectID, $versionID, $version->initialLanguageCode()] );
     }
 }
 
@@ -245,7 +243,7 @@ if ( $Module->isCurrentAction( 'CopyVersion' )  )
     if ( !$versionID or $version->attribute( 'status' ) == eZContentObjectVersion::STATUS_INTERNAL_DRAFT )
     {
         $currentVersion = $object->attribute( 'current_version' );
-        $Module->redirectToView( 'history', array( $ObjectID, $currentVersion ) );
+        $Module->redirectToView( 'history', [$ObjectID, $currentVersion] );
         return eZModule::HOOK_STATUS_CANCEL_RUN;
     }
 
@@ -272,39 +270,41 @@ if ( $Module->isCurrentAction( 'CopyVersion' )  )
 
     if ( !$http->hasPostVariable( 'DoNotEditAfterCopy' ) )
     {
-        return $Module->redirectToView( 'edit', array( $ObjectID, $newVersionID, $language ) );
+        return $Module->redirectToView( 'edit', [$ObjectID, $newVersionID, $language] );
     }
 }
 
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array( 'object', $object->attribute( 'id' ) ), // Object ID
-                      array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                      array( 'class', $object->attribute( 'contentclass_id' ) ), // Class ID
-                      array( 'class_identifier', $object->attribute( 'class_identifier' ) ), // Class identifier
-                      array( 'section_id', $object->attribute( 'section_id' ) ), // Section ID, typo, deprecated
-                      array( 'section', $object->attribute( 'section_id' ) ) // Section ID
-                      ) ); // Section ID, 0 so far
+$res->setKeys( [
+    ['object', $object->attribute( 'id' )],
+    // Object ID
+    ['remote_id', $object->attribute( 'remote_id' )],
+    ['class', $object->attribute( 'contentclass_id' )],
+    // Class ID
+    ['class_identifier', $object->attribute( 'class_identifier' )],
+    // Class identifier
+    ['section_id', $object->attribute( 'section_id' )],
+    // Section ID, typo, deprecated
+    ['section', $object->attribute( 'section_id' )],
+] ); // Section ID, 0 so far
 
 $section = eZSection::fetch( $object->attribute( 'section_id' ) );
 if( $section )
 {
-    $res->setKeys( array( array( 'section_identifier', $section->attribute( 'identifier' ) ) ) );
+    $res->setKeys( [['section_identifier', $section->attribute( 'identifier' )]] );
 }
 
-$versionArray =( isset( $versionArray ) && is_array( $versionArray ) ) ? array_unique( $versionArray, SORT_REGULAR ) : array();
+$versionArray =( isset( $versionArray ) && is_array( $versionArray ) ) ? array_unique( $versionArray, SORT_REGULAR ) : [];
 $LastAccessesVersionURI = $http->hasSessionVariable( 'LastAccessesVersionURI' ) ? $http->sessionVariable( 'LastAccessesVersionURI' ) : null;
-$explodedURI = $LastAccessesVersionURI ? explode ( '/', $LastAccessesVersionURI ) : null;
+$explodedURI = $LastAccessesVersionURI ? explode ( '/', (string) $LastAccessesVersionURI ) : null;
 if ( $LastAccessesVersionURI and is_array( $versionArray ) and !in_array( $explodedURI[3], $versionArray ) )
   $tpl->setVariable( 'redirect_uri', $http->sessionVariable( 'LastAccessesVersionURI' ) );
 
 //Fetch newer drafts and count of newer drafts.
 $newerDraftVersionList = eZPersistentObject::fetchObjectList( eZContentObjectVersion::definition(),
                                                               null,
-                                                              array( 'contentobject_id' => $object->attribute( 'id' ),
-                                                                     'status' => eZContentObjectVersion::STATUS_DRAFT,
-                                                                     'version' => array( '>', $object->attribute( 'current_version' ) ) ),
-                                                              array( 'modified' => 'asc',
-                                                                     'initial_language_id' => 'desc' ),
+                                                              ['contentobject_id' => $object->attribute( 'id' ), 'status' => eZContentObjectVersion::STATUS_DRAFT, 'version' => ['>', $object->attribute( 'current_version' )]],
+                                                              ['modified' => 'asc', 'initial_language_id' => 'desc'],
                                                               null, true );
 $newerDraftVersionListCount = is_array( $newerDraftVersionList ) ? count( $newerDraftVersionList ) : 0;
 
@@ -321,10 +321,9 @@ $tpl->setVariable( 'can_edit', $canEdit );
 //$tpl->setVariable( 'can_remove', $canRemove );
 $tpl->setVariable( 'user_id', $user->attribute( 'contentobject_id' ) );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/history.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'History' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'History' ), 'url' => false]];
 if ( $section )
 {
     $Result['navigation_part'] = $section->attribute( 'navigation_part_identifier' );

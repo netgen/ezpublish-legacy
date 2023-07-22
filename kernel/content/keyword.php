@@ -7,20 +7,19 @@
  */
 
 $Module = $Params['Module'];
-$Alphabet = rawurldecode( $Params['Alphabet'] );
+$Alphabet = rawurldecode( (string) $Params['Alphabet'] );
 
 $Offset = $Params['Offset'];
 $ClassID = $Params['ClassID'];
-$viewParameters = array( 'offset' => $Offset, 'classid' => $ClassID );
+$viewParameters = ['offset' => $Offset, 'classid' => $ClassID];
 
 $tpl = eZTemplate::factory();
 
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'alphabet', $Alphabet );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/keyword.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Keywords' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Keywords' ), 'url' => false]];
 
 ?>

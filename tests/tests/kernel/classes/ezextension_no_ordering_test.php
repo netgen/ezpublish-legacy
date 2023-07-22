@@ -24,50 +24,38 @@ class eZExtensionWithoutOrderingTest extends ezpTestCase
 
     public function testUnrelatedKeepOrder1()
     {
-        self::setExtensions( array( 'ezmultiupload', 'ezfind' ) );
-        $this->assertSame(
-            array( 'ezmultiupload', 'ezfind' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['ezmultiupload', 'ezfind'] );
+        static::assertSame(['ezmultiupload', 'ezfind'], eZExtension::activeExtensions());
     }
 
     public function testUnrelatedKeepOrder2()
     {
-        self::setExtensions( array( 'ezfind', 'ezmultiupload' ) );
-        $this->assertSame(
-            array( 'ezfind', 'ezmultiupload' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['ezfind', 'ezmultiupload'] );
+        static::assertSame(['ezfind', 'ezmultiupload'], eZExtension::activeExtensions());
     }
 
     public function testSimpleNoReordering()
     {
-        self::setExtensions( array( 'ezjscore', 'ezfind' ) );
-        $this->assertSame(
-            array( 'ezjscore', 'ezfind' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['ezjscore', 'ezfind'] );
+        static::assertSame(['ezjscore', 'ezfind'], eZExtension::activeExtensions());
     }
 
     public function testSimpleReordering()
     {
-        self::setExtensions( array( 'ezfind', 'ezjscore' ) );
-        $this->assertSame(
-            array( 'ezfind', 'ezjscore' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['ezfind', 'ezjscore'] );
+        static::assertSame(['ezfind', 'ezjscore'], eZExtension::activeExtensions());
     }
 
     public function testSimpleReorderingKeepInitialDummies()
     {
-        self::setExtensions( array( 'dummy1', 'dummy2', 'dummy3', 'ezfind', 'ezjscore' ) );
-        $this->assertSame(
-            array( 'dummy1', 'dummy2', 'dummy3', 'ezfind', 'ezjscore' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['dummy1', 'dummy2', 'dummy3', 'ezfind', 'ezjscore'] );
+        static::assertSame(['dummy1', 'dummy2', 'dummy3', 'ezfind', 'ezjscore'], eZExtension::activeExtensions());
     }
 
     public function testComplexReordering()
     {
-        self::setExtensions( array( 'ezfind', 'ezflow', 'ezgmaplocation', 'ezjscore', 'ezmultiupload', 'ezoe', 'ezwebin', 'ezwt' ) );
-        $this->assertSame(
-            array( 'ezfind', 'ezflow', 'ezgmaplocation', 'ezjscore', 'ezmultiupload', 'ezoe', 'ezwebin', 'ezwt' ),
-            eZExtension::activeExtensions() );
+        self::setExtensions( ['ezfind', 'ezflow', 'ezgmaplocation', 'ezjscore', 'ezmultiupload', 'ezoe', 'ezwebin', 'ezwt'] );
+        static::assertSame(['ezfind', 'ezflow', 'ezgmaplocation', 'ezjscore', 'ezmultiupload', 'ezoe', 'ezwebin', 'ezwt'], eZExtension::activeExtensions());
     }
 
     /**

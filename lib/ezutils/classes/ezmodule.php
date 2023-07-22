@@ -38,49 +38,49 @@ class eZModule
      * Module execution status: IDLE
      * @var int
      */
-    const STATUS_IDLE = 0;
+    final public const STATUS_IDLE = 0;
 
     /**
      * Module execution status: OK
      * @var int
      */
-    const STATUS_OK = 1;
+    final public const STATUS_OK = 1;
 
     /**
      * Module execution status: FAILED
      * @var int
      */
-    const STATUS_FAILED = 2;
+    final public const STATUS_FAILED = 2;
 
     /**
      * Module execution status: REDIRECT
      * @var int
      */
-    const STATUS_REDIRECT = 3;
+    final public const STATUS_REDIRECT = 3;
 
     /**
      * Module execution status: RERUN
      * @var int
      */
-    const STATUS_RERUN = 4;
+    final public const STATUS_RERUN = 4;
 
     /**
      * Hooks execution status: OK
      * @var int
      */
-    const HOOK_STATUS_OK = 0;
+    final public const HOOK_STATUS_OK = 0;
 
     /**
      * Hooks execution status: CANCEL_RUN
      * @var int
      */
-    const HOOK_STATUS_CANCEL_RUN = 1;
+    final public const HOOK_STATUS_CANCEL_RUN = 1;
 
     /**
      * Hooks execution status: FAILED
      * @var int
      */
-    const HOOK_STATUS_FAILED = 2;
+    final public const HOOK_STATUS_FAILED = 2;
 
     /**
      * List of defined views for the module, as defined in the $ViewList variable
@@ -294,13 +294,11 @@ class eZModule
             }
             else
             {
-                $this->FunctionList = array();
+                $this->FunctionList = [];
             }
             if ( empty( $Module ) )
             {
-                $Module = array( "name" => "null",
-                                 "variable_params" => false,
-                                 "function" => array() );
+                $Module = ["name" => "null", "variable_params" => false, "function" => []];
             }
             $this->Module = $Module;
             $this->Name = $moduleName;
@@ -323,10 +321,8 @@ class eZModule
         }
         else
         {
-            $this->Functions = array();
-            $this->Module = array( "name" => "null",
-                                   "variable_params" => false,
-                                   "function" => array() );
+            $this->Functions = [];
+            $this->Module = ["name" => "null", "variable_params" => false, "function" => []];
             $this->Name = $moduleName;
             $this->Path = $path;
             $this->Title = "";
@@ -334,12 +330,12 @@ class eZModule
             $this->UIComponent = $moduleName;
             $this->UIComponentMatch = 'module';
         }
-        $this->HookList = array();
+        $this->HookList = [];
         $this->ExitStatus = self::STATUS_IDLE;
         $this->ErrorCode = 0;
-        $this->ViewActions = array();
+        $this->ViewActions = [];
         $this->OriginalParameters = null;
-        $this->UserParameters = array();
+        $this->UserParameters = [];
 
         // Load in navigation part overrides
         $ini = eZINI::instance( 'module.ini' );
@@ -444,7 +440,7 @@ class eZModule
      */
     function singleFunction()
     {
-        return count( $this->Functions ) == 0;
+        return count( (array) $this->Functions ) == 0;
     }
 
     /**
@@ -559,8 +555,7 @@ class eZModule
     function errorModule()
     {
         if ( !isset( $GLOBALS['eZModuleGlobalErrorModule'] ) )
-            $GLOBALS['eZModuleGlobalErrorModule'] = array( 'module' => 'error',
-                                        'view' => 'view' );
+            $GLOBALS['eZModuleGlobalErrorModule'] = ['module' => 'error', 'view' => 'view'];
         return $GLOBALS['eZModuleGlobalErrorModule'];
     }
 
@@ -574,22 +569,18 @@ class eZModule
      */
     function setErrorModule( $moduleName, $viewName )
     {
-        $GLOBALS['eZModuleGlobalErrorModule'] = array( 'module' => $moduleName,
-                                                       'view' => $viewName );
+        $GLOBALS['eZModuleGlobalErrorModule'] = ['module' => $moduleName, 'view' => $viewName];
     }
 
     /**
      * Runs the defined error module
      * Sets the state of the module object to \c failed and sets the error code.
      *
-     * @param mixed $errorCode
-     * @param mixed $errorType
      * @param array $parameters
-     * @param mixed $userParameters
      *
      * @see setErrorModule(), errorModule()
      */
-    function handleError( $errorCode, $errorType = false, $parameters = array(), $userParameters = false )
+    function handleError( mixed $errorCode, mixed $errorType = false, $parameters = [], mixed $userParameters = false )
     {
         if ( self::$useExceptions && $errorType === "kernel" )
         {
@@ -636,7 +627,7 @@ class eZModule
             return false;
         }
 
-        $result = $module->run( $errorModule['view'], array( $errorType, $errorCode, $parameters, $userParameters ) );
+        $result = $module->run( $errorModule['view'], [$errorType, $errorCode, $parameters, $userParameters] );
         // The error module may want to redirect to another URL, see error.ini
         if ( $this->exitStatus() != self::STATUS_REDIRECT and
              $this->exitStatus() != self::STATUS_RERUN )
@@ -664,7 +655,7 @@ class eZModule
      *
      * @return bool true if the redirection was performed, false if the module wasn't found
      */
-    function redirect( $moduleName, $viewName, $parameters = array(),
+    function redirect( $moduleName, $viewName, $parameters = [],
                        $unorderedParameters = null, $userParameters = false,
                        $anchor = false )
     {
@@ -694,7 +685,7 @@ class eZModule
      *
      * @return boolean true if successful, false if the view isn't found
      */
-    function redirectToView( $viewName = '', $parameters = array(),
+    function redirectToView( $viewName = '', $parameters = [],
                              $unorderedParameters = null, $userParameters = false,
                              $anchor = false )
     {
@@ -719,7 +710,7 @@ class eZModule
      *
      * @todo Deprecate; have redirect() check if $module is an eZModule or a string
      */
-    function redirectModule( $module, $viewName, $parameters = array(),
+    function redirectModule( $module, $viewName, $parameters = [],
                              $unorderedParameters = null, $userParameters = false,
                              $anchor = false )
     {
@@ -744,7 +735,7 @@ class eZModule
      *
      * @see redirect(), redirectionURIForModule(), redirectToView(), redirectModule()
      */
-    function redirectionURI( $moduleName, $viewName, $parameters = array(),
+    function redirectionURI( $moduleName, $viewName, $parameters = [],
                              $unorderedParameters = null, $userParameters = false,
                              $anchor = false )
     {
@@ -810,7 +801,7 @@ class eZModule
      *
      * @see redirect(), redirectionURIForModule(), redirectToView(), redirectModule()
      */
-    function redirectionURIForModule( $module, $viewName, $parameters = array(),
+    function redirectionURIForModule( $module, $viewName, $parameters = [],
                                       $unorderedParameters = null, $userParameters = false,
                                       $anchor = false )
     {
@@ -839,7 +830,7 @@ class eZModule
         }
 
         if( !isset( $viewParameters ) )
-            $viewParameters = array(); // prevent PHP warning below
+            $viewParameters = []; // prevent PHP warning below
 
         foreach ( $viewParameters as $viewParameter )
         {
@@ -892,11 +883,7 @@ class eZModule
         if ( $viewName == '' )
             $viewName = self::currentView();
         $viewData = $this->viewData( $viewName );
-        if ( isset( $viewData['params'] ) )
-        {
-            return $viewData['params'];
-        }
-        return null;
+        return $viewData['params'] ?? null;
     }
 
     /**
@@ -915,11 +902,7 @@ class eZModule
         if ( $viewName == '' )
             $viewName = self::currentView();
         $viewData = $this->viewData( $viewName );
-        if ( isset( $viewData['unordered_params'] ) )
-        {
-            return $viewData['unordered_params'];
-        }
-        return null;
+        return $viewData['unordered_params'] ?? null;
     }
 
     /**
@@ -964,7 +947,7 @@ class eZModule
         // So parsing it with parse_url() as well to only get host.
         $currentHostname = eZSys::hostname();
         $currentHostnameParsed = parse_url( $currentHostname, PHP_URL_HOST );
-        $currentHostname = $currentHostnameParsed ? $currentHostnameParsed : $currentHostname;
+        $currentHostname = $currentHostnameParsed ?: $currentHostname;
         if ( isset( $urlComponents['host'] ) && $urlComponents['host'] !== $currentHostname )
         {
             $allowedHosts = $this->getAllowedRedirectHosts();
@@ -998,7 +981,7 @@ class eZModule
             $hostMatchMapItems = $ini->variable( 'SiteAccessSettings', 'HostMatchMapItems' );
             foreach ( $hostMatchMapItems as $item )
             {
-                list( $host, $sa ) = explode( ';', $item );
+                [$host, $sa] = explode( ';', (string) $item );
                 $allowedHosts[$host] = true;
             }
         }
@@ -1006,7 +989,7 @@ class eZModule
         // Adding HostUriMatchMapItems
         foreach ( $ini->variable( 'SiteAccessSettings', 'HostUriMatchMapItems' ) as $item )
         {
-            list( $host, $uri, $sa ) = explode( ';', $item );
+            [$host, $uri, $sa] = explode( ';', (string) $item );
             $allowedHosts[$host] = true;
         }
 
@@ -1068,14 +1051,7 @@ class eZModule
      */
     function attributes()
     {
-        return array( "uri",
-                      "functions",
-                      'views',
-                      "name",
-                      "path",
-                      "info",
-                      "aviable_functions",
-                      "available_functions" );
+        return ["uri", "functions", 'views', "name", "path", "info", "aviable_functions", "available_functions"];
     }
 
     /**
@@ -1187,7 +1163,7 @@ class eZModule
                 $type = $defaultActionStructure['type'];
                 if ( $type == 'post' )
                 {
-                    $parameters = array();
+                    $parameters = [];
                     if ( isset( $defaultActionStructure['parameters'] ) )
                         $parameters = $defaultActionStructure['parameters'];
                     $hasParameters = true;
@@ -1251,7 +1227,7 @@ class eZModule
      * @return void
      * @see actionParameter(), hasActionParameter()
      */
-    function setActionParameter( $parameterName, $parameterValue, $view = '' )
+    function setActionParameter( $parameterName, mixed $parameterValue, $view = '' )
     {
         if ( $view == '' )
             $view = self::currentView();
@@ -1296,7 +1272,7 @@ class eZModule
                 $regMatch = "/^" . $postVariableNameMatch . "_(.+)$/";
                 foreach ( $postVariables as $postVariableName => $postVariableValue )
                 {
-                    if ( preg_match( $regMatch, $postVariableName, $matches ) )
+                    if ( preg_match( $regMatch, (string) $postVariableName, $matches ) )
                     {
                         $parameterValue = $matches[1];
                         $this->ViewActionParameters[$view][$parameterName] = $parameterValue;
@@ -1347,7 +1323,7 @@ class eZModule
                 $regMatch = "/^" . $postVariableNameMatch . "_(.+)$/";
                 foreach ( $postVariables as $postVariableName => $postVariableValue )
                 {
-                    if ( preg_match( $regMatch, $postVariableName, $matches ) )
+                    if ( preg_match( $regMatch, (string) $postVariableName, $matches ) )
                     {
                         $parameterValue = $matches[1];
                         $this->ViewActionParameters[$view][$parameterName] = $parameterValue;
@@ -1403,13 +1379,12 @@ class eZModule
      */
     function addHook( $hookName, $function, $priority = 1, $expandParameters = true, $append = false )
     {
-        $hookEntries = isset( $this->HookList[$hookName] ) ? $this->HookList[$hookName] : false;
+        $hookEntries = $this->HookList[$hookName] ?? false;
         if ( !is_array( $hookEntries ) )
         {
-            $hookEntries = array();
+            $hookEntries = [];
         }
-        $entry = array( 'function' => $function,
-                        'expand_parameters' => $expandParameters );
+        $entry = ['function' => $function, 'expand_parameters' => $expandParameters];
 
         $position = $priority;
         if ( $append )
@@ -1443,7 +1418,7 @@ class eZModule
     function runHooks( $hookName, $parameters = null )
     {
         $status = null;
-        $hookEntries = isset( $this->HookList[$hookName] ) ? $this->HookList[$hookName] : false;
+        $hookEntries = $this->HookList[$hookName] ?? false;
         if ( isset( $hookEntries ) and
              is_array( $hookEntries ) )
         {
@@ -1464,7 +1439,7 @@ class eZModule
                         }
                         else if ( $expandParameters )
                         {
-                            $retVal = call_user_func_array( $functionName, array_merge( array( $this ), $parameters ) );
+                            $retVal = call_user_func_array( $functionName, array_merge( [$this], $parameters ) );
                         }
                         else
                         {
@@ -1491,7 +1466,7 @@ class eZModule
                             }
                             else if ( $expandParameters )
                             {
-                                $retVal = call_user_func_array( array( $object, $functionName ), array_merge( array( $this ), $parameters ) );
+                                $retVal = call_user_func_array( [$object, $functionName], array_merge( [$this], $parameters ) );
                             }
                             else
                             {
@@ -1500,7 +1475,7 @@ class eZModule
                         }
                         else
                         {
-                            eZDebug::writeError( "Unknown hook method '$functionName' in class '" . strtolower( get_class( $object ) ) . "' in hook: $hookName", __METHOD__ );
+                            eZDebug::writeError( "Unknown hook method '$functionName' in class '" . strtolower( (string) $object::class ) . "' in hook: $hookName", __METHOD__ );
                         }
                     }
                     else
@@ -1576,11 +1551,7 @@ class eZModule
     {
         if ( $view == '' )
             $view = $this->currentView();
-        if ( isset( $this->ViewResult[$view] ) )
-        {
-            return $this->ViewResult[$view];
-        }
-        return null;
+        return $this->ViewResult[$view] ?? null;
     }
 
     /**
@@ -1603,7 +1574,7 @@ class eZModule
 
             if ( $parameters === false)
             {
-                $parameters = array();
+                $parameters = [];
             }
 
             $parameters = array_merge( $parameters, $this->OriginalViewParameters );
@@ -1648,9 +1619,9 @@ class eZModule
      *
      * @return array The run result
      */
-    function run( $functionName, $parameters = array(), $overrideParameters = false, $userParameters = false )
+    function run( $functionName, $parameters = [], $overrideParameters = false, $userParameters = false )
     {
-        if ( count( $this->Functions ) > 0 and
+        if ( count( (array) $this->Functions ) > 0 and
              !isset( $this->Functions[$functionName] ) )
         {
             eZDebug::writeError( "Undefined view: " . $this->Module["name"] . "::$functionName ",
@@ -1664,9 +1635,9 @@ class eZModule
         else
             $function = $this->Functions[$functionName];
 
-        $params = array();
+        $params = [];
         $i = 0;
-        $parameterValues = array();
+        $parameterValues = [];
         if ( isset( $function["params"] ) )
         {
             $functionParameterDefinitions = $function["params"];
@@ -1691,9 +1662,7 @@ class eZModule
         $this->OriginalViewParameters = $parameterValues;
         $this->NamedParameters = $params;
 
-        $GLOBALS['eZRequestedModuleParams'] = array( 'module_name' => $this->Name,
-                                                     'function_name' => $functionName,
-                                                     'parameters' => $params );
+        $GLOBALS['eZRequestedModuleParams'] = ['module_name' => $this->Name, 'function_name' => $functionName, 'parameters' => $params];
 
         $this->UserParameters = $userParameters;
 
@@ -1716,8 +1685,8 @@ class eZModule
         }
 
         // check for unordered parameters and initialize variables if they exist
-        $unorderedParametersList = array();
-        $unorderedParameters = array();
+        $unorderedParametersList = [];
+        $unorderedParameters = [];
         if ( isset( $function["unordered_params"] ) )
         {
             $unorderedParams = $function["unordered_params"];
@@ -1746,7 +1715,7 @@ class eZModule
             if ( !isset( $params['UserParameters'] ) or
                  !is_array( $params['UserParameters'] ) )
             {
-                $params['UserParameters'] = array();
+                $params['UserParameters'] = [];
             }
 
             if ( is_array( $userParameters ) && count( $userParameters ) > 0 )
@@ -1781,7 +1750,7 @@ class eZModule
         $params["ModuleName"] = $this->Name;
         $params["FunctionName"] = $functionName;
         $params["Parameters"] = $parameters;
-        $params_as_var = isset( $this->Module["variable_params"] ) ? $this->Module["variable_params"] : false;
+        $params_as_var = $this->Module["variable_params"] ?? false;
         $this->ExitStatus = self::STATUS_OK;
 //        eZDebug::writeNotice( $params, 'module parameters1' );
 
@@ -1790,11 +1759,10 @@ class eZModule
         if ( !isset( $currentView ) )
             $currentView = false;
         if ( !isset( $viewStack ) )
-            $viewStack = array();
+            $viewStack = [];
         if ( is_array( $currentView ) )
             $viewStack[] = $currentView;
-        $currentView = array( 'view' => $functionName,
-                              'module' => $this->Name );
+        $currentView = ['view' => $functionName, 'module' => $this->Name];
         $Return = eZProcess::run( $this->Path . "/" . $this->Name . "/" . $function["script"],
                                   $params,
                                   $params_as_var );
@@ -1804,7 +1772,7 @@ class eZModule
             $Return = $this->viewResult( $functionName );
         }
 
-        if ( count( $viewStack ) > 0 )
+        if ( (is_countable($viewStack) ? count( $viewStack ) : 0) > 0 )
             $currentView = array_pop( $viewStack );
         else
             $currentView = false;
@@ -1903,7 +1871,7 @@ class eZModule
             $extensionRepositories = $moduleINI->variable( 'ModuleSettings', 'ExtensionRepositories' );
             $extensionDirectory = eZExtension::baseDirectory();
             $activeExtensions = eZExtension::activeExtensions();
-            $globalExtensionRepositories = array();
+            $globalExtensionRepositories = [];
 
             foreach ( $extensionRepositories as $extensionRepository )
             {
@@ -1949,7 +1917,7 @@ class eZModule
     static function setGlobalPathList( $pathList )
     {
         if ( !is_array( $pathList ) )
-            $pathList = array( $pathList );
+            $pathList = [$pathList];
         $GLOBALS['eZModuleGlobalPathList'] = $pathList;
     }
 
@@ -1964,11 +1932,11 @@ class eZModule
     {
         if ( !is_array( $GLOBALS['eZModuleGlobalPathList'] ) )
         {
-            $GLOBALS['eZModuleGlobalPathList'] = array();
+            $GLOBALS['eZModuleGlobalPathList'] = [];
         }
         if ( !is_array( $pathList ) )
         {
-            $pathList = array( $pathList );
+            $pathList = [$pathList];
         }
         $GLOBALS['eZModuleGlobalPathList'] = array_merge( $GLOBALS['eZModuleGlobalPathList'], $pathList );
     }
@@ -2006,18 +1974,18 @@ class eZModule
      * @return eZModule The eZModule object, or null if the module wasn't found
      * @see exists()
      */
-    static function findModule( $moduleName, $module = null, $pathList = null, $showError = false )
+    static function findModule( $moduleName, mixed $module = null, $pathList = null, $showError = false )
     {
         if ( $pathList === null )
-            $pathList = array();
+            $pathList = [];
         else if ( !is_array( $pathList ) )
-            $pathList = array( $pathList );
+            $pathList = [$pathList];
         $searchPathList = self::globalPathList();
         if ( $searchPathList === null )
-            $searchPathList = array();
+            $searchPathList = [];
         $searchPathList = array_merge( $searchPathList, $pathList );
-        $triedList = array();
-        $triedDirList = array();
+        $triedList = [];
+        $triedDirList = [];
         $foundADir = false;
         foreach ( $searchPathList as $path )
         {
@@ -2075,7 +2043,6 @@ class eZModule
      * Checks if access is allowed to a module/view based on site.ini[SiteAccessRules]Rules[] settings
      *
      * @since 4.4
-     * @param eZURI $uri
      * @return array An associative array with:
      *   'result'       => bool   Indicates if access is allowed
      *   'module'       => string Module name
@@ -2086,10 +2053,7 @@ class eZModule
     {
         $moduleName = $uri->element();
         $viewName = $uri->element( 1 );
-        $check = array( 'result' => true,
-                        'module' => $moduleName,
-                        'view' => $viewName,
-                        'view_checked' => false );
+        $check = ['result' => true, 'module' => $moduleName, 'view' => $viewName, 'view_checked' => false];
 
         $ini = eZINI::instance();
 
@@ -2100,7 +2064,7 @@ class eZModule
         $items = $ini->variableArray( 'SiteAccessRules', 'Rules' );
         foreach( $items as $item )
         {
-            $name = strtolower( $item[0] );
+            $name = strtolower( (string) $item[0] );
             if ( isset ( $item[1] ) )
                 $value = $item[1];
             else
@@ -2117,7 +2081,7 @@ class eZModule
                 } break;
                 case 'module':
                 {
-                    if ( preg_match( "#([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)#", $value, $matches ) )
+                    if ( preg_match( "#([a-zA-Z0-9_]+)/([a-zA-Z0-9_]+)#", (string) $value, $matches ) )
                     {
                         if ( $matches[1] == $moduleName and
                              $matches[2] == $viewName )

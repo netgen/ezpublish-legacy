@@ -31,12 +31,12 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         $ret = eZContentFunctionCollection::fetchRelatedObjects(
             $object2->attribute( 'id' ), false, true, false, false );
 
-        $this->assertInternalType( 'array', $ret );
-        $this->assertArrayHasKey( 'result', $ret );
-        $this->assertInternalType( 'array', $ret['result'] );
-        $this->assertTrue( count( $ret['result'] ) == 1 );
-        $this->assertInstanceOf( 'eZContentObject', $ret['result'][0] );
-        $this->assertEquals( $object1->attribute( 'id' ), $ret['result'][0]->attribute( 'id' ) );
+        static::assertInternalType('array', $ret);
+        static::assertArrayHasKey('result', $ret);
+        static::assertInternalType('array', $ret['result']);
+        static::assertTrue((is_countable($ret['result']) ? count( $ret['result'] ) : 0) == 1);
+        static::assertInstanceOf('eZContentObject', $ret['result'][0]);
+        static::assertEquals($object1->attribute( 'id' ), $ret['result'][0]->attribute( 'id' ));
     }
 
     /**
@@ -56,9 +56,9 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         $ret = eZContentFunctionCollection::fetchRelatedObjectsCount(
             $object2->attribute( 'id' ), false, true );
 
-        $this->assertInternalType( 'array', $ret );
-        $this->assertArrayHasKey( 'result', $ret );
-        $this->assertEquals( 1, $ret['result'] );
+        static::assertInternalType('array', $ret);
+        static::assertArrayHasKey('result', $ret);
+        static::assertEquals(1, $ret['result']);
     }
 
     /**
@@ -78,12 +78,12 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         $ret = eZContentFunctionCollection::fetchReverseRelatedObjects(
             $object1->attribute( 'id' ), false, true, false, false, false );
 
-        $this->assertInternalType( 'array', $ret );
-        $this->assertArrayHasKey( 'result', $ret );
-        $this->assertInternalType( 'array', $ret['result'] );
-        $this->assertTrue( count( $ret['result'] ) == 1 );
-        $this->assertInstanceOf( 'eZContentObject', $ret['result'][0] );
-        $this->assertEquals( $object2->attribute( 'id' ), $ret['result'][0]->attribute( 'id' ) );
+        static::assertInternalType('array', $ret);
+        static::assertArrayHasKey('result', $ret);
+        static::assertInternalType('array', $ret['result']);
+        static::assertTrue((is_countable($ret['result']) ? count( $ret['result'] ) : 0) == 1);
+        static::assertInstanceOf('eZContentObject', $ret['result'][0]);
+        static::assertEquals($object2->attribute( 'id' ), $ret['result'][0]->attribute( 'id' ));
     }
 
     /**
@@ -103,9 +103,9 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         $ret = eZContentFunctionCollection::fetchReverseRelatedObjectsCount(
             $object1->attribute( 'id' ), false, true, false );
 
-        $this->assertInternalType( 'array', $ret );
-        $this->assertArrayHasKey( 'result', $ret );
-        $this->assertEquals( 1, $ret['result'] );
+        static::assertInternalType('array', $ret);
+        static::assertArrayHasKey('result', $ret);
+        static::assertEquals(1, $ret['result']);
     }
 
     /**
@@ -141,19 +141,19 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         $object->publish();
 
         // fetch count for prefix 'k' on class 1
-        foreach ( array( $class1ID, $class2ID ) as $contentClassID )
+        foreach ( [$class1ID, $class2ID] as $contentClassID )
         {
             $count = eZContentFunctionCollection::fetchKeywordCount( 'k', $contentClassID );
-            $this->assertInternalType( 'array', $count );
-            $this->assertArrayHasKey( 'result', $count );
-            $this->assertEquals( 3, $count['result'] );
+            static::assertInternalType('array', $count);
+            static::assertArrayHasKey('result', $count);
+            static::assertEquals(3, $count['result']);
         }
 
         // fetch count for prefix 'k' on both classes
-        $count = eZContentFunctionCollection::fetchKeywordCount( 'k', array( $class1ID, $class2ID ) );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 6, $count['result'] );
+        $count = eZContentFunctionCollection::fetchKeywordCount( 'k', [$class1ID, $class2ID] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(6, $count['result']);
 
         
      
@@ -194,45 +194,45 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         
         // Fetch keyword count for class 1, not specifying parent node
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 4, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(4, $count['result']);
         
         // Fetch keyword count for class 1, directly below parentNodeId (rootNode)
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, 2 );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 1, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(1, $count['result']);
         
         // Fetch keyword count for class 1, directly below parentNodeId (specific folder)
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, $folder1->mainNode->node_id );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 1, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(1, $count['result']);
         
         // Fetch keyword count for class 1, from root folder, with depth equal to 2
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, 2, true, false, 2 );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 3, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(3, $count['result']);
         
         // Fetch keyword count for class 1, from sepecific node, with depth equal to 2
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, $folder1->mainNode->node_id, true, false, 2 );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 2, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(2, $count['result']);
         
         // Fetch keyword count for class 1, from root folder, with depth equal to 0 (unlimited)
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, 2, true, false, 0 );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 4, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(4, $count['result']);
         
         // Fetch keyword count for class 1, from specific folder, with depth equal to 0 (unlimited)
         $count = eZContentFunctionCollection::fetchKeywordCount( 'keyword7', $class1ID, false, $folder1->mainNode->node_id, true, false, 0 );
-        $this->assertInternalType( 'array', $count );
-        $this->assertArrayHasKey( 'result', $count );
-        $this->assertEquals( 2, $count['result'] );
+        static::assertInternalType('array', $count);
+        static::assertArrayHasKey('result', $count);
+        static::assertEquals(2, $count['result']);
     }
 
     /**
@@ -286,121 +286,121 @@ class eZContentFunctionCollectionTest extends ezpDatabaseTestCase
         // Fetch keywords for class 1, on all scope
         $keywords = eZContentFunctionCollection::fetchKeyword(
             'k', $class1ID, 0, 20 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 12, count( $keywords['result'] ) );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(12, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
         
         // Fetch keyword1 for class 1, not specifying parent node
         $keywords = eZContentFunctionCollection::fetchKeyword(
             'keyword1', $class1ID, 0, 20 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 4, count( $keywords['result'] ) );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(4, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
         
         // Fetch keyword1 for class 1, directly below parentNodeId (rootNode)
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), 2 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 1, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], 2 );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(1, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
         
         // Fetch keywords for class 1, directly below parentNodeId (specific folder)
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), $folder1->mainNode->node_id );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 1, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], $folder1->mainNode->node_id );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(1, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
         
         // Fetch keywords for class 1, from root folder, with depth equal to 2
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), 2, true, false, 2 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 3, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], 2, true, false, 2 );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(3, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
 
         // Fetch keywords for class 1, from sepecific node, with depth equal to 2
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), $folder1->mainNode->node_id, true, false, 2 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 2, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], $folder1->mainNode->node_id, true, false, 2 );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(2, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
         
         // Fetch keywords for class 1, from root folder, with depth equal to 0 (unlimited)
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), 2, true, false, 0 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 4, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], 2, true, false, 0 );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(4, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
 
         // Fetch keywords for class 1, from specific folder, with depth equal to 0 (unlimited)
         $keywords = eZContentFunctionCollection::fetchKeyword(
-            'keyword1', $class1ID, 0, 20, false, array(), $folder1->mainNode->node_id, true, false, 0 );
-        $this->assertInternalType( 'array', $keywords );
-        $this->assertArrayHasKey( 'result', $keywords );
-        $this->assertInternalType( 'array', $keywords['result'] );
-        $this->assertEquals( 2, count( $keywords['result'] ) );
+            'keyword1', $class1ID, 0, 20, false, [], $folder1->mainNode->node_id, true, false, 0 );
+        static::assertInternalType('array', $keywords);
+        static::assertArrayHasKey('result', $keywords);
+        static::assertInternalType('array', $keywords['result']);
+        static::assertEquals(2, is_countable($keywords['result']) ? count( $keywords['result'] ) : 0);
         foreach ( $keywords['result'] as $result )
         {
-            $this->assertInternalType( 'array', $result );
-            $this->assertArrayHasKey( 'keyword', $result );
-            $this->assertArrayHasKey( 'link_object', $result );
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $result['link_object'] );
+            static::assertInternalType('array', $result);
+            static::assertArrayHasKey('keyword', $result);
+            static::assertArrayHasKey('link_object', $result);
+            static::assertInstanceOf('eZContentObjectTreeNode', $result['link_object']);
         }
     }
 }

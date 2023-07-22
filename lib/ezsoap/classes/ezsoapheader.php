@@ -26,7 +26,7 @@ class eZSOAPHeader
     }
 
     /// Contains an array over all the headers
-    public $Headers = array();
+    public $Headers = [];
 }
 
 ?>

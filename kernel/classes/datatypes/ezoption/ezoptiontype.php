@@ -17,14 +17,14 @@
 
 class eZOptionType extends eZDataType
 {
-    const DEFAULT_NAME_VARIABLE = "_ezoption_default_name_";
+    final public const DEFAULT_NAME_VARIABLE = "_ezoption_default_name_";
 
-    const DATA_TYPE_STRING = "ezoption";
+    final public const DATA_TYPE_STRING = "ezoption";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Option", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     function validateCollectionAttributeHTTPInput( $http, $base, $contentObjectAttribute )
@@ -66,15 +66,15 @@ class eZOptionType extends eZDataType
             if ( $http->hasPostVariable( $base . "_data_option_additional_price_" . $contentObjectAttribute->attribute( "id" ) ) )
                 $optionAdditionalPriceList = $http->postVariable( $base . "_data_option_additional_price_" . $contentObjectAttribute->attribute( "id" ) );
             else
-                $optionAdditionalPriceList = array();
+                $optionAdditionalPriceList = [];
 
-            for ( $i = 0; $i < count( $valueList ); ++$i )
-                if ( trim( $valueList[$i] ) <> '' )
+            for ( $i = 0; $i < (is_countable($valueList) ? count( $valueList ) : 0); ++$i )
+                if ( trim( (string) $valueList[$i] ) <> '' )
                 {
                     ++$count;
                     break;
                 }
-            if ( $contentObjectAttribute->validateIsRequired() and trim( $dataName ) == '' )
+            if ( $contentObjectAttribute->validateIsRequired() and trim( (string) $dataName ) == '' )
             {
                 $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                      'NAME is required.' ) );
@@ -82,18 +82,18 @@ class eZOptionType extends eZDataType
             }
             if ( $count != 0 )
             {
-                for ( $i=0;$i<count( $idList );$i++ )
+                for ( $i=0;$i<(is_countable($idList) ? count( $idList ) : 0);$i++ )
                 {
                     $value =  $valueList[$i];
-                    if ( trim( $value )== "" )
+                    if ( trim( (string) $value )== "" )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'The option value must be provided.' ) );
                         return eZInputValidator::STATE_INVALID;
                     }
                     if ( isset( $optionAdditionalPriceList[$i] ) &&
-                         strlen( $optionAdditionalPriceList[$i] ) &&
-                         !preg_match( "#^[-|+]?[0-9]+(\.){0,1}[0-9]{0,2}$#", $optionAdditionalPriceList[$i] ) )
+                         strlen( (string) $optionAdditionalPriceList[$i] ) &&
+                         !preg_match( "#^[-|+]?[0-9]+(\.){0,1}[0-9]{0,2}$#", (string) $optionAdditionalPriceList[$i] ) )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'The Additional price value is not valid.' ) );
@@ -153,23 +153,22 @@ class eZOptionType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_option_id_" . $contentObjectAttribute->attribute( "id" ) ) )
             $optionIDArray = $http->postVariable( $base . "_data_option_id_" . $contentObjectAttribute->attribute( "id" ) );
         else
-            $optionIDArray = array();
+            $optionIDArray = [];
         if ( $http->hasPostVariable( $base . "_data_option_value_" . $contentObjectAttribute->attribute( "id" ) ) )
             $optionValueArray = $http->postVariable( $base . "_data_option_value_" . $contentObjectAttribute->attribute( "id" ) );
         else
-            $optionValueArray = array();
+            $optionValueArray = [];
         if ( $http->hasPostVariable( $base . "_data_option_additional_price_" . $contentObjectAttribute->attribute( "id" ) ) )
             $optionAdditionalPriceArray = $http->postVariable( $base . "_data_option_additional_price_" . $contentObjectAttribute->attribute( "id" ) );
         else
-            $optionAdditionalPriceArray = array();
+            $optionAdditionalPriceArray = [];
 
         $option = new eZOption( $optionName );
 
         $i = 0;
         foreach ( $optionIDArray as $id )
         {
-            $option->addOption( array( 'value' => $optionValueArray[$i],
-                                       'additional_price' => ( isset( $optionAdditionalPriceArray[$i] ) ? $optionAdditionalPriceArray[$i] : 0 ) ) );
+            $option->addOption( ['value' => $optionValueArray[$i], 'additional_price' => ( $optionAdditionalPriceArray[$i] ?? 0 )] );
             $i++;
         }
         $contentObjectAttribute->setContent( $option );
@@ -209,7 +208,7 @@ class eZOptionType extends eZDataType
                     $beforeID = array_shift( $idArray );
                     if ( $beforeID >= 0 )
                     {
-                        $option->insertOption( array(), $beforeID );
+                        $option->insertOption( [], $beforeID );
                         $contentObjectAttribute->setContent( $option );
                         $contentObjectAttribute->store();
                         $option = new eZOption( "" );
@@ -252,10 +251,7 @@ class eZOptionType extends eZDataType
         {
             if ( $optionArray['id'] == $optionID )
             {
-                return array( 'id' => $optionArray['id'],
-                              'name' => $option->attribute( 'name' ),
-                              'value' => $optionArray['value'],
-                              'additional_price' => $optionArray['additional_price'] );
+                return ['id' => $optionArray['id'], 'name' => $option->attribute( 'name' ), 'value' => $optionArray['value'], 'additional_price' => $optionArray['additional_price']];
             }
         }
         return false;
@@ -277,7 +273,7 @@ class eZOptionType extends eZDataType
     {
         $option = $contentObjectAttribute->content( );
         $options = $option->attribute( 'option_list' );
-        return count( $options ) > 0;
+        return (is_countable($options) ? count( $options ) : 0) > 0;
     }
 
     /*!
@@ -328,7 +324,7 @@ class eZOptionType extends eZDataType
     {
 
         $option = $contentObjectAttribute->attribute( 'content' );
-        $optionArray = array();
+        $optionArray = [];
         $optionArray[] = $option->attribute( 'name' );
 
         $optionList = $option->attribute( 'option_list' );
@@ -352,14 +348,13 @@ class eZOptionType extends eZDataType
         $option = new eZOption( "" );
 
         $option->OptionCount = 0;
-        $option->Options = array();
+        $option->Options = [];
         $option->Name = array_shift( $optionArray );
         $count = count( $optionArray );
         for ( $i = 0; $i < $count; $i +=2 )
         {
 
-            $option->addOption( array( 'value' => array_shift( $optionArray ),
-                                       'additional_price' => array_shift( $optionArray ) ) );
+            $option->addOption( ['value' => array_shift( $optionArray ), 'additional_price' => array_shift( $optionArray )] );
         }
 
 
@@ -438,7 +433,7 @@ class eZOptionType extends eZDataType
     {
         $option = new eZOption( $classAttribute->attribute( 'data_text1' ) );
         $db = eZDB::instance();
-        return array( 'data_text' =>  "'" . $db->escapeString( $option->xmlString() ) . "'" );
+        return ['data_text' =>  "'" . $db->escapeString( $option->xmlString() ) . "'"];
     }
 }
 

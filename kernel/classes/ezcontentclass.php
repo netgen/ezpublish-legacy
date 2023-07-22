@@ -18,15 +18,15 @@
 
 class eZContentClass extends eZPersistentObject
 {
-    const VERSION_STATUS_DEFINED = 0;
-    const VERSION_STATUS_TEMPORARY = 1;
-    const VERSION_STATUS_MODIFIED = 2;
+    final public const VERSION_STATUS_DEFINED = 0;
+    final public const VERSION_STATUS_TEMPORARY = 1;
+    final public const VERSION_STATUS_MODIFIED = 2;
 
     /**
      * Max length of content object name.
      * @var int
      */
-    const CONTENT_OBJECT_NAME_MAX_LENGTH = 255;
+    final public const CONTENT_OBJECT_NAME_MAX_LENGTH = 255;
 
     public function __construct( $row )
     {
@@ -56,117 +56,32 @@ class eZContentClass extends eZPersistentObject
 
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "version" => array( 'name' => 'Version',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "serialized_name_list" => array( 'name' => 'SerializedNameList',
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true ),
-                                         'serialized_description_list' => array( 'name' => 'SerializedDescriptionList',
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true ),
-                                         "identifier" => array( 'name' => "Identifier",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         "contentobject_name" => array( 'name' => "ContentObjectName",
-                                                                        'datatype' => 'string',
-                                                                        'default' => '',
-                                                                        'required' => true ),
-                                         "url_alias_name" => array( 'name' => "URLAliasName",
-                                                                    'datatype' => 'string',
-                                                                    'default' => '',
-                                                                    'required' => false ),
-                                         "creator_id" => array( 'name' => "CreatorID",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         "modifier_id" => array( 'name' => "ModifierID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "remote_id" => array( 'name' => "RemoteID",
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         "modified" => array( 'name' => "Modified",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         "is_container" => array( 'name' => "IsContainer",
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         'always_available' => array( 'name' => "AlwaysAvailable",
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true ),
-                                         'language_mask' => array( 'name' => "LanguageMask",
-                                                                   'datatype' => 'integer',
-                                                                   'default' => 0,
-                                                                   'required' => true ),
-                                         'initial_language_id' => array( 'name' => "InitialLanguageID",
-                                                                         'datatype' => 'integer',
-                                                                         'default' => 0,
-                                                                         'required' => true,
-                                                                         'foreign_class' => 'eZContentLanguage',
-                                                                         'foreign_attribute' => 'id',
-                                                                         'multiplicity' => '1..*' ),
-                                         'sort_field' => array( 'name' => 'SortField',
-                                                                'datatype' => 'integer',
-                                                                'default' => 1,
-                                                                'required' => true ),
-                                         'sort_order' => array( 'name' => 'SortOrder',
-                                                                'datatype' => 'integer',
-                                                                'default' => 1,
-                                                                'required' => true ) ),
-                      "keys" => array( "id", "version" ),
-                      "function_attributes" => array( "data_map" => "dataMap",
-                                                      'object_count' => 'objectCount',
-                                                      'object_list' => 'objectList',
-                                                      'version_count' => 'versionCount',
-                                                      'version_status' => 'versionStatus',
-                                                      'remote_id' => 'remoteID', // Note: This overrides remote_id field
-                                                      'ingroup_list' => 'fetchGroupList',
-                                                      'ingroup_id_list' => 'fetchGroupIDList',
-                                                      'match_ingroup_id_list' => 'fetchMatchGroupIDList',
-                                                      'group_list' => 'fetchAllGroups',
-                                                      'creator' => 'creator',
-                                                      'modifier' => 'modifier',
-                                                      'can_instantiate_languages' => 'canInstantiateLanguages',
-                                                      'name' => 'name',
-                                                      'nameList' => 'nameList',
-                                                      'description' => 'description',
-                                                      'descriptionList' => 'descriptionList',
-                                                      'languages' => 'languages',
-                                                      'prioritized_languages' => 'prioritizedLanguages',
-                                                      'prioritized_languages_js_array' => 'prioritizedLanguagesJsArray',
-                                                      'can_create_languages' => 'canCreateLanguages',
-                                                      'top_priority_language_locale' => 'topPriorityLanguageLocale',
-                                                      'always_available_language' => 'alwaysAvailableLanguage' ),
-                      'set_functions' => array( 'name' => 'setName' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZContentClass",
-                      "sort" => array( "id" => "asc" ),
-                      "name" => "ezcontentclass" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "version" => ['name' => 'Version', 'datatype' => 'integer', 'default' => 0, 'required' => true], "serialized_name_list" => ['name' => 'SerializedNameList', 'datatype' => 'string', 'default' => '', 'required' => true], 'serialized_description_list' => ['name' => 'SerializedDescriptionList', 'datatype' => 'string', 'default' => '', 'required' => true], "identifier" => ['name' => "Identifier", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 50], "contentobject_name" => ['name' => "ContentObjectName", 'datatype' => 'string', 'default' => '', 'required' => true], "url_alias_name" => ['name' => "URLAliasName", 'datatype' => 'string', 'default' => '', 'required' => false], "creator_id" => ['name' => "CreatorID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "modifier_id" => ['name' => "ModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], "remote_id" => ['name' => "RemoteID", 'datatype' => 'string', 'default' => '', 'required' => true], "modified" => ['name' => "Modified", 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_container" => ['name' => "IsContainer", 'datatype' => 'integer', 'default' => 0, 'required' => true], 'always_available' => ['name' => "AlwaysAvailable", 'datatype' => 'integer', 'default' => 0, 'required' => true], 'language_mask' => ['name' => "LanguageMask", 'datatype' => 'integer', 'default' => 0, 'required' => true], 'initial_language_id' => ['name' => "InitialLanguageID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentLanguage', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'sort_field' => ['name' => 'SortField', 'datatype' => 'integer', 'default' => 1, 'required' => true], 'sort_order' => ['name' => 'SortOrder', 'datatype' => 'integer', 'default' => 1, 'required' => true]], "keys" => ["id", "version"], "function_attributes" => [
+            "data_map" => "dataMap",
+            'object_count' => 'objectCount',
+            'object_list' => 'objectList',
+            'version_count' => 'versionCount',
+            'version_status' => 'versionStatus',
+            'remote_id' => 'remoteID',
+            // Note: This overrides remote_id field
+            'ingroup_list' => 'fetchGroupList',
+            'ingroup_id_list' => 'fetchGroupIDList',
+            'match_ingroup_id_list' => 'fetchMatchGroupIDList',
+            'group_list' => 'fetchAllGroups',
+            'creator' => 'creator',
+            'modifier' => 'modifier',
+            'can_instantiate_languages' => 'canInstantiateLanguages',
+            'name' => 'name',
+            'nameList' => 'nameList',
+            'description' => 'description',
+            'descriptionList' => 'descriptionList',
+            'languages' => 'languages',
+            'prioritized_languages' => 'prioritizedLanguages',
+            'prioritized_languages_js_array' => 'prioritizedLanguagesJsArray',
+            'can_create_languages' => 'canCreateLanguages',
+            'top_priority_language_locale' => 'topPriorityLanguageLocale',
+            'always_available_language' => 'alwaysAvailableLanguage',
+        ], 'set_functions' => ['name' => 'setName'], "increment_key" => "id", "class_name" => "eZContentClass", "sort" => ["id" => "asc"], "name" => "ezcontentclass"];
         return $definition;
     }
 
@@ -203,7 +118,7 @@ class eZContentClass extends eZPersistentObject
 
      \return 'eZContentClass' object.
     */
-    static function create( $userID = false, $optionalValues = array(), $languageLocale = false )
+    static function create( $userID = false, $optionalValues = [], $languageLocale = false )
     {
         $dateTime = time();
         if ( !$userID )
@@ -229,24 +144,7 @@ class eZContentClass extends eZPersistentObject
         $initialLanguageID = $nameList->alwaysAvailableLanguageID();
 
         $contentClassDefinition = eZContentClass::definition();
-        $row = array(
-            "id" => null,
-            "version" => 1,
-            "serialized_name_list" => $nameList->serializeNames(),
-            'serialized_description_list' => $descriptionList->serializeNames(),
-            "identifier" => "",
-            "contentobject_name" => "",
-            "creator_id" => $userID,
-            "modifier_id" => $userID,
-            "created" => $dateTime,
-            'remote_id' => eZRemoteIdUtility::generate( 'class' ),
-            "modified" => $dateTime,
-            "is_container" => $contentClassDefinition[ 'fields' ][ 'is_container' ][ 'default' ],
-            "always_available" => $contentClassDefinition[ 'fields' ][ 'always_available' ][ 'default' ],
-            'language_mask' => $languageMask,
-            'initial_language_id' => $initialLanguageID,
-            "sort_field" => $contentClassDefinition[ 'fields' ][ 'sort_field' ][ 'default' ],
-            "sort_order" => $contentClassDefinition[ 'fields' ][ 'sort_order' ][ 'default' ] );
+        $row = ["id" => null, "version" => 1, "serialized_name_list" => $nameList->serializeNames(), 'serialized_description_list' => $descriptionList->serializeNames(), "identifier" => "", "contentobject_name" => "", "creator_id" => $userID, "modifier_id" => $userID, "created" => $dateTime, 'remote_id' => eZRemoteIdUtility::generate( 'class' ), "modified" => $dateTime, "is_container" => $contentClassDefinition[ 'fields' ][ 'is_container' ][ 'default' ], "always_available" => $contentClassDefinition[ 'fields' ][ 'always_available' ][ 'default' ], 'language_mask' => $languageMask, 'initial_language_id' => $initialLanguageID, "sort_field" => $contentClassDefinition[ 'fields' ][ 'sort_field' ][ 'default' ], "sort_order" => $contentClassDefinition[ 'fields' ][ 'sort_order' ][ 'default' ]];
 
         $row = array_merge( $row, $optionalValues );
 
@@ -287,7 +185,7 @@ class eZContentClass extends eZPersistentObject
             $languageCode = eZContentObject::defaultLanguage();
         }
 
-        $object = eZContentObject::create( ezpI18n::tr( "kernel/contentclass", "New %1", null, array( $this->name( $languageCode ) ) ),
+        $object = eZContentObject::create( ezpI18n::tr( "kernel/contentclass", "New %1", null, [$this->name( $languageCode )] ),
                                            $this->attribute( "id" ),
                                            $userID,
                                            $sectionID,
@@ -304,7 +202,7 @@ class eZContentClass extends eZPersistentObject
 
         $object->store();
         $object->assignDefaultStates();
-        $object->setName( ezpI18n::tr( "kernel/contentclass", "New %1", null, array( $this->name( $languageCode ) ) ), false, $languageCode );
+        $object->setName( ezpI18n::tr( "kernel/contentclass", "New %1", null, [$this->name( $languageCode )] ), false, $languageCode );
 
         if ( !$versionNumber )
         {
@@ -331,7 +229,7 @@ class eZContentClass extends eZPersistentObject
             $createdObjectIDList = eZPreferences::value( 'ObjectCreationIDList' );
             if ( !$createdObjectIDList )
             {
-                $createdObjectIDList = array( $object->attribute( 'id' ) );
+                $createdObjectIDList = [$object->attribute( 'id' )];
             }
             else
             {
@@ -378,7 +276,7 @@ class eZContentClass extends eZPersistentObject
     static function canInstantiateClassList( $asObject = false, $includeFilter = true, $groupList = false, $fetchID = false )
     {
         $ini = eZINI::instance();
-        $groupArray = array();
+        $groupArray = [];
 
         $enableCaching = ( $ini->variable( 'RoleSettings', 'EnableCaching' ) == 'true' );
         if ( is_array( $groupList ) )
@@ -433,14 +331,14 @@ class eZContentClass extends eZPersistentObject
         }
 
         $languageCodeList = eZContentLanguage::fetchLocaleList();
-        $allowedLanguages = array( '*' => array() );
+        $allowedLanguages = ['*' => []];
 
         $user = eZUser::currentUser();
         $accessResult = $user->hasAccessTo( 'content' , 'create' );
         $accessWord = $accessResult['accessWord'];
 
-        $classIDArray = array();
-        $classList = array();
+        $classIDArray = [];
+        $classList = [];
         $fetchAll = false;
         if ( $accessWord == 'yes' )
         {
@@ -628,7 +526,7 @@ class eZContentClass extends eZPersistentObject
         $list = eZContentClassClassGroup::fetchGroupList( $this->attribute( "id" ),
                                                           $this->attribute( "version" ),
                                                           false );
-        $this->InGroupIDs = array();
+        $this->InGroupIDs = [];
         foreach ( $list as $item )
         {
             $this->InGroupIDs[] = $item['group_id'];
@@ -677,7 +575,7 @@ class eZContentClass extends eZPersistentObject
 
         $classNameFilter = eZContentClassName::sqlFilter( 'cc' );
 
-        $classList = array();
+        $classList = [];
         $db = eZDB::instance();
         // If $asObject is true we fetch all fields in class
         $fields = $asObject ? "cc.*" : "cc.id, $classNameFilter[nameField]";
@@ -726,7 +624,7 @@ class eZContentClass extends eZPersistentObject
             $class->remove( true, $version );
         }
         eZPersistentObject::removeObject( eZContentClassAttribute::definition(),
-                                          array( 'version' => $version ) );
+                                          ['version' => $version] );
 
         $db->commit();
     }
@@ -741,7 +639,7 @@ class eZContentClass extends eZPersistentObject
              $this->Version == eZContentClass::VERSION_STATUS_DEFINED )
         {
             $this->setAttribute( 'remote_id', eZRemoteIdUtility::generate( 'class' ) );
-            $this->sync( array( 'remote_id' ) );
+            $this->sync( ['remote_id'] );
             $remoteID = $this->attribute( 'remote_id', true );
         }
 
@@ -772,7 +670,7 @@ class eZContentClass extends eZPersistentObject
     function isRemovable()
     {
         $info = $this->removableInformation( false );
-        return count( $info['list'] ) == 0;
+        return (is_countable($info['list']) ? count( $info['list'] ) : 0) == 0;
     }
 
     /*!
@@ -789,9 +687,8 @@ class eZContentClass extends eZPersistentObject
     */
     function removableInformation( $includeAll = true )
     {
-        $result  = array( 'text' => ezpI18n::tr( 'kernel/contentclass', "Cannot remove class '%class_name':",
-                                         null, array( '%class_name' => $this->attribute( 'name' ) ) ),
-                       'list' => array() );
+        $result  = ['text' => ezpI18n::tr( 'kernel/contentclass', "Cannot remove class '%class_name':",
+                                         null, ['%class_name' => $this->attribute( 'name' )] ), 'list' => []];
         $db      = eZDB::instance();
 
         // Check top-level nodes
@@ -802,8 +699,8 @@ WHERE ezcot.depth = 1 AND
       ezco.id=ezcot.contentobject_id" );
         if ( count( $rows ) > 0 )
         {
-            $result['list'][] = array( 'text' => ezpI18n::tr( 'kernel/contentclass', 'The class is used by a top-level node and cannot be removed.
-You will need to change the class of the node by using the swap functionality.' ) );
+            $result['list'][] = ['text' => ezpI18n::tr( 'kernel/contentclass', 'The class is used by a top-level node and cannot be removed.
+You will need to change the class of the node by using the swap functionality.' )];
             if ( !$includeAll )
                 return $result;
         }
@@ -878,8 +775,7 @@ You will need to change the class of the node by using the swap functionality.' 
                 $dataType->deleteStoredClassAttribute( $classAttribute, $version );
             }
             eZPersistentObject::removeObject( eZContentClassAttribute::definition(),
-                                              array( 'contentclass_id' => $contentClassID,
-                                                     'version' => $version ) );
+                                              ['contentclass_id' => $contentClassID, 'version' => $version] );
             $db->commit();
         }
     }
@@ -893,7 +789,7 @@ You will need to change the class of the node by using the swap functionality.' 
     {
         if ( !is_array( $attributes ) )
             return;
-        usort( $attributes, array( $this, "compareAttributes" ) );
+        usort( $attributes, $this->compareAttributes(...) );
         $i = 0;
         foreach( $attributes as $attribute )
         {
@@ -957,7 +853,7 @@ You will need to change the class of the node by using the swap functionality.' 
     function initializeCopy( &$originalClass )
     {
         $name = ezpI18n::tr( 'kernel/class', 'Copy of %class_name', null,
-                        array( '%class_name' => $originalClass->attribute( 'name' ) ) );
+                        ['%class_name' => $originalClass->attribute( 'name' )] );
         $identifier = 'copy_of_' . $originalClass->attribute( 'identifier' );
         $db = eZDB::instance();
         $sql = "SELECT count( ezcontentclass_name.name ) AS count FROM ezcontentclass, ezcontentclass_name WHERE ezcontentclass.id = ezcontentclass_name.contentclass_id AND ezcontentclass_name.name like '" . $db->escapeString( $name ) . "%'";
@@ -1032,7 +928,7 @@ You will need to change the class of the node by using the swap functionality.' 
         }
 
         // Set contentobject_name to something sensible if it is missing
-        if ( count( $attributes ) > 0 && trim( $this->attribute( 'contentobject_name' ) ) == '' )
+        if ( count( $attributes ) > 0 && trim( (string) $this->attribute( 'contentobject_name' ) ) == '' )
         {
             $this->setAttribute( 'contentobject_name', '<' . $attributes[0]->attribute( 'identifier' ) . '>' );
         }
@@ -1090,7 +986,7 @@ You will need to change the class of the node by using the swap functionality.' 
 
     static function exists( $id, $version = eZContentClass::VERSION_STATUS_DEFINED, $userID = false, $useIdentifier = false )
     {
-        $conds = array( "version" => $version );
+        $conds = ["version" => $version];
         if ( $useIdentifier )
             $conds["identifier"] = $id;
         else
@@ -1104,10 +1000,9 @@ You will need to change the class of the node by using the swap functionality.' 
                                                       null,
                                                       $conds,
                                                       null,
-                                                      array( "offset" => 0,
-                                                             "length" => 1 ),
+                                                      ["offset" => 0, "length" => 1],
                                                       false );
-        if ( count( $rows ) > 0 )
+        if ( count( (array) $rows ) > 0 )
             return $rows[0]['id'];
         return false;
     }
@@ -1120,8 +1015,7 @@ You will need to change the class of the node by using the swap functionality.' 
         // then we fetch it from the DB (objects are always cached as arrays).
         if ( !isset( $eZContentClassObjectCache[$id] ) or $asObject === false or $version != eZContentClass::VERSION_STATUS_DEFINED )
         {
-            $conds = array( "id" => $id,
-                        "version" => $version );
+            $conds = ["id" => $id, "version" => $version];
 
             if ( $user_id !== false and is_numeric( $user_id ) )
                 $conds["creator_id"] = $user_id;
@@ -1132,19 +1026,18 @@ You will need to change the class of the node by using the swap functionality.' 
             $rows = eZPersistentObject::fetchObjectList( eZContentClass::definition(),
                                                       null,
                                                       $conds,
-                                                      array( "version" => $version_sort ),
-                                                      array( "offset" => 0,
-                                                             "length" => 2 ),
+                                                      ["version" => $version_sort],
+                                                      ["offset" => 0, "length" => 2],
                                                       false );
 
-            if ( count( $rows ) == 0 )
+            if ( count( (array) $rows ) == 0 )
             {
                 $contentClass = null;
                 return $contentClass;
             }
 
             $row = $rows[0];
-            $row["version_count"] = count( $rows );
+            $row["version_count"] = count( (array) $rows );
 
             if ( $asObject )
             {
@@ -1168,8 +1061,7 @@ You will need to change the class of the node by using the swap functionality.' 
 
     static function fetchByRemoteID( $remoteID, $asObject = true, $version = eZContentClass::VERSION_STATUS_DEFINED, $user_id = false ,$parent_id = null )
     {
-        $conds = array( "remote_id" => $remoteID,
-                        "version" => $version );
+        $conds = ["remote_id" => $remoteID, "version" => $version];
         if ( $user_id !== false and is_numeric( $user_id ) )
             $conds["creator_id"] = $user_id;
         $version_sort = "desc";
@@ -1178,18 +1070,17 @@ You will need to change the class of the node by using the swap functionality.' 
         $rows = eZPersistentObject::fetchObjectList( eZContentClass::definition(),
                                                       null,
                                                       $conds,
-                                                      array( "version" => $version_sort ),
-                                                      array( "offset" => 0,
-                                                             "length" => 2 ),
+                                                      ["version" => $version_sort],
+                                                      ["offset" => 0, "length" => 2],
                                                       false );
-        if ( count( $rows ) == 0 )
+        if ( count( (array) $rows ) == 0 )
         {
             $contentClass = null;
             return $contentClass;
         }
 
         $row = $rows[0];
-        $row["version_count"] = count( $rows );
+        $row["version_count"] = count( (array) $rows );
 
         if ( $asObject )
         {
@@ -1201,8 +1092,7 @@ You will need to change the class of the node by using the swap functionality.' 
 
     static function fetchByIdentifier( $identifier, $asObject = true, $version = eZContentClass::VERSION_STATUS_DEFINED, $user_id = false ,$parent_id = null )
     {
-        $conds = array( "identifier" => $identifier,
-                        "version" => $version );
+        $conds = ["identifier" => $identifier, "version" => $version];
         if ( $user_id !== false and is_numeric( $user_id ) )
             $conds["creator_id"] = $user_id;
         $version_sort = "desc";
@@ -1211,18 +1101,17 @@ You will need to change the class of the node by using the swap functionality.' 
         $rows = eZPersistentObject::fetchObjectList( eZContentClass::definition(),
                                                       null,
                                                       $conds,
-                                                      array( "version" => $version_sort ),
-                                                      array( "offset" => 0,
-                                                             "length" => 2 ),
+                                                      ["version" => $version_sort],
+                                                      ["offset" => 0, "length" => 2],
                                                       false );
-        if ( count( $rows ) == 0 )
+        if ( count( (array) $rows ) == 0 )
         {
             $contentClass = null;
             return $contentClass;
         }
 
         $row = $rows[0];
-        $row["version_count"] = count( $rows );
+        $row["version_count"] = count( (array) $rows );
 
         if ( $asObject )
         {
@@ -1237,7 +1126,7 @@ You will need to change the class of the node by using the swap functionality.' 
     static function fetchList( $version = eZContentClass::VERSION_STATUS_DEFINED, $asObject = true, $user_id = false,
                          $sorts = null, $fields = null, $classFilter = false, $limit = null )
     {
-        $conds = array();
+        $conds = [];
         $custom_fields = null;
         $custom_tables = null;
         $custom_conds = null;
@@ -1251,8 +1140,8 @@ You will need to change the class of the node by using the swap functionality.' 
             $classIDCount = 0;
             $classIdentifierCount = 0;
 
-            $classIDFilter = array();
-            $classIdentifierFilter = array();
+            $classIDFilter = [];
+            $classIdentifierFilter = [];
             foreach ( $classFilter as $classType )
             {
                 if ( is_numeric( $classType ) )
@@ -1268,11 +1157,11 @@ You will need to change the class of the node by using the swap functionality.' 
             }
 
             if ( $classIDCount > 1 )
-                $conds['id'] = array( $classIDFilter );
+                $conds['id'] = [$classIDFilter];
             else if ( $classIDCount == 1 )
                 $conds['id'] = $classIDFilter[0];
             if ( $classIdentifierCount > 1 )
-                $conds['identifier'] = array( $classIdentifierFilter );
+                $conds['identifier'] = [$classIdentifierFilter];
             else if ( $classIdentifierCount == 1 )
                 $conds['identifier'] = $classIdentifierFilter[0];
         }
@@ -1280,9 +1169,9 @@ You will need to change the class of the node by using the swap functionality.' 
         if ( $sorts && isset( $sorts['name'] ) )
         {
             $nameFiler = eZContentClassName::sqlFilter( 'ezcontentclass' );
-            $custom_tables = array( $nameFiler['from'] );
+            $custom_tables = [$nameFiler['from']];
             $custom_conds = "AND " . $nameFiler['where'];
-            $custom_fields = array( $nameFiler['nameField'] );
+            $custom_fields = [$nameFiler['nameField']];
 
             $sorts[$nameFiler['orderBy']] = $sorts['name'];
             unset( $sorts['name'] );
@@ -1324,8 +1213,7 @@ You will need to change the class of the node by using the swap functionality.' 
             $version = $this->Version;
         }
 
-        return eZContentClassAttribute::fetchFilteredList( array( "contentclass_id" => $id,
-                                                                  "version" => $version ),
+        return eZContentClassAttribute::fetchFilteredList( ["contentclass_id" => $id, "version" => $version],
                                                            $asObject );
     }
 
@@ -1338,10 +1226,8 @@ You will need to change the class of the node by using the swap functionality.' 
     */
     function fetchAttributeByIdentifier( $identifier, $asObject = true )
     {
-        $attributeArray = eZContentClassAttribute::fetchFilteredList( array( 'contentclass_id' => $this->ID,
-                                                                             'version' => $this->Version,
-                                                                             'identifier' => $identifier ), $asObject );
-        if ( count( $attributeArray ) > 0 )
+        $attributeArray = eZContentClassAttribute::fetchFilteredList( ['contentclass_id' => $this->ID, 'version' => $this->Version, 'identifier' => $identifier], $asObject );
+        if ( (is_countable($attributeArray) ? count( $attributeArray ) : 0) > 0 )
         {
             return $attributeArray[0];
         }
@@ -1356,9 +1242,7 @@ You will need to change the class of the node by using the swap functionality.' 
             $version = $this->Version;
         }
 
-        return eZContentClassAttribute::fetchFilteredList( array( "contentclass_id" => $id,
-                                                                  "is_searchable" => 1,
-                                                                  "version" => $version ), $asObject );
+        return eZContentClassAttribute::fetchFilteredList( ["contentclass_id" => $id, "is_searchable" => 1, "version" => $version], $asObject );
     }
 
     function versionStatus()
@@ -1388,7 +1272,6 @@ You will need to change the class of the node by using the swap functionality.' 
      * Will generate a name for the content object based on the class
      * settings for content object limited by self::CONTENT_OBJECT_NAME_MAX_LENGTH.
      *
-     * @param eZContentObject $contentObject
      * @param int|false $version
      * @param string|false $translation
      * @return string
@@ -1414,7 +1297,6 @@ You will need to change the class of the node by using the swap functionality.' 
      * Will generate a name for the url alias based on the class
      * settings for content object limited by site.ini\[URLTranslator]\UrlAliasNameLimit
      *
-     * @param eZContentObject $contentObject
      * @param int|false $version
      * @param string|false $translation
      * @return string
@@ -1444,12 +1326,12 @@ You will need to change the class of the node by using the swap functionality.' 
     function buildContentObjectName( $contentObjectName, $dataMap, $tmpTags = false )
     {
         preg_match_all( "|<[^>]+>|U",
-                        $contentObjectName,
+                        (string) $contentObjectName,
                         $tagMatchArray );
 
         foreach ( $tagMatchArray[0] as $tag )
         {
-            $tagName = str_replace( "<", "", $tag );
+            $tagName = str_replace( "<", "", (string) $tag );
             $tagName = str_replace( ">", "", $tagName );
 
             $tagParts = explode( '|', $tagName );
@@ -1473,7 +1355,7 @@ You will need to change the class of the node by using the swap functionality.' 
             }
 
             // replace tag with object name part
-            $contentObjectName = str_replace( $tag, $namePart, $contentObjectName );
+            $contentObjectName = str_replace( $tag, $namePart, (string) $contentObjectName );
         }
         return $contentObjectName;
     }
@@ -1514,7 +1396,7 @@ You will need to change the class of the node by using the swap functionality.' 
         {
             return array_intersect( eZContentLanguage::prioritizedLanguageCodes(), $this->CanInstantiateLanguages );
         }
-        return array();
+        return [];
     }
 
     /*!
@@ -1792,7 +1674,7 @@ You will need to change the class of the node by using the swap functionality.' 
 
         if ( is_array( $identifier ) )
         {
-            $idList = array();
+            $idList = [];
             foreach( $identifier as $identifierItem )
             {
                 if ( isset( $identifierHash[$identifierItem] )  )
@@ -1845,7 +1727,7 @@ You will need to change the class of the node by using the swap functionality.' 
             $phpCache = new eZPHPCreator( $cacheDir,
                                           'classidentifiers_' . $dbName . '.php',
                                           '',
-                                          array( 'clustering' => 'classidentifiers' ) );
+                                          ['clustering' => 'classidentifiers'] );
 
             $handler = eZExpiryHandler::instance();
             $expiryTime = 0;
@@ -1856,7 +1738,7 @@ You will need to change the class of the node by using the swap functionality.' 
 
             if ( $phpCache->canRestore( $expiryTime ) )
             {
-                $var = $phpCache->restore( array( 'identifierHash' => 'identifier_hash' ) );
+                $var = $phpCache->restore( ['identifierHash' => 'identifier_hash'] );
                 self::$identifierHash = $var['identifierHash'];
             }
             else
@@ -1865,7 +1747,7 @@ You will need to change the class of the node by using the swap functionality.' 
                 $query = "SELECT id, identifier FROM ezcontentclass where version=0";
                 $identifierArray = $db->arrayQuery( $query );
 
-                self::$identifierHash = array();
+                self::$identifierHash = [];
                 foreach ( $identifierArray as $identifierRow )
                 {
                     self::$identifierHash[$identifierRow['identifier']] = $identifierRow['id'];
@@ -1896,7 +1778,7 @@ You will need to change the class of the node by using the swap functionality.' 
                 WHERE version=$version
                 AND data_type_string='$escapedDataTypeString'";
 
-        $classIDArray = $db->arrayQuery( $sql, array( 'column' => 'contentclass_id' ) );
+        $classIDArray = $db->arrayQuery( $sql, ['column' => 'contentclass_id'] );
         return $classIDArray;
     }
 
@@ -1923,7 +1805,7 @@ You will need to change the class of the node by using the swap functionality.' 
      * @return int
      * @since 4.2
      */
-    public static function versionHistoryLimit( $class )
+    public static function versionHistoryLimit( mixed $class )
     {
         // default version limit
         $contentINI = eZINI::instance( 'content.ini' );

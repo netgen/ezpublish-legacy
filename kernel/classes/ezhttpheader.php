@@ -56,7 +56,7 @@ class eZHTTPHeader
     */
     static function headerOverrideArray( $uri )
     {
-        $headerArray = array();
+        $headerArray = [];
 
         if ( !eZHTTPHeader::enabled() )
         {
@@ -68,9 +68,9 @@ class eZHTTPHeader
         $uriString = eZURLAliasML::cleanURL( $uri->uriString() );
 
         // If content/view used, get url alias for node
-        if ( strpos( $uriString, 'content/view/' ) === 0 )
+        if ( str_starts_with((string) $uriString, 'content/view/') )
         {
-            $urlParts = explode( '/', $uriString );
+            $urlParts = explode( '/', (string) $uriString );
             $nodeID = $urlParts[3];
             if ( !$nodeID )
             {
@@ -90,7 +90,7 @@ class eZHTTPHeader
         {
             $uriCopy = clone $uri;
             eZURLAliasML::translate( $uriCopy );
-            if ( strpos( $uriCopy->uriString(), 'content/view' ) === 0 )
+            if ( str_starts_with((string) $uriCopy->uriString(), 'content/view') )
             {
                 $contentView = true;
             }
@@ -111,12 +111,12 @@ class eZHTTPHeader
                     continue;
                 }
 
-                if ( strpos( $uriString, $path ) === 0 )
+                if ( str_starts_with($uriString, $path) )
                 {
                     $config = eZStringUtils::explodeStr( $value, ';' );
                     $headerValue = $config[0];
-                    $depth = isset( $config[1] ) ? $config[1] : null;
-                    $level = isset( $config[2] ) ? $config[2] : null;
+                    $depth = $config[1] ?? null;
+                    $level = $config[2] ?? null;
 
                     if ( $header == 'Expires' )
                     {

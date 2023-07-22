@@ -43,7 +43,7 @@ class ezjscServerFunctionsJs extends ezjscServerFunctions
     public static function time( $args )
     {
         if ( $args && isset( $args[0] ) )
-            return htmlspecialchars( $args[0] ) . '_' . time();
+            return htmlspecialchars( (string) $args[0] ) . '_' . time();
         return time();
     }
 
@@ -60,13 +60,13 @@ class ezjscServerFunctionsJs extends ezjscServerFunctions
         if ( $ezjscoreIni->variable( 'eZJSCore', 'LoadFromCDN' ) === 'enabled' )
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'ExternalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['yui2'], 'ezjsc::yui2conf' ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['yui2'], 'ezjsc::yui2conf'], $packerFiles );
         }
         else
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'LocalScripts' );
             $scriptBases = $ezjscoreIni->variable( 'eZJSCore', 'LocalScriptBasePath' );
-            $packerFiles = array_merge( array( $scriptFiles['yui2'], 'ezjsc::yui2conf::' . $scriptBases['yui2'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['yui2'], 'ezjsc::yui2conf::' . $scriptBases['yui2']], $packerFiles );
         }
         return '';
     }
@@ -108,13 +108,13 @@ class ezjscServerFunctionsJs extends ezjscServerFunctions
         if ( $ezjscoreIni->variable( 'eZJSCore', 'LoadFromCDN' ) === 'enabled' )
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'ExternalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['yui3'], 'ezjsc::yui3conf' ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['yui3'], 'ezjsc::yui3conf'], $packerFiles );
         }
         else
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'LocalScripts' );
             $scriptBases = $ezjscoreIni->variable( 'eZJSCore', 'LocalScriptBasePath' );
-            $packerFiles = array_merge( array( $scriptFiles['yui3'], 'ezjsc::yui3conf::' . $scriptBases['yui3'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['yui3'], 'ezjsc::yui3conf::' . $scriptBases['yui3']], $packerFiles );
         }
         return '';
     }
@@ -142,7 +142,7 @@ class ezjscServerFunctionsJs extends ezjscServerFunctions
             $options['modules'] = new stdClass;
         }
 
-        return 'var YUI3_config = ' . json_encode( $options ) . ';';
+        return 'var YUI3_config = ' . json_encode( $options, JSON_THROW_ON_ERROR ) . ';';
     }
 
     /**
@@ -265,12 +265,12 @@ YUI( YUI3_config ).add('io-ez', function( Y )
         if ( $ezjscoreIni->variable( 'eZJSCore', 'LoadFromCDN' ) === 'enabled' )
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'ExternalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['jquery'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['jquery']], $packerFiles );
         }
         else
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'LocalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['jquery'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['jquery']], $packerFiles );
         }
         return '';
     }
@@ -288,12 +288,12 @@ YUI( YUI3_config ).add('io-ez', function( Y )
         if ( $ezjscoreIni->variable( 'eZJSCore', 'LoadFromCDN' ) === 'enabled' )
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'ExternalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['jqueryUI'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['jqueryUI']], $packerFiles );
         }
         else
         {
             $scriptFiles = $ezjscoreIni->variable( 'eZJSCore', 'LocalScripts' );
-            $packerFiles = array_merge( array( $scriptFiles['jqueryUI'] ), $packerFiles );
+            $packerFiles = array_merge( [$scriptFiles['jqueryUI']], $packerFiles );
         }
         return '';
     }
@@ -392,14 +392,14 @@ YUI( YUI3_config ).add('io-ez', function( Y )
      *              2 => SearchLimit (10 by default, max 50)
      * @return array
      */
-    public static function search( $args )
+    public static function search( mixed $args )
     {
         $http = eZHTTPTool::instance();
 
         if ( $http->hasPostVariable( 'SearchStr' ) )
-            $searchStr = trim( $http->postVariable( 'SearchStr' ) );
+            $searchStr = trim( (string) $http->postVariable( 'SearchStr' ) );
         else if ( isset( $args[0] ) )
-            $searchStr = trim( $args[0] );
+            $searchStr = trim( (string) $args[0] );
 
         if ( $http->hasPostVariable( 'SearchOffset' ))
             $searchOffset = (int) $http->postVariable( 'SearchOffset' );
@@ -422,7 +422,7 @@ YUI( YUI3_config ).add('io-ez', function( Y )
             $searchLimit = $maximumSearchLimit;
 
         // Prepare node encoding parameters
-        $encodeParams = array();
+        $encodeParams = [];
         if ( self::hasPostValue( $http, 'EncodingLoadImages' ) )
             $encodeParams['loadImages'] = true;
 
@@ -439,11 +439,13 @@ YUI( YUI3_config ).add('io-ez', function( Y )
             $encodeParams['dataMap'] = $http->postVariable( 'EncodingDataMap' );
 
         // Prepare search parameters
-        $params = array( 'SearchOffset' => $searchOffset,
-                         'SearchLimit' => $searchLimit,
-                         'SortArray' => array( 'published', 0 ), // Legacy search engine uses SortArray
-                         'SortBy' => array( 'published' => 'desc' ) // eZ Find search method implementation uses SortBy
-        );
+        $params = [
+            'SearchOffset' => $searchOffset,
+            'SearchLimit' => $searchLimit,
+            'SortArray' => ['published', 0],
+            // Legacy search engine uses SortArray
+            'SortBy' => ['published' => 'desc'],
+        ];
 
         if ( self::hasPostValue( $http, 'SearchContentClassAttributeID' ) )
         {
@@ -481,22 +483,15 @@ YUI( YUI3_config ).add('io-ez', function( Y )
 
         if ( self::hasPostValue( $http, 'EnableSpellCheck' ) || self::hasPostValue( $http, 'enable-spellcheck', '0' ) )
         {
-            $params['SpellCheck'] = array( true );
+            $params['SpellCheck'] = [true];
         }
 
         if ( self::hasPostValue( $http, 'GetFacets' ) || self::hasPostValue( $http, 'show-facets', '0' ) )
         {
-            $params['facet'] = eZFunctionHandler::execute( 'ezfind', 'getDefaultSearchFacets', array() );
+            $params['facet'] = eZFunctionHandler::execute( 'ezfind', 'getDefaultSearchFacets', [] );
         }
 
-        $result = array( 'SearchOffset' => $searchOffset,
-                         'SearchLimit' => $searchLimit,
-                         'SearchResultCount' => 0,
-                         'SearchCount' => 0,
-                         'SearchResult' => array(),
-                         'SearchString' => $searchStr,
-                         'SearchExtras' => array()
-        );
+        $result = ['SearchOffset' => $searchOffset, 'SearchLimit' => $searchLimit, 'SearchResultCount' => 0, 'SearchCount' => 0, 'SearchResult' => [], 'SearchString' => $searchStr, 'SearchExtras' => []];
 
         // Possibility to keep track of callback reference for use in js callback function
         if ( $http->hasPostVariable( 'CallbackID' ) )
@@ -507,7 +502,7 @@ YUI( YUI3_config ).add('io-ez', function( Y )
         {
             $searchList = eZSearch::search( $searchStr, $params );
 
-            $result['SearchResultCount'] = $searchList['SearchResult'] !== false ? count( $searchList['SearchResult'] ) : 0;
+            $result['SearchResultCount'] = $searchList['SearchResult'] !== false ? is_countable($searchList['SearchResult']) ? count( $searchList['SearchResult'] ) : 0 : 0;
             $result['SearchCount'] = (int) $searchList['SearchCount'];
             $result['SearchResult'] = ezjscAjaxContent::nodeEncode( $searchList['SearchResult'], $encodeParams, false );
 
@@ -520,7 +515,7 @@ YUI( YUI3_config ).add('io-ez', function( Y )
 
                 if ( isset( $params['facet'] ) )
                 {
-                    $facetInfo = array();
+                    $facetInfo = [];
                     $retrievedFacets = $searchList['SearchExtras']->attribute( 'facet_fields' );
                     $baseSearchUrl = "/content/search/";
                     eZURI::transformURI( $baseSearchUrl, false, 'full' );
@@ -528,14 +523,14 @@ YUI( YUI3_config ).add('io-ez', function( Y )
                     foreach ( $params['facet'] as $key => $defaultFacet )
                     {
                         $facetData       = $retrievedFacets[$key];
-                        $facetInfo[$key] = array( 'name' => $defaultFacet['name'], 'list' => array() );
+                        $facetInfo[$key] = ['name' => $defaultFacet['name'], 'list' => []];
                         if ( $facetData !== null )
                         {
                             foreach ( $facetData['nameList'] as $key2 => $facetName )
                             {
                                 if ( $key2 != '' )
                                 {
-                                    $tmp = array( 'value' => $facetName );
+                                    $tmp = ['value' => $facetName];
                                     $tmp['url'] = $baseSearchUrl . '?SearchText=' . $searchStr . '&filter[]=' . $facetData['queryLimit'][$key2] . '&activeFacets[' . $defaultFacet['field'] . ':' . $defaultFacet['name'] . ']=' . $facetName;
                                     $tmp['count'] = $facetData['countList'][$key2];
                                     $facetInfo[$key]['list'][] = $tmp;
@@ -555,7 +550,6 @@ YUI( YUI3_config ).add('io-ez', function( Y )
      * Creates an array out of a post parameter, return empty array if post parameter is not set.
      * Splits string on ',' in case of comma seperated values.
      *
-     * @param eZHTTPTool $http
      * @param string $key
      * @return array
      */
@@ -566,18 +560,17 @@ YUI( YUI3_config ).add('io-ez', function( Y )
             $value = $http->postVariable( $key );
             if ( is_array( $value ) )
                 return $value;
-            elseif( strpos($value, ',') === false )
-                return array( $value );
+            elseif( !str_contains((string) $value, ',') )
+                return [$value];
             else
-                return explode( ',', $value );
+                return explode( ',', (string) $value );
         }
-        return array();
+        return [];
     }
 
     /**
      * Checks if a post variable exitst and has a value
      *
-     * @param eZHTTPTool $http
      * @param string $key
      * @return bool
      */
@@ -635,14 +628,14 @@ YUI( YUI3_config ).add('io-ez', function( Y )
         if ( $wwwDir === null )
             $wwwDir = eZSys::wwwDir() . '/';
 
-        $triedFiles = array();
+        $triedFiles = [];
         $match = eZTemplateDesignResource::fileMatch( $bases, '', $file, $triedFiles );
         if ( $match === false )
         {
             eZDebug::writeWarning( "Could not find: $file", __METHOD__ );
             return false;
         }
-        return $wwwDir . htmlspecialchars( $match['path'] );
+        return $wwwDir . htmlspecialchars( (string) $match['path'] );
     }
 }
 

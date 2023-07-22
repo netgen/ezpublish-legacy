@@ -5,7 +5,7 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Initialize the ezurlalias_ml_incr table';
 $scriptSettings['use-session'] = true;
 $scriptSettings['use-modules'] = true;
@@ -25,7 +25,7 @@ $script->initialize();
 
 $db = eZDB::instance();
 
-$maxIDs = $db->arrayQuery( 'SELECT MAX( id ) AS max_id FROM ezurlalias_ml', array( 'column' => 'max_id' ) );
+$maxIDs = $db->arrayQuery( 'SELECT MAX( id ) AS max_id FROM ezurlalias_ml', ['column' => 'max_id'] );
 
 $maxID = (int)$maxIDs[0];
 $cli->output( "highest ID in ezurlalias_ml table: $maxID" );

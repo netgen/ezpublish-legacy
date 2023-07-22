@@ -133,9 +133,7 @@ class eZDiff
     public $DiffEngineInstance;
 
     /// The allowed input on which to diff
-    public $DIFF_TYPE = array( 'text' => 0,
-                            'xml' => 1,
-                            'container' => 2 );
+    public $DIFF_TYPE = ['text' => 0, 'xml' => 1, 'container' => 2];
 }
 
 ?>

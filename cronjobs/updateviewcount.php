@@ -46,12 +46,12 @@ $logFileIni = eZINI::instance( 'logfile.ini' );
 $logFilePath = $logFileIni->variable( 'AccessLogFileSettings', 'StorageDir' ) . '/' . $logFileIni->variable( 'AccessLogFileSettings', 'LogFileName' );
 $prefixes = $logFileIni->variable( 'AccessLogFileSettings', 'SitePrefix' );
 $pathPrefixes = $logFileIni->variable( 'AccessLogFileSettings', 'PathPrefix' );
-$pathPrefixesCount = count( $pathPrefixes );
+$pathPrefixesCount = is_countable($pathPrefixes) ? count( $pathPrefixes ) : 0;
 
-$nodeIDHashCounter = array();
-$pathHashCounter = array();
-$contentHash = array();
-$nonContentHash = array();
+$nodeIDHashCounter = [];
+$pathHashCounter = [];
+$contentHash = [];
+$nonContentHash = [];
 
 if ( is_file( $logFilePath ) )
 {
@@ -74,17 +74,17 @@ if ( is_file( $logFilePath ) )
             if ( $startParse or !$hasStartLine )
             {
                 $logPartArray = preg_split( "/[\"]+/", $line );
-                list( $ip, $timePart ) = explode( '[', $logPartArray[0] );
-                list( $time, $rest ) = explode( ' ', $timePart );
+                [$ip, $timePart] = explode( '[', $logPartArray[0] );
+                [$time, $rest] = explode( ' ', $timePart );
 
                 if ( $time == $startTime )
                     $stopParse = true;
 
-                list( $requireMethod, $url ) = explode( ' ', $logPartArray[1] );
+                [$requireMethod, $url] = explode( ' ', $logPartArray[1] );
                 $url = preg_replace( "/\?.*/", "", $url);
                 foreach ( $prefixes as $prefix )
                 {
-                    $urlChanged = preg_replace( '/^\/' . preg_quote( $prefix, '/' ) . '(\/|$)/', '/', $url );
+                    $urlChanged = preg_replace( '/^\/' . preg_quote( (string) $prefix, '/' ) . '(\/|$)/', '/', $url );
                     if ( $urlChanged != $url )
                     {
                         $url = $urlChanged;
@@ -92,7 +92,7 @@ if ( is_file( $logFilePath ) )
                     }
                 }
 
-                if ( strpos( $url, 'content/view/full/' ) !== false )
+                if ( str_contains( $url, 'content/view/full/' ) )
                 {
                     $url = str_replace( "content/view/full/", "", $url );
                     $url = str_replace( "/", "", $url );

@@ -17,17 +17,17 @@
 
 class eZMatrixType extends eZDataType
 {
-    const DEFAULT_NAME_VARIABLE = '_ezmatrix_default_name_';
+    final public const DEFAULT_NAME_VARIABLE = '_ezmatrix_default_name_';
 
-    const NUM_COLUMNS_VARIABLE = '_ezmatrix_default_num_columns_';
-    const NUM_ROWS_VARIABLE = '_ezmatrix_default_num_rows_';
-    const CELL_VARIABLE = '_ezmatrix_cell_';
-    const DATA_TYPE_STRING = 'ezmatrix';
+    final public const NUM_COLUMNS_VARIABLE = '_ezmatrix_default_num_columns_';
+    final public const NUM_ROWS_VARIABLE = '_ezmatrix_default_num_rows_';
+    final public const CELL_VARIABLE = '_ezmatrix_cell_';
+    final public const DATA_TYPE_STRING = 'ezmatrix';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Matrix', 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -40,8 +40,8 @@ class eZMatrixType extends eZDataType
         if ( $http->hasPostVariable( $base . '_ezmatrix_cell_' . $contentObjectAttribute->attribute( 'id' ) ) )
             $data = $http->PostVariable( $base . '_ezmatrix_cell_' . $contentObjectAttribute->attribute( 'id' ) );
         $count = 0;
-        for ( $i = 0; $i < count( $data ); ++$i )
-             if ( trim( $data[$i] ) <> '' )
+        for ( $i = 0; $i < (is_countable($data) ? count( $data ) : 0); ++$i )
+             if ( trim( (string) $data[$i] ) <> '' )
              {
                  ++$count;
                  break;
@@ -94,7 +94,7 @@ class eZMatrixType extends eZDataType
         $count = 0;
         foreach ( $columns as $column )
         {
-            $count += count( $column['rows'] );
+            $count += is_countable($column['rows']) ? count( $column['rows'] ) : 0;
         }
         return $count > 0;
     }
@@ -107,14 +107,13 @@ class eZMatrixType extends eZDataType
         $matrix = $contentObjectAttribute->content();
         $columnsArray = $matrix->attribute( 'columns' );
         $columns = $columnsArray['sequential'];
-        $metaDataArray = array();
+        $metaDataArray = [];
         foreach ( $columns as $column )
         {
             $rows = $column['rows'];
             foreach ( $rows as $row )
             {
-                $metaDataArray[] = array( 'id' => $column['identifier'],
-                                          'text' => $row );
+                $metaDataArray[] = ['id' => $column['identifier'], 'text' => $row];
             }
         }
         return $metaDataArray;
@@ -128,7 +127,7 @@ class eZMatrixType extends eZDataType
         $cellsVarName = $base . self::CELL_VARIABLE . $contentObjectAttribute->attribute( 'id' );
         if ( $http->hasPostVariable( $cellsVarName ) )
         {
-            $cells = array();
+            $cells = [];
             foreach ( $http->postVariable( $cellsVarName ) as $cell )
             {
                 $cells[] = $cell;
@@ -281,7 +280,7 @@ class eZMatrixType extends eZDataType
 
         if ( $http->hasPostVariable( $columnNameVariable ) && $http->hasPostVariable( $columnIDVariable ) )
         {
-            $columns = array();
+            $columns = [];
             $i = 0;
             $columnNameList = $http->postVariable( $columnNameVariable );
             $columnIDList = $http->postVariable( $columnIDVariable );
@@ -300,7 +299,7 @@ class eZMatrixType extends eZDataType
                 {
                     $columnID = $columnIDList[$index];
                     $name = $columnNameList[$index];
-                    if ( strlen( $columnID ) == 0 )
+                    if ( strlen( (string) $columnID ) == 0 )
                     {
                         $columnID = $name;
                         // Initialize transformation system
@@ -309,9 +308,7 @@ class eZMatrixType extends eZDataType
                     }
                 }
 
-                $columns[] = array( 'name' => $name,
-                                    'identifier' => $columnID,
-                                    'index' => $i );
+                $columns[] = ['name' => $name, 'identifier' => $columnID, 'index' => $i];
 
                 $i++;
             }
@@ -389,7 +386,7 @@ class eZMatrixType extends eZDataType
     function toString( $contentObjectAttribute )
     {
         $matrix = $contentObjectAttribute->attribute( 'content' );
-        $matrixArray = array();
+        $matrixArray = [];
         $rows = $matrix->attribute( 'rows' );
 
         foreach( $rows['sequential'] as $row )
@@ -404,8 +401,8 @@ class eZMatrixType extends eZDataType
     function fromString( $contentObjectAttribute, $string )
     {
         $matrix = $contentObjectAttribute->attribute( 'content' );
-        $matrix->Cells = array();
-        $matrix->Matrix['rows']['sequential'] = array();
+        $matrix->Cells = [];
+        $matrix->Matrix['rows']['sequential'] = [];
         $matrix->NumRows = 0;
 
         if ( $string != '' )
@@ -509,7 +506,7 @@ class eZMatrixType extends eZDataType
         $numRows = $classAttribute->attribute( 'data_int1' );
         $matrix = new eZMatrix( '', $numRows, $classAttribute->attribute( 'content' ) );
         $db = eZDB::instance();
-        return array( 'data_text' => "'" . $db->escapeString( $matrix->xmlString() ) . "'" );
+        return ['data_text' => "'" . $db->escapeString( $matrix->xmlString() ) . "'"];
     }
 }
 

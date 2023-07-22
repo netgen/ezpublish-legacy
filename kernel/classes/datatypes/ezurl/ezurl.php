@@ -23,52 +23,14 @@ class eZURL extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'url' => array( 'name' => 'URL',
-                                                         'datatype' => 'string',
-                                                         'default' => '',
-                                                         'required' => true ),
-                                         'original_url_md5' => array( 'name' => 'OriginalURLMD5',
-                                                                      'datatype' => 'string',
-                                                                      'default' => '',
-                                                                      'required' => true ),
-                                         'is_valid' => array( 'name' => 'IsValid',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'last_checked' => array( 'name' => 'LastChecked',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZURL',
-                      'name' => 'ezurl' );
+        static $definition = ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'url' => ['name' => 'URL', 'datatype' => 'string', 'default' => '', 'required' => true], 'original_url_md5' => ['name' => 'OriginalURLMD5', 'datatype' => 'string', 'default' => '', 'required' => true], 'is_valid' => ['name' => 'IsValid', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'last_checked' => ['name' => 'LastChecked', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZURL', 'name' => 'ezurl'];
         return $definition;
     }
 
     static function create( $url )
     {
         $dateTime = time();
-        $row = array(
-            'id' => null,
-            'url' => $url,
-            'original_url_md5' => md5( $url ),
-            'is_valid' => true,
-            'last_checked' => 0,
-            'created' => $dateTime,
-            'modified' => $dateTime );
+        $row = ['id' => null, 'url' => $url, 'original_url_md5' => md5( (string) $url ), 'is_valid' => true, 'last_checked' => 0, 'created' => $dateTime, 'modified' => $dateTime];
         return new eZURL( $row );
     }
 
@@ -79,7 +41,7 @@ class eZURL extends eZPersistentObject
     static function removeByID( $urlID )
     {
         eZPersistentObject::removeObject( eZURL::definition(),
-                                          array( 'id' => $urlID ) );
+                                          ['id' => $urlID] );
     }
 
     /**
@@ -108,7 +70,7 @@ class eZURL extends eZPersistentObject
                 $urlObject->setAttribute( 'url', $url );
                 $urlObject->setAttribute( 'original_url_md5', md5( $url ) );
                 $urlObject->setAttribute( 'modified', time() );
-                $urlObject->store( array( 'url', 'original_url_md5', 'modified' ) );
+                $urlObject->store( ['url', 'original_url_md5', 'modified'] );
             }
 
             $urlID = $urlObject->attribute( 'id' );
@@ -124,6 +86,7 @@ class eZURL extends eZPersistentObject
     */
     static function registerURLArray( $urlArray )
     {
+        $urlArrayTmp = [];
         $db = eZDB::instance();
 
         foreach( $urlArray as $key => $url )
@@ -135,7 +98,7 @@ class eZURL extends eZPersistentObject
         $checkURLQuery = "SELECT id, url FROM ezurl WHERE url IN ( '$inURLSQL' )";
         $urlRowArray = $db->arrayQuery( $checkURLQuery );
 
-        $registeredURLArray = array();
+        $registeredURLArray = [];
         foreach ( $urlRowArray as $urlRow )
         {
             $registeredURLArray[$urlRow['url']] = $urlRow['id'];
@@ -166,10 +129,7 @@ class eZURL extends eZPersistentObject
     {
         $dateTime = time();
         $isValid = (int) $isValid;
-        eZPersistentObject::updateObjectList( array( 'definition' => eZURL::definition(),
-                                                     'update_fields' => array( 'is_valid' => $isValid,
-                                                                               'modified' => $dateTime ),
-                                                     'conditions' => array( 'id' => $id ) ) );
+        eZPersistentObject::updateObjectList( ['definition' => eZURL::definition(), 'update_fields' => ['is_valid' => $isValid, 'modified' => $dateTime], 'conditions' => ['id' => $id]] );
     }
 
     /*!
@@ -195,9 +155,7 @@ class eZURL extends eZPersistentObject
         {
             $dateTime = time();
         }
-        eZPersistentObject::updateObjectList( array( 'definition' => eZURL::definition(),
-                                                     'update_fields' => array( 'last_checked' => $dateTime ),
-                                                     'conditions' => array( 'id' => $id ) ) );
+        eZPersistentObject::updateObjectList( ['definition' => eZURL::definition(), 'update_fields' => ['last_checked' => $dateTime], 'conditions' => ['id' => $id]] );
     }
 
     /*!
@@ -206,14 +164,14 @@ class eZURL extends eZPersistentObject
     static function fetch( $id, $asObject = true )
     {
         return eZPersistentObject::fetchObject( eZURL::definition(),
-                                                null, array( 'id' => $id ),
+                                                null, ['id' => $id],
                                                 $asObject );
     }
 
     /*!
      \return the number of registered URLs.
     */
-    static function fetchListCount( $parameters = array() )
+    static function fetchListCount( $parameters = [] )
     {
         return eZURL::handleList( $parameters, true );
     }
@@ -221,7 +179,7 @@ class eZURL extends eZPersistentObject
     /*!
      \return all registered URLs.
     */
-    static function fetchList( $parameters = array() )
+    static function fetchList( $parameters = [] )
     {
         return eZURL::handleList( $parameters, false );
     }
@@ -235,20 +193,16 @@ class eZURL extends eZPersistentObject
     public static function fetchByUrl( $url, $asObject = true )
     {
         return parent::fetchObject( self::definition(),
-                                    null, array( 'url' => $url ),
+                                    null, ['url' => $url],
                                     $asObject );
     }
 
     /*!
      \return all registered URLs.
     */
-    static function handleList( $parameters = array(), $asCount = false )
+    static function handleList( $parameters = [], $asCount = false )
     {
-        $parameters = array_merge( array( 'as_object' => true,
-                                          'is_valid' => null,
-                                          'offset' => false,
-                                          'limit' => false,
-                                          'only_published' => false ),
+        $parameters = array_merge( ['as_object' => true, 'is_valid' => null, 'offset' => false, 'limit' => false, 'only_published' => false],
                                    $parameters );
         $asObject = $parameters['as_object'];
         $isValid = $parameters['is_valid'];
@@ -257,9 +211,8 @@ class eZURL extends eZPersistentObject
         $onlyPublished = $parameters['only_published'];
         $limitArray = null;
         if ( !$asCount and $offset !== false and $limit !== false )
-            $limitArray = array( 'offset' => $offset,
-                                 'length' => $limit );
-        $conditions = array();
+            $limitArray = ['offset' => $offset, 'length' => $limit];
+        $conditions = [];
         if( $isValid === false ) $isValid = 0;
         if ( $isValid !== null )
         {
@@ -320,12 +273,11 @@ class eZURL extends eZPersistentObject
                 }
                 else
                 {
-                    $urlArray = $db->arrayQuery( $query, array( 'offset' => $offset,
-                                                                 'limit'  => $limit ) );
+                    $urlArray = $db->arrayQuery( $query, ['offset' => $offset, 'limit'  => $limit] );
                 }
                 if ( $asObject )
                 {
-                    $urls = array();
+                    $urls = [];
                     foreach ( $urlArray as $url )
                     {
                         $urls[] = new eZURL( $url );
@@ -342,14 +294,13 @@ class eZURL extends eZPersistentObject
             if ( $asCount )
             {
                 $urls = eZPersistentObject::fetchObjectList( eZURL::definition(),
-                                                             array(),
+                                                             [],
                                                              $conditions,
                                                              false,
                                                              null,
                                                              false,
                                                              false,
-                                                             array( array( 'operation' => 'count( id )',
-                                                                           'name' => 'count' ) ) );
+                                                             [['operation' => 'count( id )', 'name' => 'count']] );
                 return $urls[0]['count'];
             }
             else

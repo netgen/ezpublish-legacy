@@ -8,11 +8,8 @@
  * @package kernel
  */
 
-$MarkDefinition = array( 'name' => 'eZTemplate',
-                         'marks' => array() );
+$MarkDefinition = ['name' => 'eZTemplate', 'marks' => []];
 
-$MarkDefinition['marks'][] = array( 'name' => 'Template Compiler',
-                                    'file' => 'ezmarktemplatecompiler.php',
-                                    'class' => 'eZMarkTemplateCompiler' );
+$MarkDefinition['marks'][] = ['name' => 'Template Compiler', 'file' => 'ezmarktemplatecompiler.php', 'class' => 'eZMarkTemplateCompiler'];
 
 ?>

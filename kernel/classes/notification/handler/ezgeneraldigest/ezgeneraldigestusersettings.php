@@ -16,45 +16,14 @@
 
 class eZGeneralDigestUserSettings extends eZPersistentObject
 {
-    const TYPE_NONE = 0;
-    const TYPE_WEEKLY = 1;
-    const TYPE_MONTHLY = 2;
-    const TYPE_DAILY = 3;
+    final public const TYPE_NONE = 0;
+    final public const TYPE_WEEKLY = 1;
+    final public const TYPE_MONTHLY = 2;
+    final public const TYPE_DAILY = 3;
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => "UserID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "receive_digest" => array( 'name' => "ReceiveDigest",
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true ),
-                                         "digest_type" => array( 'name' => "DigestType",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "day" => array( 'name' => "Day",
-                                                         'datatype' => 'string',
-                                                         'default' => '',
-                                                         'required' => true ),
-                                         "time" => array( 'name' => "Time",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array(
-                          "address" => "address"
-                      ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZGeneralDigestUserSettings",
-                      "name" => "ezgeneral_digest_user_settings" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => "UserID", 'datatype' => 'integer', 'default' => 0, 'required' => true], "receive_digest" => ['name' => "ReceiveDigest", 'datatype' => 'integer', 'default' => 0, 'required' => true], "digest_type" => ['name' => "DigestType", 'datatype' => 'integer', 'default' => 0, 'required' => true], "day" => ['name' => "Day", 'datatype' => 'string', 'default' => '', 'required' => true], "time" => ['name' => "Time", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ["address" => "address"], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZGeneralDigestUserSettings", "name" => "ezgeneral_digest_user_settings"];
     }
 
     /**
@@ -76,11 +45,7 @@ class eZGeneralDigestUserSettings extends eZPersistentObject
 
     static function create( $userID, $receiveDigest = 0, $digestType = self::TYPE_NONE, $day = '', $time = '' )
     {
-        return new eZGeneralDigestUserSettings( array( 'user_id' => $userID,
-                                                       'receive_digest' => $receiveDigest,
-                                                       'digest_type' => $digestType,
-                                                       'day' => $day,
-                                                       'time' => $time ) );
+        return new eZGeneralDigestUserSettings( ['user_id' => $userID, 'receive_digest' => $receiveDigest, 'digest_type' => $digestType, 'day' => $day, 'time' => $time] );
     }
 
     /**
@@ -116,7 +81,7 @@ class eZGeneralDigestUserSettings extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject(
             self::definition(), null,
-            array( 'user_id' => $userId ), $asObject
+            ['user_id' => $userId], $asObject
         );
     }
 

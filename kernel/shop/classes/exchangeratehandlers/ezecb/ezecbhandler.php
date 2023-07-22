@@ -12,14 +12,10 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
 {
     public function __construct()
     {
-        $this->ServerName = false;
-        $this->ServerPort = false;
-        $this->RatesURI = false;
-
         parent::__construct();
     }
 
-    function initialize( $params = array() )
+    function initialize( $params = [] )
     {
         eZExchangeRatesUpdateHandler::initialize( $params );
 
@@ -59,14 +55,13 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
 
     function requestRates()
     {
-        $error = array( 'code' => self::OK,
-                        'description' => ezpI18n::tr( 'kernel/shop', "'Autorates' were retrieved successfully" ) );
+        $error = ['code' => self::OK, 'description' => ezpI18n::tr( 'kernel/shop', "'Autorates' were retrieved successfully" )];
 
         $serverName = $this->serverName();
         $serverPort = $this->serverPort();
         $ratesURI = $this->ratesURI();
 
-        $ratesList = array();
+        $ratesList = [];
 
         $buf = eZHTTPTool::sendHTTPRequest( "{$serverName}/{$ratesURI}", $serverPort,  false, 'eZ Publish', false );
         if ( $buf )
@@ -112,7 +107,7 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
         else
         {
             $error['code'] = self::FAILED;
-            $error['description'] = ezpI18n::tr( 'kernel/shop', "Unable to send http request: %1:%2/%3", null, array( $serverName, $serverPort, $ratesURI ) );
+            $error['description'] = ezpI18n::tr( 'kernel/shop', "Unable to send http request: %1:%2/%3", null, [$serverName, $serverPort, $ratesURI] );
         }
 
         $this->setRateList( $ratesList );
@@ -149,9 +144,9 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
         return $this->RatesURI;
     }
 
-    public $ServerName;
-    public $ServerPort;
-    public $RatesURI;
+    public $ServerName = false;
+    public $ServerPort = false;
+    public $RatesURI = false;
 }
 
 ?>

@@ -47,22 +47,21 @@ class eZSectionFunctionCollection
             }
         }
         if ( $sectionObject === null )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $sectionObject );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $sectionObject];
     }
 
     function fetchSectionList()
     {
         $sectionObjects = eZSection::fetchList( );
-        return array( 'result' => $sectionObjects );
+        return ['result' => $sectionObjects];
     }
 
     function fetchObjectList( $sectionID, $offset = false, $limit = false, $sortOrder = false, $status = false )
     {
         if ( $sortOrder === false )
         {
-            $sortOrder = array( 'id' => 'desc' );
+            $sortOrder = ['id' => 'desc'];
         }
         if ( $status == 'archived' )
             $status = eZContentObject::STATUS_ARCHIVED;
@@ -70,11 +69,10 @@ class eZSectionFunctionCollection
             $status = eZContentObject::STATUS_PUBLISHED;
         $objects = eZPersistentObject::fetchObjectList( eZContentObject::definition(),
                                                         null,
-                                                        array( 'section_id' => $sectionID,
-                                                               'status' => $status ),
+                                                        ['section_id' => $sectionID, 'status' => $status],
                                                         $sortOrder,
-                                                        array( 'offset' => $offset, 'limit' => $limit ) );
-        return array( 'result' => $objects );
+                                                        ['offset' => $offset, 'limit' => $limit] );
+        return ['result' => $objects];
     }
 
     function fetchObjectListCount( $sectionID, $status = false )
@@ -84,21 +82,19 @@ class eZSectionFunctionCollection
         else
             $status = eZContentObject::STATUS_PUBLISHED;
         $rows = eZPersistentObject::fetchObjectList( eZContentObject::definition(),
-                                                     array(),
-                                                     array( 'section_id' => $sectionID,
-                                                            'status' => $status ),
+                                                     [],
+                                                     ['section_id' => $sectionID, 'status' => $status],
                                                      false,
                                                      null,
                                                      false,
                                                      false,
-                                                     array( array( 'operation' => 'count( id )',
-                                                                   'name' => 'count' ) ) );
-        return array( 'result' => $rows[0]['count'] );
+                                                     [['operation' => 'count( id )', 'name' => 'count']] );
+        return ['result' => $rows[0]['count']];
     }
 
     function fetchRoles( $sectionID )
     {
-        $policies = $roleIDs = $usedRoleIDs = $roles = $roleLimitations = array();
+        $policies = $roleIDs = $usedRoleIDs = $roles = $roleLimitations = [];
 
         $limitations = eZPolicyLimitation::findByType( 'Section', $sectionID, true, false );
         foreach ( $limitations as $policyEntry )
@@ -110,7 +106,7 @@ class eZSectionFunctionCollection
             $roleIDs[] = $roleID;
             if ( !isset( $roleLimitations[$roleID] ) )
             {
-                $roleLimitations[$roleID] = array();
+                $roleLimitations[$roleID] = [];
             }
             $roleLimitations[$roleID][] = $policy;
         }
@@ -125,13 +121,13 @@ class eZSectionFunctionCollection
             }
         }
 
-        return array( 'result' => array( 'roles' => $roles, 'limited_policies' => $roleLimitations ) );
+        return ['result' => ['roles' => $roles, 'limited_policies' => $roleLimitations]];
     }
 
     function fetchUserRoles( $sectionID )
     {
         $userRoles = eZRole::fetchRolesByLimitation( 'section', $sectionID );
-        return array( 'result' => $userRoles );
+        return ['result' => $userRoles];
     }
 }
 

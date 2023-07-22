@@ -29,11 +29,10 @@
 
 class eZTranslatorManager
 {
-    const DYNAMIC_TRANSLATIONS_ENABLED = 'eZTMDynamicTranslationsEnabled';
+    final public const DYNAMIC_TRANSLATIONS_ENABLED = 'eZTMDynamicTranslationsEnabled';
 
     public function __construct()
     {
-        $this->Handlers = array();
     }
 
     /*!
@@ -50,7 +49,7 @@ class eZTranslatorManager
     function findKey( $key )
     {
         $msg = null;
-        for ( $i = 0; $i < count( $this->Handlers ) and $msg === null; ++$i )
+        for ( $i = 0; $i < (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) and $msg === null; ++$i )
         {
             $handler = $this->Handlers[$i];
             if ( $handler->isKeyBased() )
@@ -73,7 +72,7 @@ class eZTranslatorManager
         if ( !is_string( $context ) or $context == "" )
             $context = "default";
         $msg = null;
-        for ( $i = 0; $i < count( $this->Handlers ) and $msg === null; ++$i )
+        for ( $i = 0; $i < (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) and $msg === null; ++$i )
         {
             $handler = $this->Handlers[$i];
             $msg = $handler->findMessage( $context, $source, $comment );
@@ -92,7 +91,7 @@ class eZTranslatorManager
     function keyTranslate( $key )
     {
         $trans = null;
-        for ( $i = 0; $i < count( $this->Handlers ) and $trans === null; ++$i )
+        for ( $i = 0; $i < (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) and $trans === null; ++$i )
         {
             $handler = $this->Handlers[$i];
             if ( $handler->isKeyBased() )
@@ -111,7 +110,7 @@ class eZTranslatorManager
         if ( !is_string( $context ) or $context == "" )
             $context = "default";
         $trans = null;
-        for ( $i = 0; $i < count( $this->Handlers ) and $trans === null; ++$i )
+        for ( $i = 0; $i < (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) and $trans === null; ++$i )
         {
             $handler = $this->Handlers[$i];
             $trans = $handler->translate( $context, $source, $comment );
@@ -161,10 +160,7 @@ class eZTranslatorManager
     */
     static function createMessage( $context, $source, $comment = null, $translation = null )
     {
-        $msg = array( "context" => $context,
-                      "source" => $source,
-                      "comment" => $comment,
-                      "translation" => $translation );
+        $msg = ["context" => $context, "source" => $source, "comment" => $comment, "translation" => $translation];
         return $msg;
     }
 
@@ -239,7 +235,7 @@ class eZTranslatorManager
 
     /// \privatesection
     /// The array of handler objects
-    public $Handlers;
+    public $Handlers = [];
 }
 
 ?>

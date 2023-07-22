@@ -11,10 +11,7 @@
 
 class ezpTestRunner extends PHPUnit_TextUI_Command
 {
-    /**
-     * @var ezpTestRunner
-     */
-    static private $instance = null;
+    static private ?\ezpTestRunner $instance = null;
 
     /**
      * Enables additional parameters for the test runner
@@ -134,7 +131,7 @@ EOT;
      * @param array $directories
      * @return ezpTestSuite $suite
      */
-    protected function prepareTests( array $directories = array() )
+    protected function prepareTests( array $directories = [] )
     {
         // If no $directories are given, we return the standard eZ Publish test suite
         if ( count( $directories ) === 0 )
@@ -153,15 +150,15 @@ EOT;
         foreach ( $directories as $dir )
         {
             $file = $dir;
-            if ( strpos( $file, 'suite.php' ) === false )
+            if ( !str_contains( (string) $file, 'suite.php' ) )
             {
-                $file = eZDir::path( array( $file, "suite.php" ) );
+                $file = eZDir::path( [$file, "suite.php"] );
             }
 
             if ( !file_exists( $file ) )
             {
                 $normalizedExtDir = $this->normalizeExtensionPath( $dir );
-                $file = eZDir::path( array( $normalizedExtDir, "tests/suite.php") );
+                $file = eZDir::path( [$normalizedExtDir, "tests/suite.php"] );
             }
 
             if ( file_exists( $file ) )
@@ -201,7 +198,7 @@ EOT;
 
         foreach( $extensions as $extension )
         {
-            $suiteFile = eZDir::path( array( $extension, "tests", "suite.php" ) );
+            $suiteFile = eZDir::path( [$extension, "tests", "suite.php"] );
 
             if ( file_exists( $suiteFile ) )
             {
@@ -234,8 +231,6 @@ EOT;
 
     /**
      * Displays a list of available tests
-     *
-     * @param ezpTestSuite $suite
      */
     protected function listTests( ezpTestSuite $suite )
     {
@@ -257,8 +252,8 @@ EOT;
      */
     protected function normalizeExtensionPath( $path )
     {
-        if ( strpos( $path, eZExtension::baseDirectory() ) === false )
-            $path = eZDir::path( array( eZExtension::baseDirectory(), $path ) );
+        if ( !str_contains( $path, eZExtension::baseDirectory() ) )
+            $path = eZDir::path( [eZExtension::baseDirectory(), $path] );
 
         return $path;
     }
@@ -353,8 +348,6 @@ EOT;
 
     /**
      * Displays a list of available test suites
-     *
-     * @param ezpTestSuite $suite
      */
     public function listSuites( ezpTestSuite $suite )
     {
@@ -371,12 +364,11 @@ EOT;
     /**
      * Returns an array with the names of all available test suites which are children of $suite
      *
-     * @param ezpTestSuite $suite
      * @return array
      */
     protected function getSuites( ezpTestSuite $suite )
     {
-        $suites = array();
+        $suites = [];
 
         /** @var PHPUnit_Framework_Test[]|ezpTestSuite[] $tests */
         $tests = $suite->tests();
@@ -404,12 +396,11 @@ EOT;
     /**
      * Returns an array with the names of all available tests which are children of $suite
      *
-     * @param ezpTestSuite $suite
      * @return string[]
      */
     protected function getTests( ezpTestSuite $suite )
     {
-        $tests = array();
+        $tests = [];
 
         $iterator = $suite->getIterator();
 

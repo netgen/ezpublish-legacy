@@ -40,9 +40,9 @@ class ezpContentPublishingQueueProcessor
         $this->queueReader = $this->contentINI->variable( 'PublishingSettings', 'AsynchronousPublishingQueueReader' );
         $reflection = new ReflectionClass( $this->queueReader );
         if ( !$reflection->implementsInterface( 'ezpContentPublishingQueueReaderInterface' ) )
-            throw new Exception( "Configured asynchronous publishing queue reader doesn't implement ezpContentPublishingQueueReaderInterface", __CLASS__ );
+            throw new Exception( "Configured asynchronous publishing queue reader doesn't implement ezpContentPublishingQueueReaderInterface", self::class );
 
-        call_user_func( array( $this->queueReader, 'init' ) );
+        call_user_func( [$this->queueReader, 'init'] );
     }
 
     /**
@@ -135,7 +135,7 @@ class ezpContentPublishingQueueProcessor
                     $db->close();
                     $db = null;
                     eZDB::setInstance( null );
-                } catch( eZDBException $e ) {
+                } catch( eZDBException ) {
                     // Do nothing, this will be retried until the DB is back up
                 }
                 sleep( 1 );
@@ -205,7 +205,7 @@ class ezpContentPublishingQueueProcessor
                 $db->query( "DELETE from ". $processTable. " WHERE status =".  ezpContentPublishingProcess::STATUS_FINISHED. " AND finished < ". $deleteBefore );
                 $this->cleanupLastTime = time();
             }
-            catch( eZDBException $e ) 
+            catch( eZDBException ) 
             {
                 // Do nothing, this will be retried until the DB is back up
             }
@@ -262,7 +262,7 @@ class ezpContentPublishingQueueProcessor
      */
     private function registerSignalHandler()
     {
-        pcntl_signal( SIGCHLD, array( $this, 'childSignalHandler' ) );
+        pcntl_signal( SIGCHLD, $this->childSignalHandler(...) );
     }
 
     /**
@@ -294,7 +294,6 @@ class ezpContentPublishingQueueProcessor
     /**
      * Sets the used output class
      *
-     * @param ezpAsynchronousPublisherOutput $output
      * @return void
      */
     public function setOutput( ezpAsynchronousPublisherOutput $output )
@@ -323,13 +322,10 @@ class ezpContentPublishingQueueProcessor
      */
     private function getNextItem()
     {
-        return call_user_func( array( $this->queueReader, 'next' ) );
+        return call_user_func( $this->queueReader->next(...) );
     }
 
-    /**
-     * @var eZINI
-     */
-    private $contentINI;
+    private readonly \eZINI $contentINI;
 
     /**
      * Allowed slots
@@ -339,23 +335,20 @@ class ezpContentPublishingQueueProcessor
 
     /**
      * Singleton instance of ezpContentPublishingQueueProcessor
-     * @var ezpContentPublishingQueueProcessor
      */
-    private static $instance = null;
+    private static ?\ezpContentPublishingQueueProcessor $instance = null;
 
-    private $canProcess = true;
+    private bool $canProcess = true;
 
     /**
      * Currently running jobs
-     * @var array
      */
-    private $currentJobs = array();
+    private array $currentJobs = [];
 
     /**
      * Output manager
-     * @var ezpAsynchronousPublisherOutput
      */
-    private $out;
+    private \ezpAsynchronousPublisherOutput $out;
 
     /**
      * Signal handler callback
@@ -370,15 +363,13 @@ class ezpContentPublishingQueueProcessor
 
     /**
      * Time counter for cleanup of finished processes
-     * @var int
      */
-    private $cleanupLastTime;
+    private int $cleanupLastTime;
 
      /**
      * Time counter for refresh of cache/state information
-     * @var int
      */
-    private $lastRefreshTimestamp;
+    private int $lastRefreshTimestamp;
 
     /**
      * Interval for cleanup of finished processes. Default value is 12 hours in seconds

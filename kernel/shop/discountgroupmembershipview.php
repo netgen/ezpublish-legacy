@@ -34,7 +34,7 @@ if ( $http->hasPostVariable( "RemoveRuleButton" ) )
     foreach ( $discountRuleIDList  as $discountRuleID )
     {
         eZDiscountSubRuleValue::removeBySubRuleID ( $discountRuleID );
-        eZDiscountSubRule::remove( $discountRuleID );
+        (new eZDiscountSubRule())->remove($discountRuleID);
     }
     $db->commit();
 
@@ -47,12 +47,8 @@ if ( $http->hasPostVariable( "RemoveRuleButton" ) )
 
 if ( $http->hasPostVariable( "AddCustomerButton" ) )
 {
-    eZContentBrowse::browse( array( 'action_name' => 'AddCustomer',
-                                    'description_template' => 'design:shop/browse_discountcustomer.tpl',
-                                    'keys' => array( 'discountgroup_id' => $discountGroupID ),
-                                    'content' => array( 'discountgroup_id' => $discountGroupID ),
-                                    'from_page' => "/shop/discountgroupview/$discountGroupID" ),
-                             $module );
+    eZContentBrowse::browse( $module,
+                             ['action_name' => 'AddCustomer', 'description_template' => 'design:shop/browse_discountcustomer.tpl', 'keys' => ['discountgroup_id' => $discountGroupID], 'content' => ['discountgroup_id' => $discountGroupID], 'from_page' => "/shop/discountgroupview/$discountGroupID"] );
     return;
 }
 
@@ -96,7 +92,7 @@ if ( $http->hasPostVariable( "RemoveCustomerButton" ) )
 }
 
 $membershipList = eZUserDiscountRule::fetchByRuleID( $discountGroupID );
-$customers = array();
+$customers = [];
 foreach ( $membershipList as $membership )
 {
     $customers[] = eZContentObject::fetch( $membership->attribute( 'contentobject_id' ) );
@@ -104,7 +100,7 @@ foreach ( $membershipList as $membership )
 
 $ruleList = eZDiscountSubRule::fetchByRuleID( $discountGroupID );
 
-$ruleArray = array();
+$ruleArray = [];
 foreach ( $ruleList as $rule )
 {
     $name = $rule->attribute( 'name' );
@@ -200,10 +196,7 @@ foreach ( $ruleList as $rule )
         $limitation = ezpI18n::tr( 'kernel/shop', 'Any product' );
     }
 
-    $item = array( "name" => $name,
-                   "discount_percent" => $percent,
-                   "id" => $discountRuleID,
-                   "limitation" => $limitation );
+    $item = ["name" => $name, "discount_percent" => $percent, "id" => $discountRuleID, "limitation" => $limitation];
     $ruleArray[] = $item;
 }
 $tpl = eZTemplate::factory();
@@ -212,8 +205,7 @@ $tpl->setVariable( "customers", $customers );
 $tpl->setVariable( "discountgroup", $discountGroup );
 $tpl->setVariable( "rule_list", $ruleArray );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/discountgroupmembershipview.tpl" );
-$Result['path'] = array( array( 'url' => '/shop/discountgroup/',
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Group view of discount rule' ) ) );
+$Result['path'] = [['url' => '/shop/discountgroup/', 'text' => ezpI18n::tr( 'kernel/shop', 'Group view of discount rule' )]];
 ?>

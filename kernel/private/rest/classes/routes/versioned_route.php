@@ -72,6 +72,6 @@ class ezpRestVersionedRoute implements ezcMvcRoute, ezcMvcReversibleRoute
         $apiPrefix = ezpRestPrefixFilterInterface::getApiPrefix() . '/';
         $apiProviderName = ezpRestPrefixFilterInterface::getApiProviderName();
 
-        return $apiPrefix . ( !$apiProviderName ? ''  : $apiProviderName . '/' ) . 'v' . $this->version . '/' . str_replace( $apiPrefix, '', $this->route->generateUrl( $arguments ) );
+        return $apiPrefix . ( !$apiProviderName ? ''  : $apiProviderName . '/' ) . 'v' . $this->version . '/' . str_replace( $apiPrefix, '', (string) $this->route->generateUrl( $arguments ) );
     }
 }

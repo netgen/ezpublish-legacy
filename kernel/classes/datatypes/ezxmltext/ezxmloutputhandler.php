@@ -21,16 +21,13 @@ class eZXMLOutputHandler
     /**
      * Constructor
      *
-     * @param string $xmlData
-     * @param string $aliasedType
+     * @param string $XMLData
+     * @param string $AliasedType
      * @param eZContentObjectAttribute|null $contentObjectAttribute
      */
-    public function __construct( $xmlData, $aliasedType, $contentObjectAttribute = null )
+    public function __construct( /// Contains the XML data as text
+    public $XMLData, public $AliasedType, $contentObjectAttribute = null )
     {
-        $this->XMLData = $xmlData;
-        $this->AliasedHandler = null;
-        $this->AliasedType = $aliasedType;
-
         if ( is_object( $contentObjectAttribute ) )
         {
             $this->ContentObjectAttribute = $contentObjectAttribute;
@@ -55,10 +52,7 @@ class eZXMLOutputHandler
     */
     function attributes()
     {
-        return array( 'output_text',
-                      'aliased_type',
-                      'aliased_handler',
-                      'view_template_name' );
+        return ['output_text', 'aliased_type', 'aliased_handler', 'view_template_name'];
     }
 
     /*!
@@ -166,7 +160,7 @@ class eZXMLOutputHandler
         $this->Res = eZTemplateDesignResource::instance();
         if ( $this->ContentObjectAttribute )
         {
-            $this->Res->setKeys( array( array( 'attribute_identifier', $this->ContentObjectAttribute->attribute( 'contentclass_attribute_identifier' ) ) ) );
+            $this->Res->setKeys( [['attribute_identifier', $this->ContentObjectAttribute->attribute( 'contentclass_attribute_identifier' )]] );
         }
 
         $this->Document = new DOMDocument( '1.0', 'utf-8' );
@@ -187,12 +181,12 @@ class eZXMLOutputHandler
         {
             if ( !isset( $this->OutputTags[$element] ) )
             {
-                 $this->OutputTags[$element] = array();
+                 $this->OutputTags[$element] = [];
              }
         }
 
         $this->NestingLevel = 0;
-        $params = array();
+        $params = [];
 
         $output = $this->outputTag( $this->Document->documentElement, $params );
         $this->Output = $output[1];
@@ -206,12 +200,12 @@ class eZXMLOutputHandler
     // Prefetch objects, nodes and urls for further rendering
     function prefetch()
     {
-        $relatedObjectIDArray = array();
-        $nodeIDArray = array();
+        $relatedObjectIDArray = [];
+        $nodeIDArray = [];
 
         // Fetch all links and cache urls
         $linkIDArray = $this->getAttributeValueArray( 'link', 'url_id' );
-        if ( count( $linkIDArray ) > 0 )
+        if ( (is_countable($linkIDArray) ? count( $linkIDArray ) : 0) > 0 )
         {
             $inIDSQL = implode( ', ', $linkIDArray );
 
@@ -220,7 +214,7 @@ class eZXMLOutputHandler
 
             foreach ( $linkArray as $linkRow )
             {
-                $url = str_replace( '&', '&amp;', $linkRow['url'] );
+                $url = str_replace( '&', '&amp;', (string) $linkRow['url'] );
                 $this->LinkArray[$linkRow['id']] = $url;
             }
         }
@@ -289,7 +283,7 @@ class eZXMLOutputHandler
 
     function getAttributeValueArray( $tagName, $attributeName )
     {
-        $attributeValueArray = array();
+        $attributeValueArray = [];
         $elements = $this->Document->getElementsByTagName( $tagName );
         foreach ( $elements as $element )
         {
@@ -311,7 +305,7 @@ class eZXMLOutputHandler
     //                    This array is passed with no reference. Can by modified in tag's handler
     //                    for subordinate tags.
 
-    function outputTag( $element, &$siblingParams, $parentParams = array() )
+    function outputTag( $element, &$siblingParams, $parentParams = [] )
     {
         $tagName = $element->localName;
         if ( isset( $this->OutputTags[$tagName] ) )
@@ -324,7 +318,7 @@ class eZXMLOutputHandler
         }
 
         // Prepare attributes array
-        $attributes = array();
+        $attributes = [];
         if ( $element->hasAttributes() )
         {
             $attributeNodes = $element->attributes;
@@ -347,7 +341,7 @@ class eZXMLOutputHandler
                     if ( !in_array( $attrNode->value, $classesList ) )
                     {
                         eZDebug::writeWarning( "Using tag '$tagName' with class '$attrNode->value' is not allowed.", 'XML output handler' );
-                        return array( true, '' );
+                        return [true, ''];
                     }
                 }
 
@@ -379,12 +373,12 @@ class eZXMLOutputHandler
         $result = $this->callTagInitHandler( 'initHandler', $element, $attributes, $siblingParams, $parentParams );
 
         // Process children
-        $childrenOutput = array();
+        $childrenOutput = [];
         if ( $element->hasChildNodes() )
         {
             // Initialize sibiling parameters array for the next level children
             // Parent parameters for the children may be modified in the current tag handler.
-            $nextSibilingParams = array();
+            $nextSibilingParams = [];
 
             $this->NestingLevel++;
             foreach( $element->childNodes as $child )
@@ -404,7 +398,7 @@ class eZXMLOutputHandler
         }
         else
         {
-            $childrenOutput = array( array( true, '' ) );
+            $childrenOutput = [[true, '']];
         }
 
         if ( isset( $result['no_render'] ) && $result['no_render'] )
@@ -413,7 +407,7 @@ class eZXMLOutputHandler
         }
 
         // Set tpl variables by attributes and rename rules
-        $vars = array();
+        $vars = [];
 
         if ( !isset( $currentTag['quickRender'] ) && isset( $currentTag['attrNamesTemplate'] ) )
         {
@@ -425,7 +419,7 @@ class eZXMLOutputHandler
         }
         else
         {
-            $attrRenameRules = array();
+            $attrRenameRules = [];
         }
 
         foreach( $attributes as $name=>$value )
@@ -436,9 +430,9 @@ class eZXMLOutputHandler
                 continue;
             }
 
-            if ( strpos( $name, 'custom:' ) === 0 )
+            if ( str_starts_with((string) $name, 'custom:') )
             {
-                $name = substr( $name, 7 );
+                $name = substr( (string) $name, 7 );
             }
 
             $vars[$name] = $value;
@@ -472,7 +466,7 @@ class eZXMLOutputHandler
             }
 
             // Create design keys array (including the ones with no value so they still overwrite values of parent tag)
-            $designKeys = array();
+            $designKeys = [];
             if ( isset( $currentTag['attrDesignKeys'] ) )
             {
                 foreach( $currentTag['attrDesignKeys'] as $attrName=>$keyName )
@@ -490,7 +484,7 @@ class eZXMLOutputHandler
             }
 
             $existingKeys = $this->Res->keys();
-            $savedKeys = array();
+            $savedKeys = [];
 
             // Save old keys values and set new design keys
             foreach( $designKeys as $key=>$value )
@@ -499,7 +493,7 @@ class eZXMLOutputHandler
                 {
                     $savedKeys[$key] = $existingKeys[$key];
                 }
-                $this->Res->setKeys( array( array( $key, $value ) ) );
+                $this->Res->setKeys( [[$key, $value]] );
             }
 
             // Template name
@@ -523,7 +517,7 @@ class eZXMLOutputHandler
             {
                 if ( isset( $savedKeys[$key] ) )
                 {
-                    $this->Res->setKeys( array( array( $key, $savedKeys[$key] ) ) );
+                    $this->Res->setKeys( [[$key, $savedKeys[$key]]] );
                 }
                 else
                 {
@@ -603,19 +597,19 @@ class eZXMLOutputHandler
             $tagText .= $childOutput[1];
         }
         $tagText = $this->renderTag( $element, $tagText, $vars );
-        return array( false, $tagText );
+        return [false, $tagText];
     }
 
     function callTagInitHandler( $handlerName, $element, &$attributes, &$siblingParams, &$parentParams )
     {
-        $result = array();
+        $result = [];
         $thisOutputTag = $this->OutputTags[$element->nodeName];
         if ( isset( $thisOutputTag[$handlerName] ) )
         {
-            if ( is_callable( array( $this, $thisOutputTag[$handlerName] ) ) )
+            if ( is_callable( [$this, $thisOutputTag[$handlerName]] ) )
             {
-                $result = call_user_func_array( array( $this, $thisOutputTag[$handlerName] ),
-                                                array( $element, &$attributes, &$siblingParams, &$parentParams ) );
+                $result = call_user_func_array( [$this, $thisOutputTag[$handlerName]],
+                                                [$element, &$attributes, &$siblingParams, &$parentParams] );
             }
         }
         return $result;
@@ -623,7 +617,7 @@ class eZXMLOutputHandler
 
     function callTagRenderHandler( $handlerName, $element, $childrenOutput, $vars )
     {
-        $result = array();
+        $result = [];
         $thisOutputTag = $this->OutputTags[$element->nodeName];
         if ( isset( $thisOutputTag[$handlerName] ) )
         {
@@ -634,10 +628,10 @@ class eZXMLOutputHandler
             $handlerFunction = 'renderAll';
         }
 
-        if ( is_callable( array( $this, $handlerFunction ) ) )
+        if ( is_callable( [$this, $handlerFunction] ) )
         {
-            $result = call_user_func_array( array( $this, $handlerFunction ),
-                                            array( $element, $childrenOutput, $vars ) );
+            $result = call_user_func_array( [$this, $handlerFunction],
+                                            [$element, $childrenOutput, $vars] );
         }
         else
         {
@@ -648,19 +642,14 @@ class eZXMLOutputHandler
 
     // This array should be overriden in derived class with the set of rules
     // for outputting tags.
-    public $OutputTags = array();
+    public $OutputTags = [];
 
     // Path to tags' templates
     public $TemplatesPath = 'design:content/datatype/view/ezxmltags/';
-
-    /// Contains the XML data as text
-    public $XMLData;
     public $Document;
 
     public $XMLSchema;
-
-    public $AliasedType;
-    public $AliasedHandler;
+    public $AliasedHandler = null;
 
     public $Output = '';
     public $Tpl;
@@ -674,11 +663,11 @@ class eZXMLOutputHandler
     public $ObjectAttributeID;
 
     /// Contains the URL's for <link> tags hashed by ID
-    public $LinkArray = array();
+    public $LinkArray = [];
     /// Contains the Objects hashed by ID
-    public $ObjectArray = array();
+    public $ObjectArray = [];
     /// Contains the Nodes hashed by ID
-    public $NodeArray = array();
+    public $NodeArray = [];
 
     public $NestingLevel = 0;
 }

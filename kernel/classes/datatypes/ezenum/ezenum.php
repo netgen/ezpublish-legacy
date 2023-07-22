@@ -20,27 +20,17 @@ class eZEnum
     /**
      * Constructor
      *
-     * @param int $id
-     * @param int $version
+     * @param int $ClassAttributeID
+     * @param int $ClassAttributeVersion
      */
-    public function __construct( $id, $version )
+    public function __construct( public $ClassAttributeID, public $ClassAttributeVersion )
     {
-        $this->ClassAttributeID = $id;
-        $this->ClassAttributeVersion = $version;
         $this->Enumerations = eZEnumValue::fetchAllElements( $this->ClassAttributeID, $this->ClassAttributeVersion );
-        $this->IsmultipleEnum = null;
-        $this->IsoptionEnum = null;
-        $this->ObjectEnumerations = null;
     }
 
     function attributes()
     {
-        return array( 'contentclass_attributeid',
-                      'contentclass_attributeversion',
-                      'enum_list',
-                      'enumobject_list',
-                      'enum_ismultiple',
-                      'enum_isoption' );
+        return ['contentclass_attributeid', 'contentclass_attributeversion', 'enum_list', 'enumobject_list', 'enum_ismultiple', 'enum_isoption'];
     }
 
     function hasAttribute( $attr )
@@ -114,7 +104,7 @@ class eZEnum
         $db = eZDB::instance();
         $db->begin();
 
-        for ($i=0;$i<count( $array_enumid );$i++ )
+        for ($i=0;$i<(is_countable($array_enumid) ? count( $array_enumid ) : 0);$i++ )
         {
             $enumvalue = eZEnumValue::fetch( $array_enumid[$i], $version );
             $enumvalue->setAttribute( "enumelement", $array_enumelement[$i] );
@@ -191,11 +181,9 @@ class eZEnum
     }
 
     public $Enumerations;
-    public $ObjectEnumerations;
-    public $ClassAttributeID;
-    public $ClassAttributeVersion;
-    public $IsmultipleEnum;
-    public $IsoptionEnum;
+    public $ObjectEnumerations = null;
+    public $IsmultipleEnum = null;
+    public $IsoptionEnum = null;
 }
 
 ?>

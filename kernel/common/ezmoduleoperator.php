@@ -24,7 +24,7 @@ class eZModuleOperator
      */
     public function __construct( $name = 'ezmodule' )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -40,18 +40,17 @@ class eZModuleOperator
     */
     function namedParameterList()
     {
-        return array( 'uri' => array( 'type' => 'string',
-                                      'required' => false,
-                                      'default' => false ) );
+        return ['uri' => ['type' => 'string', 'required' => false, 'default' => false]];
     }
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
     {
+        $check = [];
         $uri = new eZURI( $namedParameters[ 'uri' ] );
         $moduleName = $uri->element( 0 );
         $moduleList = eZINI::instance( 'module.ini' )->variable( 'ModuleSettings', 'ModuleList' );
         if ( in_array( $moduleName, $moduleList, true ) )
             $check = eZModule::accessAllowed( $uri );
-        $operatorValue = isset( $check['result'] ) ? $check['result'] : false;
+        $operatorValue = $check['result'] ?? false;
     }
 
     /// \privatesection

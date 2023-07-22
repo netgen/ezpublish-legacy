@@ -19,19 +19,14 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Fixes references to images located outside VarDir.\n\n" .
-            "This may for instance occur when the VarDir setting is changed after a project has been started\n" .
-            "\n" .
-            "The legacy kernel will accept this, but the new Public API will not.",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Fixes references to images located outside VarDir.\n\n" .
+        "This may for instance occur when the VarDir setting is changed after a project has been started\n" .
+        "\n" .
+        "The legacy kernel will accept this, but the new Public API will not.", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
-$options = $script->getOptions( "[dry-run]", "", array( 'n' => 'Dry run' ) );
+$options = $script->getOptions( "[dry-run]", "", ['n' => 'Dry run'] );
 $optDryRun = (bool)$options['dry-run'];
 
 $script->initialize();
@@ -41,7 +36,7 @@ $db = eZDB::instance();
 $clusterHandler = eZClusterFileHandler::instance();
 
 $varDir = eZINI::instance( 'site.ini' )->variable( 'FileSettings', 'VarDir' );
-if ( substr( $varDir, 0, -1 ) !== DIRECTORY_SEPARATOR )
+if ( substr( (string) $varDir, 0, -1 ) !== DIRECTORY_SEPARATOR )
 {
     $varDir .= DIRECTORY_SEPARATOR;
 }
@@ -70,8 +65,8 @@ foreach ( $rows as $row )
 
     // Detect the part before '/images/', e.g. the varDir the file was created with
     $relativePath = substr(
-        $filePath,
-        strpos( $filePath, 'storage/images/' )
+        (string) $filePath,
+        strpos( (string) $filePath, 'storage/images/' )
     );
 
     $newPath = $varDir . $relativePath;
@@ -102,7 +97,7 @@ foreach ( $rows as $row )
 
     if ( !isset( $renamedFiles[$imageAttributeId] ) )
     {
-        $renamedFiles[$imageAttributeId] = array();
+        $renamedFiles[$imageAttributeId] = [];
     }
     $renamedFiles[$imageAttributeId][$filePath] = $newPath;
 }
@@ -112,7 +107,7 @@ foreach ( $renamedFiles as $attributeId => $files )
     $attributeObjects = eZContentObjectAttribute::fetchObjectList(
         eZContentObjectAttribute::definition(),
         null,
-        array( 'id' => $attributeId )
+        ['id' => $attributeId]
     );
 
     /** @var eZContentObjectAttribute $attributeObject */
@@ -129,7 +124,7 @@ foreach ( $renamedFiles as $attributeId => $files )
             if ( isset( $files[$oldPath] ) )
             {
                 $ezimageNode->setAttribute( 'url', $files[$oldPath] );
-                $ezimageNode->setAttribute( 'dirpath', dirname( $files[$oldPath] ) );
+                $ezimageNode->setAttribute( 'dirpath', dirname( (string) $files[$oldPath] ) );
             }
 
             // Update aliases
@@ -139,7 +134,7 @@ foreach ( $renamedFiles as $attributeId => $files )
                 if ( isset( $files[$oldPath] ) )
                 {
                     $ezimageAlias->setAttribute( 'url', $files[$oldPath] );
-                    $ezimageAlias->setAttribute( 'dirpath', dirname( $files[$oldPath] ) );
+                    $ezimageAlias->setAttribute( 'dirpath', dirname( (string) $files[$oldPath] ) );
                 }
             }
         }

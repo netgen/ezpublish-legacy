@@ -18,62 +18,13 @@ class eZCollaborationItemMessageLink extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'collaboration_id' => array( 'name' => 'CollaborationID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZCollaborationItem',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         'message_id' => array( 'name' => 'MessageID',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZCollaborationSimpleMessage',
-                                                                'foreign_attribute' => 'id',
-                                                                'multiplicity' => '1..*' ),
-                                         'message_type' => array( 'name' => 'MessageType',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         'participant_id' => array( 'name' => 'ParticipantID',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true,
-                                                                    'foreign_class' => 'eZUser',
-                                                                    'foreign_attribute' => 'contentobject_id',
-                                                                    'multiplicity' => '1..*' ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'collaboration_item' => 'collaborationItem',
-                                                      'participant' => 'participant',
-                                                      'simple_message' => 'simpleMessage' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZCollaborationItemMessageLink',
-                      'name' => 'ezcollab_item_message_link' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'collaboration_id' => ['name' => 'CollaborationID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationItem', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'message_id' => ['name' => 'MessageID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationSimpleMessage', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'message_type' => ['name' => 'MessageType', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'participant_id' => ['name' => 'ParticipantID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'function_attributes' => ['collaboration_item' => 'collaborationItem', 'participant' => 'participant', 'simple_message' => 'simpleMessage'], 'increment_key' => 'id', 'class_name' => 'eZCollaborationItemMessageLink', 'name' => 'ezcollab_item_message_link'];
     }
 
     static function create( $collaborationID, $messageID, $messageType, $participantID )
     {
         $dateTime = time();
-        $row = array(
-            'collaboration_id' => $collaborationID,
-            'message_id' => $messageID,
-            'message_type' => $messageType,
-            'participant_id' => $participantID,
-            'created' => $dateTime,
-            'modified' => $dateTime );
+        $row = ['collaboration_id' => $collaborationID, 'message_id' => $messageID, 'message_type' => $messageType, 'participant_id' => $participantID, 'created' => $dateTime, 'modified' => $dateTime];
         return new eZCollaborationItemMessageLink( $row );
     }
 
@@ -114,41 +65,35 @@ class eZCollaborationItemMessageLink extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZCollaborationItemMessageLink::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 null, null,
                                                 $asObject );
     }
 
     static function fetchItemCount( $parameters )
     {
-        $parameters = array_merge( array( 'item_id' => false,
-                                          'conditions' => null ),
+        $parameters = array_merge( ['item_id' => false, 'conditions' => null],
                                    $parameters );
         $itemID = $parameters['item_id'];
         $conditions = $parameters['conditions'];
         if ( $conditions === null )
-            $conditions = array();
+            $conditions = [];
         $conditions['collaboration_id'] = $itemID;
 
         $objectList = eZPersistentObject::fetchObjectList( eZCollaborationItemMessageLink::definition(),
-                                                           array(),
+                                                           [],
                                                            $conditions,
                                                            false,
                                                            null,
                                                            false,
                                                            false,
-                                                           array( array( 'operation' => 'count( id )',
-                                                                         'name' => 'count' ) ) );
+                                                           [['operation' => 'count( id )', 'name' => 'count']] );
         return $objectList[0]['count'];
     }
 
     static function fetchItemList( $parameters )
     {
-        $parameters = array_merge( array( 'as_object' => true,
-                                          'item_id' => false,
-                                          'offset' => false,
-                                          'limit' => false,
-                                          'sort_by' => false ),
+        $parameters = array_merge( ['as_object' => true, 'item_id' => false, 'offset' => false, 'limit' => false, 'sort_by' => false],
                                    $parameters );
         $itemID = $parameters['item_id'];
         $asObject = $parameters['as_object'];
@@ -157,13 +102,12 @@ class eZCollaborationItemMessageLink extends eZPersistentObject
         $limitArray = null;
         if ( $offset and $limit )
         {
-            $limitArray = array( 'offset' => $offset,
-                                 'limit' => $limit );
+            $limitArray = ['offset' => $offset, 'limit' => $limit];
         }
 
         return eZPersistentObject::fetchObjectList( eZCollaborationItemMessageLink::definition(),
                                                     null,
-                                                    array( "collaboration_id" => $itemID ),
+                                                    ["collaboration_id" => $itemID],
                                                     null, $limitArray,
                                                     $asObject );
     }

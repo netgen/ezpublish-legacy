@@ -69,9 +69,7 @@ class eZDefaultShopAccountHandler
         $userObject = $user->attribute( "contentobject" );
         $dataMap = $userObject->dataMap();
 
-        return array( 'first_name' => $dataMap['first_name']->content(),
-                      'last_name' => $dataMap['last_name']->content(),
-                      'email' => $user->attribute( "email" ) );
+        return ['first_name' => $dataMap['first_name']->content(), 'last_name' => $dataMap['last_name']->content(), 'email' => $user->attribute( "email" )];
     }
 }
 

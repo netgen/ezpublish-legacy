@@ -21,29 +21,29 @@
 
 class eZHTTPFile
 {
-    const UPLOADEDFILE_OK = 0;
-    const UPLOADEDFILE_DOES_NOT_EXIST = -1;
-    const UPLOADEDFILE_EXCEEDS_PHP_LIMIT = -2;
-    const UPLOADEDFILE_EXCEEDS_MAX_SIZE = -3;
-    const UPLOADEDFILE_MISSING_TMP_DIR = -4;
-    const UPLOADEDFILE_CANT_WRITE = -5;
-    const UPLOADEDFILE_UNKNOWN_ERROR = -6;
+    public const UPLOADEDFILE_OK = 0;
+    public const UPLOADEDFILE_DOES_NOT_EXIST = -1;
+    public const UPLOADEDFILE_EXCEEDS_PHP_LIMIT = -2;
+    public const UPLOADEDFILE_EXCEEDS_MAX_SIZE = -3;
+    public const UPLOADEDFILE_MISSING_TMP_DIR = -4;
+    public const UPLOADEDFILE_CANT_WRITE = -5;
+    public const UPLOADEDFILE_UNKNOWN_ERROR = -6;
 
     /*!
      Initializes with a name and http variable.
     */
-    public function __construct( /*! Name of the HTTP variable */ $http_name,
+    public function __construct( /*! Name of the HTTP variable */
+    /// The name of the HTTP file
+    public $HTTPName,
                                  /*! The HTTP variable structure */ $variable )
     {
-        $this->HTTPName = $http_name;
         $this->OriginalFilename = $variable["name"];
         $this->Type = $variable["type"];
-        $mime = explode( "/", $this->Type );
+        $mime = explode( "/", (string) $this->Type );
         $this->MimeCategory = $mime[0];
         $this->MimePart = $mime[1];
         $this->Filename = $variable["tmp_name"];
         $this->Size = $variable["size"];
-        $this->IsTemporary = true;
     }
 
     /*!
@@ -106,7 +106,7 @@ class eZHTTPFile
         }
         else
         {
-            $dest_name = $dir . "/" . md5( basename( $this->Filename ) . microtime() . mt_rand() ) . $suffixString;
+            $dest_name = $dir . "/" . md5( basename( (string) $this->Filename ) . microtime() . random_int(0, mt_getrandmax()) ) . $suffixString;
         }
 
         if ( !move_uploaded_file( $this->Filename, $dest_name ) )
@@ -121,12 +121,12 @@ class eZHTTPFile
             $this->Filename = $dest_name;
             $perm = $ini->variable( "FileSettings", "StorageFilePermissions" );
             $oldumask = umask( 0 );
-            chmod( $dest_name, octdec( $perm ) );
+            chmod( $dest_name, octdec( (string) $perm ) );
             umask( $oldumask );
 
             // Write log message to storage.log
             $storageDir = $dir . "/";
-            eZLog::writeStorageLog( basename( $this->Filename ), $storageDir );
+            eZLog::writeStorageLog( basename( (string) $this->Filename ), $storageDir );
         }
         return $ret;
     }
@@ -136,13 +136,7 @@ class eZHTTPFile
     */
     function attributes()
     {
-        return array( "original_filename",
-                      "filename",
-                      "filesize",
-                      "is_temporary",
-                      "mime_type",
-                      "mime_type_category",
-                      "mime_type_part" );
+        return ["original_filename", "filename", "filesize", "is_temporary", "mime_type", "mime_type_category", "mime_type_part"];
     }
 
     /*!
@@ -212,44 +206,16 @@ class eZHTTPFile
 
             if ( isset( $_FILES[$httpName] ) and $_FILES[$httpName]['name'] != "" )
             {
-                switch ( $_FILES[$httpName]['error'] )
-                {
-                    case ( UPLOAD_ERR_NO_FILE ):
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_DOES_NOT_EXIST;
-                    }break;
-
-                    case ( UPLOAD_ERR_INI_SIZE ):
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_EXCEEDS_PHP_LIMIT;
-                    }break;
-
-                    case ( UPLOAD_ERR_FORM_SIZE ):
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_EXCEEDS_MAX_SIZE;
-                    }break;
-
-                    case ( UPLOAD_ERR_NO_TMP_DIR ):
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_MISSING_TMP_DIR;
-                    }break;
-
-                    case ( UPLOAD_ERR_CANT_WRITE ):
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_CANT_WRITE;
-                    }break;
-
-                    case ( 0 ):
-                    {
-                        return ( $maxSize == 0 || $_FILES[$httpName]['size'] <= $maxSize )? eZHTTPFile::UPLOADEDFILE_OK:
-                                                                                             eZHTTPFile::UPLOADEDFILE_EXCEEDS_MAX_SIZE;
-                    }break;
-
-                    default:
-                    {
-                        return eZHTTPFile::UPLOADEDFILE_UNKNOWN_ERROR;
-                    }
-                }
+                return match ($_FILES[$httpName]['error']) {
+                    UPLOAD_ERR_NO_FILE => eZHTTPFile::UPLOADEDFILE_DOES_NOT_EXIST,
+                    UPLOAD_ERR_INI_SIZE => eZHTTPFile::UPLOADEDFILE_EXCEEDS_PHP_LIMIT,
+                    UPLOAD_ERR_FORM_SIZE => eZHTTPFile::UPLOADEDFILE_EXCEEDS_MAX_SIZE,
+                    UPLOAD_ERR_NO_TMP_DIR => eZHTTPFile::UPLOADEDFILE_MISSING_TMP_DIR,
+                    UPLOAD_ERR_CANT_WRITE => eZHTTPFile::UPLOADEDFILE_CANT_WRITE,
+                    0 => ( $maxSize == 0 || $_FILES[$httpName]['size'] <= $maxSize )? eZHTTPFile::UPLOADEDFILE_OK:
+                                                                                         eZHTTPFile::UPLOADEDFILE_EXCEEDS_MAX_SIZE,
+                    default => eZHTTPFile::UPLOADEDFILE_UNKNOWN_ERROR,
+                };
             }
             else
             {
@@ -295,11 +261,8 @@ class eZHTTPFile
     function setMimeType( $mime )
     {
         $this->Type = $mime;
-        list ( $this->MimeCategory, $this->MimePart ) = explode( '/', $mime, 2 );
+        [$this->MimeCategory, $this->MimePart] = explode( '/', (string) $mime, 2 );
     }
-
-    /// The name of the HTTP file
-    public $HTTPName;
     /// The original name of the file from the client
     public $OriginalFilename;
     /// The mime type of the file
@@ -313,7 +276,7 @@ class eZHTTPFile
     /// The size of the local file
     public $Size;
     /// Whether the file is a temporary file or if it has been moved(stored).
-    public $IsTemporary;
+    public $IsTemporary = true;
 }
 
 ?>

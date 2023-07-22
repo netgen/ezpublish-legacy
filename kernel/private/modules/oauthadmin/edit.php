@@ -27,8 +27,8 @@ if ( $module->isCurrentAction( 'Store') )
     // generate id & secret
     if ( $application->version == ezpRestClient::STATUS_DRAFT )
     {
-        $application->client_id = md5( $application->name . uniqid( $application->name ) );
-        $application->client_secret = md5( $application->name . uniqid( $application->name ) );
+        $application->client_id = md5( $application->name . uniqid( (string) $application->name ) );
+        $application->client_secret = md5( $application->name . uniqid( (string) $application->name ) );
     }
     $application->description = $module->actionParameter( 'Description' );
     $application->endpoint_uri = $module->actionParameter( 'EndPointURI' );
@@ -50,11 +50,7 @@ if ( $module->isCurrentAction( 'Discard' ) )
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'module', $module );
 $tpl->setVariable( 'application', $application );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'Edit REST application' ) )
-);
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'Edit REST application' )]];
 
 $Result['content'] = $tpl->fetch( 'design:oauthadmin/edit.tpl' );
 return $Result;

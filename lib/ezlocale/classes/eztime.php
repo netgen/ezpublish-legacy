@@ -60,17 +60,17 @@ class eZTime
     /*!
      Number of seconds in a minute.
     */
-    const SECONDS_A_MINUTE = 60;
+    final public const SECONDS_A_MINUTE = 60;
 
     /*!
      Number of seconds in an hour.
     */
-    const SECONDS_AN_HOUR = 3600;
+    final public const SECONDS_AN_HOUR = 3600;
 
     /*!
      Number of seconds in a day.
     */
-    const SECONDS_A_DAY = 86400; // 24*60*60
+    final public const SECONDS_A_DAY = 86400; // 24*60*60
 
     /**
      * Creates a new time object with default locale, if $time is not supplied the current time is used.
@@ -96,12 +96,7 @@ class eZTime
 
     function attributes()
     {
-        return array( 'timestamp',
-                      'time_of_day',
-                      'hour',
-                      'minute',
-                      'second',
-                      'is_valid' );
+        return ['timestamp', 'time_of_day', 'hour', 'minute', 'second', 'is_valid'];
     }
 
     function hasAttribute( $name )

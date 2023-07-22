@@ -15,7 +15,7 @@
 */
 class eZGeneralDigestHandler extends eZNotificationEventHandler
 {
-    const NOTIFICATION_HANDLER_ID = 'ezgeneraldigest';
+    final public const NOTIFICATION_HANDLER_ID = 'ezgeneraldigest';
 
     public function __construct()
     {
@@ -25,10 +25,7 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
 
     function attributes()
     {
-        return array_merge( array( 'settings',
-                                   'all_week_days',
-                                   'all_month_days',
-                                   'available_hours' ),
+        return array_merge( ['settings', 'all_week_days', 'all_month_days', 'available_hours'],
                             eZNotificationEventHandler::attributes() );
     }
 
@@ -53,30 +50,7 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
         }
         else if ( $attr == 'available_hours' )
         {
-            return array( '0:00',
-                          '1:00',
-                          '2:00',
-                          '3:00',
-                          '4:00',
-                          '5:00',
-                          '6:00',
-                          '7:00',
-                          '8:00',
-                          '9:00',
-                          '10:00',
-                          '11:00',
-                          '12:00',
-                          '13:00',
-                          '14:00',
-                          '15:00',
-                          '16:00',
-                          '17:00',
-                          '18:00',
-                          '19:00',
-                          '20:00',
-                          '21:00',
-                          '22:00',
-                          '23:00' );
+            return ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
         }
         return eZNotificationEventHandler::attribute( $attr );
     }
@@ -117,11 +91,11 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
                 $result = $tpl->fetch( 'design:notification/handler/ezgeneraldigest/view/plain.tpl' );
                 $subject = $tpl->variable( 'subject' );
 
-                $parameters = array();
+                $parameters = [];
                 if ( $tpl->hasVariable( 'content_type' ) )
                     $parameters['content_type'] = $tpl->variable( 'content_type' );
 
-                $transport->send( $address, $subject, $result, null, $parameters );
+                $transport->send( $address, $subject, $result, null );
                 eZDebugSetting::writeDebug( 'kernel-notification', $result, "digest result" );
             }
 
@@ -141,7 +115,7 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
                 $splited = array_chunk( $collectionItemIDList, $countElements );
                 foreach ( $splited as $key => $value )
                 {
-                    eZPersistentObject::removeObject( eZNotificationCollectionItem::definition(), array( 'id' => array( $value, '' ) ) );
+                    eZPersistentObject::removeObject( eZNotificationCollectionItem::definition(), ['id' => [$value, '']] );
                 }
             }
 
@@ -153,9 +127,9 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
     function fetchUsersForDigest( $timestamp )
     {
         return eZPersistentObject::fetchObjectList( eZNotificationCollectionItem::definition(),
-                                                    array(), array( 'send_date' => array( '', array( 1, $timestamp ) ) ),
-                                                    array( 'address' => 'asc' ),null,
-                                                    false,false,array( array( 'operation' => 'distinct address' ) ) );
+                                                    [], ['send_date' => ['', [1, $timestamp]]],
+                                                    ['address' => 'asc'],null,
+                                                    false,false,[['operation' => 'distinct address']] );
 
     }
 
@@ -174,7 +148,7 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
                         send_date != 0 and
                         send_date < $time";
         $handlerResult = $db->arrayQuery( $query );
-        $handlers = array();
+        $handlers = [];
         $availableHandlers = eZNotificationEventFilter::availableHandlers();
         foreach ( $handlerResult as $handlerName )
         {
@@ -201,7 +175,7 @@ class eZGeneralDigestHandler extends eZNotificationEventHandler
                         handler = '$handler'
                         order by eznotificationcollection_item.event_id";
         $itemResult = $db->arrayQuery( $query );
-        $items = array();
+        $items = [];
         foreach ( $itemResult as $itemRow )
         {
             $items[] = new eZNotificationCollectionItem( $itemRow );

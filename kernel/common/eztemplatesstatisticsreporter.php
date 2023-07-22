@@ -68,7 +68,7 @@ class eZTemplatesStatisticsReporter
 
         $templatesUsageStatistics = eZTemplate::templatesUsageStatistics();
 
-        $alreadyListedTemplate = $templateCounts = array();
+        $alreadyListedTemplate = $templateCounts = [];
 
         //Generate usage count for each unique template first.
         foreach( $templatesUsageStatistics as $templateInfo )
@@ -123,7 +123,7 @@ class eZTemplatesStatisticsReporter
             }
         }
 
-        $totalTemplatesCount = count( $templatesUsageStatistics );
+        $totalTemplatesCount = is_countable($templatesUsageStatistics) ? count( $templatesUsageStatistics ) : 0;
         $totalUniqueTemplatesCopunt = count( array_keys( $alreadyListedTemplate ) );
 
         if ( $as_html )

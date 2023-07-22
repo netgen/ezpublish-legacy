@@ -44,10 +44,9 @@ $tpl->setVariable( 'toolbar_list', $toolbarArray );
 $tpl->setVariable( 'siteaccess_list', $siteAccessList );
 $tpl->setVariable( 'current_siteaccess', $currentSiteAccess );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/toolbarlist.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'design/standard/toolbar', 'Toolbar management' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'design/standard/toolbar', 'Toolbar management' )]];
 
 
 ?>

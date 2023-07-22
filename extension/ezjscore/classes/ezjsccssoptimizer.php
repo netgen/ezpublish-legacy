@@ -40,32 +40,32 @@ class ezjscCssOptimizer
     public static function optimize( $css, $packLevel = 2 )
     {
         // Normalize line feeds
-        $css = str_replace( array( "\r\n", "\r" ), "\n", $css );
+        $css = str_replace( ["\r\n", "\r"], "\n", $css );
 
         // Remove multiline comments
         $css = preg_replace( '!(?:\n|\s|^)/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css );
         $css = preg_replace( '!(?:;)/\*[^*]*\*+([^/][^*]*\*+)*/!', ';', $css );
 
         // Remove whitespace from start and end of line + multiple linefeeds
-        $css = preg_replace( array( '/\n\s+/', '/\s+\n/', '/\n+/' ), "\n", $css );
+        $css = preg_replace( ['/\n\s+/', '/\s+\n/', '/\n+/'], "\n", $css );
 
         if ( $packLevel > 2 )
         {
             // Remove space around ':' and ','
-            $css = preg_replace( array( '/:\s+/', '/\s+:/' ), ':', $css );
-            $css = preg_replace( array( '/,\s+/', '/\s+,/' ), ',', $css );
+            $css = preg_replace( ['/:\s+/', '/\s+:/'], ':', $css );
+            $css = preg_replace( ['/,\s+/', '/\s+,/'], ',', $css );
 
             // Remove unnecessary line breaks...
-            $css = str_replace( array( ";\n", '; ' ), ';', $css );
-            $css = str_replace( array( "}\n", "\n}", ';}' ), '}', $css );
-            $css = str_replace( array( "{\n", "\n{", '{;' ), '{', $css );
+            $css = str_replace( [";\n", '; '], ';', $css );
+            $css = str_replace( ["}\n", "\n}", ';}'], '}', $css );
+            $css = str_replace( ["{\n", "\n{", '{;'], '{', $css );
             // ... and spaces as well
-            $css = str_replace(array('\s{\s', '\s{', '{\s' ), '{', $css );
-            $css = str_replace(array('\s}\s', '\s}', '}\s' ), '}', $css );
+            $css = str_replace(['\s{\s', '\s{', '{\s'], '{', $css );
+            $css = str_replace(['\s}\s', '\s}', '}\s'], '}', $css );
 
             // Optimize css
-            $css = str_replace( array( ' 0em', ' 0px', ' 0pt', ' 0pc' ), ' 0', $css );
-            $css = str_replace( array( ':0em', ':0px', ':0pt', ':0pc' ), ':0', $css );
+            $css = str_replace( [' 0em', ' 0px', ' 0pt', ' 0pc'], ' 0', $css );
+            $css = str_replace( [':0em', ':0px', ':0pt', ':0pc'], ':0', $css );
             $css = str_replace( ' 0 0 0 0;', ' 0;', $css );
             $css = str_replace( ':0 0 0 0;', ':0;', $css );
 

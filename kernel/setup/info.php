@@ -34,44 +34,27 @@ catch ( ezcSystemInfoReaderCantScanOSException $e )
 if ( $info instanceof ezcSystemInfo )
 {
     // Workaround until ezcTemplate is used, as properties can not be accessed directly in ezp templates.
-    $systemInfo = array(
-        'cpu_type' => $info->cpuType,
-        'cpu_speed' => $info->cpuSpeed,
-        'cpu_count' =>$info->cpuCount,
-        'memory_size' => $info->memorySize
-    );
+    $systemInfo = ['cpu_type' => $info->cpuType, 'cpu_speed' => $info->cpuSpeed, 'cpu_count' =>$info->cpuCount, 'memory_size' => $info->memorySize];
 
     if ( $info->phpAccelerator !== null )
     {
-        $phpAcceleratorInfo = array(   'name' => $info->phpAccelerator->name,
-                                       'url' => $info->phpAccelerator->url,
-                                       'enabled' => $info->phpAccelerator->isEnabled,
-                                       'version_integer' => $info->phpAccelerator->versionInt,
-                                       'version_string' => $info->phpAccelerator->versionString
-        );
+        $phpAcceleratorInfo = ['name' => $info->phpAccelerator->name, 'url' => $info->phpAccelerator->url, 'enabled' => $info->phpAccelerator->isEnabled, 'version_integer' => $info->phpAccelerator->versionInt, 'version_string' => $info->phpAccelerator->versionString];
     }
     else
     {
-        $phpAcceleratorInfo = array();
+        $phpAcceleratorInfo = [];
     }
 }
 else
 {
-       $systemInfo = array(
-        'cpu_type' => '',
-        'cpu_speed' => '',
-        'cpu_count' => '',
-        'memory_size' => ''
-    );
-    $phpAcceleratorInfo = array();
+       $systemInfo = ['cpu_type' => '', 'cpu_speed' => '', 'cpu_count' => '', 'memory_size' => ''];
+    $phpAcceleratorInfo = [];
 }
 
 $webserverInfo = false;
 if ( function_exists( 'apache_get_version' ) )
 {
-    $webserverInfo = array( 'name' => 'Apache',
-                            'modules' => false,
-                            'version' => apache_get_version() );
+    $webserverInfo = ['name' => 'Apache', 'modules' => false, 'version' => apache_get_version()];
     if ( function_exists( 'apache_get_modules' ) )
         $webserverInfo['modules'] = apache_get_modules();
 }
@@ -92,12 +75,12 @@ $tpl->setVariable( 'autoload_functions', spl_autoload_functions() );
 // values are not immediately available in the old template engine.
 $tpl->setVariable( 'system_info', $systemInfo );
 
-$phpINI = array();
-foreach ( array( 'safe_mode', 'register_globals', 'file_uploads' ) as $iniName )
+$phpINI = [];
+foreach ( ['safe_mode', 'register_globals', 'file_uploads'] as $iniName )
 {
     $phpINI[ $iniName ] = ini_get( $iniName ) != 0;
 }
-foreach ( array( 'open_basedir', 'post_max_size', 'memory_limit', 'max_execution_time' ) as $iniName )
+foreach ( ['open_basedir', 'post_max_size', 'memory_limit', 'max_execution_time'] as $iniName )
 {
     $value = ini_get( $iniName );
     if ( $value !== '' )
@@ -105,9 +88,8 @@ foreach ( array( 'open_basedir', 'post_max_size', 'memory_limit', 'max_execution
 }
 $tpl->setVariable( 'php_ini', $phpINI );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/info.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'System information' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'System information' )]];
 
 ?>

@@ -28,9 +28,8 @@ abstract class ezpSessionHandler
      *
      * @param bool $userHasCookie
      */
-    public function __construct( $userHasCookie = false )
+    public function __construct(public $userHasCookie = false)
     {
-        $this->userHasCookie = $userHasCookie;
     }
 
     /**
@@ -52,12 +51,12 @@ abstract class ezpSessionHandler
     {
         session_module_name( 'user' );
         session_set_save_handler(
-            array( $this, 'open' ),
-            array( $this, 'close' ),
-            array( $this, 'read' ),
-            array( $this, 'write' ),
-            array( $this, 'destroy' ),
-            array( $this, 'gc' )
+            $this->open(...),
+            $this->close(...),
+            $this->read(...),
+            $this->write(...),
+            $this->destroy(...),
+            $this->gc(...)
             );
         return true;
     }
@@ -195,7 +194,5 @@ abstract class ezpSessionHandler
     {
         return session_start();
     }
-
-    public $userHasCookie;
 }
 ?>

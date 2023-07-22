@@ -25,11 +25,11 @@
 
 class eZStringType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezstring';
-    const MAX_LEN_FIELD = 'data_int1';
-    const MAX_LEN_VARIABLE = '_ezstring_max_string_length_';
-    const DEFAULT_STRING_FIELD = "data_text1";
-    const DEFAULT_STRING_VARIABLE = "_ezstring_default_value_";
+    final public const DATA_TYPE_STRING = 'ezstring';
+    final public const MAX_LEN_FIELD = 'data_int1';
+    final public const MAX_LEN_VARIABLE = '_ezstring_max_string_length_';
+    final public const DEFAULT_STRING_FIELD = "data_text1";
+    final public const DEFAULT_STRING_VARIABLE = "_ezstring_default_value_";
 
     /*!
      Initializes with a string id and a description.
@@ -37,8 +37,7 @@ class eZStringType extends eZDataType
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Text line', 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_text' => 'text' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_text' => 'text']] );
         $this->MaxLenValidator = new eZIntegerValidator();
     }
 
@@ -97,7 +96,7 @@ class eZStringType extends eZDataType
 
         if ( $http->hasPostVariable( $base . '_ezstring_data_text_' . $contentObjectAttribute->attribute( 'id' ) ) )
         {
-            $data = trim( $http->postVariable( $base . '_ezstring_data_text_' . $contentObjectAttribute->attribute( 'id' ) ) );
+            $data = trim( (string) $http->postVariable( $base . '_ezstring_data_text_' . $contentObjectAttribute->attribute( 'id' ) ) );
 
             if ( $data == "" )
             {
@@ -200,8 +199,7 @@ class eZStringType extends eZDataType
                                  $objectAttribute, $string,
                                  &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => true );
+        $result = ['errors' => [], 'require_storage' => true];
         $objectAttribute->setContent( $string );
         $objectAttribute->setAttribute( 'data_text', $string );
         return true;
@@ -221,7 +219,7 @@ class eZStringType extends eZDataType
         if ( $http->hasPostVariable( $maxLenName ) )
         {
             $maxLenValue = $http->postVariable( $maxLenName );
-            $maxLenValue = str_replace(" ", "", $maxLenValue );
+            $maxLenValue = str_replace(" ", "", (string) $maxLenValue );
             if( ( $maxLenValue == "" ) ||  ( $maxLenValue == 0 ) )
             {
                 $maxLenValue = 0;
@@ -307,7 +305,7 @@ class eZStringType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return trim( $contentObjectAttribute->attribute( 'data_text' ) ) != '';
+        return trim( (string) $contentObjectAttribute->attribute( 'data_text' ) ) != '';
     }
 
     function isIndexable()
@@ -378,10 +376,10 @@ class eZStringType extends eZDataType
             $default = "'" . $db->escapeString( $default ) . "'";
             $trans = eZCharTransform::instance();
             $lowerCasedDefault = $trans->transformByGroup( $default, 'lowercase' );
-            return array( 'data_text' => $default, 'sort_key_string' => $lowerCasedDefault );
+            return ['data_text' => $default, 'sort_key_string' => $lowerCasedDefault];
         }
 
-        return array();
+        return [];
     }
 
     /// \privatesection

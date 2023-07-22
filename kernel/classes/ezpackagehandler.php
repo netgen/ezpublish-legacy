@@ -22,9 +22,9 @@ class eZPackageHandler
      * @param string $handlerType
      * @param array $parameters
      */
-    public function __construct( $handlerType, $parameters = array() )
+    public function __construct( $handlerType, $parameters = [] )
     {
-        $parameters = array_merge( array( 'extract-install-content' => false ),
+        $parameters = array_merge( ['extract-install-content' => false],
                                    $parameters );
         $this->ExtractInstallContent = $parameters['extract-install-content'];
         $this->HandlerType = $handlerType;
@@ -86,7 +86,7 @@ class eZPackageHandler
 
      \note This must be implemented for package handlers.
     */
-    function explainInstallItem( $package, $installItem, $requestedInfo = array() )
+    function explainInstallItem( $package, $installItem, $requestedInfo = [] )
     {
     }
 
@@ -192,7 +192,7 @@ class eZPackageHandler
             // If action not set - skip this element
             if ( !isset( $installParameters['error']['choosen_action'] ) )
             {
-                 $installParameters['error'] = array();
+                 $installParameters['error'] = [];
                  return false;
             }
             return true;
@@ -220,8 +220,8 @@ class eZPackageHandler
 
         if ( isset( $installParameters['error_default_actions'][$handlerType][$errorCode] ) )
         {
-            if ( $resetError && count( $installParameters['error'] ) )
-                $installParameters['error'] = array();
+            if ( $resetError && (is_countable($installParameters['error']) ? count( $installParameters['error'] ) : 0) )
+                $installParameters['error'] = [];
             return $installParameters['error_default_actions'][$handlerType][$errorCode];
         }
 
@@ -232,7 +232,7 @@ class eZPackageHandler
             {
                 $choosenAction = $installParameters['error']['choosen_action'];
                 if ( $resetError )
-                    $installParameters['error'] = array();
+                    $installParameters['error'] = [];
                 return $choosenAction;
             }
         }

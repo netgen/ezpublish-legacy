@@ -17,12 +17,12 @@
 
 class eZObjectRelationType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezobjectrelation";
+    final public const DATA_TYPE_STRING = "ezobjectrelation";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Object relation", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     public function isRelationType()
@@ -90,7 +90,7 @@ class eZObjectRelationType extends eZDataType
         {
             $trans = eZCharTransform::instance();
 
-            $fuzzyMatchText = trim( $http->postVariable( $fuzzyMatchVariableName ) );
+            $fuzzyMatchText = trim( (string) $http->postVariable( $fuzzyMatchVariableName ) );
             if ( $fuzzyMatchText != '' )
             {
                 $fuzzyMatchText = $trans->transformByGroup( $fuzzyMatchText, 'lowercase' );
@@ -101,12 +101,12 @@ class eZObjectRelationType extends eZDataType
                     if ( $classContent['default_selection_node'] )
                     {
                         $nodeID = $classContent['default_selection_node'];
-                        $nodeList = eZContentObjectTreeNode::subTreeByNodeID( array( 'Depth' => 1 ), $nodeID );
+                        $nodeList = eZContentObjectTreeNode::subTreeByNodeID( ['Depth' => 1], $nodeID );
                         $lastDiff = false;
                         $matchObjectID = false;
                         foreach ( $nodeList as $node )
                         {
-                            $name = $trans->transformByGroup( trim( $node->attribute( 'name' ) ), 'lowercase' );
+                            $name = $trans->transformByGroup( trim( (string) $node->attribute( 'name' ) ), 'lowercase' );
                             $diff = $this->fuzzyTextMatch( $name, $fuzzyMatchText );
                             if ( $diff === false )
                                 continue;
@@ -141,10 +141,10 @@ class eZObjectRelationType extends eZDataType
     */
     function fuzzyTextMatch( $text, $match )
     {
-        $pos = strpos( $text, $match );
+        $pos = strpos( (string) $text, (string) $match );
         if ( $pos !== false )
         {
-            $diff = strlen( $text ) - ( strlen( $match ) + $pos );
+            $diff = strlen( (string) $text ) - ( strlen( (string) $match ) + $pos );
             $diff += $pos;
             return $diff;
         }
@@ -155,8 +155,8 @@ class eZObjectRelationType extends eZDataType
     {
         if ( is_array( $content ) )
         {
-            $doc = $this->createClassDOMDocument( $content );
-            $this->storeClassDOMDocument( $doc, $classAttribute );
+            $doc = static::createClassDOMDocument($content);
+            static::storeClassDOMDocument($doc, $classAttribute);
             return true;
         }
         return false;
@@ -239,7 +239,7 @@ class eZObjectRelationType extends eZDataType
             $publishedVersionNo = $contentObject->publishedVersion();
             if ( $contentObjectAttribute->contentClassAttributeCanTranslate() && $publishedVersionNo > 0 )
             {
-                $existingRelations = array();
+                $existingRelations = [];
 
                 // get published translations of this attribute
                 $pubAttribute = eZContentObjectAttribute::fetch($contentObjectAttribute->ID, $publishedVersionNo );
@@ -309,10 +309,10 @@ class eZObjectRelationType extends eZDataType
         if ( $http->hasPostVariable( $postVariable ) )
         {
             $constrainedList = $http->postVariable( $postVariable );
-            $constrainedClassList = array();
+            $constrainedClassList = [];
             foreach ( $constrainedList as $constraint )
             {
-                if ( trim( $constraint ) != '' )
+                if ( trim( (string) $constraint ) != '' )
                     $constrainedClassList[] = $constraint;
             }
             $content['class_constraint_list'] = $constrainedClassList;
@@ -347,7 +347,7 @@ class eZObjectRelationType extends eZDataType
     function initializeClassAttribute( $classAttribute )
     {
         $xmlText = $classAttribute->attribute( 'data_text5' );
-        if ( trim( $xmlText ) == '' )
+        if ( trim( (string) $xmlText ) == '' )
         {
             $content = $this->defaultClassAttributeContent();
             return $this->storeClassAttributeContent( $classAttribute, $content );
@@ -361,7 +361,7 @@ class eZObjectRelationType extends eZDataType
         $classAttribute->setAttribute( 'data_int2', $content['default_selection_node'] );
         $classAttribute->setAttribute( 'data_int3', $content['fuzzy_match'] );
 
-        $xmlContentArray = array();
+        $xmlContentArray = [];
         $defaultClassAttributeContent = $this->defaultClassAttributeContent();
         foreach( $content as $xmlKey => $xmlContent )
         {
@@ -394,7 +394,7 @@ class eZObjectRelationType extends eZDataType
         // get array of ezcontentobjecttranslations
         $transList = $currVerobj->translations( false );
         // get count of LanguageCode in transList
-        $countTsl = count( $transList );
+        $countTsl = is_countable($transList) ? count( $transList ) : 0;
         // Delete the old version from ezcontentobject_link if count of translations > 1
         if ( $countTsl > 1 )
         {
@@ -437,16 +437,11 @@ class eZObjectRelationType extends eZDataType
                 $redirectionURI = $parameters['current-redirection-uri'];
                 $ini = eZINI::instance( 'content.ini' );
 
-                $browseParameters = array( 'action_name' => 'AddRelatedObject_' . $contentObjectAttribute->attribute( 'id' ),
-                                           'type' =>  'AddRelatedObjectToDataType',
-                                           'browse_custom_action' => array( 'name' => 'CustomActionButton[' . $contentObjectAttribute->attribute( 'id' ) . '_set_object_relation]',
-                                                                            'value' => $contentObjectAttribute->attribute( 'id' ) ),
-                                           'persistent_data' => array( 'HasObjectInput' => 0 ),
-                                           'from_page' => $redirectionURI );
+                $browseParameters = ['action_name' => 'AddRelatedObject_' . $contentObjectAttribute->attribute( 'id' ), 'type' =>  'AddRelatedObjectToDataType', 'browse_custom_action' => ['name' => 'CustomActionButton[' . $contentObjectAttribute->attribute( 'id' ) . '_set_object_relation]', 'value' => $contentObjectAttribute->attribute( 'id' )], 'persistent_data' => ['HasObjectInput' => 0], 'from_page' => $redirectionURI];
                 $browseTypeINIVariable = $ini->variable( 'ObjectRelationDataTypeSettings', 'ClassAttributeStartNode' );
                 foreach( $browseTypeINIVariable as $value )
                 {
-                    list( $classAttributeID, $type ) = explode( ';',$value );
+                    [$classAttributeID, $type] = explode( ';',(string) $value );
                     if ( $classAttributeID == $contentObjectAttribute->attribute( 'contentclassattribute_id' ) && strlen( $type ) > 0 )
                     {
                         $browseParameters['type'] = $type;
@@ -472,16 +467,16 @@ class eZObjectRelationType extends eZDataType
                 }
                 else
                 {
-                    $classConstraintList = array();
+                    $classConstraintList = [];
                 }
 
-                if ( count($classConstraintList) > 0 )
+                if ( (is_countable($classConstraintList) ? count($classConstraintList) : 0) > 0 )
                 {
                     $browseParameters['class_array'] = $classConstraintList;
                 }
 
-                eZContentBrowse::browse( $browseParameters,
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         $browseParameters );
             } break;
 
             case "remove_object" :
@@ -522,7 +517,7 @@ class eZObjectRelationType extends eZDataType
 
     function defaultClassAttributeContent()
     {
-        return array( 'class_constraint_list' => array() );
+        return ['class_constraint_list' => []];
     }
 
     /*!
@@ -536,8 +531,7 @@ class eZObjectRelationType extends eZDataType
         $editGrouped = ( $content['selection_type'] == 0 or
                          ( $content['selection_type'] == 1 and $content['fuzzy_match'] ) );
 
-        $info = array( 'edit' => array( 'grouped_input' => $editGrouped ),
-                       'collection' => array( 'grouped_input' => $editGrouped ) );
+        $info = ['edit' => ['grouped_input' => $editGrouped], 'collection' => ['grouped_input' => $editGrouped]];
         return eZDataType::objectDisplayInformation( $objectAttribute, $info );
     }
 
@@ -557,15 +551,13 @@ class eZObjectRelationType extends eZDataType
         $defaultSelectionNode = $classObjectAttribute->attribute( "data_int2" );
         $fuzzyMatch = $classObjectAttribute->attribute( "data_int3" );
 
-        $attributeContent = array( 'selection_type' => $selectionType,
-                                   'default_selection_node' => $defaultSelectionNode,
-                                   'fuzzy_match' => $fuzzyMatch );
+        $attributeContent = ['selection_type' => $selectionType, 'default_selection_node' => $defaultSelectionNode, 'fuzzy_match' => $fuzzyMatch];
 
         $attributeXMLContent = $this->defaultClassAttributeContent();
         $xmlText = $classObjectAttribute->attribute( 'data_text5' );
-        if ( trim( $xmlText ) != '' )
+        if ( trim( (string) $xmlText ) != '' )
         {
-            $doc = $this->parseXML( $xmlText );
+            $doc = static::parseXML($xmlText);
             $attributeXMLContent = $this->createClassContentStructure( $doc );
         }
         return array_merge( $attributeContent, $attributeXMLContent );
@@ -601,21 +593,13 @@ class eZObjectRelationType extends eZDataType
             {
                 $module = $classAttribute->currentModule();
                 $customActionName = 'CustomActionButton[' . $classAttribute->attribute( 'id' ) . '_browsed_for_selection_node]';
-                eZContentBrowse::browse( array( 'action_name' => 'SelectObjectRelationNode',
-                                                'content' => array( 'contentclass_id' => $classAttribute->attribute( 'contentclass_id' ),
-                                                                    'contentclass_attribute_id' => $classAttribute->attribute( 'id' ),
-                                                                    'contentclass_version' => $classAttribute->attribute( 'version' ),
-                                                                    'contentclass_attribute_identifier' => $classAttribute->attribute( 'identifier' ) ),
-                                                'persistent_data' => array( $customActionName => '',
-                                                                            'ContentClassHasInput' => false ),
-                                                'description_template' => 'design:class/datatype/browse_objectrelation_placement.tpl',
-                                                'from_page' => $module->currentRedirectionURI() ),
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         ['action_name' => 'SelectObjectRelationNode', 'content' => ['contentclass_id' => $classAttribute->attribute( 'contentclass_id' ), 'contentclass_attribute_id' => $classAttribute->attribute( 'id' ), 'contentclass_version' => $classAttribute->attribute( 'version' ), 'contentclass_attribute_identifier' => $classAttribute->attribute( 'identifier' )], 'persistent_data' => [$customActionName => '', 'ContentClassHasInput' => false], 'description_template' => 'design:class/datatype/browse_objectrelation_placement.tpl', 'from_page' => $module->currentRedirectionURI()] );
             } break;
             case 'browsed_for_selection_node':
             {
                 $nodeSelection = eZContentBrowse::result( 'SelectObjectRelationNode' );
-                if ( count( $nodeSelection ) > 0 )
+                if ( (is_countable($nodeSelection) ? count( $nodeSelection ) : 0) > 0 )
                 {
                     $nodeID = $nodeSelection[0];
                     $content = $classAttribute->content();

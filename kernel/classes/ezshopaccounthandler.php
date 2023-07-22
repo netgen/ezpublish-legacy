@@ -20,19 +20,7 @@ class eZShopAccountHandler
     static function instance()
     {
         $accountHandler = null;
-        if ( eZExtension::findExtensionType( array( 'ini-name' => 'shopaccount.ini',
-                                                    'repository-group' => 'HandlerSettings',
-                                                    'repository-variable' => 'Repositories',
-                                                    'extension-group' => 'HandlerSettings',
-                                                    'extension-variable' => 'ExtensionRepositories',
-                                                    'type-group' => 'AccountSettings',
-                                                    'type-variable' => 'Handler',
-                                                    'alias-group' => 'AccountSettings',
-                                                    'alias-variable' => 'Alias',
-                                                    'subdir' => 'shopaccounthandlers',
-                                                    'type-directory' => false,
-                                                    'extension-subdir' => 'shopaccounthandlers',
-                                                    'suffix-name' => 'shopaccounthandler.php' ),
+        if ( eZExtension::findExtensionType( ['ini-name' => 'shopaccount.ini', 'repository-group' => 'HandlerSettings', 'repository-variable' => 'Repositories', 'extension-group' => 'HandlerSettings', 'extension-variable' => 'ExtensionRepositories', 'type-group' => 'AccountSettings', 'type-variable' => 'Handler', 'alias-group' => 'AccountSettings', 'alias-variable' => 'Alias', 'subdir' => 'shopaccounthandlers', 'type-directory' => false, 'extension-subdir' => 'shopaccounthandlers', 'suffix-name' => 'shopaccounthandler.php'],
                                              $out ) )
         {
             $filePath = $out['found-file-path'];

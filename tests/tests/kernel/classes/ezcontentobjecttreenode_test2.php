@@ -12,26 +12,26 @@ class eZContentObjectTreeNodeTest2 extends ezpDatabaseTestCase
 {
     public function providerForTestIssue23528()
     {
-        return array(
+        return [
             // integer
-            array( 'published',        "                            ( ezcontentobject.published IN (1,3,0,1,0)  ) AND " ),
-            array( 'modified',         "                            ( ezcontentobject.modified IN (1,3,0,1,0)  ) AND " ),
-            array( 'modified_subnode', "                            ( ezcontentobject_tree.modified_subnode IN (1,3,0,1,0)  ) AND " ),
-            array( 'node_id',          "                            ( ezcontentobject_tree.node_id IN (1,3,0,1,0)  ) AND " ),
-            array( 'contentobject_id', "                            ( ezcontentobject_tree.contentobject_id IN (1,3,0,1,0)  ) AND " ),
-            array( 'section',          "                            ( ezcontentobject.section_id IN (1,3,0,1,0)  ) AND " ),
-            array( 'state',            "                            ( ezcontentobject.id IN (SELECT contentobject_id FROM ezcobj_state_link WHERE contentobject_state_id IN ( 1, 3, 0, 1, 0 )) ) AND " ),
-            array( 'depth',            "                            ( ezcontentobject_tree.depth IN (1,3,0,1,0)  ) AND " ),
-            array( 'priority',         "                            ( ezcontentobject_tree.priority IN (1,3,0,1,0)  ) AND " ),
-            array( 'owner',            "                            ( ezcontentobject.owner_id IN (1,3,0,1,0)  ) AND " ),
-            array( 'visibility',       "                            ( ezcontentobject_tree.is_invisible IN (1,3,0,1,0)  ) AND " ),
+            ['published', "                            ( ezcontentobject.published IN (1,3,0,1,0)  ) AND "],
+            ['modified', "                            ( ezcontentobject.modified IN (1,3,0,1,0)  ) AND "],
+            ['modified_subnode', "                            ( ezcontentobject_tree.modified_subnode IN (1,3,0,1,0)  ) AND "],
+            ['node_id', "                            ( ezcontentobject_tree.node_id IN (1,3,0,1,0)  ) AND "],
+            ['contentobject_id', "                            ( ezcontentobject_tree.contentobject_id IN (1,3,0,1,0)  ) AND "],
+            ['section', "                            ( ezcontentobject.section_id IN (1,3,0,1,0)  ) AND "],
+            ['state', "                            ( ezcontentobject.id IN (SELECT contentobject_id FROM ezcobj_state_link WHERE contentobject_state_id IN ( 1, 3, 0, 1, 0 )) ) AND "],
+            ['depth', "                            ( ezcontentobject_tree.depth IN (1,3,0,1,0)  ) AND "],
+            ['priority', "                            ( ezcontentobject_tree.priority IN (1,3,0,1,0)  ) AND "],
+            ['owner', "                            ( ezcontentobject.owner_id IN (1,3,0,1,0)  ) AND "],
+            ['visibility', "                            ( ezcontentobject_tree.is_invisible IN (1,3,0,1,0)  ) AND "],
             // string
-            array( 'path',             "                            ( ezcontentobject_tree.path_string IN ('1','3','foo','1foo','foo_1')  ) AND " ),
-            array( 'class_identifier', "                            ( ezcontentclass.identifier IN ('1','3','foo','1foo','foo_1')  ) AND " ),
-            array( 'class_name',       "                            ( ezcontentclass_name.name IN ('1','3','foo','1foo','foo_1')  ) AND " ),
-            array( 'name',             "                            ( ezcontentobject_name.name IN ('1','3','foo','1foo','foo_1')  ) AND " ),
+            ['path', "                            ( ezcontentobject_tree.path_string IN ('1','3','foo','1foo','foo_1')  ) AND "],
+            ['class_identifier', "                            ( ezcontentclass.identifier IN ('1','3','foo','1foo','foo_1')  ) AND "],
+            ['class_name', "                            ( ezcontentclass_name.name IN ('1','3','foo','1foo','foo_1')  ) AND "],
+            ['name', "                            ( ezcontentobject_name.name IN ('1','3','foo','1foo','foo_1')  ) AND "],
             // custom
-            array( 1,                  "
+            [1, "
                                   a0.contentobject_id = ezcontentobject.id AND
                                   a0.contentclassattribute_id = 1 AND
                                   a0.version = ezcontentobject_name.content_version AND 
@@ -42,8 +42,8 @@ class eZContentObjectTreeNodeTest2 extends ezpDatabaseTestCase
      ( a0.language_id & 1 )
    + ( ( a0.language_id & 2 ) )
  ) 
- AND                             ( a0.sort_key_string IN ('1','3','foo','1foo','foo_1')  ) AND " ),
-        );
+ AND                             ( a0.sort_key_string IN ('1','3','foo','1foo','foo_1')  ) AND "],
+        ];
     }
 
     /**
@@ -55,18 +55,17 @@ class eZContentObjectTreeNodeTest2 extends ezpDatabaseTestCase
      */
     public function testIssue23528( $name, $expected )
     {
-        $params = array( 1, '3', 'foo', '1foo', 'foo_1' );
-        $attributeFilterParams = array( array( $name, 'in', $params ) );
+        $params = [1, '3', 'foo', '1foo', 'foo_1'];
+        $attributeFilterParams = [[$name, 'in', $params]];
         $attributeFilter = eZContentObjectTreeNode::createAttributeFilterSQLStrings( $attributeFilterParams );
-        $this->assertEquals( $expected, $attributeFilter['where'] );
+        static::assertEquals($expected, $attributeFilter['where']);
     }
 
     public function testSortingByTrashed()
     {
         // test sorting by trashed
-        $sortList = array( array( 'trashed', true ) );
+        $sortList = [['trashed', true]];
         $result = eZContentObjectTreeNode::createSortingSQLStrings( $sortList, 'ezcot' );
-        $this->assertEquals( 'ezcot.trashed asc',
-            strtolower( $result[ 'sortingFields' ] ) );
+        static::assertEquals('ezcot.trashed asc', strtolower( (string) $result[ 'sortingFields' ] ));
     }
 }

@@ -16,22 +16,14 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Remove from database policies defined on module which do not exist in a modules folder"
-            . "according to settings from module.ini/[ModuleSettings]/ExtensionRepositories",
-        'use-session' => false,
-        'use-modules' => true,
-        'use-extensions' => true
-    )
+    ['description' => "Remove from database policies defined on module which do not exist in a modules folder"
+        . "according to settings from module.ini/[ModuleSettings]/ExtensionRepositories", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true]
 );
 $script->startup();
 $options = $script->getOptions(
     "[dry-run][n]",
     '',
-    array(
-        'dry-run' => "Test mode, output the list of affected policies without removing them",
-        'n' => "Do not wait"
-    )
+    ['dry-run' => "Test mode, output the list of affected policies without removing them", 'n' => "Do not wait"]
 );
 $script->initialize();
 
@@ -47,13 +39,12 @@ if ( !$optDryRun && !isset( $options['n'] ) )
 }
 
 $rows =  eZPersistentObject::fetchObjectList( eZPolicy::definition(),
-    array(),
+    [],
     null,
     false,
     null,
     false, false,
-    array( array( 'operation' => 'count( * )',
-                  'name' => 'count' ) ) );
+    [['operation' => 'count( * )', 'name' => 'count']] );
 $total = $rows[0]['count'];
 if ( !$optDryRun )
 {
@@ -70,7 +61,7 @@ if ( !$optDryRun )
     $script->resetIteration( $total );
 }
 
-$limitation = array( 'offset' => 0, 'limit' => 100 );
+$limitation = ['offset' => 0, 'limit' => 100];
 
 $db = eZDB::instance();
 

@@ -59,13 +59,12 @@ class eZURI
     /**
      * URI transformation mode used by transformURI().
      *
-     * @var string
      *
      * @see transformURI()
      * @see getTransformURIMode()
      * @see setTransformURIMode()
      */
-    private static $transformURIMode = "relative";
+    private static string $transformURIMode = "relative";
 
     /**
      * Initializes with the URI string $uri. The URI string is split on / into an array.
@@ -105,7 +104,7 @@ class eZURI
     {
         $codec = eZTextCodec::instance( false, 'utf-8' );
         $str = $codec->convertString( $str ); // Make sure the string is in utf-8
-        $out = explode( "/", $str ); // Don't encode the slashes
+        $out = explode( "/", (string) $str ); // Don't encode the slashes
         foreach ( $out as $i => $o )
         {
             if ( preg_match( "#^[\(]([a-zA-Z0-9_]+)[\)]#", $o, $m ) )
@@ -233,7 +232,7 @@ class eZURI
             return;
 
         $this->OriginalURI = $uri;
-        $this->UserArray = array();
+        $this->UserArray = [];
 
         unset( $paramName, $paramValue );
         foreach ( array_keys( $this->URIArray ) as $key )
@@ -270,7 +269,7 @@ class eZURI
 
         if ( eZINI::instance( 'template.ini' )->variable( 'ControlSettings', 'AllowUserVariables' ) == 'false' )
         {
-            $this->UserArray = array();
+            $this->UserArray = [];
         }
         // Convert filter string to current locale
         $this->convertFilterString();
@@ -368,7 +367,7 @@ class eZURI
             if ( $paramKey == 'namefilter' )
             {
                 $char = $this->UserArray[$paramKey];
-                $char = urldecode( $char );
+                $char = urldecode( (string) $char );
 
                 $codec = eZTextCodec::instance( 'utf-8', false );
                 if ( $codec )
@@ -505,13 +504,7 @@ class eZURI
      */
     public function attributes()
     {
-        return array( 'element',
-                      'base',
-                      'tail',
-                      'index',
-                      'uri',
-                      'original_uri',
-                      'query_string' );
+        return ['element', 'base', 'tail', 'index', 'uri', 'original_uri', 'query_string'];
     }
 
     /**
@@ -618,7 +611,7 @@ class eZURI
             $serverURL = self::$transformURIMode;
         }
 
-        if ( preg_match( "#^[a-zA-Z0-9]+:#", $href ) || substr( $href, 0, 2 ) == '//' )
+        if ( preg_match( "#^[a-zA-Z0-9]+:#", $href ) || str_starts_with($href, '//') )
             return false;
 
         if ( strlen( $href ) == 0 )

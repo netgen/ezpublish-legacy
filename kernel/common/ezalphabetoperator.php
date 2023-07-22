@@ -24,7 +24,7 @@ class eZAlphabetOperator
      */
     public function __construct( $alphabet = 'alphabet' )
     {
-        $this->Operators = array( $alphabet );
+        $this->Operators = [$alphabet];
         $this->Alphabet = $alphabet;
     }
 
@@ -66,43 +66,43 @@ class eZAlphabetOperator
 
         $alphabetRangeList = $contentINI->hasVariable( 'AlphabeticalFilterSettings', 'AlphabetList' )
                              ? $contentINI->variable( 'AlphabeticalFilterSettings', 'AlphabetList' )
-                             : array();
+                             : [];
 
         $alphabetFromArray = $contentINI->hasVariable( 'AlphabeticalFilterSettings', 'ContentFilterList' )
                              ? $contentINI->variable( 'AlphabeticalFilterSettings', 'ContentFilterList' )
-                             : array( 'default' );
+                             : ['default'];
 
         // If alphabet list is empty
-        if ( count( $alphabetFromArray ) == 0 )
+        if ( (is_countable($alphabetFromArray) ? count( $alphabetFromArray ) : 0) == 0 )
             return false;
 
-        $alphabetRangeList = array_merge( $alphabetRangeList, array( 'default' => '97-122' ) );
-        $alphabet = array();
+        $alphabetRangeList = array_merge( $alphabetRangeList, ['default' => '97-122'] );
+        $alphabet = [];
         foreach ( $alphabetFromArray as $alphabetFrom )
         {
             // If $alphabetFrom exists in range array $alphabetRangeList
             if ( isset( $alphabetRangeList[$alphabetFrom] ) )
             {
-                $lettersArray = explode( ',', $alphabetRangeList[$alphabetFrom] );
+                $lettersArray = explode( ',', (string) $alphabetRangeList[$alphabetFrom] );
                 foreach ( $lettersArray as $letter )
                 {
                     $rangeArray =  explode( '-', $letter );
                     if ( isset( $rangeArray[1] ) )
                     {
-                        $alphabet = array_merge( $alphabet, range( trim( $rangeArray[0] ), trim( $rangeArray[1] ) ) );
+                        $alphabet = [...$alphabet, ...range( trim( $rangeArray[0] ), trim( $rangeArray[1] ) )];
                     }
                     else
-                        $alphabet = array_merge( $alphabet, array( trim( $letter ) ) );
+                        $alphabet = [...$alphabet, trim( $letter )];
                 }
             }
         }
         // Get alphabet by default (eng-GB)
         if ( count( $alphabet ) == 0 )
         {
-            $rangeArray = explode( '-', $alphabetRangeList['default'] );
+            $rangeArray = explode( '-', (string) $alphabetRangeList['default'] );
             $alphabet = range( $rangeArray[0], $rangeArray[1] );
         }
-        $resAlphabet = array();
+        $resAlphabet = [];
         $i18nINI = eZINI::instance( 'i18n.ini' );
         $charset = $i18nINI->variable( 'CharacterSettings', 'Charset' );
 

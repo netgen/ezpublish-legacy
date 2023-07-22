@@ -10,10 +10,7 @@
 
 class eZSearchEngineRegression extends ezpTestCase
 {
-    /**
-     * @var eZSearchEngine
-     */
-    private $searchEngine;
+    private ?\eZSearchEngine $searchEngine = null;
 
     public function setUp()
     {
@@ -26,29 +23,11 @@ class eZSearchEngineRegression extends ezpTestCase
      */
     public function testSplitString( $originalString, $convertedString )
     {
-        $this->assertSame( $convertedString, $this->searchEngine->splitString( $originalString ) );
+        static::assertSame($convertedString, $this->searchEngine->splitString( $originalString ));
     }
 
     public function providerForTestSplitString()
     {
-        return array(
-            array( "", array() ),
-            array( "   ", array() ),
-            array( "L'avertissement", array( "L", "avertissement") ),
-            array( "L’avertissement", array( "L", "avertissement") ),
-            array( "Hello world", array( "Hello", "world" ) ),
-            array( "  Hello   world  ", array( "Hello", "world" ) ),
-            array( "  'Hello''world'  ", array( "Hello", "world" ) ),
-            array( "  'Hello'   'world'  ", array( "Hello", "world" ) ),
-            array( "  'Hello' ''  'world'  ", array( "Hello", "world" ) ),
-            array( '  "Hello""world"  ', array( "Hello", "world" ) ),
-            array( '  "Hello"   "world"  ', array( "Hello", "world" ) ),
-            array( '  "Hello" ""  "world"  ', array( "Hello", "world" ) ),
-            array( '  ‘Hello’   ‘world’  ', array( "Hello", "world" ) ),
-            array( '  ‘Hello’ ‘’  ‘world’  ', array( "Hello", "world" ) ),
-            array( '  ‟Hello„‟world„  ', array( "Hello", "world" ) ),
-            array( '  ‟Hello„   ‟world„  ', array( "Hello", "world" ) ),
-            array( '  ‟Hello„ ‟„  ’world„  ', array( "Hello", "world" ) ),
-        );
+        return [["", []], ["   ", []], ["L'avertissement", ["L", "avertissement"]], ["L’avertissement", ["L", "avertissement"]], ["Hello world", ["Hello", "world"]], ["  Hello   world  ", ["Hello", "world"]], ["  'Hello''world'  ", ["Hello", "world"]], ["  'Hello'   'world'  ", ["Hello", "world"]], ["  'Hello' ''  'world'  ", ["Hello", "world"]], ['  "Hello""world"  ', ["Hello", "world"]], ['  "Hello"   "world"  ', ["Hello", "world"]], ['  "Hello" ""  "world"  ', ["Hello", "world"]], ['  ‘Hello’   ‘world’  ', ["Hello", "world"]], ['  ‘Hello’ ‘’  ‘world’  ', ["Hello", "world"]], ['  ‟Hello„‟world„  ', ["Hello", "world"]], ['  ‟Hello„   ‟world„  ', ["Hello", "world"]], ['  ‟Hello„ ‟„  ’world„  ', ["Hello", "world"]]];
     }
 }

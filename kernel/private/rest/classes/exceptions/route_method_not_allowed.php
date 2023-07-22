@@ -15,14 +15,14 @@ class ezpRouteMethodNotAllowedException extends ezcMvcToolsException
      *
      * @var array
      */
-    protected $allowedMethods = array();
+    protected $allowedMethods = [];
 
     /**
      * Constructor
      *
      * @param array $allowedMethods
      */
-    public function __construct( array $allowedMethods = array() )
+    public function __construct( array $allowedMethods = [] )
     {
         $this->allowedMethods = $allowedMethods;
         parent::__construct(

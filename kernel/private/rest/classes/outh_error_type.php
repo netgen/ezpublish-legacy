@@ -10,30 +10,19 @@
 
 class ezpOauthErrorType
 {
-    const INVALID_REQUEST = 'invalid_request';
-    const INVALID_TOKEN = 'invalid_token';
-    const EXPIRED_TOKEN = 'expired_token';
-    const INSUFFICIENT_SCOPE = 'insufficient_scope';
+    final public const INVALID_REQUEST = 'invalid_request';
+    final public const INVALID_TOKEN = 'invalid_token';
+    final public const EXPIRED_TOKEN = 'expired_token';
+    final public const INSUFFICIENT_SCOPE = 'insufficient_scope';
 
     public static function httpCodeforError( $error )
     {
-        // These HTTP response codes are extracted from Section 5.2.1 of the oauth2.0 spec.
-        switch ( $error )
-        {
-            case self::INVALID_REQUEST:
-                return ezpHttpResponseCodes::BAD_REQUEST;
-                break;
-            case self::INVALID_TOKEN:
-            case self::EXPIRED_TOKEN:
-                return ezpHttpResponseCodes::UNAUTHORIZED;
-                break;
-            case self::INSUFFICIENT_SCOPE:
-                return ezpHttpResponseCodes::FORBIDDEN;
-                break;
-            default:
-                return ezpHttpResponseCodes::SERVER_ERROR;
-                break;
-        }
+        return match ($error) {
+            self::INVALID_REQUEST => ezpHttpResponseCodes::BAD_REQUEST,
+            self::INVALID_TOKEN, self::EXPIRED_TOKEN => ezpHttpResponseCodes::UNAUTHORIZED,
+            self::INSUFFICIENT_SCOPE => ezpHttpResponseCodes::FORBIDDEN,
+            default => ezpHttpResponseCodes::SERVER_ERROR,
+        };
     }
 }
 ?>

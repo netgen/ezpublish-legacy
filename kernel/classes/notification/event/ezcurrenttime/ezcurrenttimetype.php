@@ -15,7 +15,7 @@
 */
 class eZCurrentTimeType extends eZNotificationEventType
 {
-    const NOTIFICATION_TYPE_STRING = 'ezcurrenttime';
+    final public const NOTIFICATION_TYPE_STRING = 'ezcurrenttime';
 
     public function __construct()
     {

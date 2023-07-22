@@ -16,21 +16,21 @@
 
 class eZModuleFunctionInfo
 {
-    const ERROR_NO_CLASS = 5;
-    const ERROR_NO_CLASS_METHOD = 6;
-    const ERROR_CLASS_INSTANTIATE_FAILED = 7;
-    const ERROR_MISSING_PARAMETER = 8;
+    public const ERROR_NO_CLASS = 5;
+    public const ERROR_NO_CLASS_METHOD = 6;
+    public const ERROR_CLASS_INSTANTIATE_FAILED = 7;
+    public const ERROR_MISSING_PARAMETER = 8;
 
     /**
      * Constructor
      *
-     * @param string $moduleName
+     * @param string $ModuleName
      */
-    public function __construct( $moduleName )
+    public function __construct(
+        /// \privatesection
+        public $ModuleName
+    )
     {
-        $this->ModuleName = $moduleName;
-        $this->IsValid = false;
-        $this->FunctionList = array();
     }
 
     function isValid()
@@ -240,13 +240,9 @@ class eZModuleFunctionInfo
     {
         if ( !isset( $GLOBALS['eZModuleFunctionClassObjectList'] ) )
         {
-            $GLOBALS['eZModuleFunctionClassObjectList'] = array();
+            $GLOBALS['eZModuleFunctionClassObjectList'] = [];
         }
-        if ( isset( $GLOBALS['eZModuleFunctionClassObjectList'][$className] ) )
-        {
-            return $GLOBALS['eZModuleFunctionClassObjectList'][$className];
-        }
-        return $GLOBALS['eZModuleFunctionClassObjectList'][$className] = new $className();
+        return $GLOBALS['eZModuleFunctionClassObjectList'][$className] ?? ($GLOBALS['eZModuleFunctionClassObjectList'][$className] = new $className());
     }
 
     function executeClassMethod( $className, $methodName,
@@ -254,22 +250,18 @@ class eZModuleFunctionInfo
     {
         if ( !class_exists( $className ) )
         {
-            return array( 'internal_error' => eZModuleFunctionInfo::ERROR_NO_CLASS,
-                          'internal_error_class_name' => $className );
+            return ['internal_error' => eZModuleFunctionInfo::ERROR_NO_CLASS, 'internal_error_class_name' => $className];
         }
         $classObject = $this->objectForClass( $className );
         if ( $classObject === null )
         {
-            return array( 'internal_error' => eZModuleFunctionInfo::ERROR_CLASS_INSTANTIATE_FAILED,
-                          'internal_error_class_name' => $className );
+            return ['internal_error' => eZModuleFunctionInfo::ERROR_CLASS_INSTANTIATE_FAILED, 'internal_error_class_name' => $className];
         }
         if ( !method_exists( $classObject, $methodName ) )
         {
-            return array( 'internal_error' => eZModuleFunctionInfo::ERROR_NO_CLASS_METHOD,
-                          'internal_error_class_name' => $className,
-                          'internal_error_class_method_name' => $methodName );
+            return ['internal_error' => eZModuleFunctionInfo::ERROR_NO_CLASS_METHOD, 'internal_error_class_name' => $className, 'internal_error_class_method_name' => $methodName];
         }
-        $parameterArray = array();
+        $parameterArray = [];
         foreach ( $functionParameterDefinitions as $functionParameterDefinition )
         {
             $parameterName = $functionParameterDefinition['name'];
@@ -282,8 +274,7 @@ class eZModuleFunctionInfo
             {
                 if ( $functionParameterDefinition['required'] )
                 {
-                    return array( 'internal_error' => eZModuleFunctionInfo::ERROR_MISSING_PARAMETER,
-                                  'internal_error_parameter_name' => $parameterName );
+                    return ['internal_error' => eZModuleFunctionInfo::ERROR_MISSING_PARAMETER, 'internal_error_parameter_name' => $parameterName];
                 }
                 else if ( isset( $functionParameterDefinition['default'] ) )
                 {
@@ -296,13 +287,10 @@ class eZModuleFunctionInfo
             }
         }
 
-        return call_user_func_array( array( $classObject, $methodName ), $parameterArray );
+        return call_user_func_array( [$classObject, $methodName], $parameterArray );
     }
-
-    /// \privatesection
-    public $ModuleName;
-    public $FunctionList;
-    public $IsValid;
+    public $FunctionList = [];
+    public $IsValid = false;
 }
 
 ?>

@@ -35,32 +35,19 @@ class ezpKernelRest implements ezpKernelHandler
      */
     protected $uri;
 
-    /**
-     * Custom ZetaComponents MvcTools ResponseWriter class name.
-     * Used to get a usable Response from the REST API's controllers.
-     *
-     * Must reference an implementation of ezpRestHttpResponseWriter.
-     *
-     * @var string
-     */
-    private $responseWriterClass;
-
     private static $response;
 
     /**
-     * @param array $settings
      * @param null $responseWriterClass Name of the ezpRestHttpResponseWriter implementation to use during request
      */
-    public function __construct( array $settings = array(), $responseWriterClass = null )
+    public function __construct( array $settings = [], private $responseWriterClass = null )
     {
-        $this->responseWriterClass = $responseWriterClass;
-
         if ( isset( $settings['injected-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
@@ -68,21 +55,16 @@ class ezpKernelRest implements ezpKernelHandler
         }
         if ( isset( $settings['injected-merge-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-merge-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
             eZINI::injectMergeSettings( $injectedSettings );
         }
-        $this->settings = $settings + array(
-            'use-cache-headers'         => true,
-            'max-age'                   => 86400,
-            'siteaccess'                => null,
-            'use-exceptions'            => false
-        );
+        $this->settings = $settings + ['use-cache-headers'         => true, 'max-age'                   => 86400, 'siteaccess'                => null, 'use-exceptions'            => false];
         unset( $settings, $injectedSettings, $file, $section, $setting, $keySetting, $injectedSetting );
 
         // lazy loaded database driver
@@ -111,8 +93,8 @@ class ezpKernelRest implements ezpKernelHandler
         eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
 
         // Trick to get eZSys working with a script other than index.php (while index.php still used in generated URLs):
-        $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_rest.php', '/index.php', $_SERVER['SCRIPT_FILENAME'] );
-        $_SERVER['PHP_SELF'] = str_replace( '/index_rest.php', '/index.php', $_SERVER['PHP_SELF'] );
+        $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_rest.php', '/index.php', (string) $_SERVER['SCRIPT_FILENAME'] );
+        $_SERVER['PHP_SELF'] = str_replace( '/index_rest.php', '/index.php', (string) $_SERVER['PHP_SELF'] );
 
         $ini = eZINI::instance();
         $timezone = $ini->variable( 'TimeZoneSettings', 'TimeZone' );
@@ -136,7 +118,7 @@ class ezpKernelRest implements ezpKernelHandler
         // set siteaccess from X-Siteaccess header if given and exists
         if ( isset( $_SERVER['HTTP_X_SITEACCESS'] ) && eZSiteAccess::exists( $_SERVER['HTTP_X_SITEACCESS'] ) )
         {
-            $access = array( 'name' => $_SERVER['HTTP_X_SITEACCESS'], 'type' => eZSiteAccess::TYPE_STATIC );
+            $access = ['name' => $_SERVER['HTTP_X_SITEACCESS'], 'type' => eZSiteAccess::TYPE_STATIC];
         }
         else
         {
@@ -167,10 +149,7 @@ class ezpKernelRest implements ezpKernelHandler
         return self::$response;
     }
 
-    /**
-     * @param mixed $response
-     */
-    public static function setResponse( $response )
+    public static function setResponse( mixed $response )
     {
         self::$response = $response;
     }
@@ -195,7 +174,7 @@ class ezpKernelRest implements ezpKernelHandler
      *
      * @throws \RuntimeException
      */
-    public function runCallback( \Closure $callback, $postReinitialize = true )
+    public function runCallback( \Closure $callback, $postReinitialize = true ): never
     {
         throw new \RuntimeException( 'runCallback() method is not supported by ezpKernelRest' );
     }

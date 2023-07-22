@@ -11,24 +11,19 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Re-creates missing references to image files in ezimagefile. See issue EZP-21324\n",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Re-creates missing references to image files in ezimagefile. See issue EZP-21324\n", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
-$options = $script->getOptions( "[dry-run]", "", array( 'n' => 'Dry run' ) );
+$options = $script->getOptions( "[dry-run]", "", ['n' => 'Dry run'] );
 $optDryRun = (bool)$options['dry-run'];
 
 $script->initialize();
 
 $imageAttributes = eZPersistentObject::fetchObjectList(
     eZContentObjectAttribute::definition(),
-    array( 'id', 'contentobject_id', 'version', 'data_text' ),
-    array( 'data_type_string' => 'ezimage' ),
+    ['id', 'contentobject_id', 'version', 'data_text'],
+    ['data_type_string' => 'ezimage'],
     null,
     null, // @todo Implement batch fetch
     false
@@ -40,7 +35,7 @@ if ( $optDryRun )
 
 foreach ( $imageAttributes as $imageAttribute )
 {
-    if ( ( $doc = simplexml_load_string( $imageAttribute["data_text"] ) ) === false )
+    if ( ( $doc = simplexml_load_string( (string) $imageAttribute["data_text"] ) ) === false )
         continue;
 
     // Creates ezimagefile entries

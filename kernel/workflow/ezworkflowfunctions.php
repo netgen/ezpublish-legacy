@@ -12,7 +12,7 @@ class eZWorkflowFunctions
 {
     static function addGroup( $workflowID, $workflowVersion, $selectedGroup )
     {
-        list ( $groupID, $groupName ) = explode( '/', $selectedGroup );
+        [$groupID, $groupName] = explode( '/', (string) $selectedGroup );
         $ingroup = eZWorkflowGroupLink::create( $workflowID, $workflowVersion, $groupID, $groupName );
         $ingroup->store();
         return true;
@@ -32,7 +32,7 @@ class eZWorkflowFunctions
             }
         }
 
-        if ( count( $groups ) == 0 )
+        if ( (is_countable($groups) ? count( $groups ) : 0) == 0 )
         {
             return false;
         }

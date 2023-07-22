@@ -11,9 +11,9 @@ $GroupID = null;
 if ( isset( $Params["GroupID"] ) )
     $GroupID = $Params["GroupID"];
 $http = eZHTTPTool::instance();
-$deleteIDArray = $http->hasSessionVariable( 'DeleteClassIDArray' ) ? $http->sessionVariable( 'DeleteClassIDArray' ) : array();
-$DeleteResult = array();
-$alreadyRemoved = array();
+$deleteIDArray = $http->hasSessionVariable( 'DeleteClassIDArray' ) ? $http->sessionVariable( 'DeleteClassIDArray' ) : [];
+$DeleteResult = [];
+$alreadyRemoved = [];
 
 if ( !$http->hasPostVariable( 'ConfirmButton' ) && !$http->hasPostVariable( 'CancelButton' ) && $GroupID != null )
 {
@@ -27,12 +27,11 @@ if ( !$http->hasPostVariable( 'ConfirmButton' ) && !$http->hasPostVariable( 'Can
         {
             // find out to how many groups the class belongs:
             $classInGroups = $class->attribute( 'ingroup_list' );
-            if ( count( $classInGroups ) != 1 )
+            if ( (is_countable($classInGroups) ? count( $classInGroups ) : 0) != 1 )
             {
                 // remove class - group relation:
-                eZClassFunctions::removeGroup( $classID, null, array( $GroupID ) );
-                $alreadyRemoved[] = array( 'id' => $classID,
-                                           'name' => $class->attribute( 'name' ) );
+                eZClassFunctions::removeGroup( $classID, null, [$GroupID] );
+                $alreadyRemoved[] = ['id' => $classID, 'name' => $class->attribute( 'name' )];
                 $updateDeleteIDArray = true;
                 unset( $deleteIDArray[$key] );
             }
@@ -43,7 +42,7 @@ if ( !$http->hasPostVariable( 'ConfirmButton' ) && !$http->hasPostVariable( 'Can
         // we aren't going to remove classes already processed:
         $http->setSessionVariable( 'DeleteClassIDArray', $deleteIDArray );
     }
-    if ( count( $deleteIDArray ) == 0 )
+    if ( (is_countable($deleteIDArray) ? count( $deleteIDArray ) : 0) == 0 )
     {
         // we don't need anything to confirm:
         return $Module->redirectTo( '/class/classlist/' . $GroupID );
@@ -55,7 +54,7 @@ if ( $http->hasPostVariable( "ConfirmButton" ) )
     foreach ( $deleteIDArray as $deleteID )
     {
         eZContentClassOperations::remove( $deleteID );
-        ezpEvent::getInstance()->notify( 'content/class/cache', array( $deleteID ) );
+        ezpEvent::getInstance()->notify( 'content/class/cache', [$deleteID] );
     }
     return $Module->redirectTo( '/class/classlist/' . $GroupID );
 }
@@ -76,26 +75,21 @@ foreach ( $deleteIDArray as $deleteID )
         $ClassName = $class->attribute( 'name' );
         if ( !$class->isRemovable() )
         {
-            $item = array( "className" => $ClassName,
-                           'objectCount' => 0,
-                           "is_removable" => false,
-                           'reason' => $class->removableInformation() );
+            $item = ["className" => $ClassName, 'objectCount' => 0, "is_removable" => false, 'reason' => $class->removableInformation()];
             $DeleteResult[] = $item;
             continue;
         }
         ++$canRemoveCount;
         $classObjects = eZContentObject::fetchSameClassList( $ClassID );
-        $ClassObjectsCount = count( $classObjects );
-        $item = array( "className" => $ClassName,
-                       "is_removable" => true,
-                       "objectCount" => $ClassObjectsCount );
+        $ClassObjectsCount = count( (array) $classObjects );
+        $item = ["className" => $ClassName, "is_removable" => true, "objectCount" => $ClassObjectsCount];
         $DeleteResult[] = $item;
     }
 }
 
 $canRemove = ( $canRemoveCount > 0 );
 
-$Module->setTitle( ezpI18n::tr( 'kernel/class', 'Remove classes %class_id', null, array( '%class_id' => $ClassID ) ) );
+$Module->setTitle( ezpI18n::tr( 'kernel/class', 'Remove classes %class_id', null, ['%class_id' => $ClassID] ) );
 $tpl = eZTemplate::factory();
 
 $tpl->setVariable( 'module', $Module );
@@ -104,10 +98,8 @@ $tpl->setVariable( 'DeleteResult', $DeleteResult );
 $tpl->setVariable( 'already_removed', $alreadyRemoved );
 $tpl->setVariable( 'can_remove', $canRemove );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:class/removeclass.tpl" );
-$Result['path'] = array( array( 'url' => '/class/grouplist/',
-                                'text' => ezpI18n::tr( 'kernel/class', 'Class groups' ) ) );
-$Result['path'][] = array( 'url' => false,
-                           'text' => ezpI18n::tr( 'kernel/class', 'Remove classes' ) );
+$Result['path'] = [['url' => '/class/grouplist/', 'text' => ezpI18n::tr( 'kernel/class', 'Class groups' )]];
+$Result['path'][] = ['url' => false, 'text' => ezpI18n::tr( 'kernel/class', 'Remove classes' )];
 ?>

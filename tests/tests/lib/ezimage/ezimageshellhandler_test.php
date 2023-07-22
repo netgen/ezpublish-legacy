@@ -17,13 +17,13 @@ class eZImageShellHandlerTest extends ezpTestCase
         exec( eZINI::instance( "image.ini" )->variable( "ImageMagick", "Executable" ) . " -version 2>&1", $output, $returnValue );
         if ( $returnValue !== 0 )
         {
-            $this->markTestSkipped( 'ImageMagick is not installed' );
+            static::markTestSkipped('ImageMagick is not installed');
         }
 
         $this->imageManager = eZImageManager::instance();
         $this->imageManager->readINISettings();
 
-        ezpINIHelper::setINISetting( 'image.ini', 'ImageConverterSettings', 'ImageConverters', array( 'ImageMagick' ) );
+        ezpINIHelper::setINISetting( 'image.ini', 'ImageConverterSettings', 'ImageConverters', ['ImageMagick'] );
     }
 
     public function tearDown()
@@ -41,7 +41,7 @@ class eZImageShellHandlerTest extends ezpTestCase
     {
         $dest = "tests/tests/lib/ezimage/data/andernach_result.jpg";
         $this->imageManager->convert( "tests/tests/lib/ezimage/data/andernach.jpg", $dest, "small" );
-        $this->assertTrue( file_exists( "tests/tests/lib/ezimage/data/andernach_small.jpg" ) );
+        static::assertTrue(file_exists( "tests/tests/lib/ezimage/data/andernach_small.jpg" ));
     }
 }
 ?>

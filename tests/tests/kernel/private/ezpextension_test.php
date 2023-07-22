@@ -10,7 +10,7 @@
 
 class ezpExtensionTest extends ezpTestCase
 {
-    protected $data = array();
+    protected $data = [];
 
     public function setUp()
     {
@@ -33,43 +33,23 @@ class ezpExtensionTest extends ezpTestCase
     {
         $extension = ezpExtension::getInstance( $extensionName );
         $loadingOrder = $extension->getLoadingOrder();
-        $this->assertSame( $expectedResult, $loadingOrder );
+        static::assertSame($expectedResult, $loadingOrder);
     }
 
     public static function providerForGetLoadingOrderTest()
     {
-        return array(
-
+        return [
             // valid extension.xml
-            array(
-                'ezfind',
-                array( 'before' => array( 'ezwebin', 'ezflow' ), 'after' => array( 'ezjscore' ) ),
-            ),
-
+            ['ezfind', ['before' => ['ezwebin', 'ezflow'], 'after' => ['ezjscore']]],
             // only 'requires' dependency
-            array(
-                'ezdeprequires',
-                array( 'before' => array(), 'after' => array( 'ezjscore' ) ),
-            ),
-
+            ['ezdeprequires', ['before' => [], 'after' => ['ezjscore']]],
             // only 'uses' dependency
-            array(
-                'ezdepuses',
-                array( 'before' => array(), 'after' => array( 'ezjscore' ) ),
-            ),
-
+            ['ezdepuses', ['before' => [], 'after' => ['ezjscore']]],
             // only 'extends' dependency
-            array(
-                'ezdepextends',
-                array( 'before' => array( 'ezwebin', 'ezflow' ), 'after' => array() ),
-            ),
-
+            ['ezdepextends', ['before' => ['ezwebin', 'ezflow'], 'after' => []]],
             // invalid XML
-            array(
-                'ezdepinvalid',
-                null,
-            ),
-        );
+            ['ezdepinvalid', null],
+        ];
     }
 
     /**
@@ -79,63 +59,23 @@ class ezpExtensionTest extends ezpTestCase
     {
         $extension = ezpExtension::getInstance( $extensionName );
         $info = $extension->getInfo();
-        $this->assertSame( $expectedResult, $info );
+        static::assertSame($expectedResult, $info);
     }
 
     public static function providerForGetInfoTest()
     {
-        $ezInfoNewArray = array(
-            'name' => "New eZ Info",
-            'version' => '2.0',
-            'copyright' => "Copyright © 2010 eZ Systems AS.",
-            'license' => "GNU General Public License v2.0",
-            'info_url' => "http://ez.no",
-            'Includes the following third-party software' => array(
-                'name' => 'Software 1',
-                'version' => '1.1',
-                'copyright' => 'Some company.',
-                'license' => 'Apache License, Version 2.0',
-                'info_url' => 'http://company.com'
-            ),
-            'Includes the following third-party software (2)' => array(
-                'name' => 'Software 2',
-                'version' => '2.0',
-                'copyright' => 'Some other company.',
-                'license' => 'GNU Public license V2.0',
-            ),
-        );
+        $ezInfoNewArray = ['name' => "New eZ Info", 'version' => '2.0', 'copyright' => "Copyright © 2010 eZ Systems AS.", 'license' => "GNU General Public License v2.0", 'info_url' => "http://ez.no", 'Includes the following third-party software' => ['name' => 'Software 1', 'version' => '1.1', 'copyright' => 'Some company.', 'license' => 'Apache License, Version 2.0', 'info_url' => 'http://company.com'], 'Includes the following third-party software (2)' => ['name' => 'Software 2', 'version' => '2.0', 'copyright' => 'Some other company.', 'license' => 'GNU Public license V2.0']];
 
-        $ezInfoOldArray = array(
-            'Name' => "Old eZ Info",
-            'Version' => '1.0',
-            'Copyright' => "Copyright © 2010 eZ Systems AS.",
-            'Info_url' => "http://ez.no",
-            'License' => "GNU General Public License v2.0",
-            'Includes the following third-party software' => array(
-                'name' => 'Software 1',
-                'Version' => '1.1',
-                'copyright' => 'Some company.',
-                'license' => 'Apache License, Version 2.0',
-                'info_url' => 'http://company.com',
-             ),
-            'Includes the following third-party software (2)' => array(
-                'name' => 'Software 2',
-                'Version' => '2.0',
-                'copyright' => 'Some other company.',
-                'license' => 'GNU Public license V2.0',
-            ),
-        );
+        $ezInfoOldArray = ['Name' => "Old eZ Info", 'Version' => '1.0', 'Copyright' => "Copyright © 2010 eZ Systems AS.", 'Info_url' => "http://ez.no", 'License' => "GNU General Public License v2.0", 'Includes the following third-party software' => ['name' => 'Software 1', 'Version' => '1.1', 'copyright' => 'Some company.', 'license' => 'Apache License, Version 2.0', 'info_url' => 'http://company.com'], 'Includes the following third-party software (2)' => ['name' => 'Software 2', 'Version' => '2.0', 'copyright' => 'Some other company.', 'license' => 'GNU Public license V2.0']];
 
-        return array(
+        return [
             // valid and complete extension.xml
-            array( 'ezinfonew', $ezInfoNewArray ),
-
+            ['ezinfonew', $ezInfoNewArray],
             // invalid extension.xml
-            array( 'ezinfoinvalid', null ),
-
+            ['ezinfoinvalid', null],
             // extension using ezinfo.php
-            array( 'ezinfoold', $ezInfoOldArray )
-        );
+            ['ezinfoold', $ezInfoOldArray],
+        ];
     }
 
     /**

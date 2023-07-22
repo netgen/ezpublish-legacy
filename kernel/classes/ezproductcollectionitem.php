@@ -20,59 +20,7 @@ class eZProductCollectionItem extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "productcollection_id" => array( 'name' => "ProductCollectionID",
-                                                                          'datatype' => 'integer',
-                                                                          'default' => 0,
-                                                                          'required' => true,
-                                                                          'foreign_class' => 'eZProductCollection',
-                                                                          'foreign_attribute' => 'id',
-                                                                          'multiplicity' => '1..*' ),
-                                         "contentobject_id" => array( 'name' => "ContentObjectID",
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         "item_count" => array( 'name' => "ItemCount",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         "price" => array( 'name' => "Price",
-                                                           'datatype' => 'float',
-                                                           'default' => 0,
-                                                           'required' => true ),
-                                         'is_vat_inc' => array( 'name' => "IsVATIncluded",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         'vat_value' => array( 'name' => "VATValue",
-                                                               'datatype' => 'float',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'discount' => array( 'name' => "DiscountValue",
-                                                              'datatype' => 'float',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'name' => array( 'name' => 'Name',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      'function_attributes' => array( 'contentobject' => 'contentObject',
-                                                      'option_list' => 'optionList' ),
-                      "keys" => array( "id" ),
-                      'sort' => array( 'id' => 'asc' ),
-                      "increment_key" => "id",
-                      "relations" => array( "contentobject_id" => array( "class" => "ezcontentobject",
-                                                                         "field" => "id" ),
-                                            "productcollection_id" => array( "class" => "ezproductcollection",
-                                                                             "field" => "id" ) ),
-                      "class_name" => "eZProductCollectionItem",
-                      "name" => "ezproductcollection_item" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "productcollection_id" => ['name' => "ProductCollectionID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZProductCollection', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "contentobject_id" => ['name' => "ContentObjectID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "item_count" => ['name' => "ItemCount", 'datatype' => 'integer', 'default' => 0, 'required' => true], "price" => ['name' => "Price", 'datatype' => 'float', 'default' => 0, 'required' => true], 'is_vat_inc' => ['name' => "IsVATIncluded", 'datatype' => 'integer', 'default' => 0, 'required' => true], 'vat_value' => ['name' => "VATValue", 'datatype' => 'float', 'default' => 0, 'required' => true], 'discount' => ['name' => "DiscountValue", 'datatype' => 'float', 'default' => 0, 'required' => true], 'name' => ['name' => 'Name', 'datatype' => 'string', 'default' => '', 'required' => true]], 'function_attributes' => ['contentobject' => 'contentObject', 'option_list' => 'optionList'], "keys" => ["id"], 'sort' => ['id' => 'asc'], "increment_key" => "id", "relations" => ["contentobject_id" => ["class" => "ezcontentobject", "field" => "id"], "productcollection_id" => ["class" => "ezproductcollection", "field" => "id"]], "class_name" => "eZProductCollectionItem", "name" => "ezproductcollection_item"];
     }
 
     /*!
@@ -81,7 +29,7 @@ class eZProductCollectionItem extends eZPersistentObject
     */
     static function create( $productCollectionID )
     {
-        return new eZProductCollectionItem( array( "productcollection_id" => $productCollectionID ) );
+        return new eZProductCollectionItem( ["productcollection_id" => $productCollectionID] );
     }
 
     /*!
@@ -117,7 +65,7 @@ class eZProductCollectionItem extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZProductCollectionItem::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -125,7 +73,7 @@ class eZProductCollectionItem extends eZPersistentObject
     {
         $limitation = null;
         if ( $offset !== false or $limit !== false )
-            $limitation = array( 'offset' => $offset, 'length' => $limit );
+            $limitation = ['offset' => $offset, 'length' => $limit];
 
         return eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
                                                     null,
@@ -282,7 +230,7 @@ class eZProductCollectionItem extends eZPersistentObject
         $rows = $db->arrayQuery( "SELECT id FROM ezproductcollection_item WHERE $inText" );
         if ( count( $rows ) > 0 )
         {
-            $itemIDList = array();
+            $itemIDList = [];
             foreach ( $rows as $row )
             {
                 $itemIDList[] = $row['id'];

@@ -19,14 +19,14 @@
 
 class eZImageType extends eZDataType
 {
-    const FILESIZE_FIELD = 'data_int1';
-    const FILESIZE_VARIABLE = '_ezimage_max_filesize_';
-    const DATA_TYPE_STRING = "ezimage";
+    final public const FILESIZE_FIELD = 'data_int1';
+    final public const FILESIZE_VARIABLE = '_ezimage_max_filesize_';
+    final public const DATA_TYPE_STRING = "ezimage";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Image", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
         $this->FileExtensionBlackListValidator = new eZFileExtensionBlackListValidator();
     }
 
@@ -54,7 +54,7 @@ class eZImageType extends eZDataType
             return;
         }
 
-        $basenameHashed = md5( $originalAlias["basename"] );
+        $basenameHashed = md5( (string) $originalAlias["basename"] );
         $trashedFolder = "{$originalAlias["dirpath"]}/trashed";
         $imageHandler->updateAliasPath( $trashedFolder, $basenameHashed );
         if ( $imageHandler->isStorageRequired() )
@@ -65,9 +65,9 @@ class eZImageType extends eZDataType
 
         // Now clean all other aliases, not cleanly registered within the attribute content
         // First get all remaining aliases full path to then safely move them to the trashed folder
-        ezpEvent::getInstance()->notify( 'image/trashAliases', array( $originalAlias['url'] ) );
+        ezpEvent::getInstance()->notify( 'image/trashAliases', [$originalAlias['url']] );
         $aliasNames = array_keys( $imageHandler->aliasList() );
-        $aliasesPath = array();
+        $aliasesPath = [];
         foreach ( $aliasNames as $aliasName )
         {
             if ( $aliasName === "original" )
@@ -82,10 +82,7 @@ class eZImageType extends eZDataType
         {
             return;
         }
-        $conds = array(
-            "contentobject_attribute_id" => $contentObjectAttribute->attribute( "id" ),
-            "filepath"                   => array( $aliasesPath )
-        );
+        $conds = ["contentobject_attribute_id" => $contentObjectAttribute->attribute( "id" ), "filepath"                   => [$aliasesPath]];
         $remainingAliases = eZPersistentObject::fetchObjectList(
             eZImageFile::definition(), null,
             $conds
@@ -96,7 +93,7 @@ class eZImageType extends eZDataType
         {
             foreach ( $remainingAliases as $remainingAlias )
             {
-                $filename = basename( $remainingAlias->attribute( "filepath" ) );
+                $filename = basename( (string) $remainingAlias->attribute( "filepath" ) );
                 $newFilePath = $trashedFolder . "/" . $basenameHashed . substr( $filename, strrpos( $filename, '_' ) );
                 eZClusterFileHandler::instance( $remainingAlias->attribute( "filepath" ) )->move( $newFilePath );
 
@@ -120,7 +117,7 @@ class eZImageType extends eZDataType
     {
         $imageHandler = $contentObjectAttribute->attribute( "content" );
         $originalAlias = $imageHandler->imageAlias( "original" );
-        $originalPath = str_replace( "/trashed", "", $originalAlias["dirpath"]);
+        $originalPath = str_replace( "/trashed", "", (string) $originalAlias["dirpath"]);
         $originalName = $imageHandler->imageName( $contentObjectAttribute, $contentObjectAttribute->objectVersion() );
         $imageHandler->updateAliasPath( $originalPath, $originalName );
 
@@ -133,7 +130,7 @@ class eZImageType extends eZDataType
         // Now clean all other aliases, not cleanly registered within the attribute content
         // First get all remaining aliases full path to then safely remove them
         $aliasNames = array_keys( $imageHandler->aliasList() );
-        $aliasesPath = array();
+        $aliasesPath = [];
         foreach ( $aliasNames as $aliasName )
         {
             if ( $aliasName === "original" )
@@ -148,10 +145,7 @@ class eZImageType extends eZDataType
         {
             return;
         }
-        $conds = array(
-        	"contentobject_attribute_id" => $contentObjectAttribute->attribute( "id" ),
-            "filepath"                   => array( $aliasesPath )
-        );
+        $conds = ["contentobject_attribute_id" => $contentObjectAttribute->attribute( "id" ), "filepath"                   => [$aliasesPath]];
         $remainingAliases = eZPersistentObject::fetchObjectList(
             eZImageFile::definition(), null,
             $conds
@@ -162,7 +156,7 @@ class eZImageType extends eZDataType
         {
             foreach ( $remainingAliases as $remainingAlias )
             {
-                $filename = basename( $remainingAlias->attribute( "filepath" ) );
+                $filename = basename( (string) $remainingAlias->attribute( "filepath" ) );
                 $newFilePath = $originalPath . "/" . $originalName . substr( $filename, strrpos( $filename, '_' ) );
                 eZClusterFileHandler::instance( $remainingAlias->attribute( "filepath" ) )->move( $newFilePath );
 
@@ -281,7 +275,7 @@ class eZImageType extends eZDataType
     {
         $mimeType = eZMimeType::findByURL( $filename );
         $nameMimeType = $mimeType['name'];
-        $nameMimeTypes = explode('/', $nameMimeType);
+        $nameMimeTypes = explode('/', (string) $nameMimeType);
 
         return $nameMimeTypes[0] === 'image';
     }
@@ -375,14 +369,13 @@ class eZImageType extends eZDataType
                              $objectAttribute, $httpFile, $mimeData,
                              &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => false );
+        $result = ['errors' => [], 'require_storage' => false];
 
         $handler = $objectAttribute->content();
         if ( !$handler )
         {
-            $result['errors'][] = array( 'description' => ezpI18n::tr( 'kernel/classes/datatypes/ezimage',
-                                                                  'Failed to fetch Image Handler. Please contact the site administrator.' ) );
+            $result['errors'][] = ['description' => ezpI18n::tr( 'kernel/classes/datatypes/ezimage',
+                                                                  'Failed to fetch Image Handler. Please contact the site administrator.' )];
             return false;
         }
 
@@ -398,18 +391,17 @@ class eZImageType extends eZDataType
                                 $objectAttribute, $filePath,
                                 &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => false );
+        $result = ['errors' => [], 'require_storage' => false];
 
         $handler = $objectAttribute->content();
         if ( !$handler )
         {
-            $result['errors'][] = array( 'description' => ezpI18n::tr( 'kernel/classes/datatypes/ezimage',
-                                                                  'Failed to fetch Image Handler. Please contact the site administrator.' ) );
+            $result['errors'][] = ['description' => ezpI18n::tr( 'kernel/classes/datatypes/ezimage',
+                                                                  'Failed to fetch Image Handler. Please contact the site administrator.' )];
             return false;
         }
 
-        $status = $handler->initializeFromFile( $filePath, false, basename( $filePath ) );
+        $status = $handler->initializeFromFile( $filePath, false, basename( (string) $filePath ) );
         $result['require_storage'] = $handler->isStorageRequired();
         return $status;
     }
@@ -438,10 +430,7 @@ class eZImageType extends eZDataType
             $mimeType = $original['mime_type'];
             $originalFileName = $original['original_filename'];
 
-            return array( 'filename' => $fileName,
-                          'original_filename' => $originalFileName,
-                          'filepath' => $filePath,
-                          'mime_type' => $mimeType );
+            return ['filename' => $fileName, 'original_filename' => $originalFileName, 'filepath' => $filePath, 'mime_type' => $mimeType];
         }
         return false;
     }
@@ -512,7 +501,7 @@ class eZImageType extends eZDataType
         $content = $contentObjectAttribute->content();
         $original = $content->attribute( 'original' );
         $value = $original['alternative_text'];
-        if ( trim( $value ) == '' )
+        if ( trim( (string) $value ) == '' )
         {
             if ( array_key_exists( $name, $original ) )
                 $value = $original[$name];
@@ -578,7 +567,7 @@ class eZImageType extends eZDataType
 
         if ( $original['url'] )
         {
-            $imageKey = md5( mt_rand() );
+            $imageKey = md5( random_int(0, mt_getrandmax()) );
 
             $package->appendSimpleFile( $imageKey, $original['url'] );
             $node->setAttribute( 'image-file-key', $imageKey );
@@ -626,7 +615,7 @@ class eZImageType extends eZDataType
 
     function fromString( $objectAttribute, $string )
     {
-        $delimiterPos = strpos( $string, '|' );
+        $delimiterPos = strpos( (string) $string, '|' );
 
         /** @var eZImageAliasHandler $content */
         $content = $objectAttribute->attribute( 'content' );
@@ -636,8 +625,8 @@ class eZImageType extends eZDataType
         }
         else
         {
-            $content->initializeFromFile( substr( $string, 0, $delimiterPos ), '' );
-            $content->setAttribute( 'alternative_text', substr( $string, $delimiterPos + 1 ) );
+            $content->initializeFromFile( substr( (string) $string, 0, $delimiterPos ), '' );
+            $content->setAttribute( 'alternative_text', substr( (string) $string, $delimiterPos + 1 ) );
         }
         $content->store( $objectAttribute );
         return true;
@@ -656,7 +645,7 @@ class eZImageType extends eZDataType
     {
         $objectAttributeId = $objectAttribute->attribute( "id" );
 
-        if ( ( $doc = simplexml_load_string( $objectAttribute->attribute( "data_text" ) ) ) === false )
+        if ( ( $doc = simplexml_load_string( (string) $objectAttribute->attribute( "data_text" ) ) ) === false )
             return;
 
         // Creates ezimagefile entries
@@ -673,7 +662,7 @@ class eZImageType extends eZDataType
 
     /// \privatesection
     /// The file extension blacklist validator
-    private $FileExtensionBlackListValidator;
+    private readonly \eZFileExtensionBlackListValidator $FileExtensionBlackListValidator;
 }
 
 eZDataType::register( eZImageType::DATA_TYPE_STRING, "eZImageType" );

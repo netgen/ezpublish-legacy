@@ -46,7 +46,7 @@ class eZPackageRegression extends ezpDatabaseTestCase
 
         // 1) Load a test package
         $packageName = 'ezpackage_regression_testIssue15223.ezpkg';
-        $packageFilename = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . $packageName;
+        $packageFilename = __DIR__ . DIRECTORY_SEPARATOR . $packageName;
         $packageImportTried = false;
 
         while( !$packageImportTried )
@@ -68,13 +68,7 @@ class eZPackageRegression extends ezpDatabaseTestCase
         }
 
         // 2) Install the package
-        $installParameters = array( 'site_access_map' => array( '*' => false ),
-                                    'top_nodes_map' => array( '*' => 2 ),
-                                    'design_map' => array( '*' => false ),
-                                    'restore_dates' => true,
-                                    'user_id' => $adminUser->attribute( 'contentobject_id' ),
-                                    'non-interactive' => true,
-                                    'language_map' => $package->defaultLanguageMap() );
+        $installParameters = ['site_access_map' => ['*' => false], 'top_nodes_map' => ['*' => 2], 'design_map' => ['*' => false], 'restore_dates' => true, 'user_id' => $adminUser->attribute( 'contentobject_id' ), 'non-interactive' => true, 'language_map' => $package->defaultLanguageMap()];
         $result = $package->install( $installParameters );
 
         // 3) Publish an object of the imported class
@@ -86,19 +80,19 @@ class eZPackageRegression extends ezpDatabaseTestCase
 
         // 4) Test data from the publish object
         $publishedNodeArray = eZContentObjectTreeNode::fetchByContentObjectID( $publishedObjectID );
-        if ( count( $publishedNodeArray ) != 1 )
+        if ( (is_countable($publishedNodeArray) ? count( $publishedNodeArray ) : 0) != 1 )
         {
-            $this->fail( "An error occured fetching node for object #$publishedObjectID" );
+            static::fail("An error occured fetching node for object #$publishedObjectID");
         }
         $publishedNode = $publishedNodeArray[0];
         if ( !$publishedNode instanceof eZContentObjectTreeNode )
         {
-            $this->fail( "An error occured fetching node for object #$publishedObjectID" );
+            static::fail("An error occured fetching node for object #$publishedObjectID");
         }
         else
         {
-            $this->assertEquals( "eZPackageRegression::testIssue15263", $publishedNode->attribute( 'name' ) );
-            $this->assertEquals( "eZPackageRegression-testIssue15263",  $publishedNode->attribute( 'url_alias' ) );
+            static::assertEquals("eZPackageRegression::testIssue15263", $publishedNode->attribute( 'name' ));
+            static::assertEquals("eZPackageRegression-testIssue15263", $publishedNode->attribute( 'url_alias' ));
         }
 
         // Remove the installed package & restore the logged in user

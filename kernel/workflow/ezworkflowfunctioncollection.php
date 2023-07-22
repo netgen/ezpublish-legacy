@@ -18,12 +18,12 @@ class eZWorkflowFunctionCollection
 {
     function fetchWorkflowStatuses()
     {
-        return array( 'result' => eZWorkflow::statusNameMap() );
+        return ['result' => eZWorkflow::statusNameMap()];
     }
 
     function fetchWorkflowTypeStatuses()
     {
-        return array( 'result' => eZWorkflowType::statusNameMap() );
+        return ['result' => eZWorkflowType::statusNameMap()];
     }
 
 }

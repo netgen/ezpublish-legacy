@@ -18,25 +18,20 @@ class eZTemplateCompiledLoop
     /**
      * Constructor
      *
-     * @param string $name
+     * @param string $Name
      * @param array $newNodes
-     * @param array $parameters
+     * @param array $Parameters
      * @param $nodePlacement
-     * @param string $uniqid
-     * @param mixed $node
-     * @param eZTemplate $tpl
-     * @param array $privateData
+     * @param string $UniqID
+     * @param eZTemplate $Tpl
+     * @param array $PrivateData
      */
-    public function __construct( $name, &$newNodes, $parameters, $nodePlacement, $uniqid, $node, $tpl, $privateData )
+    public function __construct( ///
+    /// \privatesection
+    ///
+    public $Name, &$newNodes, public $Parameters, public $NodePlacement, public $UniqID, public mixed $Node, public $Tpl, public $PrivateData )
     {
-        $this->Name          = $name;
-        $this->Parameters    = $parameters;
-        $this->NodePlacement = $nodePlacement;
-        $this->UniqID        = $uniqid;
         $this->NewNodes      =& $newNodes;
-        $this->Node          = $node;
-        $this->Tpl           = $tpl;
-        $this->PrivateData   = $privateData;
     }
 
     /*!
@@ -85,7 +80,7 @@ class eZTemplateCompiledLoop
         $this->NewNodes[] = eZTemplateNodeTool::createVariableNode( false,
                                                                     $this->Parameters['sequence_array'],
                                                                     $this->NodePlacement,
-                                                                    array( 'treat-value-as-non-object' => true, 'text-result' => false ),
+                                                                    ['treat-value-as-non-object' => true, 'text-result' => false],
                                                                     "${fName}_sequence_array_$uniqid" );
         $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$${fName}_sequence_var_$uniqid = current( \$${fName}_sequence_array_$uniqid );\n" );
     }
@@ -102,7 +97,7 @@ class eZTemplateCompiledLoop
         $uniqid   = $this->UniqID;
         $seqVar   = "${fName}_sequence_var_$uniqid";
         $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "// setting current sequence value" );
-        $this->NewNodes[] = eZTemplateNodeTool::createVariableNode( false, $seqVar, $this->NodePlacement, array(),
+        $this->NewNodes[] = eZTemplateNodeTool::createVariableNode( false, $seqVar, $this->NodePlacement, [],
                                                                     $this->Parameters['sequence_var'][0][1],
                                                                     false, true, true );
     }
@@ -141,7 +136,7 @@ class eZTemplateCompiledLoop
         $children            = eZTemplateNodeTool::extractFunctionNodeChildren( $this->Node );
         $transformedChildren = eZTemplateCompiler::processNodeTransformationNodes( $this->Tpl, $this->Node, $children, $this->PrivateData );
 
-        $childrenNodes = array();
+        $childrenNodes = [];
         $delimiter = null;
 
         if ( is_array( $transformedChildren ) )
@@ -181,21 +176,17 @@ class eZTemplateCompiledLoop
         if ( $delimiter ) // if delimiter is specified
         {
             $delimiterNodes = eZTemplateNodeTool::extractNodes( $children,
-                                                    array( 'match' => array( 'type' => 'equal',
-                                                                             'matches' => array( array( 'match-keys' => array( 0 ),
-                                                                                                       'match-with' => eZTemplate::NODE_FUNCTION ),
-                                                                                                 array( 'match-keys' => array( 2 ),
-                                                                                                        'match-with' => 'delimiter' ) ) ) ) );
+                                                    ['match' => ['type' => 'equal', 'matches' => [['match-keys' => [0], 'match-with' => eZTemplate::NODE_FUNCTION], ['match-keys' => [2], 'match-with' => 'delimiter']]]] );
             $delimiterNode = false;
-            if ( count( $delimiterNodes ) > 0 )
+            if ( (is_countable($delimiterNodes) ? count( $delimiterNodes ) : 0) > 0 )
                 $delimiterNode = $delimiterNodes[0];
 
             $delimiterChildren = eZTemplateNodeTool::extractFunctionNodeChildren( $delimiterNode );
             $delimiterParameters = eZTemplateNodeTool::extractFunctionNodeParameters( $delimiterNode );
 
-            $checkModulo = array();
-            $checkModuloEnd = array();
-            $delemiterModuloValue = array();
+            $checkModulo = [];
+            $checkModuloEnd = [];
+            $delemiterModuloValue = [];
             if ( isset( $delimiterParameters['modulo'] ) )
             {
                 switch ( $this->Name )
@@ -215,7 +206,7 @@ class eZTemplateCompiledLoop
                         else
                         {
                             $delemiterModuloValue[] = eZTemplateNodeTool::createVariableNode( false, $delimiterModulo, eZTemplateNodeTool::extractFunctionNodePlacement( $this->Node ),
-                                                                                        array( 'spacing' => 0 ), 'moduloValue' );
+                                                                                        ['spacing' => 0], 'moduloValue' );
                             $matchCode = "( ( $currentIndex ) % \$moduloValue ) == 0";
                         }
                         $checkModulo[] = eZTemplateNodeTool::createCodePieceNode( "if ( $matchCode ) // Check modulo\n{" );
@@ -226,7 +217,7 @@ class eZTemplateCompiledLoop
                     }
                 }
             }
-            $delimiterNodes = array();
+            $delimiterNodes = [];
             $delimiterNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( \$skipDelimiter )\n" .
                                                                          "    \$skipDelimiter = false;\n" .
                                                                          "else\n" .
@@ -282,18 +273,7 @@ class eZTemplateCompiledLoop
         // initialize sequence
         $this->createSequenceVars();
     }
-
-    ///
-    /// \privatesection
-    ///
-    public $Name;
-    public $Parameters;
-    public $NodePlacement;
-    public $UniqID;
     public $NewNodes;
-    public $Node;
-    public $Tpl;
-    public $PrivateData;
 
 }
 

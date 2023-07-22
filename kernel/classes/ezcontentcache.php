@@ -18,12 +18,12 @@ class eZContentCache
 {
     // The timestamp for the cache format, will expire
     // cache which differs from this.
-    const CODE_DATE = 1064816011;
+    final public const CODE_DATE = 1_064_816_011;
 
     static function cachePathInfo( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList, $layout, $cacheTTL = false,
-                            $parameters = array() )
+                            $parameters = [] )
     {
-        $md5Input = array( $nodeID, $viewMode, $language );
+        $md5Input = [$nodeID, $viewMode, $language];
         $md5Input[] = $offset;
         $md5Input = array_merge( $md5Input, $layout );
         sort( $roleList );
@@ -48,15 +48,13 @@ class eZContentCache
         $extraPath = eZDir::filenamePath( "$nodeID" );
         $ini = eZINI::instance();
         $currentSiteAccess = $GLOBALS['eZCurrentAccess']['name'];
-        $cacheDir = eZDir::path( array( eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' ), $currentSiteAccess, $extraPath ) );
-        $cachePath = eZDir::path( array( $cacheDir, $cacheFile ) );
-        return array( 'dir' => $cacheDir,
-                      'file' => $cacheFile,
-                      'path' => $cachePath );
+        $cacheDir = eZDir::path( [eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' ), $currentSiteAccess, $extraPath] );
+        $cachePath = eZDir::path( [$cacheDir, $cacheFile] );
+        return ['dir' => $cacheDir, 'file' => $cacheFile, 'path' => $cachePath];
     }
 
     static function exists( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList, $layout,
-                     $parameters = array() )
+                     $parameters = [] )
     {
         $cachePathInfo = eZContentCache::cachePathInfo( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList,
                                                         $layout, false, $parameters );
@@ -85,9 +83,9 @@ class eZContentCache
     }
 
     static function restore( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList, $layout,
-                      $parameters = array() )
+                      $parameters = [] )
     {
-        $result = array();
+        $result = [];
         $cachePathInfo = eZContentCache::cachePathInfo( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList,
                                                         $layout, false, $parameters );
         $cacheDir = $cachePathInfo['dir'];
@@ -148,17 +146,13 @@ class eZContentCache
         $viewMode = $cachedArray['content_info']['viewmode'];
 
         $res = eZTemplateDesignResource::instance();
-        $res->setKeys( array( array( 'node', $nodeID ),
-                              array( 'view_offset', $offset ),
-                              array( 'viewmode', $viewMode ),
-                              array( 'section', $cachedArray['section_id'] )
-                              ) );
+        $res->setKeys( [['node', $nodeID], ['view_offset', $offset], ['viewmode', $viewMode], ['section', $cachedArray['section_id']]] );
         $result['content_info'] = $cachedArray['content_info'];
         $result['content'] = $cachedArray['content'];
 
         $result['view_parameters'] = $cachedArray['content_info']['view_parameters'];
 
-        foreach ( array( 'path', 'node_id', 'section_id', 'navigation_part' ) as $item )
+        foreach ( ['path', 'node_id', 'section_id', 'navigation_part'] as $item )
         {
             if ( isset( $cachedArray[$item] ) )
             {
@@ -173,14 +167,14 @@ class eZContentCache
                     $nodeID, $parentNodeID, $nodeDepth, $urlAlias, $viewMode, $sectionID,
                     $language, $offset, $roleList, $discountList, $layout, $navigationPartIdentifier,
                     $result, $cacheTTL = -1,
-                    $parameters = array() )
+                    $parameters = [] )
     {
         $cachePathInfo = eZContentCache::cachePathInfo( $siteDesign, $nodeID, $viewMode, $language, $offset, $roleList, $discountList,
                                                         $layout, false, $parameters );
         $cacheDir = $cachePathInfo['dir'];
         $cacheFile = $cachePathInfo['file'];
 
-        $serializeArray = array();
+        $serializeArray = [];
 
         if ( isset( $parameters['view_parameters']['offset'] ) )
         {
@@ -191,26 +185,11 @@ class eZContentCache
         {
             $viewParameters = $parameters['view_parameters'];
         }
-        $contentInfo = array( 'site_design' => $siteDesign,
-                              'node_id' => $nodeID,
-                              'parent_node_id' => $parentNodeID,
-                              'node_depth' => $nodeDepth,
-                              'url_alias' => $urlAlias,
-                              'object_id' => $objectID,
-                              'class_id' => $classID,
-                              'class_identifier' => $classIdentifier,
-                              'navigation_part' => $navigationPartIdentifier,
-                              'viewmode' => $viewMode,
-                              'language' => $language,
-                              'offset' => $offset,
-                              'view_parameters' => $viewParameters,
-                              'role_list' => $roleList,
-                              'discount_list' => $discountList,
-                              'section_id' => $result['section_id'] );
+        $contentInfo = ['site_design' => $siteDesign, 'node_id' => $nodeID, 'parent_node_id' => $parentNodeID, 'node_depth' => $nodeDepth, 'url_alias' => $urlAlias, 'object_id' => $objectID, 'class_id' => $classID, 'class_identifier' => $classIdentifier, 'navigation_part' => $navigationPartIdentifier, 'viewmode' => $viewMode, 'language' => $language, 'offset' => $offset, 'view_parameters' => $viewParameters, 'role_list' => $roleList, 'discount_list' => $discountList, 'section_id' => $result['section_id']];
 
         $serializeArray['content_info'] = $contentInfo;
 
-        foreach ( array( 'path', 'node_id', 'section_id', 'navigation_part' ) as $item )
+        foreach ( ['path', 'node_id', 'section_id', 'navigation_part'] as $item )
         {
             if ( isset( $result[$item] ) )
             {
@@ -259,7 +238,7 @@ class eZContentCache
         // Also it uses the cluster file handler to delete files using a wildcard (glob style).
         $ini = eZINI::instance();
         $extraCacheName = '';
-        $cacheBaseDir = eZDir::path( array( eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' ) ) );
+        $cacheBaseDir = eZDir::path( [eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' )] );
         $fileHandler = eZClusterFileHandler::instance();
 
         if ( $userId !== false && is_numeric( $userId ) )
@@ -275,7 +254,7 @@ class eZContentCache
         {
             if ( !is_array( $relatedSiteAccessList ) )
             {
-                $relatedSiteAccessList = array( $relatedSiteAccessList );
+                $relatedSiteAccessList = [$relatedSiteAccessList];
             }
             $relatedSiteAccessList[] = $GLOBALS['eZCurrentAccess']['name'];
             $siteAccesses = array_unique( $relatedSiteAccessList );

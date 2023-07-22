@@ -18,10 +18,11 @@ class eZNotificationSchedule
 {
     static function setDateForItem( $item, $settings )
     {
+        $secondsDiff = null;
         if ( !is_array( $settings ) )
             return false;
 
-        $dayNum = isset( $settings['day'] ) ? $settings['day'] : false;
+        $dayNum = $settings['day'] ?? false;
         $hour = $settings['hour'];
         $currentDate = getdate();
         $hoursDiff = $hour - $currentDate['hours'];

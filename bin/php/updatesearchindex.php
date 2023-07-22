@@ -15,38 +15,27 @@ require_once 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => ( "eZ Publish search index updater.\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish search index updater.\n\n" .
                                                         "Goes trough all objects and reindexes the meta data to the search engine" .
                                                         "\n" .
-                                                        "updatesearchindex.php"),
-                                     'use-session' => true,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "updatesearchindex.php"), 'use-session' => true, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[db-host:][db-user:][db-password:][db-database:][db-type:|db-driver:][sql][clean]",
                                 "",
-                                array( 'db-host' => "Database host",
-                                       'db-user' => "Database user",
-                                       'db-password' => "Database password",
-                                       'db-database' => "Database name",
-                                       'db-driver' => "Database driver",
-                                       'db-type' => "Database driver, alias for --db-driver",
-                                       'sql' => "Display sql queries",
-                                       'clean' =>  "Remove all search data before beginning indexing"
-                                       ) );
+                                ['db-host' => "Database host", 'db-user' => "Database user", 'db-password' => "Database password", 'db-database' => "Database name", 'db-driver' => "Database driver", 'db-type' => "Database driver, alias for --db-driver", 'sql' => "Display sql queries", 'clean' =>  "Remove all search data before beginning indexing"] );
 $script->initialize();
 
 $script->setIterationData( '.', '~' );
 
-$dbUser = $options['db-user'] ? $options['db-user'] : false;
-$dbPassword = $options['db-password'] ? $options['db-password'] : false;
-$dbHost = $options['db-host'] ? $options['db-host'] : false;
-$dbName = $options['db-database'] ? $options['db-database'] : false;
-$dbImpl = $options['db-driver'] ? $options['db-driver'] : false;
+$dbUser = $options['db-user'] ?: false;
+$dbPassword = $options['db-password'] ?: false;
+$dbHost = $options['db-host'] ?: false;
+$dbName = $options['db-database'] ?: false;
+$dbImpl = $options['db-driver'] ?: false;
 $showSQL = $options['sql'] ? true : false;
-$siteAccess = $options['siteaccess'] ? $options['siteaccess'] : false;
+$siteAccess = $options['siteaccess'] ?: false;
 $cleanupSearch = $options['clean'] ? true : false;
 
 if ( $siteAccess )
@@ -74,7 +63,7 @@ $db = eZDB::instance();
 
 if ( $dbHost or $dbName or $dbUser or $dbImpl )
 {
-    $params = array();
+    $params = [];
     if ( $dbHost !== false )
         $params['server'] = $dbHost;
     if ( $dbUser !== false )
@@ -109,16 +98,14 @@ if ( $cleanupSearch )
 }
 
 $def = eZContentObject::definition();
-$conds = array(
-    'status' => eZContentObject::STATUS_PUBLISHED
-);
+$conds = ['status' => eZContentObject::STATUS_PUBLISHED];
 
 $count = eZPersistentObject::count( $def, $conds, 'id' );
 
 $cli->output( "Number of objects to index: $count");
 
 $length = 50;
-$limit = array( 'offset' => 0 , 'length' => $length );
+$limit = ['offset' => 0, 'length' => $length];
 
 $script->resetIteration( $count );
 
@@ -153,7 +140,7 @@ do
 
     $limit['offset'] += $length;
 
-} while ( count( $objects ) == $length );
+} while ( count( (array) $objects ) == $length );
 
 $cli->output();
 $cli->output( "done" );

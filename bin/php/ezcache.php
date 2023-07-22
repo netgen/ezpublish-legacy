@@ -14,15 +14,10 @@ require_once 'autoload.php';
 $helper = new eZCacheHelper(
     $cli = eZCLI::instance(),
     $script = eZScript::instance(
-        array(
-            'description' => "eZ Publish Cache Handler\n" .
-                             "Allows for easy clearing of Cache files\n" .
-                             "\n" .
-                             "./bin/php/ezcache.php --clear-tag=content",
-            'use-session' => false,
-            'use-modules' => false,
-            'use-extensions' => true
-        )
+        ['description' => "eZ Publish Cache Handler\n" .
+                         "Allows for easy clearing of Cache files\n" .
+                         "\n" .
+                         "./bin/php/ezcache.php --clear-tag=content", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
     )
 );
 
@@ -30,22 +25,14 @@ $script->startup();
 
 $options = $script->getOptions( "[clear-tag:][clear-id:][clear-all]" . /*[purge-tag:][purge-id:][purge-all]*/ "[iteration-sleep:][iteration-max:][expiry:][list-tags][list-ids][purge]",
                                 "",
-                                array( 'clear-tag' => 'Clears all caches related to a given tag, separate multiple tags with a comma',
-                                       'clear-id' => 'Clears all caches related to a given id, separate multiple ids with a comma',
-                                       'clear-all' => 'Clears all caches',
-                                       'purge' => 'Enforces purging of cache items which ensures that specified entries are physically removed (Useful for saving diskspace). Used together with the clear-* options.',
-                                       'iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float.',
-                                       'iteration-max' => 'Amount of items to remove in each iteration when performing a purge operation.',
-                                       'expiry' => 'Date or relative time which specifies when cache items are to be considered expired, e.g \'now\', \'-2 days\' or \'last monday\'. Can only be used together with --purge.',
-                                       'list-tags' => 'Lists all available tags',
-                                       'list-ids' => 'Lists all available ids' ) );
+                                ['clear-tag' => 'Clears all caches related to a given tag, separate multiple tags with a comma', 'clear-id' => 'Clears all caches related to a given id, separate multiple ids with a comma', 'clear-all' => 'Clears all caches', 'purge' => 'Enforces purging of cache items which ensures that specified entries are physically removed (Useful for saving diskspace). Used together with the clear-* options.', 'iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float.', 'iteration-max' => 'Amount of items to remove in each iteration when performing a purge operation.', 'expiry' => 'Date or relative time which specifies when cache items are to be considered expired, e.g \'now\', \'-2 days\' or \'last monday\'. Can only be used together with --purge.', 'list-tags' => 'Lists all available tags', 'list-ids' => 'Lists all available ids'] );
 
 $script->initialize();
 
 $purgeSleep = false;
 if ( $options['iteration-sleep'] )
 {
-    $purgeSleep = (int)($options['iteration-sleep']*1000000); // Turn into microseconds
+    $purgeSleep = (int)($options['iteration-sleep']*1_000_000); // Turn into microseconds
 }
 $purgeMax = false;
 if ( $options['iteration-max'] )
@@ -60,7 +47,7 @@ if ( $options['expiry'] )
         $cli->error( "--expiry can only be used together with --purge" );
         $script->shutdown( 1 );
     }
-    $expiryText = trim( $options['expiry'] );
+    $expiryText = trim( (string) $options['expiry'] );
     $purgeExpiry = strtotime( $expiryText );
     if ( $purgeExpiry == -1 || $purgeExpiry === false )
     {
@@ -89,7 +76,7 @@ if ( $options['list-tags'] )
         $column = 0;
         foreach ( $tagList as $tagName )
         {
-            $len = strlen( $tagName );
+            $len = strlen( (string) $tagName );
             if ( $len > $column )
                 $column = $len;
         }
@@ -104,7 +91,7 @@ if ( $options['list-tags'] )
                 if ( $i > 0 )
                     $cli->output( str_repeat( ' ', $column ), false );
                 else
-                    $cli->output( str_repeat( ' ', $column - strlen( $tagName ) - 1 ), false );
+                    $cli->output( str_repeat( ' ', $column - strlen( (string) $tagName ) - 1 ), false );
                 $cli->output( $cacheEntry['name'] );
                 ++$i;
             }
@@ -127,7 +114,7 @@ if ( $options['list-ids'] )
         $column = 0;
         foreach ( $cacheList as $cacheInfo )
         {
-            $len = strlen( $cacheInfo['id'] );
+            $len = strlen( (string) $cacheInfo['id'] );
             if ( $len > $column )
                 $column = $len;
         }
@@ -135,7 +122,7 @@ if ( $options['list-ids'] )
         foreach ( $cacheList as $cacheInfo )
         {
             $cli->output( $cli->stylize( 'emphasize', $cacheInfo['id'] ) . ':', false );
-            $cli->output( str_repeat( ' ', $column - strlen( $cacheInfo['id'] ) - 1 ), false );
+            $cli->output( str_repeat( ' ', $column - strlen( (string) $cacheInfo['id'] ) - 1 ), false );
             $cli->output( $cacheInfo['name'] );
         }
     }
@@ -172,9 +159,9 @@ if ( $options['clear-id'] )
 {
     $noAction = false;
     $idName = $options['clear-id'];
-    $missingIDList = array();
-    $cacheEntries = array();
-    foreach ( explode( ',', $idName ) as $id )
+    $missingIDList = [];
+    $cacheEntries = [];
+    foreach ( explode( ',', (string) $idName ) as $id )
     {
         $cacheEntry = eZCache::fetchByID( $id, $cacheList );
         if ( $cacheEntry )

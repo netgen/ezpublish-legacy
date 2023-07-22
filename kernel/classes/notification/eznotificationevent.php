@@ -15,10 +15,10 @@
 */
 class eZNotificationEvent extends eZPersistentObject
 {
-    const STATUS_CREATED = 0;
-    const STATUS_HANDLED = 1;
+    final public const STATUS_CREATED = 0;
+    final public const STATUS_HANDLED = 1;
 
-    public function __construct( $row = array() )
+    public function __construct( $row = [] )
     {
         parent::__construct( $row );
         $this->TypeString = $this->attribute( 'event_type_string' );
@@ -26,78 +26,19 @@ class eZNotificationEvent extends eZPersistentObject
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "status" => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         "event_type_string" => array( 'name' => "EventTypeString",
-                                                                       'datatype' => 'string',
-                                                                       'default' => '',
-                                                                       'required' => true ),
-                                         "data_int1" => array( 'name' => "DataInt1",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int2" => array( 'name' => "DataInt2",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int3" => array( 'name' => "DataInt3",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int4" => array( 'name' => "DataInt4",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_text1" => array( 'name' => "DataText1",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "data_text2" => array( 'name' => "DataText2",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "data_text3" => array( 'name' => "DataText3",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "data_text4" => array( 'name' => "DataText4",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'content' => 'content' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZNotificationEvent",
-                      "name" => "eznotificationevent" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "status" => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], "event_type_string" => ['name' => "EventTypeString", 'datatype' => 'string', 'default' => '', 'required' => true], "data_int1" => ['name' => "DataInt1", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int2" => ['name' => "DataInt2", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int3" => ['name' => "DataInt3", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int4" => ['name' => "DataInt4", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_text1" => ['name' => "DataText1", 'datatype' => 'text', 'default' => '', 'required' => true], "data_text2" => ['name' => "DataText2", 'datatype' => 'text', 'default' => '', 'required' => true], "data_text3" => ['name' => "DataText3", 'datatype' => 'text', 'default' => '', 'required' => true], "data_text4" => ['name' => "DataText4", 'datatype' => 'text', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ['content' => 'content'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZNotificationEvent", "name" => "eznotificationevent"];
     }
 
-    static function create( $type, $params = array() )
+    static function create( $type, $params = [] )
     {
-        $row = array(
-            "id" => null,
-            'event_type_string' => $type,
-            'data_int1' => 0,
-            'data_int2' => 0,
-            'data_int3' => 0,
-            'data_int4' => 0,
-            'data_text1' => '',
-            'data_text2' => '',
-            'data_text3' => '',
-            'data_text4' => '' );
+        $row = ["id" => null, 'event_type_string' => $type, 'data_int1' => 0, 'data_int2' => 0, 'data_int3' => 0, 'data_int4' => 0, 'data_text1' => '', 'data_text2' => '', 'data_text3' => '', 'data_text4' => ''];
         $event = new eZNotificationEvent( $row );
         eZDebugSetting::writeDebug( 'kernel-notification', $event, "event" );
         $event->initializeEventType( $params );
         return $event;
     }
 
-    function initializeEventType( $params = array() )
+    function initializeEventType( $params = [] )
     {
         $eventType = $this->eventType();
         $eventType->initializeEvent( $this, $params );
@@ -158,7 +99,7 @@ class eZNotificationEvent extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZNotificationEvent::definition(),
                                                 null,
-                                                array( 'id' => $eventID ) );
+                                                ['id' => $eventID] );
     }
 
     /**
@@ -176,7 +117,7 @@ class eZNotificationEvent extends eZPersistentObject
     static function fetchUnhandledList( $limit = null )
     {
         return eZPersistentObject::fetchObjectList( eZNotificationEvent::definition(),
-                                                    null, array( 'status' => self::STATUS_CREATED ), null, $limit,
+                                                    null, ['status' => self::STATUS_CREATED], null, $limit,
                                                     true );
     }
 

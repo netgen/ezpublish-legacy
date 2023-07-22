@@ -10,7 +10,7 @@ $http = eZHTTPTool::instance();
 $SectionID = $Params["SectionID"];
 $Module = $Params['Module'];
 $Offset = $Params['Offset'];
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $section = eZSection::fetch( $SectionID );
 
@@ -24,11 +24,8 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( "view_parameters", $viewParameters );
 $tpl->setVariable( "section", $section );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:section/view.tpl" );
-$Result['path'] = array( array( 'url' => 'section/list',
-                                'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ),
-                         array( 'url' => false,
-                                'text' => $section->attribute('name') ) );
+$Result['path'] = [['url' => 'section/list', 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )], ['url' => false, 'text' => $section->attribute('name')]];
 
 ?>

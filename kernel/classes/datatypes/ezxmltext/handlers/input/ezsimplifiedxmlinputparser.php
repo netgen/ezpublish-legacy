@@ -11,106 +11,32 @@
 // if ( !class_exists( 'eZXMLInputParser' ) )
 class eZSimplifiedXMLInputParser extends eZXMLInputParser
 {
-    public $InputTags = array(
-        'b'       => array( 'name' => 'strong' ),
-        'bold'    => array( 'name' => 'strong' ),
-        'i'       => array( 'name' => 'emphasize' ),
-        'em'      => array( 'name' => 'emphasize' ),
-        'h'       => array( 'name' => 'header' ),
-        'p'       => array( 'name' => 'paragraph' ),
-        'para'    => array( 'name' => 'paragraph' ),
-        'br'      => array( 'name' => 'br',
-                            'noChildren' => true ),
-        'a'       => array( 'name' => 'link' ),
-        'h1'     => array( 'nameHandler' => 'tagNameHeader' ),
-        'h2'     => array( 'nameHandler' => 'tagNameHeader' ),
-        'h3'     => array( 'nameHandler' => 'tagNameHeader' ),
-        'h4'     => array( 'nameHandler' => 'tagNameHeader' ),
-        'h5'     => array( 'nameHandler' => 'tagNameHeader' ),
-        'h6'     => array( 'nameHandler' => 'tagNameHeader' ),
-        );
+    public $InputTags = ['b'       => ['name' => 'strong'], 'bold'    => ['name' => 'strong'], 'i'       => ['name' => 'emphasize'], 'em'      => ['name' => 'emphasize'], 'h'       => ['name' => 'header'], 'p'       => ['name' => 'paragraph'], 'para'    => ['name' => 'paragraph'], 'br'      => ['name' => 'br', 'noChildren' => true], 'a'       => ['name' => 'link'], 'h1'     => ['nameHandler' => 'tagNameHeader'], 'h2'     => ['nameHandler' => 'tagNameHeader'], 'h3'     => ['nameHandler' => 'tagNameHeader'], 'h4'     => ['nameHandler' => 'tagNameHeader'], 'h5'     => ['nameHandler' => 'tagNameHeader'], 'h6'     => ['nameHandler' => 'tagNameHeader']];
 
-    public $OutputTags = array(
-        'section'   => array(),
+    public $OutputTags = ['section'   => [], 'embed'     => [
+        //'parsingHandler' => 'breakInlineFlow',
+        'structHandler' => 'appendLineParagraph',
+        'publishHandler' => 'publishHandlerEmbed',
+        'attributes' => ['id' => 'xhtml:id'],
+        'requiredInputAttributes' => ['href'],
+    ], 'embed-inline'     => [
+        //'parsingHandler' => 'breakInlineFlow',
+        'structHandler' => 'appendLineParagraph',
+        'publishHandler' => 'publishHandlerEmbed',
+        'attributes' => ['id' => 'xhtml:id'],
+        'requiredInputAttributes' => ['href'],
+    ], 'object'    => [
+        //'parsingHandler' => 'breakInlineFlow',
+        'structHandler' => 'appendLineParagraph',
+        'publishHandler' => 'publishHandlerObject',
+        'attributes' => ['href' => 'image:ezurl_href', 'target' => 'image:ezurl_target', 'ezurl_href' => 'image:ezurl_href', 'ezurl_id' => 'image:ezurl_id', 'ezurl_target' => 'image:ezurl_target'],
+        'requiredInputAttributes' => ['id'],
+    ], 'table'     => ['structHandler' => 'appendParagraph'], 'tr'        => [], 'td'        => ['attributes' => ['width' => 'xhtml:width', 'colspan' => 'xhtml:colspan', 'rowspan' => 'xhtml:rowspan']], 'th'        => ['attributes' => ['width' => 'xhtml:width', 'colspan' => 'xhtml:colspan', 'rowspan' => 'xhtml:rowspan']], 'ol'        => ['structHandler' => 'structHandlerLists'], 'ul'        => ['structHandler' => 'structHandlerLists'], 'li'        => ['autoCloseOn' => ['li']], 'header'    => ['autoCloseOn' => ['paragraph'], 'structHandler' => 'structHandlerHeader'], 'paragraph' => ['autoCloseOn' => ['paragraph'], 'publishHandler' => 'publishHandlerParagraph'], 'line'      => [], 'br'        => ['parsingHandler' => 'breakInlineFlow', 'structHandler' => 'structHandlerBr', 'attributes' => false], 'literal'   => ['parsingHandler' => 'parsingHandlerLiteral', 'structHandler' => 'appendParagraph'], 'strong'    => ['structHandler' => 'appendLineParagraph'], 'emphasize' => ['structHandler' => 'appendLineParagraph'], 'link'      => ['structHandler' => 'appendLineParagraph', 'publishHandler' => 'publishHandlerLink', 'attributes' => ['title' => 'xhtml:title', 'id' => 'xhtml:id'], 'requiredInputAttributes' => ['href']], 'anchor'    => ['structHandler' => 'appendLineParagraph'], 'custom'    => ['structHandler' => 'structHandlerCustom', 'publishHandler' => 'publishHandlerCustom', 'requiredInputAttributes' => ['name']], '#text'     => ['structHandler' => 'structHandlerText']];
 
-        'embed'     => array( //'parsingHandler' => 'breakInlineFlow',
-                              'structHandler' => 'appendLineParagraph',
-                              'publishHandler' => 'publishHandlerEmbed',
-                              'attributes' => array( 'id' => 'xhtml:id' ),
-                              'requiredInputAttributes' => array( 'href' ) ),
-
-        'embed-inline'     => array( //'parsingHandler' => 'breakInlineFlow',
-                              'structHandler' => 'appendLineParagraph',
-                              'publishHandler' => 'publishHandlerEmbed',
-                              'attributes' => array( 'id' => 'xhtml:id' ),
-                              'requiredInputAttributes' => array( 'href' ) ),
-
-        'object'    => array( //'parsingHandler' => 'breakInlineFlow',
-                              'structHandler' => 'appendLineParagraph',
-                              'publishHandler' => 'publishHandlerObject',
-                              'attributes' => array( 'href' => 'image:ezurl_href',
-                                                     'target' => 'image:ezurl_target',
-                                                     'ezurl_href' => 'image:ezurl_href',
-                                                     'ezurl_id' => 'image:ezurl_id',
-                                                     'ezurl_target' => 'image:ezurl_target' ),
-                              'requiredInputAttributes' => array( 'id' ) ),
-
-        'table'     => array( 'structHandler' => 'appendParagraph' ),
-
-        'tr'        => array(),
-
-        'td'        => array( 'attributes' => array( 'width' => 'xhtml:width',
-                                                     'colspan' => 'xhtml:colspan',
-                                                     'rowspan' => 'xhtml:rowspan' ) ),
-
-        'th'        => array( 'attributes' => array( 'width' => 'xhtml:width',
-                                                     'colspan' => 'xhtml:colspan',
-                                                     'rowspan' => 'xhtml:rowspan' ) ),
-
-        'ol'        => array( 'structHandler' => 'structHandlerLists' ),
-
-        'ul'        => array( 'structHandler' => 'structHandlerLists' ),
-
-        'li'        => array( 'autoCloseOn' => array( 'li' ) ),
-
-        'header'    => array( 'autoCloseOn' => array( 'paragraph' ),
-                              'structHandler' => 'structHandlerHeader' ),
-
-        'paragraph' => array( 'autoCloseOn' => array( 'paragraph' ),
-                              'publishHandler' => 'publishHandlerParagraph' ),
-
-        'line'      => array(),
-
-        'br'        => array( 'parsingHandler' => 'breakInlineFlow',
-                              'structHandler' => 'structHandlerBr',
-                              'attributes' => false ),
-
-        'literal'   => array( 'parsingHandler' => 'parsingHandlerLiteral',
-                              'structHandler' => 'appendParagraph' ),
-
-        'strong'    => array( 'structHandler' => 'appendLineParagraph' ),
-
-        'emphasize' => array( 'structHandler' => 'appendLineParagraph' ),
-
-        'link'      => array( 'structHandler' => 'appendLineParagraph',
-                              'publishHandler' => 'publishHandlerLink',
-                              'attributes' => array( 'title' => 'xhtml:title',
-                                                     'id' => 'xhtml:id' ),
-                              'requiredInputAttributes' => array( 'href' ) ),
-
-        'anchor'    => array( 'structHandler' => 'appendLineParagraph' ),
-
-        'custom'    => array( 'structHandler' => 'structHandlerCustom',
-                              'publishHandler' => 'publishHandlerCustom',
-                              'requiredInputAttributes' => array( 'name' ) ),
-
-        '#text'     => array( 'structHandler' => 'structHandlerText' )
-        );
-
-    public function __construct( $contentObjectID, $validateErrorLevel = eZXMLInputParser::ERROR_ALL, $detectErrorLevel = eZXMLInputParser::ERROR_ALL,
+    public function __construct( // needed for self-embedding protection
+    public $contentObjectID, $validateErrorLevel = eZXMLInputParser::ERROR_ALL, $detectErrorLevel = eZXMLInputParser::ERROR_ALL,
                                          $parseLineBreaks = false, $removeDefaultAttrs = false )
     {
-        $this->contentObjectID = $contentObjectID;
         parent::__construct( $validateErrorLevel, $detectErrorLevel, $parseLineBreaks, $removeDefaultAttrs );
     }
 
@@ -162,10 +88,10 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         $data = $param[0];
         $pos =& $param[1];
 
-        $tablePos = strpos( $data, '</literal>', $pos );
+        $tablePos = strpos( (string) $data, '</literal>', $pos );
         if ( $tablePos === false )
         {
-            $tablePos = strpos( $data, '</LITERAL>', $pos );
+            $tablePos = strpos( (string) $data, '</LITERAL>', $pos );
         }
 
         if ( $tablePos === false )
@@ -173,7 +99,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
             return $ret;
         }
 
-        $text = substr( $data, $pos, $tablePos - $pos );
+        $text = substr( (string) $data, $pos, $tablePos - $pos );
 
         $textNode = $this->Document->createTextNode( $text );
         $element->appendChild( $textNode );
@@ -194,7 +120,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         $tagBeginPos = $param[2];
         $parent = $element->parentNode;
 
-        $wholeTagString = substr( $data, $tagBeginPos, $pos - $tagBeginPos );
+        $wholeTagString = substr( (string) $data, $tagBeginPos, $pos - $tagBeginPos );
 
         if ( $parent &&
              $this->XMLSchema->isInline( $parent ) )
@@ -237,7 +163,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
 
             $insertData .= $appendData;
 
-            $data = $insertData . substr( $data, $pos );
+            $data = $insertData . substr( (string) $data, $pos );
             $pos = 0;
             $element = $parent->removeChild( $element );
             $ret = false;
@@ -254,7 +180,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
     function appendLineParagraph( $element, $newParent )
     {
         eZDebugSetting::writeDebug( 'kernel-datatype-ezxmltext', $newParent, 'eZSimplifiedXMLInputParser::appendLineParagraph new parent' );
-        $ret = array();
+        $ret = [];
         $parent = $element->parentNode;
         if ( !$parent instanceof DOMElement )
         {
@@ -323,7 +249,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
     // Structure handler for temporary <br> elements
     function structHandlerBr( $element, $newParent )
     {
-        $ret = array();
+        $ret = [];
         $ret['result'] = $newParent;
         $parent = $element->parentNode;
 
@@ -346,7 +272,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                 {
                     // break paragraph or line flow
                     unset( $ret );
-                    $ret = array();
+                    $ret = [];
 
                     // Do not process next <br> tag
                     $next->setAttribute( 'ignore', 'true' );
@@ -376,7 +302,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         }
 
         // Trim spaces used for tag indenting
-        if ( $next && $next->nodeType == XML_TEXT_NODE && !trim( $next->textContent ) )
+        if ( $next && $next->nodeType == XML_TEXT_NODE && !trim( (string) $next->textContent ) )
         {
             $nextToNext = $next->nextSibling;
             if ( !$nextToNext || $nextToNext->nodeName != 'br' )
@@ -390,7 +316,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
     // Structure handler for in-paragraph nodes.
     function appendParagraph( $element, &$newParent )
     {
-        $ret = array();
+        $ret = [];
         $parent = $element->parentNode;
         if ( !$parent )
         {
@@ -578,7 +504,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
     // Structure handler for 'ul' and 'ol' tags.
     function structHandlerLists( $element, &$params )
     {
-        $ret = array();
+        $ret = [];
         $parent = $element->parentNode;
         $parentName = $parent->nodeName;
 
@@ -685,7 +611,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
             {
                 // Trim and remove if empty
                 $parent = $element->parentNode;
-                $trimmedElement = new DOMText( ltrim( $element->textContent ) );
+                $trimmedElement = new DOMText( ltrim( (string) $element->textContent ) );
 
                 if ( $trimmedElement->textContent == '' )
                 {
@@ -712,7 +638,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         $line = $element->lastChild;
         if ( $element->childNodes->length == 1 && $line->nodeName == 'line' )
         {
-            $lineChildren = array();
+            $lineChildren = [];
             $lineChildNodes = $line->childNodes;
             foreach ( $lineChildNodes as $lineChildNode )
             {
@@ -738,7 +664,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
 
         if ( $href )
         {
-            if ( preg_match( "@^ezobject://[0-9]+(#.*)?$@", $href ) )
+            if ( preg_match( "@^ezobject://[0-9]+(#.*)?$@", (string) $href ) )
             {
                 $url = strtok( $href, '#' );
                 $anchorName = strtok( '#' );
@@ -750,7 +676,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     $this->linkedObjectIDArray[] = $objectID;
                 }
             }
-            elseif ( preg_match( "@^eznode://.+(#.*)?$@" , $href ) )
+            elseif ( preg_match( "@^eznode://.+(#.*)?$@" , (string) $href ) )
             {
                 $objectID = null;
                 $url = strtok( $href, '#' );
@@ -763,7 +689,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     if ( !$node )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', array( $nodeID ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', [$nodeID] ) );
                     }
                     else
                     {
@@ -776,7 +702,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     if ( !$node )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', array( $nodePath ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', [$nodePath] ) );
                     }
                     else
                     {
@@ -792,14 +718,14 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     $this->linkedObjectIDArray[] = $objectID;
                 }
             }
-            elseif ( preg_match( "@^#.*$@" , $href ) )
+            elseif ( preg_match( "@^#.*$@" , (string) $href ) )
             {
-                $anchorName = substr( $href, 1 );
+                $anchorName = substr( (string) $href, 1 );
             }
             else
             {
                 //washing href. single and double quotes replaced with their urlencoded form
-                $href = str_replace( array('\'','"'), array('%27','%22'), $href );
+                $href = str_replace( ['\'', '"'], ['%27', '%22'], (string) $href );
 
                 $temp = explode( '#', $href );
                 $url = $temp[0];
@@ -814,7 +740,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     if ( preg_match( "/^(java|vb)script:.*/i" , $url ) )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Using scripts in links is not allowed, link '%1' has been removed", '', array( $url ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Using scripts in links is not allowed, link '%1' has been removed", '', [$url] ) );
 
                         $element->removeAttribute( 'href' );
                         return $ret;
@@ -825,7 +751,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                          !eZMail::validate( $mailAddr[1] ) )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Invalid e-mail address: '%1'", '' , array( $mailAddr[1] ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Invalid e-mail address: '%1'", '' , [$mailAddr[1]] ) );
 
                         $element->removeAttribute( 'href' );
                         return $ret;
@@ -854,7 +780,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
 
     function convertHrefToID( $href )
     {
-        $href = str_replace("&amp;", "&", $href );
+        $href = str_replace("&amp;", "&", (string) $href );
 
         $urlID = eZURL::registerURL( $href );
 
@@ -873,7 +799,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
 
         $href = $element->getAttribute( 'href' );
         //washing href. single and double quotes replaced with their urlencoded form
-        $href = str_replace( array('\'','"'), array('%27','%22'), $href );
+        $href = str_replace( ['\'', '"'], ['%27', '%22'], (string) $href );
 
         if ( $href != null )
         {
@@ -885,7 +811,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                 if ( $objectID == $this->contentObjectID )
                 {
                     $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                        ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Object %1 can not be embeded to itself.', '', array( $objectID ) ) );
+                                        ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Object %1 can not be embeded to itself.', '', [$objectID] ) );
 
                     $element->removeAttribute( 'href' );
                     return $ret;
@@ -909,7 +835,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     if ( !$node )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', array( $nodeID ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Node '%1' does not exist.", '', [$nodeID] ) );
 
                         $element->removeAttribute( 'href' );
                         return $ret;
@@ -921,7 +847,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                     if ( !$node )
                     {
                         $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Node \'%1\' does not exist.', '', array( $nodePath ) ) );
+                                            ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Node \'%1\' does not exist.', '', [$nodePath] ) );
 
                         $element->removeAttribute( 'href' );
                         return $ret;
@@ -937,7 +863,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
                 if ( $objectID == $this->contentObjectID )
                 {
                     $this->handleError( eZXMLInputParser::ERROR_DATA,
-                                        ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Object %1 can not be embeded to itself.', '', array( $objectID ) ) );
+                                        ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Object %1 can not be embeded to itself.', '', [$objectID] ) );
 
                     $element->removeAttribute( 'href' );
                     return $ret;
@@ -973,7 +899,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         {
             $this->isInputValid = false;
             $this->Messages[] = ezpI18n::tr( 'kernel/classes/datatypes',
-                                        'Object %1 can not be embeded to itself.', false, array( $objectID ) );
+                                        'Object %1 can not be embeded to itself.', false, [$objectID] );
             return $ret;
         }
 
@@ -985,7 +911,7 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         // If there are any image object with links.
         $href = $element->getAttributeNS( $this->Namespaces['image'], 'ezurl_href' );
         //washing href. single and double quotes inside url replaced with their urlencoded form
-        $href = str_replace( array('\'','"'), array('%27','%22'), $href );
+        $href = str_replace( ['\'', '"'], ['%27', '%22'], (string) $href );
 
         $urlID = $element->getAttributeNS( $this->Namespaces['image'], 'ezurl_id' );
 
@@ -1048,11 +974,8 @@ class eZSimplifiedXMLInputParser extends eZXMLInputParser
         return $this->urlIDArray;
     }
 
-    public $urlIDArray = array();
-    public $relatedObjectIDArray = array();
-    public $linkedObjectIDArray = array();
-
-    // needed for self-embedding protection
-    public $contentObjectID = 0;
+    public $urlIDArray = [];
+    public $relatedObjectIDArray = [];
+    public $linkedObjectIDArray = [];
 }
 ?>

@@ -17,13 +17,12 @@
 
 class eZEmailType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezemail";
+    final public const DATA_TYPE_STRING = "ezemail";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Email", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_text' => 'email' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_text' => 'email']] );
     }
 
     /*!
@@ -63,7 +62,7 @@ class eZEmailType extends eZDataType
         {
             $email = $http->postVariable( $base . '_data_text_' . $contentObjectAttribute->attribute( 'id' ) );
 
-            $trimmedEmail = trim( $email );
+            $trimmedEmail = trim( (string) $email );
 
             if ( $trimmedEmail == "" )
             {
@@ -112,7 +111,7 @@ class eZEmailType extends eZDataType
             $email = $http->postVariable( $base . "_data_text_" . $contentObjectAttribute->attribute( "id" ) );
             $classAttribute = $contentObjectAttribute->contentClassAttribute();
 
-            $trimmedEmail = trim( $email );
+            $trimmedEmail = trim( (string) $email );
 
             if ( $trimmedEmail == "" )
             {
@@ -202,7 +201,7 @@ class eZEmailType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return trim( $contentObjectAttribute->attribute( "data_text" ) ) != '';
+        return trim( (string) $contentObjectAttribute->attribute( "data_text" ) ) != '';
     }
 
     function isInformationCollector()
@@ -212,7 +211,7 @@ class eZEmailType extends eZDataType
 
     function sortKey( $contentObjectAttribute )
     {
-        return strtolower( $contentObjectAttribute->attribute( 'data_text' ) );
+        return strtolower( (string) $contentObjectAttribute->attribute( 'data_text' ) );
     }
 
     function sortKeyType()

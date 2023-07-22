@@ -39,9 +39,7 @@ if ( $http->hasPostVariable( "UpdateSettingButton" ) )
     if ( eZOperationHandler::operationIsAvailable( 'user_setsettings' ) )
     {
            $operationResult = eZOperationHandler::execute( 'user',
-                                                           'setsettings', array( 'user_id'    => $UserID,
-                                                                                  'is_enabled' => $isEnabled,
-                                                                                  'max_login'  => $maxLogin ) );
+                                                           'setsettings', ['user_id'    => $UserID, 'is_enabled' => $isEnabled, 'max_login'  => $maxLogin] );
     }
     else
     {
@@ -79,11 +77,8 @@ $tpl->setVariable( "userSetting", $userSetting );
 $tpl->setVariable( "failed_login_attempts", $failedLoginAttempts );
 $tpl->setVariable( "max_failed_login_attempts", $maxFailedLoginAttempts );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:user/setting.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Setting' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Setting' ), 'url' => false]];
 
 ?>

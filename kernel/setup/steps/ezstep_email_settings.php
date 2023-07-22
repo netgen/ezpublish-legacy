@@ -72,11 +72,7 @@ class eZStepEmailSettings extends eZStepInstaller
 
     function display()
     {
-        $emailInfo = array( 'type' => 1,
-                            'server' => false,
-                            'user' => false,
-                            'password' => false,
-                            'result' => false );
+        $emailInfo = ['type' => 1, 'server' => false, 'user' => false, 'password' => false, 'result' => false];
         if ( isset( $this->PersistenceList['email_info'] ) )
             $emailInfo = array_merge( $emailInfo, $this->PersistenceList['email_info'] );
         if ( $emailInfo['server'] and
@@ -92,14 +88,13 @@ class eZStepEmailSettings extends eZStepInstaller
         $this->Tpl->setVariable( 'email_info', $emailInfo );
 
         $systemType = eZSys::filesystemType();
-        $this->Tpl->setVariable( 'system', array( 'type' => $systemType ) );
+        $this->Tpl->setVariable( 'system', ['type' => $systemType] );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( "design:setup/init/email_settings.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Email settings' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Email settings' ), 'url' => false]];
         return $result;
 
     }

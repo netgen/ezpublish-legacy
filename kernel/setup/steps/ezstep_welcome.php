@@ -39,7 +39,7 @@ class eZStepWelcome extends eZStepInstaller
         if ( $this->Http->hasPostVariable( 'eZSetupWizardLanguage' ) )
         {
             $wizardLanguage = $this->Http->postVariable( 'eZSetupWizardLanguage' );
-            $this->PersistenceList['setup_wizard'] = array( 'language' => $wizardLanguage );
+            $this->PersistenceList['setup_wizard'] = ['language' => $wizardLanguage];
 
             eZTranslatorManager::setActiveTranslation( $wizardLanguage );
         }
@@ -56,7 +56,7 @@ class eZStepWelcome extends eZStepInstaller
         $this->OptionalResults = $optionalRunResult['results'];
         $this->OptionalResult = $optionalRunResult['result'];
 
-        $testsRun = array();
+        $testsRun = [];
         if ( isset( $this->Results ) && is_array( $this->Results ) )
         {
             foreach ( $this->Results as $testResultItem )
@@ -78,7 +78,7 @@ class eZStepWelcome extends eZStepInstaller
 
     function display()
     {
-        $result = array();
+        $result = [];
 
         $languages = false;
         $defaultLanguage = false;
@@ -90,12 +90,10 @@ class eZStepWelcome extends eZStepInstaller
 
         $this->Tpl->setVariable( 'language_list', $languages );
         $this->Tpl->setVariable( 'primary_language', $defaultLanguage );
-        $this->Tpl->setVariable( 'optional_test', array( 'result' => $this->OptionalResult,
-                                                         'results' => $this->OptionalResults ) );
+        $this->Tpl->setVariable( 'optional_test', ['result' => $this->OptionalResult, 'results' => $this->OptionalResults] );
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/welcome.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Welcome to eZ Publish' ),
-                                    'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Welcome to eZ Publish' ), 'url' => false]];
 
         return $result;
     }

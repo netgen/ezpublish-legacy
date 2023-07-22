@@ -47,7 +47,7 @@ function exitWithInternalError( $errorText )
     else if ( $contentType === 'json' )
         header('Content-Type: text/javascript; charset=utf-8');
 
-    echo ezjscAjaxContent::autoEncode( array( 'error_text' => $errorText, 'content' => '' ), $contentType );
+    echo ezjscAjaxContent::autoEncode( ['error_text' => $errorText, 'content' => ''], $contentType );
     eZExecution::cleanExit();
 }
 

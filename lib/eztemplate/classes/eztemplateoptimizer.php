@@ -24,7 +24,7 @@ class eZTemplateOptimizer
         $data = $var[2];
         /* Check if the variable node has the correct format */
         if ( ( $var[1] == 'attributeAccess' ) and
-             ( count( $data ) == 5 ) and
+             ( (is_countable($data) ? count( $data ) : 0) == 5 ) and
              ( $data[0][0] == eZTemplate::TYPE_VARIABLE ) and
              ( $data[0][1][2] == 'node' ) and
              ( $data[1][0] == eZTemplate::TYPE_ATTRIBUTE ) and
@@ -44,14 +44,14 @@ class eZTemplateOptimizer
                 $file = $node[2][$resourceData['class-info'][$attribute]];
                 $node[0] = eZTemplate::NODE_OPTIMIZED_RESOURCE_ACQUISITION;
                 $node[10] = $resourceData['class-info'][$attribute];
-                $node[2] = array( $node[10] => $file );
+                $node[2] = [$node[10] => $file];
 
                 return true;
             }
             else /* If we can't find it in the lookup table then it's simply
                   * not there, so we can just kill the array. */
             {
-                $node[2] = array( 'dummy' => 'foo' );
+                $node[2] = ['dummy' => 'foo'];
                 return false;
             }
             /* Added as an extra fall back, this point should never be reached,
@@ -90,7 +90,7 @@ class eZTemplateOptimizer
         $ret = 0;
         if( !is_array( $data ) )
         {
-             $data = array();
+             $data = [];
         }
         /* node.object.data_map optimization */
         if ( ( count( $data ) >= 3 ) and
@@ -120,7 +120,7 @@ class eZTemplateOptimizer
             }
 
             /* Create a new node representing the optimization */
-            array_unshift( $data, array( eZTemplate::TYPE_OPTIMIZED_NODE, null, 2 ) );
+            array_unshift( $data, [eZTemplate::TYPE_OPTIMIZED_NODE, null, 2] );
             $ret = 1;
         }
 
@@ -184,7 +184,7 @@ class eZTemplateOptimizer
         }
         if ( $addNodeInit )
         {
-            $initializer = array( eZTemplate::NODE_OPTIMIZED_INIT, null, false );
+            $initializer = [eZTemplate::NODE_OPTIMIZED_INIT, null, false];
             array_unshift( $tree[1], $initializer );
         }
     }
@@ -192,8 +192,8 @@ class eZTemplateOptimizer
     static function fetchClassDeclaration( $classID )
     {
         $contentClass = eZContentClass::fetch( $classID );
-        $attributeArray = array();
-        $attributes = is_object( $contentClass ) ? $contentClass->fetchAttributes() : array();
+        $attributeArray = [];
+        $attributes = is_object( $contentClass ) ? $contentClass->fetchAttributes() : [];
         foreach ( $attributes as $attribute )
         {
             $attributeArray[ $attribute->Identifier ] = $attribute->DataTypeString;

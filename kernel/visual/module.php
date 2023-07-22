@@ -6,69 +6,21 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZVisual",
-                 "variable_params" => true,
-                 'ui_component_match' => 'view' );
+$Module = ["name" => "eZVisual", "variable_params" => true, 'ui_component_match' => 'view'];
 
-$ViewList = array();
-$ViewList["toolbarlist"] = array(
-    "script" => "toolbarlist.php",
-    "default_navigation_part" => 'ezvisualnavigationpart',
-    "params" => array( 'SiteAccess' ) );
+$ViewList = [];
+$ViewList["toolbarlist"] = ["script" => "toolbarlist.php", "default_navigation_part" => 'ezvisualnavigationpart', "params" => ['SiteAccess']];
 
-$ViewList["toolbar"] = array(
-    "script" => "toolbar.php",
-    'ui_context' => 'edit',
-    "default_navigation_part" => 'ezvisualnavigationpart',
-    'post_actions' => array( 'BrowseActionName' ),
-    'single_post_actions' => array( 'BackToToolbarsButton' => 'BackToToolbars',
-                                    'NewToolButton' => 'NewTool',
-                                    'UpdatePlacementButton' => 'UpdatePlacement',
-                                    'BrowseButton' => 'Browse',
-                                    'RemoveButton' => 'Remove',
-                                    'StoreButton' => 'Store' ),
-    "params" => array( 'SiteAccess', 'Position' ) );
+$ViewList["toolbar"] = ["script" => "toolbar.php", 'ui_context' => 'edit', "default_navigation_part" => 'ezvisualnavigationpart', 'post_actions' => ['BrowseActionName'], 'single_post_actions' => ['BackToToolbarsButton' => 'BackToToolbars', 'NewToolButton' => 'NewTool', 'UpdatePlacementButton' => 'UpdatePlacement', 'BrowseButton' => 'Browse', 'RemoveButton' => 'Remove', 'StoreButton' => 'Store'], "params" => ['SiteAccess', 'Position']];
 
-$ViewList["menuconfig"] = array(
-    "script" => "menuconfig.php",
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'StoreButton' => 'Store',
-                                    'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess' ),
-    "params" => array() );
+$ViewList["menuconfig"] = ["script" => "menuconfig.php", 'default_navigation_part' => 'ezsetupnavigationpart', 'single_post_actions' => ['StoreButton' => 'Store', 'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess'], "params" => []];
 
-$ViewList["templatelist"] = array(
-    "script" => "templatelist.php",
-    "default_navigation_part" => 'ezvisualnavigationpart',
-    "params" => array( ),
-    "unordered_params" => array( "offset" => "Offset" ) );
+$ViewList["templatelist"] = ["script" => "templatelist.php", "default_navigation_part" => 'ezvisualnavigationpart', "params" => [], "unordered_params" => ["offset" => "Offset"]];
 
-$ViewList["templateview"] = array(
-    "script" => "templateview.php",
-    "default_navigation_part" => 'ezvisualnavigationpart',
-    'single_post_actions' => array( 'SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess',
-                                    'RemoveOverrideButton' => 'RemoveOverride',
-                                    'UpdateOverrideButton' => 'UpdateOverride',
-                                    'NewOverrideButton' => 'NewOverride' ),
-    "params" => array( ) );
+$ViewList["templateview"] = ["script" => "templateview.php", "default_navigation_part" => 'ezvisualnavigationpart', 'single_post_actions' => ['SelectCurrentSiteAccessButton' => 'SelectCurrentSiteAccess', 'RemoveOverrideButton' => 'RemoveOverride', 'UpdateOverrideButton' => 'UpdateOverride', 'NewOverrideButton' => 'NewOverride'], "params" => []];
 
-$ViewList['templateedit'] = array(
-    'script' => 'templateedit.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezvisualnavigationpart',
-    'single_post_actions' => array( 'SaveButton' => 'Save',
-                                    'DiscardButton' => 'Discard' ),
-    'params' => array( ),
-    'unordered_params' => array( 'siteAccess' => 'SiteAccess' ) );
+$ViewList['templateedit'] = ['script' => 'templateedit.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezvisualnavigationpart', 'single_post_actions' => ['SaveButton' => 'Save', 'DiscardButton' => 'Discard'], 'params' => [], 'unordered_params' => ['siteAccess' => 'SiteAccess']];
 
-$ViewList['templatecreate'] = array(
-    'script' => 'templatecreate.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezvisualnavigationpart',
-    'single_post_actions' => array( 'CreateOverrideButton' => 'CreateOverride',
-                                    'CancelOverrideButton' => 'CancelOverride' ),
-    'params' => array( ),
-    'unordered_params' => array( 'siteAccess' => 'SiteAccess',
-                                 'classID' => 'ClassID',
-                                 'nodeID' => 'NodeID' ) );
+$ViewList['templatecreate'] = ['script' => 'templatecreate.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezvisualnavigationpart', 'single_post_actions' => ['CreateOverrideButton' => 'CreateOverride', 'CancelOverrideButton' => 'CancelOverride'], 'params' => [], 'unordered_params' => ['siteAccess' => 'SiteAccess', 'classID' => 'ClassID', 'nodeID' => 'NodeID']];
 
 ?>

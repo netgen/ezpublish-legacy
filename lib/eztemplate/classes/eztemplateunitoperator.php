@@ -45,7 +45,7 @@ class eZTemplateUnitOperator
     public function __construct( $name = "si" )
     {
         $this->SIName = $name;
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -58,32 +58,28 @@ class eZTemplateUnitOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->SIName => array( 'input' => true,
-                                              'output' => true,
-                                              'parameters' => true,
-                                              'element-transformation' => true,
-                                              'transform-parameters' => true,
-                                              'input-as-parameter' => 'always',
-                                              'element-transformation-func' => 'operatorTransform' ) );
+        return [$this->SIName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'operatorTransform']];
     }
 
     function operatorTransform( $operatorName, &$node, $tpl, &$resourceData,
                                 $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
+        $base = null;
+        $prefix_base = null;
         if ( !eZTemplateNodeTool::isConstantElement( $parameters[1] ) ||
-             ( count( $parameters ) > 2 && !eZTemplateNodeTool::isConstantElement( $parameters[2] ) ) )
+             ( (is_countable($parameters) ? count( $parameters ) : 0) > 2 && !eZTemplateNodeTool::isConstantElement( $parameters[2] ) ) )
         {
             return false;
         }
 
         // We do not support non-static values for decimal_count, decimal_symbol and thousands_separator
-        if ( count( $parameters ) > 3 and
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 3 and
              !eZTemplateNodeTool::isConstantElement( $parameters[3] ) )
             return false;
-        if ( count( $parameters ) > 4 and
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 4 and
              !eZTemplateNodeTool::isConstantElement( $parameters[4] ) )
             return false;
-        if ( count( $parameters ) > 5 and
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 5 and
              !eZTemplateNodeTool::isConstantElement( $parameters[5] ) )
             return false;
 
@@ -92,7 +88,7 @@ class eZTemplateUnitOperator
         $decimalSymbol = $locale->decimalSymbol();
         $decimalThousandsSeparator = $locale->thousandsSeparator();
 
-        if ( count( $parameters ) > 2 )
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 2 )
         {
             $prefix = eZTemplateNodeTool::elementConstantValue( $parameters[2] );
         }
@@ -101,14 +97,14 @@ class eZTemplateUnitOperator
             $prefix = 'auto';
         }
 
-        if ( count( $parameters ) > 3 )
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 3 )
             $decimalCount = eZTemplateNodeTool::elementConstantValue( $parameters[3] );
         elseif ( $prefix == 'none' )
             $decimalCount = 0;
 
-        if ( count( $parameters ) > 4 )
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 4 )
             $decimalSymbol = eZTemplateNodeTool::elementConstantValue( $parameters[4] );
-        if ( count( $parameters ) > 5 )
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > 5 )
             $decimalThousandsSeparator = eZTemplateNodeTool::elementConstantValue( $parameters[5] );
 
         $decimalSymbolText = eZPHPCreator::variableText( $decimalSymbol, 0, 0, false );
@@ -148,10 +144,10 @@ class eZTemplateUnitOperator
             $prefixes = $unit_ini->group( "DecimalPrefixes" );
 
             $prefix_group = $unit_ini->group( "DecimalPrefixes" );
-            $prefixes = array();
+            $prefixes = [];
             foreach ( $prefix_group as $prefix_item )
             {
-                $prefixes[] = explode( ";", $prefix_item );
+                $prefixes[] = explode( ";", (string) $prefix_item );
             }
             usort( $prefixes, "eZTemplateUnitCompareFactor" );
             $prefix_var = "";
@@ -166,7 +162,7 @@ class eZTemplateUnitOperator
                 {
                     foreach ( $prefixes as $prefix )
                     {
-                        $val = pow( 10, (int)$prefix[0] );
+                        $val = 10 ** ((int)$prefix[0]);
                         if ( $val <= $output )
                         {
                             $prefix_var = $prefix[1];
@@ -178,10 +174,10 @@ class eZTemplateUnitOperator
             }
             else
             {
-                $values = array();
+                $values = [];
                 $values[] = $parameters[0];
-                $values[] = array( eZTemplateNodeTool::createArrayElement( $prefixes ) );
-                $values[] = array( eZTemplateNodeTool::createStringElement( $base ) );
+                $values[] = [eZTemplateNodeTool::createArrayElement( $prefixes )];
+                $values[] = [eZTemplateNodeTool::createStringElement( $base )];
 
                 $code = 'if ( %1% >= 0 and %1% < 10 )' . "\n" .
                      '{' . "\n" .
@@ -203,16 +199,16 @@ class eZTemplateUnitOperator
                      '}' . "\n" .
                      '%output% = %1% . \' \' . %tmp3% . %3%;';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 )];
             }
         }
         else if ( $prefix == "binary" )
         {
             $prefix_group = $unit_ini->group( $fake . "BinaryPrefixes" );
-            $prefixes = array();
+            $prefixes = [];
             foreach ( $prefix_group as $prefix_item )
             {
-                $prefixes[] = explode( ";", $prefix_item );
+                $prefixes[] = explode( ";", (string) $prefix_item );
             }
             usort( $prefixes, "eZTemplateUnitCompareFactor" );
             $prefix_var = "";
@@ -226,7 +222,7 @@ class eZTemplateUnitOperator
                 {
                     foreach ( $prefixes as $prefix )
                     {
-                        $val = pow( 2, (int)$prefix[0] );
+                        $val = 2 ** ((int)$prefix[0]);
                         if ( $val <= $output )
                         {
                             $prefix_var = $prefix[1];
@@ -238,10 +234,10 @@ class eZTemplateUnitOperator
             }
             else
             {
-                $values = array();
+                $values = [];
                 $values[] = $parameters[0];
-                $values[] = array( eZTemplateNodeTool::createArrayElement( $prefixes ) );
-                $values[] = array( eZTemplateNodeTool::createStringElement( $base ) );
+                $values[] = [eZTemplateNodeTool::createArrayElement( $prefixes )];
+                $values[] = [eZTemplateNodeTool::createStringElement( $base )];
 
                 $code = 'if ( %1% >= 0 and %1% < 10 )' . "\n" .
                      '{' . "\n" .
@@ -263,7 +259,7 @@ class eZTemplateUnitOperator
                      '}' . "\n" .
                      '%output% = %1% . \' \' . %tmp3% . %3%;';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 )];
             }
         }
         else
@@ -287,14 +283,14 @@ class eZTemplateUnitOperator
                 }
                 else
                 {
-                    $values = array();
+                    $values = [];
                     $values[] = $parameters[0];
-                    $values[] = array( eZTemplateNodeTool::createStringElement( '' ) );
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $base ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( '' )];
+                    $values[] = [eZTemplateNodeTool::createStringElement( $base )];
 
                     $code = '%output% = number_format( %1%, ' . $decimalCount . ', ' . $decimalSymbolText . ', ' . $decimalThousandsSeparatorText . ' ) . \' \' . %2% . %3%;';
 
-                    return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                    return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
                 }
             }
 
@@ -302,38 +298,38 @@ class eZTemplateUnitOperator
             {
                 if ( $hasInput )
                 {
-                    $val = pow( $prefix_base, (int)$prefix_var[0] );
+                    $val = $prefix_base ** ((int)$prefix_var[0]);
                     $output = number_format( $output / $val, $decimalCount, $decimalSymbol, $decimalThousandsSeparator );
                     $prefix_var = $prefix_var[1];
                 }
                 else
                 {
-                    $values = array();
+                    $values = [];
                     $values[] = $parameters[0];
-                    $values[] = array( eZTemplateNodeTool::createNumericElement( pow( $prefix_base, (int)$prefix_var[0] ) ) );
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $prefix_var[1] ) );
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $base ) );
+                    $values[] = [eZTemplateNodeTool::createNumericElement( $prefix_base ** ((int)$prefix_var[0]) )];
+                    $values[] = [eZTemplateNodeTool::createStringElement( $prefix_var[1] )];
+                    $values[] = [eZTemplateNodeTool::createStringElement( $base )];
 
                     $code = '%output% = number_format( %1% / %2%, ' . $decimalCount . ', ' . $decimalSymbolText . ', ' . $decimalThousandsSeparatorText . ' ) . \' \' . %3% . %4%;';
 
-                    return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                    return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
                 }
             }
         }
 
         if ( $hasInput )
         {
-            return array( eZTemplateNodeTool::createStringElement( $output . ' ' . $prefix_var . $base ) );
+            return [eZTemplateNodeTool::createStringElement( $output . ' ' . $prefix_var . $base )];
         }
 
-        $values = array();
+        $values = [];
         $values[] = $parameters[0];
-        $values[] = array( eZTemplateNodeTool::createStringElement( $prefix_var ) );
-        $values[] = array( eZTemplateNodeTool::createStringElement( $base ) );
+        $values[] = [eZTemplateNodeTool::createStringElement( $prefix_var )];
+        $values[] = [eZTemplateNodeTool::createStringElement( $base )];
 
         $code = '%output% = %1% . \' \' . %2% . %3%;';
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
     }
 
     /*!
@@ -341,21 +337,7 @@ class eZTemplateUnitOperator
     */
     function namedParameterList()
     {
-        return array( "unit" => array( "type" => "string",
-                                       "required" => true,
-                                       "default" => false ),
-                      "prefix" => array( "type" => "string",
-                                         "required" => false,
-                                         "default" => "auto" ),
-                      "decimal_count" => array( "type" => "integer",
-                                                "required" => false,
-                                                "default" => false ),
-                      "decimal_symbol" => array( "type" => "string",
-                                                 "required" => false,
-                                                 "default" => false ),
-                      "thousands_separator" => array( "type" => "string",
-                                                      "required" => false,
-                                                      "default" => false ) );
+        return ["unit" => ["type" => "string", "required" => true, "default" => false], "prefix" => ["type" => "string", "required" => false, "default" => "auto"], "decimal_count" => ["type" => "integer", "required" => false, "default" => false], "decimal_symbol" => ["type" => "string", "required" => false, "default" => false], "thousands_separator" => ["type" => "string", "required" => false, "default" => false]];
     }
 
     /*!
@@ -364,6 +346,7 @@ class eZTemplateUnitOperator
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters,
                      $placement )
     {
+        $prefix_base = null;
         $unit = $namedParameters["unit"];
         $prefix = $namedParameters["prefix"];
 
@@ -377,9 +360,9 @@ class eZTemplateUnitOperator
         elseif ( $prefix == 'none' )
             $decimalCount = 0;
 
-        if ( strlen( $namedParameters['decimal_symbol'] ) > 0 )
+        if ( strlen( (string) $namedParameters['decimal_symbol'] ) > 0 )
             $decimalSymbol = $namedParameters['decimal_symbol'];
-        if ( strlen( $namedParameters['thousands_separator'] ) > 0 )
+        if ( strlen( (string) $namedParameters['thousands_separator'] ) > 0 )
             $decimalThousandsSeparator = $namedParameters['thousands_separator'];
 
         $ini = eZINI::instance();
@@ -413,17 +396,17 @@ class eZTemplateUnitOperator
             else
             {
                 $prefix_group = $unit_ini->group( "DecimalPrefixes" );
-                $prefixes = array();
+                $prefixes = [];
                 foreach ( $prefix_group as $prefix_item )
                 {
-                    $prefixes[] = explode( ";", $prefix_item );
+                    $prefixes[] = explode( ";", (string) $prefix_item );
                 }
                 usort( $prefixes, "eZTemplateUnitCompareFactor" );
                 $prefix_var = "";
                 $divider = false;
                 foreach ( $prefixes as $prefix )
                 {
-                    $val = pow( 10, (int)$prefix[0] );
+                    $val = 10 ** ((int)$prefix[0]);
                     if ( $val <= $operatorValue )
                     {
                         $prefix_var = $prefix[1];
@@ -442,16 +425,16 @@ class eZTemplateUnitOperator
             else
             {
                 $prefix_group = $unit_ini->group( $fake . "BinaryPrefixes" );
-                $prefixes = array();
+                $prefixes = [];
                 foreach ( $prefix_group as $prefix_item )
                 {
-                    $prefixes[] = explode( ";", $prefix_item );
+                    $prefixes[] = explode( ";", (string) $prefix_item );
                 }
                 usort( $prefixes, "eZTemplateUnitCompareFactor" );
                 $prefix_var = "";
                 foreach ( $prefixes as $prefix )
                 {
-                    $val = pow( 2, (int)$prefix[0] );
+                    $val = 2 ** ((int)$prefix[0]);
                     if ( $val <= $operatorValue )
                     {
                         $prefix_var = $prefix[1];
@@ -482,7 +465,7 @@ class eZTemplateUnitOperator
                 $tpl->warning( $operatorName, "Prefix \"$prefix\" for unit \"$unit\" not found", $placement );
             if ( is_array( $prefix_var ) )
             {
-                $val = pow( $prefix_base, (int)$prefix_var[0] );
+                $val = $prefix_base ** ((int)$prefix_var[0]);
                 $operatorValue = number_format( $operatorValue / $val, $decimalCount, $decimalSymbol, $decimalThousandsSeparator );
                 $prefix_var = $prefix_var[1];
             }
@@ -496,10 +479,8 @@ class eZTemplateUnitOperator
  Helper function for eZTemplateUnitOperator which sorts array elements.
  Sorts on index 0 of $a and $b.
 */
-    function eZTemplateUnitCompareFactor( $a, $b )
+    function eZTemplateUnitCompareFactor($a, $b)
     {
-        if ( $a[0] == $b[0] )
-            return 0;
-        return ( $a[0] > $b[0] ) ? -1 : 1;
+        return $b[0] <=> $a[0];
     }
 ?>

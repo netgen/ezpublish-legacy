@@ -68,9 +68,9 @@ class eZContentClassRegression extends ezpDatabaseTestCase
         $class->storeVersioned( $attributes, eZContentClass::VERSION_STATUS_DEFINED );
         $db->commit();
 
-        $this->assertTrue( eZContentClassClassGroup::classInGroup( $class->attribute( 'id' ),
+        static::assertTrue(eZContentClassClassGroup::classInGroup( $class->attribute( 'id' ),
                                                                    eZContentClass::VERSION_STATUS_DEFINED,
-                                                                   1 ) );
+                                                                   1 ));
     }
 
 }

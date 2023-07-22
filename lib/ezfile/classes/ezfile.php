@@ -21,14 +21,14 @@ class eZFile
      *
      * @see downloadContent()
      */
-    const READ_PACKET_SIZE = 16384;
+    final public const READ_PACKET_SIZE = 16384;
 
     /**
      * Flags for file manipulation
      *
      * @see rename()
      */
-    const CLEAN_ON_FAILURE = 1,
+    final public const CLEAN_ON_FAILURE = 1,
           APPEND_DEBUG_ON_FAILURE = 2;
 
     /*!
@@ -55,10 +55,10 @@ class eZFile
         if ( $atomic )
         {
             $realpath = $filepath;
-            $dirname  = dirname( $filepath );
+            $dirname  = dirname( (string) $filepath );
             if ( strlen( $dirname ) != 0 )
                 $dirname .= "/";
-            $filepath = $dirname . "ezfile-tmp." . md5( $filepath . getmypid() . mt_rand() );
+            $filepath = $dirname . "ezfile-tmp." . md5( $filepath . getmypid() . random_int(0, mt_getrandmax()) );
         }
 
         $file = fopen( $filepath, 'wb' );
@@ -72,12 +72,12 @@ class eZFile
                     // block-copy source $data to new $file in 1MB chunks
                     while ( !feof( $data ) )
                     {
-                        fwrite( $file, fread( $data, 1048576 ) );
+                        fwrite( $file, fread( $data, 1_048_576 ) );
                     }
                     fclose( $data );
                 }
                 else
-                    fwrite( $file, $data );
+                    fwrite( $file, (string) $data );
             }
             fclose( $file );
 
@@ -101,7 +101,7 @@ class eZFile
     */
     static function suffix( $filename )
     {
-        $parts = explode( '.', $filename);
+        $parts = explode( '.', (string) $filename);
         return array_pop( $parts );
     }
 

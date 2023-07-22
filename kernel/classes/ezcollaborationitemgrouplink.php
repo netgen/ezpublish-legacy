@@ -18,68 +18,13 @@ class eZCollaborationItemGroupLink extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'collaboration_id' => array( 'name' => 'CollaborationID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZCollaborationItem',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         'group_id' => array( 'name' => 'GroupID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZCollaborationGroup',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         'user_id' => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         'is_read' => array( 'name' => 'IsRead',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'is_active' => array( 'name' => 'IsActive',
-                                                               'datatype' => 'integer',
-                                                               'default' => 1,
-                                                               'required' => true ),
-                                         'last_read' => array( 'name' => 'LastRead',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'collaboration_id', 'group_id', 'user_id' ),
-                      'function_attributes' => array( 'user' => 'user',
-                                                      'collaboration_item' => 'collaborationItem',
-                                                      'collaboration_group' => 'collaborationGroup' ),
-                      'class_name' => 'eZCollaborationItemGroupLink',
-                      'sort' => array( 'modified' => 'asc' ),
-                      'name' => 'ezcollab_item_group_link' );
+        return ['fields' => ['collaboration_id' => ['name' => 'CollaborationID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationItem', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'group_id' => ['name' => 'GroupID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationGroup', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'user_id' => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'is_read' => ['name' => 'IsRead', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'is_active' => ['name' => 'IsActive', 'datatype' => 'integer', 'default' => 1, 'required' => true], 'last_read' => ['name' => 'LastRead', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['collaboration_id', 'group_id', 'user_id'], 'function_attributes' => ['user' => 'user', 'collaboration_item' => 'collaborationItem', 'collaboration_group' => 'collaborationGroup'], 'class_name' => 'eZCollaborationItemGroupLink', 'sort' => ['modified' => 'asc'], 'name' => 'ezcollab_item_group_link'];
     }
 
     static function create( $collaborationID, $groupID, $userID )
     {
         $date_time = time();
-        $row = array(
-            'collaboration_id' => $collaborationID,
-            'group_id' => $groupID,
-            'is_read' => false,
-            'is_active' => true,
-            'last_read' => 0,
-            'user_id' => $userID,
-            'created' => $date_time,
-            'modified' => $date_time );
+        $row = ['collaboration_id' => $collaborationID, 'group_id' => $groupID, 'is_read' => false, 'is_active' => true, 'last_read' => 0, 'user_id' => $userID, 'created' => $date_time, 'modified' => $date_time];
         return new eZCollaborationItemGroupLink( $row );
     }
 
@@ -106,9 +51,7 @@ class eZCollaborationItemGroupLink extends eZPersistentObject
 
         return eZPersistentObject::fetchObject( eZCollaborationItemGroupLink::definition(),
                                                 null,
-                                                array( 'collaboration_id' => $collaborationID,
-                                                       'group_id' => $groupID,
-                                                       'user_id' => $userID ),
+                                                ['collaboration_id' => $collaborationID, 'group_id' => $groupID, 'user_id' => $userID],
                                                 $asObject );
     }
 
@@ -121,8 +64,7 @@ class eZCollaborationItemGroupLink extends eZPersistentObject
 
         return eZPersistentObject::fetchObjectList( eZCollaborationItemGroupLink::definition(),
                                                     null,
-                                                    array( 'collaboration_id' => $collaborationID,
-                                                           'user_id' => $userID ),
+                                                    ['collaboration_id' => $collaborationID, 'user_id' => $userID],
                                                     null, null,
                                                     $asObject );
     }

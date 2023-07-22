@@ -6,13 +6,7 @@
  * @package kernel
  */
 
-$FunctionList = array();
-$FunctionList['sitedesign_list'] = array( 'name' => 'sitedesign_list',
-                                          'operation_types' => array( 'read' ),
-                                          'call_method' => array( 'include_file' => 'kernel/layout/ezlayoutfunctioncollection.php',
-                                                                  'class' => 'eZLayoutFunctionCollection',
-                                                                  'method' => 'fetchSitedesignList' ),
-                                          'parameter_type' => 'standard',
-                                          'parameters' => array( ) );
+$FunctionList = [];
+$FunctionList['sitedesign_list'] = ['name' => 'sitedesign_list', 'operation_types' => ['read'], 'call_method' => ['include_file' => 'kernel/layout/ezlayoutfunctioncollection.php', 'class' => 'eZLayoutFunctionCollection', 'method' => 'fetchSitedesignList'], 'parameter_type' => 'standard', 'parameters' => []];
 
 ?>

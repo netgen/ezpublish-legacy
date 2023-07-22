@@ -29,21 +29,21 @@
 
 $objectID      = isset( $Params['ObjectID'] ) ? (int) $Params['ObjectID'] : 0;
 $objectVersion = isset( $Params['ObjectVersion'] ) ? (int) $Params['ObjectVersion'] : 0;
-$tagName       = isset( $Params['TagName'] ) ? strtolower( trim( $Params['TagName'] )) : '';
-$customTagName = isset( $Params['CustomTagName'] ) ? trim( $Params['CustomTagName'] ) : '';
+$tagName       = isset( $Params['TagName'] ) ? strtolower( trim( (string) $Params['TagName'] )) : '';
+$customTagName = isset( $Params['CustomTagName'] ) ? trim( (string) $Params['CustomTagName'] ) : '';
 
 if ( $customTagName === 'undefined' ) $customTagName = '';
 
 if ( $objectID === 0  || $objectVersion === 0 )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'ObjectID/ObjectVersion' ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, ['%parameter' => 'ObjectID/ObjectVersion'] );
    eZExecution::cleanExit();
 }
 
 $object = eZContentObject::fetch( $objectID );
 if ( !$object instanceof eZContentObject || !$object->canEdit() )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'ObjectId', '%value' => $objectID ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'ObjectId', '%value' => $objectID] );
    eZExecution::cleanExit();
 }
 
@@ -90,15 +90,15 @@ switch ( $tagName )
 
 if ( !$templateName )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'TagName', '%value' => $tagName ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'TagName', '%value' => $tagName] );
    eZExecution::cleanExit();
 }
 
 
 
 // class list with description
-$classList  = array();
-$customInlineList = array();
+$classList  = [];
+$customInlineList = [];
 $contentIni = eZINI::instance( 'content.ini' );
 
 if ( $tagName === 'custom' )
@@ -108,7 +108,7 @@ if ( $tagName === 'custom' )
     if ( $contentIni->hasVariable( 'CustomTagSettings', 'CustomTagsDescription' ) )
         $customTagDescription = $contentIni->variable( 'CustomTagSettings', 'CustomTagsDescription' );
     else
-        $customTagDescription = array();
+        $customTagDescription = [];
 
     if ( $contentIni->hasVariable( 'CustomTagSettings', 'IsInline' ) )
         $customInlineList = $contentIni->variable( 'CustomTagSettings', 'IsInline' );
@@ -127,7 +127,7 @@ else
     if ( $contentIni->hasVariable( $tagName, 'ClassDescription' ) )
         $classListDescription = $contentIni->variable( $tagName, 'ClassDescription' );
     else
-        $classListDescription = array();
+        $classListDescription = [];
 
     $classList['-0-'] = 'None';
     if ( $contentIni->hasVariable( $tagName, 'AvailableClasses' ) )
@@ -156,11 +156,11 @@ $tpl->setVariable( 'custom_inline_tags', $customInlineList );
 $tpl->setVariable( 'class_list', $classList );
 
 $ezoeIni = eZINI::instance( 'ezoe.ini' );
-$tpl->setVariable( 'custom_attribute_style_map', json_encode( $ezoeIni->variable('EditorSettings', 'CustomAttributeStyleMap' ) ) );
+$tpl->setVariable( 'custom_attribute_style_map', json_encode( $ezoeIni->variable('EditorSettings', 'CustomAttributeStyleMap' ), JSON_THROW_ON_ERROR ) );
 
 // use persistent_variable like content/view does, sending parameters
 // to pagelayout as a hash.
-$tpl->setVariable( 'persistent_variable', array() );
+$tpl->setVariable( 'persistent_variable', [] );
 
 $xmlTagAliasList = $ezoeIni->variable( 'EditorSettings', 'XmlTagNameAlias' );
 if ( isset( $xmlTagAliasList[$tagName] ) )
@@ -173,12 +173,12 @@ if ( $tagName === 'td' || $tagName === 'th' )
 {
     // generate javascript data for td / th classes
     $tagName2 = $tagName === 'td' ? 'th' : 'td';
-    $cellClassList = array( $tagName => $classList, $tagName2 => array('-0-' => 'None') );
+    $cellClassList = [$tagName => $classList, $tagName2 => ['-0-' => 'None']];
 
     if ( $contentIni->hasVariable( $tagName2, 'ClassDescription' ) )
         $classListDescription = $contentIni->variable( $tagName2, 'ClassDescription' );
     else
-        $classListDescription = array();
+        $classListDescription = [];
 
     if ( $contentIni->hasVariable( $tagName2, 'AvailableClasses' ) )
     {
@@ -190,11 +190,11 @@ if ( $tagName === 'td' || $tagName === 'th' )
                 $cellClassList[$tagName2][$class] = $class;
         }
     }
-    $tpl->setVariable( 'cell_class_list', json_encode( $cellClassList ) );
+    $tpl->setVariable( 'cell_class_list', json_encode( $cellClassList, JSON_THROW_ON_ERROR ) );
 }
 
 // run template and return result
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:ezoe/' . $templateName );
 $Result['pagelayout'] = 'design:ezoe/popup_pagelayout.tpl';
 $Result['persistent_variable'] = $tpl->variable( 'persistent_variable' );

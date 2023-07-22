@@ -20,8 +20,9 @@ class eZGIFImageAnalyzer
     /*!
      Checks the file for GIF data blocks and returns information on the GIF file.
     */
-    function process( $mimeData, $parameters = array() )
+    function process( $mimeData, $parameters = [] )
     {
+        $info = [];
         $printInfo = false;
         if ( isset( $parameters['print_info'] ) )
             $printInfo = $parameters['print_info'];
@@ -30,18 +31,14 @@ class eZGIFImageAnalyzer
         $fd = fopen( $filename, 'rb' );
         if ( $fd )
         {
-            $blockTypes = array( 0x21 => 'Exension Introducer',
-                                 0x2c => 'Image Descriptor',
-                                 0x3b => 'Trailer' );
-            $extensionLabels = array( 0xf9 => 'Graphical Control Extension',
-                                      0xff => 'Application Extension',
-                                      0xfe => 'Comment Extension' );
+            $blockTypes = [0x21 => 'Exension Introducer', 0x2c => 'Image Descriptor', 0x3b => 'Trailer'];
+            $extensionLabels = [0xf9 => 'Graphical Control Extension', 0xff => 'Application Extension', 0xfe => 'Comment Extension'];
             // Read GIF header
             $data = fread( $fd, 6 );
             if ( $data == 'GIF87a' or
                  $data == 'GIF89a' )
             {
-                $info = array();
+                $info = [];
 
                 $info['version'] = substr( $data, 3 );
                 $info['frame_count'] = 0;
@@ -51,7 +48,7 @@ class eZGIFImageAnalyzer
                 $info['animation_timer'] = false;
                 $info['animation_timer_type'] = eZImageAnalyzer::TIMER_HUNDRETHS_OF_A_SECOND;
 
-                $info['comment_list'] = array();
+                $info['comment_list'] = [];
 
                 $info['transparency_type'] = eZImageAnalyzer::TRANSPARENCY_OPAQUE;
 

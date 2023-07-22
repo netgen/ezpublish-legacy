@@ -16,11 +16,11 @@
 
 class eZStepSiteDetails extends eZStepInstaller
 {
-    const SITE_ACCESS_ILLEGAL = 11;
+    final public const SITE_ACCESS_ILLEGAL = 11;
 
-    const SITE_ACCESS_DEFAULT_REGEXP = '/^([a-zA-Z0-9_]*)$/';
-    const SITE_ACCESS_HOSTNAME_REGEXP = '/^([a-zA-Z0-9.\-:]*)$/';
-    const SITE_ACCESS_PORT_REGEXP = '/^([0-9]*)$/';
+    final public const SITE_ACCESS_DEFAULT_REGEXP = '/^([a-zA-Z0-9_]*)$/';
+    final public const SITE_ACCESS_HOSTNAME_REGEXP = '/^([a-zA-Z0-9.\-:]*)$/';
+    final public const SITE_ACCESS_PORT_REGEXP = '/^([0-9]*)$/';
 
     /**
      * Constructor
@@ -43,15 +43,15 @@ class eZStepSiteDetails extends eZStepInstaller
         $databaseInfo['info'] = $databaseMap[$databaseInfo['type']];
         $regionalInfo = $this->PersistenceList['regional_info'];
 
-        $dbStatus = array();
+        $dbStatus = [];
         $dbDriver = $databaseInfo['info']['driver'];
         $dbServer = $databaseInfo['server'];
         $dbUser = $databaseInfo['user'];
         $dbSocket = $databaseInfo['socket'];
         $dbPwd = $databaseInfo['password'];
 
-        $chosenDatabases = array();
-        $siteAccessValues = array();
+        $chosenDatabases = [];
+        $siteAccessValues = [];
         $siteAccessValues['admin'] = 1; // Add user and admin as illegal site access values
         $siteAccessValues['user'] = 1;
 
@@ -75,13 +75,13 @@ class eZStepSiteDetails extends eZStepInstaller
         {
             $regexp = self::SITE_ACCESS_HOSTNAME_REGEXP;
         }
-        $validateUserPath = preg_match( $regexp, $userPath );
+        $validateUserPath = preg_match( $regexp, (string) $userPath );
 
         if ( isset( $siteAccessValues[$userPath] ) or !$validateUserPath ) // check for equal site access values
         {
             $this->Error[0] = self::SITE_ACCESS_ILLEGAL;
             /* Check for valid host name */
-            $userPath = ( ( $siteType['access_type'] == 'hostname' ) and ( strpos( $userPath, '_' ) !== false ) ) ? strtr( $userPath, '_', '-' ) : $userPath;
+            $userPath = ( ( $siteType['access_type'] == 'hostname' ) and ( str_contains( (string) $userPath, '_' ) ) ) ? strtr( $userPath, '_', '-' ) : $userPath;
             $error = true;
         }
 
@@ -95,13 +95,13 @@ class eZStepSiteDetails extends eZStepInstaller
 
         $siteAccessValues[$siteType['access_type_value']] = 1;
         $adminPath = $this->Http->postVariable( 'eZSetup_site_templates_admin_value' );
-        $validateAdminPath = preg_match( $regexp, $adminPath );
+        $validateAdminPath = preg_match( $regexp, (string) $adminPath );
 
         if ( isset( $siteAccessValues[$adminPath] ) or !$validateAdminPath ) // check for equal site access values
         {
             $this->Error[0] = self::SITE_ACCESS_ILLEGAL;
             /* Check for valid host name */
-            $adminPath = ( ( $siteType['access_type'] == 'hostname' ) and ( strpos( $adminPath, '_' ) !== false ) ) ? strtr( $adminPath, '_', '-' ) : $adminPath;
+            $adminPath = ( ( $siteType['access_type'] == 'hostname' ) and ( str_contains( (string) $adminPath, '_' ) ) ) ? strtr( $adminPath, '_', '-' ) : $adminPath;
             $error = true;
         }
 
@@ -133,13 +133,12 @@ class eZStepSiteDetails extends eZStepInstaller
 
         // Check database connection
         $result = $this->checkDatabaseRequirements( false,
-                                                    array( 'database' => $siteType['database'] ) );
+                                                    ['database' => $siteType['database']] );
 
         if ( !$result['status'] )
         {
             $this->storeSiteType( $siteType );
-            $this->Error[0] = array( 'type' => 'db',
-                                            'error_code' => $result['error_code'] );
+            $this->Error[0] = ['type' => 'db', 'error_code' => $result['error_code']];
             return false;
         }
         // Store charset if found
@@ -157,7 +156,7 @@ class eZStepSiteDetails extends eZStepInstaller
         if ( $dbStatus['connected'] )
         {
 
-            if ( count( $db->eZTableList() ) != 0 )
+            if ( (is_countable($db->eZTableList()) ? count( $db->eZTableList() ) : 0) != 0 )
             {
                 if ( $this->Http->hasPostVariable( 'eZSetup_site_templates_existing_database' ) &&
                      $this->Http->postVariable( 'eZSetup_site_templates_existing_database' ) != eZStepInstaller::DB_DATA_CHOOSE )
@@ -182,6 +181,7 @@ class eZStepSiteDetails extends eZStepInstaller
 
     function init()
     {
+        $chosenDatabases = [];
         if ( $this->hasKickstartData() )
         {
             $data = $this->kickstartData();
@@ -196,8 +196,8 @@ class eZStepSiteDetails extends eZStepInstaller
             if ( !$siteType['title'] )
                 $siteType['title'] = $siteType['name'];
 
-            $siteType['url'] = isset( $data['URL'] ) ? $data['URL'] : false;
-            if ( strlen( $siteType['url'] ) == 0 )
+            $siteType['url'] = $data['URL'] ?? false;
+            if ( strlen( (string) $siteType['url'] ) == 0 )
                 $siteType['url'] = 'http://' . eZSys::hostName() . eZSys::indexDir( false );
 
             switch ( $siteType['access_type'] )
@@ -251,9 +251,7 @@ class eZStepSiteDetails extends eZStepInstaller
 
             $siteType['database'] = $data['Database'];
             $action = eZStepInstaller::DB_DATA_APPEND;
-            $map = array( 'ignore' => 1,
-                          'remove' => 2,
-                          'skip' => 3 );
+            $map = ['ignore' => 1, 'remove' => 2, 'skip' => 3];
             // Figure out what to do with database, do we need cleanup etc?
             if ( isset( $map[$data['DatabaseAction']] ) )
                 $action = $map[$data['DatabaseAction']];
@@ -262,12 +260,11 @@ class eZStepSiteDetails extends eZStepInstaller
             $chosenDatabases[$siteType['database']] = 1;
 
             $result = $this->checkDatabaseRequirements( false,
-                                                        array( 'database' => $siteType['database'] ) );
+                                                        ['database' => $siteType['database']] );
 
             if ( !$result['status'] )
             {
-                $this->Error[0] = array( 'type' => 'db',
-                                                'error_code' => $result['error_code'] );
+                $this->Error[0] = ['type' => 'db', 'error_code' => $result['error_code']];
                 return false;
             }
 
@@ -290,24 +287,18 @@ class eZStepSiteDetails extends eZStepInstaller
 
         $demoDataResult = false;
 
-        $dbStatus = array();
+        $dbStatus = [];
         $dbDriver = $databaseInfo['info']['driver'];
         $dbServer = $databaseInfo['server'];
         $dbPort = $databaseInfo['port'];
-        $dbName = isset( $databaseInfo['dbname'] ) ? $databaseInfo['dbname'] : '';
+        $dbName = $databaseInfo['dbname'] ?? '';
         $dbUser = $databaseInfo['user'];
         $dbSocket = $databaseInfo['socket'];
-        if ( trim( $dbSocket ) == '' )
+        if ( trim( (string) $dbSocket ) == '' )
             $dbSocket = false;
         $dbPwd = $databaseInfo['password'];
         $dbCharset = 'iso-8859-1';
-        $dbParameters = array( 'server' => $dbServer,
-                               'port' => $dbPort,
-                               'user' => $dbUser,
-                               'password' => $dbPwd,
-                               'socket' => $dbSocket,
-                               'database' => false,
-                               'charset' => $dbCharset );
+        $dbParameters = ['server' => $dbServer, 'port' => $dbPort, 'user' => $dbUser, 'password' => $dbPwd, 'socket' => $dbSocket, 'database' => false, 'charset' => $dbCharset];
 
         // PostgreSQL requires us to specify database name.
         // We use template1 here since it exists on all PostgreSQL installations.
@@ -317,7 +308,7 @@ class eZStepSiteDetails extends eZStepInstaller
         $db = eZDB::instance( $dbDriver, $dbParameters, true );
         $availDatabases = $db->availableDatabases();
 
-        if ( count( $availDatabases ) > 0 ) // login succeeded, and at least one database available
+        if ( ($availDatabases === null ? 0 : count( $availDatabases )) > 0 ) // login succeeded, and at least one database available
         {
             $this->PersistenceList['database_info_available'] = $availDatabases;
         }
@@ -341,7 +332,7 @@ class eZStepSiteDetails extends eZStepInstaller
 
         if ( !isset( $siteType['title'] ) )
             $siteType['title'] = $siteType['name'];
-        $siteType['errors'] = array();
+        $siteType['errors'] = [];
         if ( !isset( $siteType['url'] ) )
             $siteType['url'] = 'http://' . eZSys::hostName() . eZSys::indexDir( false );
         if ( !isset( $siteType['site_access_illegal'] ) )
@@ -358,8 +349,8 @@ class eZStepSiteDetails extends eZStepInstaller
                 // First try database name match
                 foreach ( $databaseList as $databaseName )
                 {
-                    $dbName = trim( strtolower( $databaseName ) );
-                    $identifier = trim( strtolower( $siteType['identifier'] ) );
+                    $dbName = trim( strtolower( (string) $databaseName ) );
+                    $identifier = trim( strtolower( (string) $siteType['identifier'] ) );
                     if ( $dbName == $identifier )
                     {
                         $matchedDBName = $databaseName;
@@ -368,7 +359,7 @@ class eZStepSiteDetails extends eZStepInstaller
                 }
                 if ( !$matchedDBName )
                     $matchedDBName = $databaseList[$databaseCounter++];
-                $databaseList = array_values( array_diff( $databaseList, array( $matchedDBName ) ) );
+                $databaseList = array_values( array_diff( $databaseList, [$matchedDBName] ) );
                 $siteType['database'] = $matchedDBName;
             }
             else
@@ -426,9 +417,7 @@ class eZStepSiteDetails extends eZStepInstaller
             {
                 if ( $error == eZStepInstaller::DB_ERROR_CHARSET_DIFFERS )
                     $this->Tpl->setVariable( 'db_charset_differs', 1 );
-                $siteType['errors'][] = $this->databaseErrorInfo( array( 'error_code' => $error,
-                                                                         'database_info' => $this->PersistenceList['database_info'],
-                                                                         'site_type' => $siteType ) );
+                $siteType['errors'][] = $this->databaseErrorInfo( ['error_code' => $error, 'database_info' => $this->PersistenceList['database_info'], 'site_type' => $siteType] );
             }
         }
         $this->storeSiteType( $siteType );
@@ -438,16 +427,15 @@ class eZStepSiteDetails extends eZStepInstaller
         $this->Tpl->setVariable( 'site_type', $siteType );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/site_details.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Site details' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Site details' ), 'url' => false]];
         return $result;
     }
 
-    public $Error = array();
+    public $Error = [];
 }
 
 ?>

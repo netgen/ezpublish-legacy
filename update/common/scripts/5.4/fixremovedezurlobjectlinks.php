@@ -15,23 +15,16 @@ require 'autoload.php';
 set_time_limit( 0 );
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "Fix occurrences of link items that have been removed from XML-blocks, but\n" .
+$script = eZScript::instance( ['description' => ( "Fix occurrences of link items that have been removed from XML-blocks, but\n" .
                                                         "not from the URL object link table. This script will remove these orphaned\n" .
                                                         "entries.\n" .
                                                         "\n" .
-                                                        "fixremovedezurlobjectlinks.php" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true,
-                                    ) );
+                                                        "fixremovedezurlobjectlinks.php" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 
 $config = "[fix][fetch-limit:]";
 $argConfig = "";
-$optionHelp = array(
-                    "fix" => "Fix orphaned ezurl-object-link references.",
-                    "fetch-limit" => "The number of attributes to fetch in one chunk. Default value is 200,\nthe limit must be higher than 1."
-                    );
+$optionHelp = ["fix" => "Fix orphaned ezurl-object-link references.", "fetch-limit" => "The number of attributes to fetch in one chunk. Default value is 200,\nthe limit must be higher than 1."];
 $arguments = false;
 $useStandardOptions = true;
 
@@ -69,17 +62,14 @@ class ezpUrlObjectLinkRemove
     public $xmlClassAttributeIdArray = null;
     public $xmlAttrCount = null;
 
-    public $offset;
-    public $fetchLimit;
-    public $processedCount;
+    public $offset = 0;
+    public $fetchLimit = 200;
+    public $processedCount = 0;
 
     public $outputEntryNumber;
-    public $finalOutputMessageArray = array();
+    public $finalOutputMessageArray = [];
 
-    public $cli;
-    public $script;
-
-    public $doFix;
+    public $doFix = false;
 
     /**
      * Create a new instance of the ezpUrlObjectLink object.
@@ -88,20 +78,11 @@ class ezpUrlObjectLinkRemove
      * @param eZScript $script
      * @param array $options
      */
-    public function __construct( $cli, $script, $options )
+    public function __construct( public $cli, public $script, $options )
     {
-        $this->cli = $cli;
-        $this->script = $script;
-
-        $this->offset = 0;
-        $this->fetchLimit = 200;
-        $this->processedCount = 0;
-
         $this->verboseLevel = $this->script->verboseOutputLevel();
 
         $this->script->resetIteration( $this->xmlTextContentObjectAttributeCount() );
-
-        $this->doFix = false;
         if ( $options['fix'] !== null and $options['fix'] )
         {
             $this->doFix = true;
@@ -124,9 +105,8 @@ class ezpUrlObjectLinkRemove
         {
             // First we want to find all class attributes which are defined. We won't be touching
             // attributes which are in a transient state.
-            $xmlTextAttributes = eZContentClassAttribute::fetchList( true, array( 'data_type' => 'ezxmltext',
-                                                                                  'version' => 0 ) );
-            $this->xmlClassAttributeIdArray = array();
+            $xmlTextAttributes = eZContentClassAttribute::fetchList( true, ['data_type' => 'ezxmltext', 'version' => 0] );
+            $this->xmlClassAttributeIdArray = [];
 
             foreach ( $xmlTextAttributes as $classAttr )
             {
@@ -168,8 +148,7 @@ class ezpUrlObjectLinkRemove
         else
         {
             $this->outputEntryNumber++;
-            $this->finalOutputMessageArray[$this->outputEntryNumber] = array( "messages" => array( $message ),
-                                                                              "label" => $label );
+            $this->finalOutputMessageArray[$this->outputEntryNumber] = ["messages" => [$message], "label" => $label];
         }
     }
 
@@ -183,8 +162,7 @@ class ezpUrlObjectLinkRemove
     {
         while ( $this->processedCount < $this->xmlTextContentObjectAttributeCount() )
         {
-            $limit = array( 'offset' => $this->offset,
-                            'length' => $this->fetchLimit );
+            $limit = ['offset' => $this->offset, 'length' => $this->fetchLimit];
 
             $xmlAttributeChunk = eZContentObjectAttribute::fetchListByClassID( $this->xmlClassAttributeIds(), false, $limit, true, false );
 
@@ -228,7 +206,7 @@ class ezpUrlObjectLinkRemove
                 }
 
                 $linkNodes = $dom->getElementsByTagName( 'link' );
-                $urlIdArray = array();
+                $urlIdArray = [];
 
                 foreach ( $linkNodes as $link )
                 {
@@ -262,7 +240,7 @@ class ezpUrlObjectLinkRemove
                 $label = null;
             }
 
-            $this->processedCount += count( $xmlAttributeChunk );
+            $this->processedCount += is_countable($xmlAttributeChunk) ? count( $xmlAttributeChunk ) : 0;
             $this->offset += $this->fetchLimit;
             unset( $xmlAttributeChunk );
         }

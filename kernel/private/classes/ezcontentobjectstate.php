@@ -16,47 +16,11 @@
  */
 class eZContentObjectState extends eZPersistentObject
 {
-    const MAX_IDENTIFIER_LENGTH = 45;
+    final public const MAX_IDENTIFIER_LENGTH = 45;
 
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( "name" => "ID",
-                                                        "datatype" => "integer",
-                                                        "required" => true ),
-                                         "group_id" => array( "name" => "GroupID",
-                                                              "datatype" => "integer",
-                                                              "required" => true,
-                                                              "foreign_class" => "eZContentObjectStateGroup",
-                                                              "foreign_attribute" => "id",
-                                                              "multiplicity" => "1..*" ),
-                                         "identifier" => array( "name" => "Identifier",
-                                                                "datatype" => "string",
-                                                                "required" => true,
-                                                                "max_length" => self::MAX_IDENTIFIER_LENGTH ),
-                                         "language_mask" => array( "name" => "LanguageMask",
-                                                                   "datatype" => "integer",
-                                                                   "default" => 0,
-                                                                   "required" => true ),
-                                         "default_language_id" => array( "name" => "DefaultLanguageID",
-                                                                         "datatype" => "integer",
-                                                                         "required" => true ),
-                                         "priority" => array( "name" => "Order",
-                                                              "datatype" => "integer",
-                                                              "required" => true,
-                                                              "default" => 0 ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( "current_translation" => "currentTranslation",
-                                                      "all_translations" => "allTranslations",
-                                                      "translations" => "translations",
-                                                      "languages" => "languages",
-                                                      "available_languages" => "availableLanguages",
-                                                      "default_language" => "defaultLanguage",
-                                                      "object_count" => "objectCount",
-                                                      "group" => "group" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZContentObjectState",
-                      "sort" => array( "group_id" => "asc", "priority" => "asc" ),
-                      "name" => "ezcobj_state" );
+        static $definition = ["fields" => ["id" => ["name" => "ID", "datatype" => "integer", "required" => true], "group_id" => ["name" => "GroupID", "datatype" => "integer", "required" => true, "foreign_class" => "eZContentObjectStateGroup", "foreign_attribute" => "id", "multiplicity" => "1..*"], "identifier" => ["name" => "Identifier", "datatype" => "string", "required" => true, "max_length" => self::MAX_IDENTIFIER_LENGTH], "language_mask" => ["name" => "LanguageMask", "datatype" => "integer", "default" => 0, "required" => true], "default_language_id" => ["name" => "DefaultLanguageID", "datatype" => "integer", "required" => true], "priority" => ["name" => "Order", "datatype" => "integer", "required" => true, "default" => 0]], "keys" => ["id"], "function_attributes" => ["current_translation" => "currentTranslation", "all_translations" => "allTranslations", "translations" => "translations", "languages" => "languages", "available_languages" => "availableLanguages", "default_language" => "defaultLanguage", "object_count" => "objectCount", "group" => "group"], "increment_key" => "id", "class_name" => "eZContentObjectState", "sort" => ["group_id" => "asc", "priority" => "asc"], "name" => "ezcobj_state"];
         return $definition;
     }
 
@@ -68,7 +32,7 @@ class eZContentObjectState extends eZPersistentObject
     public static function fetchById( $id )
     {
         $id = (int)$id;
-        $states = self::fetchByConditions( array( "ezcobj_state.id=$id" ), 1, 0 );
+        $states = self::fetchByConditions( ["ezcobj_state.id=$id"], 1, 0 );
         $state = count( $states ) > 0 ? $states[0] : false;
         return $state;
     }
@@ -85,7 +49,7 @@ class eZContentObjectState extends eZPersistentObject
     {
         $db = eZDB::instance();
         $identifier = $db->escapeString( $identifier );
-        $states = self::fetchByConditions( array( "ezcobj_state.identifier='$identifier'", "ezcobj_state_group.id=$groupID" ), 1, 0 );
+        $states = self::fetchByConditions( ["ezcobj_state.identifier='$identifier'", "ezcobj_state_group.id=$groupID"], 1, 0 );
         $state = count( $states ) > 0 ? $states[0] : false;
         return $state;
     }
@@ -105,12 +69,7 @@ class eZContentObjectState extends eZPersistentObject
     {
         $db = eZDB::instance();
 
-        $defaultConditions = array(
-            'ezcobj_state.group_id=ezcobj_state_group.id',
-            'ezcobj_state_language.contentobject_state_id=ezcobj_state.id',
-            eZContentLanguage::languagesSQLFilter( 'ezcobj_state' ),
-            eZContentLanguage::sqlFilter( 'ezcobj_state_language', 'ezcobj_state' )
-        );
+        $defaultConditions = ['ezcobj_state.group_id=ezcobj_state_group.id', 'ezcobj_state_language.contentobject_state_id=ezcobj_state.id', eZContentLanguage::languagesSQLFilter( 'ezcobj_state' ), eZContentLanguage::sqlFilter( 'ezcobj_state_language', 'ezcobj_state' )];
 
         $conditions = array_merge( $conditions, $defaultConditions );
 
@@ -121,9 +80,9 @@ class eZContentObjectState extends eZPersistentObject
                "WHERE $conditionsSQL " .
                "ORDER BY ezcobj_state.priority";
 
-        $rows = $db->arrayQuery( $sql, array( 'limit' => $limit, 'offset' => $offset ) );
+        $rows = $db->arrayQuery( $sql, ['limit' => $limit, 'offset' => $offset] );
 
-        $states = array();
+        $states = [];
         foreach ( $rows as $row )
         {
             $state = new eZContentObjectState( $row );
@@ -147,12 +106,9 @@ class eZContentObjectState extends eZPersistentObject
     public static function fetchByGroup( $groupID, $limit = false, $offset = false )
     {
         $groupID = (int)$groupID;
-        return self::fetchByConditions( array( "ezcobj_state_group.id=$groupID" ), $limit, $offset );
+        return self::fetchByConditions( ["ezcobj_state_group.id=$groupID"], $limit, $offset );
     }
 
-    /**
-     * @param eZContentObjectStateLanguage $stateLanguage
-     */
     private function setLanguageObject( eZContentObjectStateLanguage $stateLanguage )
     {
         $this->LanguageObject = $stateLanguage;
@@ -199,7 +155,7 @@ class eZContentObjectState extends eZPersistentObject
     {
         if ( !is_array( $this->AllTranslations ) )
         {
-            $allTranslations = array();
+            $allTranslations = [];
             foreach ( $this->translations() as $translation )
             {
                 $languageID = $translation->attribute( 'language_id' ) & ~1;
@@ -212,7 +168,7 @@ class eZContentObjectState extends eZPersistentObject
                 $languageID = $language->attribute( 'id' );
                 if ( !array_key_exists( $languageID, $allTranslations ) )
                 {
-                    $row = array( 'language_id' => $languageID );
+                    $row = ['language_id' => $languageID];
                     if ( isset( $this->ID ) )
                     {
                         $row['contentobject_state_id'] = $this->ID;
@@ -255,7 +211,7 @@ class eZContentObjectState extends eZPersistentObject
     {
         if ( !isset( $this->ID ) )
         {
-            $this->Translations = array();
+            $this->Translations = [];
         }
         else if ( !is_array( $this->Translations ) )
         {
@@ -271,7 +227,7 @@ class eZContentObjectState extends eZPersistentObject
      */
     public function languages()
     {
-        return isset( $this->LanguageMask ) ? eZContentLanguage::prioritizedLanguagesByMask( $this->LanguageMask ) : array();
+        return isset( $this->LanguageMask ) ? eZContentLanguage::prioritizedLanguagesByMask( $this->LanguageMask ) : [];
     }
 
     /**
@@ -280,7 +236,7 @@ class eZContentObjectState extends eZPersistentObject
      */
     public function availableLanguages()
     {
-        $languages = array();
+        $languages = [];
         $languageObjects = $this->languages();
 
         foreach ( $languageObjects as $languageObject )
@@ -408,7 +364,7 @@ class eZContentObjectState extends eZPersistentObject
      * @return boolean true when valid, false when not valid
      * @see eZContentObjectState::store()
      */
-    public function isValid( &$messages = array() )
+    public function isValid( &$messages = [] )
     {
         $isValid = true;
         // missing identifier
@@ -422,16 +378,16 @@ class eZContentObjectState extends eZPersistentObject
             // make sure the identifier contains only valid characters
             $trans = eZCharTransform::instance();
             $validIdentifier = $trans->transformByGroup( $this->Identifier, 'identifier' );
-            if ( strcmp( $validIdentifier, $this->Identifier ) != 0 )
+            if ( strcmp( (string) $validIdentifier, (string) $this->Identifier ) != 0 )
             {
                 // invalid identifier
                 $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Identifier: invalid, it can only consist of characters in the range a-z, 0-9 and underscore.' );
                 $isValid = false;
             }
-            else if ( strlen( $this->Identifier ) > self::MAX_IDENTIFIER_LENGTH )
+            else if ( strlen( (string) $this->Identifier ) > self::MAX_IDENTIFIER_LENGTH )
             {
                 $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Identifier: invalid, maximum %max characters allowed.',
-                                      null, array( '%max' => self::MAX_IDENTIFIER_LENGTH ) );
+                                      null, ['%max' => self::MAX_IDENTIFIER_LENGTH] );
                 $isValid = false;
             }
             else if ( isset( $this->GroupID ) )
@@ -461,7 +417,7 @@ class eZContentObjectState extends eZPersistentObject
             {
                 // if name nor description are set but translation is specified as main language
                 $isValid = false;
-                $messages[] = ezpI18n::tr( 'kernel/state/edit', '%language_name: this language is the default but neither name or description were provided for this language', null, array( '%language_name' => $translation->attribute( 'language' )->attribute( 'locale_object' )->attribute( 'intl_language_name' ) ) );
+                $messages[] = ezpI18n::tr( 'kernel/state/edit', '%language_name: this language is the default but neither name or description were provided for this language', null, ['%language_name' => $translation->attribute( 'language' )->attribute( 'locale_object' )->attribute( 'intl_language_name' )] );
             }
         }
 
@@ -498,10 +454,10 @@ class eZContentObjectState extends eZPersistentObject
                "ORDER BY g.identifier, s.priority";
         $db = eZDB::instance();
         $rows = $db->arrayQuery( $sql );
-        $limitationList = array();
+        $limitationList = [];
         foreach ( $rows as $row )
         {
-            $limitationList[] = array( 'name' => $row['group_identifier'] . '/' . $row['state_identifier'], 'id' => $row['id'] );
+            $limitationList[] = ['name' => $row['group_identifier'] . '/' . $row['state_identifier'], 'id' => $row['id']];
         }
 
         return $limitationList;
@@ -517,7 +473,7 @@ class eZContentObjectState extends eZPersistentObject
     {
         if ( !is_array( self::$Defaults ) )
         {
-            self::$Defaults = eZPersistentObject::fetchObjectList( self::definition(), null, array( 'priority' => 0 ) );
+            self::$Defaults = eZPersistentObject::fetchObjectList( self::definition(), null, ['priority' => 0] );
         }
 
         return self::$Defaults;
@@ -559,8 +515,8 @@ class eZContentObjectState extends eZPersistentObject
         $db = eZDB::instance();
         $db->begin();
         $db->query( "DELETE FROM ezcobj_state_link WHERE contentobject_state_id=$id" );
-        eZPersistentObject::removeObject( eZContentObjectStateLanguage::definition(), array( 'contentobject_state_id' => $id ) );
-        eZPersistentObject::removeObject( eZContentObjectState::definition(), array( 'id' => $id ) );
+        eZPersistentObject::removeObject( eZContentObjectStateLanguage::definition(), ['contentobject_state_id' => $id] );
+        eZPersistentObject::removeObject( eZContentObjectState::definition(), ['id' => $id] );
         $db->commit();
     }
 
@@ -575,9 +531,9 @@ class eZContentObjectState extends eZPersistentObject
         return $result[0]['object_count'];
     }
 
-    private $LanguageObject;
-    private $Translations;
-    private $AllTranslations;
-    private static $Defaults = null;
+    private ?\eZContentObjectStateLanguage $LanguageObject = null;
+    private ?array $Translations = null;
+    private ?array $AllTranslations = null;
+    private static ?array $Defaults = null;
 }
 ?>

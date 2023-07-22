@@ -15,27 +15,13 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'required' => true ),
-                                         'name' => array( 'name' => 'Name',
-                                                          'datatype' => 'string',
-                                                          'required' => true ),
-                                         'locale' => array( 'name' => 'Locale',
-                                                            'datatype' => 'string',
-                                                            'required' => true ),
-                                         'disabled' => array( 'name' => 'Disabled',     /* disabled is reserved for the future */
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => false ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'translation' => 'translation',
-                                                      'locale_object' => 'localeObject',
-                                                      'class_count' => 'classCount',
-                                                      'object_count' => 'objectCount' ),
-                      'sort' => array( 'name' => 'asc' ),
-                      'class_name' => 'eZContentLanguage',
-                      'name' => 'ezcontent_language' );
+        static $definition = ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'required' => true], 'name' => ['name' => 'Name', 'datatype' => 'string', 'required' => true], 'locale' => ['name' => 'Locale', 'datatype' => 'string', 'required' => true], 'disabled' => [
+            'name' => 'Disabled',
+            /* disabled is reserved for the future */
+            'datatype' => 'integer',
+            'default' => 0,
+            'required' => false,
+        ]], 'keys' => ['id'], 'function_attributes' => ['translation' => 'translation', 'locale_object' => 'localeObject', 'class_count' => 'classCount', 'object_count' => 'objectCount'], 'sort' => ['name' => 'asc'], 'class_name' => 'eZContentLanguage', 'name' => 'ezcontent_language'];
         return $definition;
     }
 
@@ -73,7 +59,7 @@ class eZContentLanguage extends eZPersistentObject
             return $existingLanguage;
         }
 
-        if ( count( $languages ) >= self::maxCount() )
+        if ( (is_countable($languages) ? count( $languages ) : 0) >= self::maxCount() )
         {
             eZDebug::writeError( 'Too many languages, cannot add more!', __METHOD__ );
             return false;
@@ -94,11 +80,7 @@ class eZContentLanguage extends eZPersistentObject
             $candidateId *= 2;
         }
 
-        $newLanguage = new eZContentLanguage( array(
-                                                  'id' => $candidateId,
-                                                  'locale' => $locale,
-                                                  'name' => $name,
-                                                  'disabled' => 0 ) );
+        $newLanguage = new eZContentLanguage( ['id' => $candidateId, 'locale' => $locale, 'name' => $name, 'disabled' => 0] );
         $newLanguage->store();
 
         $db->unlock();
@@ -190,7 +172,7 @@ class eZContentLanguage extends eZPersistentObject
 
         unset( $GLOBALS['eZContentLanguageList'] );
         unset( $GLOBALS['eZContentLanguageMask'] );
-        $GLOBALS['eZContentLanguageList'] = array();
+        $GLOBALS['eZContentLanguageList'] = [];
         $mask = 1; // we want have 0-th bit set too!
         foreach ( $languages as $language )
         {
@@ -213,11 +195,10 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function fetchLimitationList( $forceReloading = false )
     {
-        $languages = array();
+        $languages = [];
         foreach ( eZContentLanguage::fetchList( $forceReloading ) as $language )
         {
-            $languages[] = array( 'name' => $language->attribute( 'name' ),
-                                  'id' => $language->attribute( 'locale' ) );
+            $languages[] = ['name' => $language->attribute( 'name' ), 'id' => $language->attribute( 'locale' )];
         }
         return $languages;
     }
@@ -231,7 +212,7 @@ class eZContentLanguage extends eZPersistentObject
     static function fetchLocaleList()
     {
         $languages = eZContentLanguage::fetchList();
-        $localeList = array();
+        $localeList = [];
 
         foreach ( $languages as $language )
         {
@@ -252,7 +233,7 @@ class eZContentLanguage extends eZPersistentObject
     {
         $languages = eZContentLanguage::fetchList();
 
-        return isset( $languages[$id] )? $languages[$id]: false;
+        return $languages[$id] ?? false;
     }
 
     /**
@@ -295,7 +276,7 @@ class eZContentLanguage extends eZPersistentObject
     {
         if ( !isset( $GLOBALS['eZContentLanguagePrioritizedLanguages'] ) )
         {
-            $GLOBALS['eZContentLanguagePrioritizedLanguages'] = array();
+            $GLOBALS['eZContentLanguagePrioritizedLanguages'] = [];
 
             $ini = eZINI::instance();
 
@@ -312,10 +293,10 @@ class eZContentLanguage extends eZPersistentObject
 
             if ( !$languageList )
             {
-                $languageList = array( $ini->variable( 'RegionalSettings', 'ContentObjectLocale' ) );
+                $languageList = [$ini->variable( 'RegionalSettings', 'ContentObjectLocale' )];
             }
 
-            $processedLocaleCodes = array();
+            $processedLocaleCodes = [];
             foreach ( $languageList as $localeCode )
             {
                 if ( in_array( $localeCode, $processedLocaleCodes ) )
@@ -361,7 +342,7 @@ class eZContentLanguage extends eZPersistentObject
     static function prioritizedLanguageCodes()
     {
         $languages = eZContentLanguage::prioritizedLanguages();
-        $localeList = array();
+        $localeList = [];
 
         foreach ( $languages as $language )
         {
@@ -431,7 +412,7 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function languagesByMask( $mask )
     {
-        $result = array();
+        $result = [];
 
         $languages = eZContentLanguage::fetchList();
         foreach ( $languages as $key => $language )
@@ -453,7 +434,7 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function prioritizedLanguagesByMask( $mask )
     {
-        $result = array();
+        $result = [];
 
         $languages = eZContentLanguage::prioritizedLanguages();
         foreach ( $languages as $language )
@@ -476,7 +457,7 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function prioritizedLanguagesByLocaleList( $languageLocaleList )
     {
-        $result = array();
+        $result = [];
 
         if ( is_array( $languageLocaleList ) && count( $languageLocaleList ) > 0 )
         {
@@ -552,7 +533,7 @@ class eZContentLanguage extends eZPersistentObject
 
         if ( !is_array( $locales ) )
         {
-            $locales = array( $locales );
+            $locales = [$locales];
         }
 
         $mask = 0;
@@ -588,9 +569,9 @@ class eZContentLanguage extends eZPersistentObject
     public static function decodeLanguageMask( $langMask, $returnLanguageLocale = false )
     {
         $maxNumberOfLanguges = self::maxCount();
-        $maxInteger = pow( 2, $maxNumberOfLanguges );
+        $maxInteger = 2 ** $maxNumberOfLanguges;
 
-        $list = array();
+        $list = [];
 
         // Applying this bit-logic on negative numbers, or numbers out of bounds
         // will have unexpected results.
@@ -621,10 +602,7 @@ class eZContentLanguage extends eZPersistentObject
             }
         }
 
-        return array(
-                      'always_available' => $alwaysAvailable,
-                      'language_list'    => $list
-                    );
+        return ['always_available' => $alwaysAvailable, 'language_list'    => $list];
     }
 
     /**
@@ -715,7 +693,7 @@ class eZContentLanguage extends eZPersistentObject
             $rightSide = "  ( $languageTable.$languageAttributeName & 1 )\n";
         }
 
-        for ( $index = count( $prioritizedLanguages ) - 1, $multiplier = 2; $index >= 0; $index--, $multiplier *= 2 )
+        for ( $index = (is_countable($prioritizedLanguages) ? count( $prioritizedLanguages ) : 0) - 1, $multiplier = 2; $index >= 0; $index--, $multiplier *= 2 )
         {
             $id = $prioritizedLanguages[$index]->attribute( 'id' );
 
@@ -877,17 +855,16 @@ class eZContentLanguage extends eZPersistentObject
      */
     static function jsArrayByMask( $mask )
     {
-        $localList = array();
+        $localList = [];
         $languages = eZContentLanguage::prioritizedLanguagesByMask( $mask );
         foreach ( $languages as $key => $language )
         {
-            $localList[] = array( 'locale' => $language->attribute( 'locale' ),
-                                  'name'   => $language->attribute( 'name' ) );
+            $localList[] = ['locale' => $language->attribute( 'locale' ), 'name'   => $language->attribute( 'name' )];
         }
 
         if ( $localList )
         {
-            return json_encode( $localList );
+            return json_encode( $localList, JSON_THROW_ON_ERROR );
         }
         else
         {

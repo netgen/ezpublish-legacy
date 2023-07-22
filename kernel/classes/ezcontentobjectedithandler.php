@@ -29,7 +29,7 @@ class eZContentObjectEditHandler
     */
     static function storeActionList()
     {
-        return array();
+        return [];
     }
 
     /*!
@@ -47,7 +47,7 @@ class eZContentObjectEditHandler
     */
     function validateInput( $http, &$module, &$class, $object, &$version, $contentObjectAttributes, $editVersion, $editLanguage, $fromLanguage, $validationParameters )
     {
-        $result = array( 'is_valid' => true, 'warnings' => array() );
+        $result = ['is_valid' => true, 'warnings' => []];
 
         return $result;
     }
@@ -66,7 +66,7 @@ class eZContentObjectEditHandler
             {
                 include_once( $fileName );
                 $className = $extensionDirectory . 'Handler';
-                $storeActionList = call_user_func_array( array( $className, 'storeActionList' ), array() );
+                $storeActionList = call_user_func_array( [$className, 'storeActionList'], [] );
                 foreach( $storeActionList as $storeAction )
                 {
                     eZContentObjectEditHandler::addStoreAction( $storeAction );
@@ -85,7 +85,7 @@ class eZContentObjectEditHandler
     */
     static function executeHandlerFunction( $functionName, $params )
     {
-        $result = array();
+        $result = [];
         $contentINI = eZINI::instance( 'content.ini' );
         foreach( array_unique( $contentINI->variable( 'EditSettings', 'ExtensionDirectories' ) ) as $extensionDirectory )
         {
@@ -95,9 +95,8 @@ class eZContentObjectEditHandler
                 include_once( $fileName );
                 $className = $extensionDirectory . 'Handler';
                 $inputHandler = new $className();
-                $functionResult = call_user_func_array( array( $inputHandler, $functionName ), $params );
-                $result[] = array( 'handler' => $className,
-                                   'function' => array( 'name' => $functionName, 'value' => $functionResult ) );
+                $functionResult = call_user_func_array( [$inputHandler, $functionName], $params );
+                $result[] = ['handler' => $className, 'function' => ['name' => $functionName, 'value' => $functionResult]];
             }
         }
 
@@ -112,15 +111,7 @@ class eZContentObjectEditHandler
     {
         $http = eZHTTPTool::instance();
         $functionName = 'fetchInput';
-        $params = array( $http,
-                         &$module,
-                         &$class,
-                         $object,
-                         &$version,
-                         $contentObjectAttributes,
-                         $editVersion,
-                         $editLanguage,
-                         $fromLanguage );
+        $params = [$http, &$module, &$class, $object, &$version, $contentObjectAttributes, $editVersion, $editLanguage, $fromLanguage];
 
        self::executeHandlerFunction( $functionName, $params );
     }
@@ -132,7 +123,7 @@ class eZContentObjectEditHandler
     static function executePublish( $contentObjectID, $contentObjectVersion )
     {
         $functionName = 'publish';
-        $params = array( $contentObjectID, $contentObjectVersion );
+        $params = [$contentObjectID, $contentObjectVersion];
 
         self::executeHandlerFunction( $functionName, $params );
     }
@@ -143,23 +134,14 @@ class eZContentObjectEditHandler
     */
     static function validateInputHandlers( &$module, &$class, $object, &$version, $contentObjectAttributes, $editVersion, $editLanguage, $fromLanguage, $validationParameters )
     {
-        $result = array( 'validated' => true, 'warnings' => array() );
+        $result = ['validated' => true, 'warnings' => []];
         $validated =& $result['validated'];
         $warnings =& $result['warnings'];
 
         $http = eZHTTPTool::instance();
 
         $functionName = 'validateInput';
-        $params = array( $http,
-                         &$module,
-                         &$class,
-                         $object,
-                         &$version,
-                         $contentObjectAttributes,
-                         $editVersion,
-                         $editLanguage,
-                         $fromLanguage,
-                         $validationParameters );
+        $params = [$http, &$module, &$class, $object, &$version, $contentObjectAttributes, $editVersion, $editLanguage, $fromLanguage, $validationParameters];
 
         $validationResults = self::executeHandlerFunction( $functionName, $params );
 
@@ -189,7 +171,7 @@ class eZContentObjectEditHandler
     {
         if ( !isset( $GLOBALS['eZContentObjectEditHandler_StoreAction'] ) )
         {
-            $GLOBALS['eZContentObjectEditHandler_StoreAction'] = array();
+            $GLOBALS['eZContentObjectEditHandler_StoreAction'] = [];
         }
         $GLOBALS['eZContentObjectEditHandler_StoreAction'][] = $name;
     }

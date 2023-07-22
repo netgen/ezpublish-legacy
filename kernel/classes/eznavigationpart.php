@@ -42,14 +42,7 @@ class eZNavigationPart
     {
         $parts = eZNavigationPart::fetchList();
 
-        if ( isset( $parts[$identifier] ) )
-            return $parts[$identifier];
-
-        // Return the first part which is the default
-        if ( isset( $parts[0] ) )
-            return $parts[0];
-
-        return false;
+        return $parts[$identifier] ?? $parts[0] ?? false;
     }
 
     /*!
@@ -66,11 +59,10 @@ class eZNavigationPart
 
         $ini = eZINI::instance( 'menu.ini' );
         $parts = $ini->variable( 'NavigationPart', 'Part' );
-        $list = array();
+        $list = [];
         foreach ( $parts as $identifier => $name )
         {
-            $list[$identifier] = array( 'name' => ezpI18n::tr( 'kernel/navigationpart', $name, 'Navigation part' ),
-                                        'identifier' => $identifier );
+            $list[$identifier] = ['name' => ezpI18n::tr( 'kernel/navigationpart', $name, 'Navigation part' ), 'identifier' => $identifier];
         }
         return $list;
     }

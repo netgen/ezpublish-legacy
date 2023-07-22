@@ -15,12 +15,12 @@
 */
 class eZSimpleShippingType extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = 'ezsimpleshipping';
+    final public const WORKFLOW_TYPE_STRING = 'ezsimpleshipping';
 
     public function __construct()
     {
         parent::__construct( eZSimpleShippingType::WORKFLOW_TYPE_STRING, ezpI18n::tr( 'kernel/workflow/event', "Simple shipping" ) );
-        $this->setTriggerTypes( array( 'shop' => array( 'confirmorder' => array ( 'before' ) ) ) );
+        $this->setTriggerTypes( ['shop' => ['confirmorder' => ['before']]] );
     }
 
     function execute( $process, $event )
@@ -54,10 +54,7 @@ class eZSimpleShippingType extends eZWorkflowEventType
 
                 $cost = eZShopFunctions::convertAdditionalPrice( $orderCurrency, $cost );
 
-                $orderItem = new eZOrderItem( array( 'order_id' => $orderID,
-                                                     'description' => $description,
-                                                     'price' => $cost,
-                                                     'type' => 'ezsimpleshipping' )
+                $orderItem = new eZOrderItem( ['order_id' => $orderID, 'description' => $description, 'price' => $cost, 'type' => 'ezsimpleshipping']
                                               );
                 $orderItem->store();
             }

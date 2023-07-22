@@ -23,7 +23,7 @@ class ezpRestBasicAuthStyle extends ezpRestAuthenticationStyle implements ezpRes
 
         $cred = new ezcAuthenticationPasswordCredentials( $request->authentication->identifier,
                                                           md5( "{$request->authentication->identifier}\n{$request->authentication->password}" ) );
-        $authDbInfo = new ezcAuthenticationDatabaseInfo( ezcDbInstance::get(), 'ezuser', array( 'login', 'password_hash' ) );
+        $authDbInfo = new ezcAuthenticationDatabaseInfo( ezcDbInstance::get(), 'ezuser', ['login', 'password_hash'] );
 
         $auth = new ezcAuthentication( $cred );
         $auth->addFilter( new ezcAuthenticationDatabaseFilter( $authDbInfo ) );

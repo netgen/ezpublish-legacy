@@ -23,7 +23,6 @@ class eZCodePageCodec extends eZTextCodec
     public function __construct( $name )
     {
         parent::__construct( $name );
-        $this->CodePage = false;
     }
 
     function toUnicode( $str )
@@ -89,7 +88,7 @@ class eZCodePageCodec extends eZTextCodec
         $this->CodePage = $cp;
     }
 
-    public $CodePage;
+    public $CodePage = false;
 }
 
 ?>

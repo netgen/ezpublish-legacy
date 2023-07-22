@@ -25,44 +25,7 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'contentobject_id' => array( 'name' => 'ContentObjectID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         'user_identifier' => array( 'name' => 'UserIdentifier',
-                                                                     'datatype' => 'string',
-                                                                     'default' => '',
-                                                                     'required' => true ),
-                                         'creator_id' => array( 'name' => 'CreatorID',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'attributes' => 'informationCollectionAttributes',
-                                                      'data_map' => 'dataMap',
-                                                      'object' => 'object',
-                                                      'creator' => 'creator' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZInformationCollection',
-                      'name' => 'ezinfocollection' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'contentobject_id' => ['name' => 'ContentObjectID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'user_identifier' => ['name' => 'UserIdentifier', 'datatype' => 'string', 'default' => '', 'required' => true], 'creator_id' => ['name' => 'CreatorID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'function_attributes' => ['attributes' => 'informationCollectionAttributes', 'data_map' => 'dataMap', 'object' => 'object', 'creator' => 'creator'], 'increment_key' => 'id', 'class_name' => 'eZInformationCollection', 'name' => 'ezinfocollection'];
     }
 
     /*!
@@ -72,7 +35,7 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function attributeHideList()
     {
-        $attributes = array();
+        $attributes = [];
         $ini = eZINI::instance( 'collect.ini' );
         $attributes[] = $ini->variable( 'InfoSettings', 'TypeAttribute' );
         $attributes[] = $ini->variable( 'EmailSettings', 'SendEmailAttribute' );
@@ -271,7 +234,7 @@ class eZInformationCollection extends eZPersistentObject
         if ( !$userData )
             $userData = $ini->variable( 'CollectionSettings', 'CollectionUserData' );
 
-        if ( !in_array( $userData, array( 'multiple', 'unique', 'overwrite' ) ) )
+        if ( !in_array( $userData, ['multiple', 'unique', 'overwrite'] ) )
             $userData = 'unique';
 
         return $userData;
@@ -340,7 +303,7 @@ class eZInformationCollection extends eZPersistentObject
         if ( !$display )
             $display = $ini->variable( 'DisplaySettings', 'Display' );
 
-        if ( !in_array( $display, array( 'result', 'redirect', 'node' ) ) )
+        if ( !in_array( $display, ['result', 'redirect', 'node'] ) )
             $display = 'result';
 
         return $display;
@@ -387,7 +350,7 @@ class eZInformationCollection extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZInformationCollection::definition(),
                                                 null,
-                                                array( 'id' => $id ),
+                                                ['id' => $id],
                                                 $asObject );
     }
 
@@ -397,7 +360,7 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function fetchByUserIdentifier( $userIdentifier, $contentObjectID = false, $asObject = true )
     {
-        $conditions = array( 'user_identifier' => $userIdentifier );
+        $conditions = ['user_identifier' => $userIdentifier];
         if ( $contentObjectID )
             $conditions['contentobject_id'] = $contentObjectID;
         return eZPersistentObject::fetchObject( eZInformationCollection::definition(),
@@ -450,7 +413,7 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function getSortArrayFromParam( $definition, $sortArray )
     {
-        if ( count( $sortArray ) < 2 )
+        if ( (is_countable($sortArray) ? count( $sortArray ) : 0) < 2 )
         {
             return null;
         }
@@ -461,7 +424,7 @@ class eZInformationCollection extends eZPersistentObject
         if ( isset( $definition[ 'fields' ][ $sortField ] ) )
         {
             $sortDir = $sortArray[1] ? 'asc' : 'desc';
-            $sorts = array( $sortField => $sortDir );
+            $sorts = [$sortField => $sortDir];
             return $sorts;
         }
 
@@ -485,9 +448,9 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function fetchCollectionsList( $contentObjectID = false, $creatorID = false , $userIdentifier = false, $limitArray  = false, $sortArray = false, $asObject = true )
     {
-        $conditions = array();
+        $conditions = [];
         if ( $contentObjectID )
-            $conditions = array( 'contentobject_id' => $contentObjectID  );
+            $conditions = ['contentobject_id' => $contentObjectID];
         if ( $creatorID )
             $conditions['creator_id'] = $creatorID;
         if ( $userIdentifier )
@@ -506,14 +469,14 @@ class eZInformationCollection extends eZPersistentObject
         $sorts = null;
         if ( $sortArray !== false )
         {
-            if ( count( $sortArray ) >= 2 )
+            if ( (is_countable($sortArray) ? count( $sortArray ) : 0) >= 2 )
             {
-                $sorts = array();
+                $sorts = [];
                 $def = eZInformationCollection::definition();
 
                 if ( ! ( is_array( $sortArray[0] ) ) )
                 {
-                    $sortArray = array( 0 => $sortArray );
+                    $sortArray = [0 => $sortArray];
                 }
 
                 foreach ( $sortArray as $sortElement )
@@ -547,23 +510,22 @@ class eZInformationCollection extends eZPersistentObject
     */
     static function fetchCollectionsCount( $contentObjectID = false, $creatorID = false, $userIdentifier = false )
     {
-        $conditions = array();
+        $conditions = [];
         if ( is_numeric( $contentObjectID ) )
-            $conditions = array( 'contentobject_id' => $contentObjectID  );
+            $conditions = ['contentobject_id' => $contentObjectID];
         if ( is_numeric( $creatorID ) )
             $conditions['creator_id'] = $creatorID ;
         if ( $userIdentifier )
             $conditions['user_identifier'] = $userIdentifier;
 
         $resultSet = eZPersistentObject::fetchObjectList( eZInformationCollection::definition(),
-                                                          array(),
+                                                          [],
                                                           $conditions,
                                                           false,
                                                           null,
                                                           false,
                                                           false,
-                                                          array( array( 'operation' => 'count( id )',
-                                                                        'name' => 'count' ) ) );
+                                                          [['operation' => 'count( id )', 'name' => 'count']] );
         return $resultSet[0]['count'];
     }
 
@@ -579,7 +541,7 @@ class eZInformationCollection extends eZPersistentObject
                                        AND ezinfocollection_attribute.contentobject_attribute_id = '" . $objectAttributeID . "' " .  $valueSQL . "
                                        GROUP BY data_int" );
 
-        $result = array();
+        $result = [];
         foreach ( $resArray as $res )
         {
             $result[$res['data_int']] = $res['count'];
@@ -608,7 +570,7 @@ class eZInformationCollection extends eZPersistentObject
 
         if ( $asObject )
         {
-            $retArray = array();
+            $retArray = [];
             foreach ( $arrayRes as $row )
             {
                 $retArray[] = new eZInformationCollectionAttribute( $row );
@@ -633,7 +595,7 @@ class eZInformationCollection extends eZPersistentObject
         // Retrieve the indexed information collection attributes
         $informationCollectionAttributes = $this->informationCollectionAttributes();
 
-        $retArray = array();
+        $retArray = [];
 
         // Loop through each attribute hashing the array with the
         // class attribute identifier associated with the information
@@ -701,11 +663,7 @@ class eZInformationCollection extends eZPersistentObject
             $user = eZUser::currentUser();
             $creatorID = $user->id();
         }
-        $row = array( 'contentobject_id' => $contentObjectID,
-                      'user_identifier' => $userIdentifier,
-                      'creator_id' => $creatorID,
-                      'created' => $timestamp,
-                      'modified' => $timestamp );
+        $row = ['contentobject_id' => $contentObjectID, 'user_identifier' => $userIdentifier, 'creator_id' => $creatorID, 'created' => $timestamp, 'modified' => $timestamp];
         return new eZInformationCollection( $row );
     }
 

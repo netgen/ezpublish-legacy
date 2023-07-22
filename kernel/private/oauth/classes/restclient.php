@@ -71,7 +71,7 @@ class ezpRestClient
 
     public function getState()
     {
-        $result = array();
+        $result = [];
         $result['id'] = $this->id;
         $result['name'] = $this->name;
         $result['description'] = $this->description;
@@ -126,16 +126,10 @@ class ezpRestClient
      */
     public function __get( $propertyName )
     {
-        switch( $propertyName )
-        {
-            case 'owner':
-            {
-                return $this->_owner();
-            } break;
-
-            default:
-                throw new ezcBasePropertyNotFoundException( $propertyName );
-        }
+        return match ($propertyName) {
+            'owner' => $this->_owner(),
+            default => throw new ezcBasePropertyNotFoundException( $propertyName ),
+        };
     }
 
     /**
@@ -156,7 +150,7 @@ class ezpRestClient
 
     public function __isset( $propertyName )
     {
-        return in_array( $propertyName, array( 'owner' ) );
+        return in_array( $propertyName, ['owner'] );
     }
 
     /**
@@ -195,9 +189,9 @@ class ezpRestClient
     {
         $session = ezcPersistentSessionInstance::get();
 
-        $q = $session->createFindQuery( __CLASS__ );
+        $q = $session->createFindQuery( self::class );
         $q->where( $q->expr->eq( 'client_id', $q->bindValue( $clientId ) ) );
-        $results = $session->find( $q, __CLASS__ );
+        $results = $session->find( $q, self::class );
         if ( count( $results ) != 1 )
             return false;
         else
@@ -225,7 +219,7 @@ class ezpRestClient
      *
      * @todo Handle non-authorization using
      */
-    public function isAuthorizedByUser( $scope, $user = null )
+    public function isAuthorizedByUser( mixed $scope, $user = null )
     {
         if ( $user === null )
             $user = eZUser::currentUser();
@@ -264,7 +258,7 @@ class ezpRestClient
         return ( $endPointUri === $this->endpoint_uri );
     }
 
-    const STATUS_DRAFT = 1;
-    const STATUS_PUBLISHED = 0;
+    final public const STATUS_DRAFT = 1;
+    final public const STATUS_PUBLISHED = 0;
 }
 ?>

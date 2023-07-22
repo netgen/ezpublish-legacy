@@ -51,7 +51,7 @@ class ezpRestCacheStorageClusterObject extends ezpRestCacheStorageCluster
         if ( ( is_object( $data ) && !( $data instanceof ezcBaseExportable ) )
              || is_resource( $data ) )
         {
-            throw new ezcCacheInvalidDataException( gettype( $data ), array( 'scalar', 'array', 'ezcBaseExportable' ) );
+            throw new ezcCacheInvalidDataException( gettype( $data ), ['scalar', 'array', 'ezcBaseExportable'] );
         }
         return "<?php\nreturn " . var_export( $data, true ) . ";\n?>\n";
     }

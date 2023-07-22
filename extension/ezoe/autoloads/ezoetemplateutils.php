@@ -37,7 +37,7 @@ class eZOETemplateUtils
 {
     function operatorList()
     {
-        return array( 'ezoe_ini_section' );
+        return ['ezoe_ini_section'];
     }
 
     function namedParameterPerOperator()
@@ -47,15 +47,7 @@ class eZOETemplateUtils
 
     function namedParameterList()
     {
-        return array( 'ezoe_ini_section' => array( 'section' => array( 
-                                                       'type' => 'string',
-                                                       'required' => true,
-                                                       'default' => '' ),
-                                                   'file' => array( 
-                                                       'type' => 'string',
-                                                       'required' => false,
-                                                       'default' => 'site.ini' )
-                                           ));
+        return ['ezoe_ini_section' => ['section' => ['type' => 'string', 'required' => true, 'default' => ''], 'file' => ['type' => 'string', 'required' => false, 'default' => 'site.ini']]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters )

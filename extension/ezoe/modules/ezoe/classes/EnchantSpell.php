@@ -22,11 +22,11 @@ class EnchantSpell extends SpellChecker {
 		if (enchant_broker_dict_exists($r,$lang)) {
 			$d = enchant_broker_request_dict($r, $lang);
 			
-			$returnData = array();
+			$returnData = [];
 			foreach($words as $key => $value) {
 				$correct = enchant_dict_check($d, $value);
 				if(!$correct) {
-					$returnData[] = trim($value);
+					$returnData[] = trim((string) $value);
 				}
 			}
 	
@@ -47,7 +47,7 @@ class EnchantSpell extends SpellChecker {
 	 */
 	function &getSuggestions($lang, $word) {
 		$r = enchant_broker_init();
-		$suggs = array();
+		$suggs = [];
 
 		if (enchant_broker_dict_exists($r,$lang)) {
 			$d = enchant_broker_request_dict($r, $lang);

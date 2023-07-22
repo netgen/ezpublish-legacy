@@ -161,15 +161,15 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         $i = 0;
 
         $path = 'var/tests/'  . __FUNCTION__ . '/cache.txt';
-        $content = array( __METHOD__, 2, 3, 4 );
-        $newContent = array( __METHOD__, 5, 6, 7 );
-        $extradata = array( 'content' => $content );
+        $content = [__METHOD__, 2, 3, 4];
+        $newContent = [__METHOD__, 5, 6, 7];
+        $extradata = ['content' => $content];
 
         // Create the cache item, and expire it
         $ch = eZClusterFileHandler::instance( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         $ch->loadMetaData( true );
         self::assertEquals( $extradata['content'], $result );
@@ -180,7 +180,7 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         // Re-process the deleted item without a generate callback (stay in generation mode)
         $chGenerate = eZClusterFileHandler::instance( $path );
         $result = $chGenerate->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
+            $this->processCacheRetrieveCallback(...),
             null,
             null, null, $extradata );
         self::assertNotEquals( $content, $result, "Generation start" );
@@ -190,8 +190,8 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         // call the same function another time to trigger stalecache
         $ch = eZClusterFileHandler::instance( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         self::assertEquals( $content, $result, "Stalecache content" );
 
@@ -199,23 +199,23 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         $ch->deleteLocal();
         clearstatcache( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         self::assertEquals( $content, $result, "Stalecache content" );
         unset( $ch );
 
         // store the new cache contents
         $chGenerate->storeCache(
-            self::processCacheGenerateCallback( $path, array('content' => $newContent ) ) );
+            self::processCacheGenerateCallback( $path, ['content' => $newContent] ) );
         $chGenerate->loadMetaData( true );
         unset( $chGenerate );
 
         // re-request the cache a last time and check that it matches the new content
         $ch = eZClusterFileHandler::instance( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         self::assertEquals( $newContent, $result, "New content" );
         unset( $ch );
@@ -225,8 +225,8 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         touch( $path, strtotime( '-1 hour' ) );
         clearstatcache( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         self::assertEquals( $newContent, $result, "New content" );
         unset( $ch );
@@ -281,12 +281,7 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
         /** Add random content ?
          * Idea: use extra data to carry options around from {@link testProcessCache}
          */
-        return array(
-            'content' => $extraData['content'],
-            'scope' => 'test',
-            'datatype' => 'text/plain',
-            'store' => true // required because eZFS2 doesn't store by default. See the todo at the end of the processCache method.
-        );
+        return ['content' => $extraData['content'], 'scope' => 'test', 'datatype' => 'text/plain', 'store' => true];
     }
 
     /**
@@ -307,12 +302,12 @@ abstract class eZClusterStaleCacheTest extends ezpDatabaseTestCase
      *        Can also be an array of path
      * @todo Refactor. Copy/Paste of code is bad.
      */
-    protected static function deleteLocalFiles( $path )
+    protected static function deleteLocalFiles( mixed $path )
     {
         foreach( func_get_args() as $item )
         {
             if ( !is_array( $item ) )
-                $item = array( $item );
+                $item = [$item];
             foreach( $item as $path )
             {
                 if ( file_exists( $path ) )

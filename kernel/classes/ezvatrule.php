@@ -18,38 +18,12 @@ class eZVatRule extends eZPersistentObject
 {
     public function __construct( $row )
     {
-        $this->ProductCategories = null;
         parent::__construct( $row );
     }
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "country_code"=> array ( 'name' => 'CountryCode',
-                                                                  'datatype' => 'string',
-                                                                  'default' => null,
-                                                                  'required' => true ),
-                                         "vat_type" => array( 'name' => "VatType",
-                                                              'datatype' => 'integer',
-                                                              'default' => null,
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZVatType',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*') ),
-                      "function_attributes" => array( 'product_categories' => 'productCategories',
-                                                      'product_categories_string' => 'productCategoriesString',
-                                                      'product_categories_ids' => 'productCategoriesIDs',
-                                                      'product_categories_names' => 'productCategoriesNames',
-                                                      'vat_type_object' => 'vatTypeObject',
-                                                      'vat_type_name' => 'vatTypeName',
-                                                      'country' => 'country' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZVatRule",
-                      "name" => "ezvatrule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "country_code"=> ['name' => 'CountryCode', 'datatype' => 'string', 'default' => null, 'required' => true], "vat_type" => ['name' => "VatType", 'datatype' => 'integer', 'default' => null, 'required' => true, 'foreign_class' => 'eZVatType', 'foreign_attribute' => 'id', 'multiplicity' => '1..*']], "function_attributes" => ['product_categories' => 'productCategories', 'product_categories_string' => 'productCategoriesString', 'product_categories_ids' => 'productCategoriesIDs', 'product_categories_names' => 'productCategoriesNames', 'vat_type_object' => 'vatTypeObject', 'vat_type_name' => 'vatTypeName', 'country' => 'country'], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZVatRule", "name" => "ezvatrule"];
     }
 
     function setAttribute( $attr, $val )
@@ -72,7 +46,7 @@ class eZVatRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZVatRule::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 true );
     }
 
@@ -80,7 +54,7 @@ class eZVatRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZVatRule::definition(),
                                                     null, null,
-                                                    array( 'id' => 'asc' ),
+                                                    ['id' => 'asc'],
                                                     null, true );
     }
 
@@ -94,7 +68,7 @@ class eZVatRule extends eZPersistentObject
     static function fetchByVatType( $vatID )
     {
         return eZPersistentObject::fetchObjectList( eZVatRule::definition(), null,
-                                                     array( 'vat_type' => (int) $vatID ),
+                                                     ['vat_type' => (int) $vatID],
                                                      null, null, true, false, null );
     }
 
@@ -136,24 +110,19 @@ class eZVatRule extends eZPersistentObject
     static function fetchCountByVatType( $vatID )
     {
         $rows = eZPersistentObject::fetchObjectList( eZVatRule::definition(),
-                                                     array(),
-                                                     array( 'vat_type' => (int) $vatID ),
+                                                     [],
+                                                     ['vat_type' => (int) $vatID],
                                                      false,
                                                      null,
                                                      false,
                                                      false,
-                                                     array( array( 'operation' => 'count( * )',
-                                                                   'name' => 'count' ) ) );
+                                                     [['operation' => 'count( * )', 'name' => 'count']] );
         return $rows[0]['count'];
     }
 
     static function create()
     {
-        $row = array(
-            "id" => null,
-            "country_code" => null,
-            "vat_type" => null
-            );
+        $row = ["id" => null, "country_code" => null, "vat_type" => null];
         return new eZVatRule( $row );
     }
 
@@ -170,7 +139,7 @@ class eZVatRule extends eZPersistentObject
         eZVatRule::removeProductCategories( $id );
 
         // Remove the rule itself.
-        eZPersistentObject::removeObject( eZVatRule::definition(), array( "id" => $id ) );
+        eZPersistentObject::removeObject( eZVatRule::definition(), ["id" => $id] );
 
         $db->commit();
     }
@@ -233,7 +202,7 @@ class eZVatRule extends eZPersistentObject
             return $result;
         }
 
-        $categoriesNames = array();
+        $categoriesNames = [];
         foreach ( $categories as $cat )
             $categoriesNames[] = $cat['name'];
 
@@ -247,7 +216,7 @@ class eZVatRule extends eZPersistentObject
      */
     function productCategoriesIDs()
     {
-        $catIDs = array();
+        $catIDs = [];
         $categories = $this->attribute( 'product_categories' );
 
         if ( $categories )
@@ -266,7 +235,7 @@ class eZVatRule extends eZPersistentObject
      */
     function productCategoriesNames()
     {
-        $catNames = array();
+        $catNames = [];
         $categories = $this->attribute( 'product_categories' );
 
         if ( $categories )
@@ -345,7 +314,7 @@ class eZVatRule extends eZPersistentObject
     }
 
 
-    public $ProductCategories;
+    public $ProductCategories = null;
 }
 
 ?>

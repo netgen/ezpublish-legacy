@@ -17,12 +17,7 @@ class eZHTTPToolTest extends ezpTestCase
      */
     public static function providerTestGetDataByURL()
     {
-        return array(
-            array( 'Error: this web page does only understand POST methods', 'http://soap.critmon1.ez.no' ),
-            array( 'Error: this web page does only understand POST methods', 'https://soap.critmon1.ez.no' ),
-            array( true, 'http://soap.critmon1.ez.no', true ),
-            array( true, 'https://soap.critmon1.ez.no', true ),
-        );
+        return [['Error: this web page does only understand POST methods', 'http://soap.critmon1.ez.no'], ['Error: this web page does only understand POST methods', 'https://soap.critmon1.ez.no'], [true, 'http://soap.critmon1.ez.no', true], [true, 'https://soap.critmon1.ez.no', true]];
     }
 
     /**
@@ -32,16 +27,16 @@ class eZHTTPToolTest extends ezpTestCase
     {
         self::markTestSkipped( "Test disabled as critmon has been shut down. Needs a different server or way of doing this." );
 
-        $this->assertEquals( eZHTTPTool::getDataByURL( $url, $justCheckURL, $userAgent ), $expectedDataResult );
+        static::assertEquals(eZHTTPTool::getDataByURL( $url, $justCheckURL, $userAgent ), $expectedDataResult);
 
         // There's no way to test the whole method without refactoring it.
         if ( extension_loaded( 'curl' ) )
         {
-            $this->markTestIncomplete( 'cURL behaviour tested, not fopen()' );
+            static::markTestIncomplete('cURL behaviour tested, not fopen()');
         }
         else
         {
-            $this->markTestIncomplete( 'fopen() behaviour tested, not cURL' );
+            static::markTestIncomplete('fopen() behaviour tested, not cURL');
         }
     }
 }

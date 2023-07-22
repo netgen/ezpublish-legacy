@@ -16,12 +16,9 @@ $ini = eZINI::instance();
 
 $tpl->setVariable( "verify_user_email", $ini->variable( 'UserSettings', 'VerifyUserType' ) === "email" );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:user/success.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Success' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Success' ), 'url' => false]];
 if ( $ini->variable( 'SiteSettings', 'LoginPage' ) == 'custom' )
     $Result['pagelayout'] = 'loginpagelayout.tpl';
 

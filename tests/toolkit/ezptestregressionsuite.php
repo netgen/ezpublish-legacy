@@ -76,7 +76,7 @@ class ezpTestRegressionSuite extends PHPUnit_Framework_TestSuite
             return;
         }
 
-        $names = array();
+        $names = [];
 /*
         if ( $theClass->getName() !== 'ezcTestRegressionTest'
              && !$theClass->isSubclassOf( 'ezcTestRegressionTest' ) )

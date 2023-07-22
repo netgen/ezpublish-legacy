@@ -12,27 +12,18 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Database Converter\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Database Converter\n\n" .
                                                         "Convert the database to the given type\n".
-                                                        "ezconvertmysqltabletype.php [--host=VALUE --user=VALUE --database=VALUE [--password=VALUE]] [--list] [--newtype=TYPE] [--usecopy]" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+                                                        "ezconvertmysqltabletype.php [--host=VALUE --user=VALUE --database=VALUE [--password=VALUE]] [--list] [--newtype=TYPE] [--usecopy]" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[host:][user:][password:][database:][list][newtype:][usecopy]",
                                 "",
-                                array(
-                                       'list' => "List the table types",
-                                       'host' => "Connect to host database",
-                                       'user' => "User for login to the database",
-                                       'password' => "Password to use when connecting to the database",
-                                       'newtype' => "Convert the database to the given type.\nType can either be: myisam or innodb\n".
-                                                    "Make sure that you have made a BACKUP UP of YOUR DATABASE!",
-                                       'usecopy' => "To convert the table we rename the original table and copy the data to the new table structure.\n".
-                                                    "This conversion method is much slower and has a higher risk to corrupt the data in the database.\n".
-                                                    "However this option may circumvent the MySQL crash on the ALTER query." )
+                                ['list' => "List the table types", 'host' => "Connect to host database", 'user' => "User for login to the database", 'password' => "Password to use when connecting to the database", 'newtype' => "Convert the database to the given type.\nType can either be: myisam or innodb\n".
+                                             "Make sure that you have made a BACKUP UP of YOUR DATABASE!", 'usecopy' => "To convert the table we rename the original table and copy the data to the new table structure.\n".
+                                             "This conversion method is much slower and has a higher risk to corrupt the data in the database.\n".
+                                             "However this option may circumvent the MySQL crash on the ALTER query."]
                               );
 $script->initialize();
 
@@ -64,7 +55,7 @@ else
 function checkParameters( $cli, $script, $options, $host, $user, $password, $database, $listMode, $newType )
 {
     // Extra parameters are not tolerated.
-    if ( count ( $options['arguments'] ) != 0 )
+    if ( (is_countable($options['arguments']) ? count ( $options['arguments'] ) : 0) != 0 )
     {
             $cli->error( "Unknown parameters" );
             $script->shutdown( 1 );
@@ -84,7 +75,7 @@ function checkParameters( $cli, $script, $options, $host, $user, $password, $dat
     // If the newType is set, check whether the given type exist.
     if ( $newType )
     {
-        switch ( strtolower( $newType ) )
+        switch ( strtolower( (string) $newType ) )
         {
             case "innodb": break;
             case "myisam": break;
@@ -100,7 +91,7 @@ function checkParameters( $cli, $script, $options, $host, $user, $password, $dat
 function eZTriedDatabaseString( $database, $host, $user, $password )
 {
     $msg = "'$database'";
-    if ( strlen( $host ) > 0 )
+    if ( strlen( (string) $host ) > 0 )
     {
         $msg .= " at host '$host'";
     }
@@ -108,11 +99,11 @@ function eZTriedDatabaseString( $database, $host, $user, $password )
     {
         $msg .= " locally";
     }
-    if ( strlen( $user ) > 0 )
+    if ( strlen( (string) $user ) > 0 )
     {
         $msg .= " with user '$user'";
     }
-    if ( strlen( $password ) > 0 )
+    if ( strlen( (string) $password ) > 0 )
         $msg .= " and with a password";
     return $msg;
 }
@@ -125,10 +116,7 @@ function connectToDatabase( $cli, $script, $host, $user, $password, $database )
     if ( $user )
     {
         $db = eZDB::instance( "mysql",
-                           array( 'server' => $host,
-                                  'user' => $user,
-                                  'password' => $password,
-                                  'database' => $database ) );
+                           ['server' => $host, 'user' => $user, 'password' => $password, 'database' => $database] );
     } else
     {
          $db = eZDB::instance();
@@ -169,7 +157,7 @@ function connectToDatabase( $cli, $script, $host, $user, $password, $database )
 function getTableType( $db, $tableName )
 {
     $res = $db->arrayQuery( "SHOW CREATE TABLE `$tableName`" );
-    preg_match( '/(?:TYPE|ENGINE)=(\w*)/', $res[0]["Create Table"], $grep );
+    preg_match( '/(?:TYPE|ENGINE)=(\w*)/', (string) $res[0]["Create Table"], $grep );
     return $grep[1];
 }
 
@@ -185,8 +173,8 @@ function listTypes( $cli, $db )
         $tableName = current( $table );
         $tableType = getTableType( $db, $tableName );
 
-        $spaces = str_pad(' ', 40 - strlen( $tableName ) );
-        $eZpublishTable = strncmp( $tableName, "ez", 2 ) == 0 ? "" : "(non eZ Publish)";
+        $spaces = str_pad(' ', 40 - strlen( (string) $tableName ) );
+        $eZpublishTable = str_starts_with((string) $tableName, "ez") ? "" : "(non eZ Publish)";
         $cli->output( "$tableName $spaces $tableType $eZpublishTable" );
     }
 }
@@ -210,9 +198,9 @@ function createTableStructure( $db, $tableFrom, $tableTo, $newType )
 {
     $res = $db->arrayQuery( "SHOW CREATE TABLE `$tableFrom`" );
 
-    $pattern = array( "/(TYPE|ENGINE)=(\w*)/", "/TABLE `$tableFrom`/" );
-    $replacement = array( "ENGINE=$newType", "TABLE `$tableTo`" );
-    $structure = preg_replace( $pattern, $replacement, $res[0]["Create Table"] );
+    $pattern = ["/(TYPE|ENGINE)=(\w*)/", "/TABLE `$tableFrom`/"];
+    $replacement = ["ENGINE=$newType", "TABLE `$tableTo`"];
+    $structure = preg_replace( $pattern, $replacement, (string) $res[0]["Create Table"] );
 
     $db->query( $structure );
 }
@@ -231,11 +219,11 @@ function setNewType( $cli, $db, $newType, $usecopy )
         $tableName = current( $table );
 
         // Checking if it is necessary to convert the table.
-        if ( strncmp( $tableName, "ez", 2 ) != 0 )
+        if ( !str_starts_with((string) $tableName, "ez") )
         {
             $cli->notice( "Skipping table $tableName because it is not an eZ Publish table" );
         }
-        else if ( strcasecmp( getTableType( $db, $tableName ), $newType ) == 0 )
+        else if ( strcasecmp( (string) getTableType( $db, $tableName ), (string) $newType ) == 0 )
         {
             $cli->notice( "Skipping table $tableName because it has already the $newType type" );
         }

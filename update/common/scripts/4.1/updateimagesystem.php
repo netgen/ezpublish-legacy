@@ -11,7 +11,7 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Update all attributes with datatype ezimage to use the new image system introduced in eZ Publish 3.3';
 $scriptSettings['use-session'] = true;
 $scriptSettings['use-modules'] = false;
@@ -39,8 +39,8 @@ $imageManager = eZImageManager::factory();
 
 $contentObjectAttributes = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(),
                                                                 null,
-                                                                array( 'data_type_string' => 'ezimage' ) );
-$script->resetIteration( count( $contentObjectAttributes ) );
+                                                                ['data_type_string' => 'ezimage'] );
+$script->resetIteration( count( (array) $contentObjectAttributes ) );
 
 foreach ( $contentObjectAttributes as $contentObjectAttribute )
 {
@@ -95,11 +95,11 @@ foreach ( $contentObjectAttributes as $contentObjectAttribute )
             $filePath = $dirPath . '/' . $fileName;
 
             $baseName = $fileName;
-            $dotPosition = strrpos( $fileName, '.' );
+            $dotPosition = strrpos( (string) $fileName, '.' );
             if ( $dotPosition !== false )
             {
-                $baseName = substr( $fileName, 0, $dotPosition );
-                $suffix = substr( $fileName, $dotPosition + 1 );
+                $baseName = substr( (string) $fileName, 0, $dotPosition );
+                $suffix = substr( (string) $fileName, $dotPosition + 1 );
             }
 
             $width = false;
@@ -108,7 +108,7 @@ foreach ( $contentObjectAttributes as $contentObjectAttribute )
             if ( !$fileExists )
             {
                 $referenceDirPath = eZSys::storageDirectory() . '/reference/image';
-                $suffixList = array( 'jpg', 'png', 'gif' );
+                $suffixList = ['jpg', 'png', 'gif'];
                 foreach ( $suffixList as $suffix )
                 {
                     $referenceFilePath = $referenceDirPath . '/' . $baseName . '.' . $suffix;

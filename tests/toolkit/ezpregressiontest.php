@@ -21,9 +21,9 @@ abstract class ezpRegressionTest extends ezpTestCase
      * How to sort the test files: 'mtime' sorts by modification time, any other
      * value sorts by name.
      */
-    const SORT_MODE = 'name';
+    final public const SORT_MODE = 'name';
 
-    protected $files = array();
+    protected $files = [];
     protected $currentFile;
 
     public function __construct()
@@ -33,13 +33,13 @@ abstract class ezpRegressionTest extends ezpTestCase
         {
             // Sort by modification time to get updated tests first
             usort( $this->files,
-                   array( $this, 'sortTestsByMtime' ) );
+                   $this->sortTestsByMtime(...) );
         }
         else
         {
             // Sort it, then the file a.in will be processed first. Handy for development.
             usort( $this->files,
-                   array( $this, 'sortTestsByName' ) );
+                   $this->sortTestsByName(...) );
         }
     }
 
@@ -93,8 +93,7 @@ abstract class ezpRegressionTest extends ezpTestCase
                     if ( !$onlyWithExtension ||
                          substr( $file,  -$extensionLength - 1 ) === ".{$onlyWithExtension}" )
                     {
-                        $total[] = array( 'file' => $new,
-                                          'mtime' => filemtime( $new ) );
+                        $total[] = ['file' => $new, 'mtime' => filemtime( $new )];
                     }
                 }
                 elseif ( is_dir( $new ) )
@@ -111,17 +110,17 @@ abstract class ezpRegressionTest extends ezpTestCase
         {
             return $a['mtime'] < $b['mtime'] ? 1 : -1;
         }
-        return strnatcmp( $a['file'], $b['file'] );
+        return strnatcmp( (string) $a['file'], (string) $b['file'] );
     }
 
     final protected function sortTestsByName( $a, $b )
     {
-        return strnatcmp( $a['file'], $b['file'] );
+        return strnatcmp( (string) $a['file'], (string) $b['file'] );
     }
 
     final protected function outFileName( $file, $inExtension, $outExtension = '.out' )
     {
-        $baseFile = substr( $file, 0, strlen( $file ) - strlen( $inExtension ) );
+        $baseFile = substr( (string) $file, 0, strlen( (string) $file ) - strlen( (string) $inExtension ) );
         return $baseFile . $outExtension;
     }
 
@@ -129,7 +128,7 @@ abstract class ezpRegressionTest extends ezpTestCase
     {
         if ( $this->currentFile === false )
         {
-            throw new PHPUnit_Framework_ExpectationFailedException( "No currentFile set for test " . __CLASS__ );
+            throw new PHPUnit_Framework_ExpectationFailedException( "No currentFile set for test " . self::class );
         }
 
         $exception = null;
@@ -167,7 +166,7 @@ abstract class ezpRegressionTest extends ezpTestCase
      */
     public static function suite()
     {
-        return new ezpTestRegressionSuite( get_called_class() );
+        return new ezpTestRegressionSuite( static::class );
     }
 }
 ?>

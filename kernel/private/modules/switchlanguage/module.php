@@ -8,15 +8,11 @@
  * @package kernel
  */
 
-$Module = array( "name" => "SwitchLanguage",
-                 "var_params" => false );
+$Module = ["name" => "SwitchLanguage", "var_params" => false];
 
-$ViewList = array();
-$ViewList['to'] = array(
-    "script" => "to.php",
-    "params" => array( "SiteAccess" ),
-    );
+$ViewList = [];
+$ViewList['to'] = ["script" => "to.php", "params" => ["SiteAccess"]];
 
-$FunctionList = array();
+$FunctionList = [];
 
 ?>

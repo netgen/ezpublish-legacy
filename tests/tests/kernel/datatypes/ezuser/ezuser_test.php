@@ -57,7 +57,7 @@ class eZUserTest extends ezpDatabaseTestCase
         $rows = $db->arrayQuery( "SELECT * FROM ezuser where login = '{$this->username}'" );
         if ( count( $rows ) !== 1 )
         {
-            $this->fail( "User {$this->username} is not in database.");
+            static::fail("User {$this->username} is not in database.");
         }
         // Not used in this test
         $passwordHashMD5Password = $rows[0]['password_hash'];
@@ -73,7 +73,7 @@ class eZUserTest extends ezpDatabaseTestCase
         // Verify that the email and password were accepted
         if ( !( $user instanceof eZUser ) )
         {
-            $this->fail( "User {$this->email} is not in database.");
+            static::fail("User {$this->email} is not in database.");
         }
 
         // Get the password_hash
@@ -86,7 +86,7 @@ class eZUserTest extends ezpDatabaseTestCase
         $hashMD5Expected = md5( "{$this->username}\n{$this->password}" );
 
         // Verify that the 2 password hashes saved above are the same
-        $this->assertEquals( $hashMD5Expected, $passwordHashMD5User );
+        static::assertEquals($hashMD5Expected, $passwordHashMD5User);
 
         // Verify that the user can still login with username
         $userClass = eZUserLoginHandler::instance( 'standard' );
@@ -95,7 +95,7 @@ class eZUserTest extends ezpDatabaseTestCase
         // Verify that the username and password were accepted
         if ( !( $user instanceof eZUser ) )
         {
-            $this->fail( "User {$this->username} is not in database.");
+            static::fail("User {$this->username} is not in database.");
         }
     }
 }

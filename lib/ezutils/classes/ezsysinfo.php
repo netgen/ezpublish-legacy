@@ -40,11 +40,7 @@ class eZSysInfo
     */
     function attributes()
     {
-        return array( 'is_valid',
-                      'cpu_type',
-                      'cpu_unit',
-                      'cpu_speed',
-                      'memory_size' );
+        return ['is_valid', 'cpu_type', 'cpu_unit', 'cpu_speed', 'memory_size'];
     }
 
     /*!
@@ -202,13 +198,13 @@ class eZSysInfo
         $fileLines = file( $cpuinfoPath );
         foreach ( $fileLines as $line )
         {
-            if ( substr( $line, 0, 7 ) == 'cpu MHz' )
+            if ( str_starts_with($line, 'cpu MHz') )
             {
                 $cpu = trim( substr( $line, 11, strlen( $line ) - 11 ) );
                 $this->CPUSpeed = $cpu;
                 $this->CPUUnit = 'MHz';
             }
-            if ( substr( $line, 0, 10 ) == 'model name' )
+            if ( str_starts_with($line, 'model name') )
             {
                 $system = trim( substr( $line, 13, strlen( $line ) - 13 ) );
                 $this->CPUType = $system;
@@ -222,7 +218,7 @@ class eZSysInfo
         $fileLines = file( $meminfoPath );
         foreach ( $fileLines as $line )
         {
-            if ( substr( $line, 0, 8 ) == 'MemTotal' )
+            if ( str_starts_with($line, 'MemTotal') )
             {
                 $mem = trim( substr( $line, 11, strlen( $line ) - 11 ) );
                 $memBytes = $mem;
@@ -271,7 +267,7 @@ class eZSysInfo
         $fileLines = file( $dmesgPath );
         foreach ( $fileLines as $line )
         {
-            if ( substr( $line, 0, 3 ) == 'CPU' )
+            if ( str_starts_with($line, 'CPU') )
             {
                 $system = trim( substr( $line, 4, strlen( $line ) - 4 ) );
                 $cpu = false;
@@ -286,7 +282,7 @@ class eZSysInfo
                 $this->CPUType = $system;
                 $this->CPUUnit = $cpuunit;
             }
-            if ( substr( $line, 0, 11 ) == 'real memory' )
+            if ( str_starts_with($line, 'real memory') )
             {
                 $mem = trim( substr( $line, 12, strlen( $line ) - 12 ) );
                 $memBytes = $mem;

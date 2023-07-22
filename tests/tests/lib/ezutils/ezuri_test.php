@@ -44,7 +44,7 @@ class eZURITest extends ezpTestCase
         $ezuri = eZURI::instance();
         $ezuri2 = eZURI::instance();
 
-        $this->assertSame( $ezuri2, $ezuri, $docstring );
+        static::assertSame($ezuri2, $ezuri, $docstring);
     }
 
     public function testInstanceRepeatCallsWithSameUri()
@@ -58,7 +58,7 @@ class eZURITest extends ezpTestCase
         $ezuri = eZURI::instance( $uri );
         $ezuri2 = eZURI::instance( $uri );
 
-        $this->assertNotSame( $ezuri, $ezuri2, $docstring );
+        static::assertNotSame($ezuri, $ezuri2, $docstring);
     }
 
     public function testInstanceRepeatCallsWithDifferentUri()
@@ -75,9 +75,9 @@ class eZURITest extends ezpTestCase
         $ezuri1 = eZURI::instance( $uri1 );
         $ezuri2 = eZURI::instance( $uri2 );
 
-        $this->assertNotSame( $ezuri, $ezuri1, $docstring );
-        $this->assertNotSame( $ezuri, $ezuri2, $docstring );
-        $this->assertNotSame( $ezuri1, $ezuri2, $docstring );
+        static::assertNotSame($ezuri, $ezuri1, $docstring);
+        static::assertNotSame($ezuri, $ezuri2, $docstring);
+        static::assertNotSame($ezuri1, $ezuri2, $docstring);
     }
 }
 

@@ -19,6 +19,7 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
      */
     public function testIssue15155()
     {
+        $originalAliases = [];
         // figure out the max versions for images
         $contentINI = eZINI::instance( 'content.ini' );
         $versionlimit = $contentINI->variable( 'VersionManagement', 'DefaultVersionHistoryLimit' );
@@ -36,10 +37,10 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
             $versionlimit = 2;
         }
 
-        $baseImagePath = dirname( __FILE__ ) . '/ezimagealiashandler_regression_issue15155.png';
+        $baseImagePath = __DIR__ . '/ezimagealiashandler_regression_issue15155.png';
         $parts = pathinfo( $baseImagePath );
         $imagePattern = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '_%s_%d.' . $parts['extension'];
-        $toDelete = array();
+        $toDelete = [];
 
         // Create version 1
         $imagePath = sprintf( $imagePattern, md5(1), 1 );
@@ -75,7 +76,7 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
             {
                 $removeVersion = $i - $versionlimit;
                 $aliasPath = $originalAliases[$removeVersion]['url'];
-                $this->assertFalse( file_exists( $aliasPath ), "Alias $aliasPath for version $removeVersion should have been removed" );
+                static::assertFalse(file_exists( $aliasPath ), "Alias $aliasPath for version $removeVersion should have been removed");
             }
         }
 
@@ -88,38 +89,12 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
      */
     public function providerForTestImageNameObjectFalse()
     {
-        return array(
-            array(
-                str_repeat( 'a', 180 ) . "This is a Very Long Name isn't it?",
-                str_repeat( 'a', 180 ) . "This-is-a-Very-Long-1"
-            ),
-            array(
-                str_repeat( 'a', 180 ) . "私は簡単にパブリッシュの記事で使用することができるようなも",
-                str_repeat( 'a', 180 ) . "私は簡単にパ1"
-            ),
-            array(
-                str_repeat( 'a', 180 ) . "私aはb簡c単dにeパfブgリhッシュの記事で使用することがで",
-                str_repeat( 'a', 180 ) . "私aはb簡c単dにe1"
-            )
-        );
+        return [[str_repeat( 'a', 180 ) . "This is a Very Long Name isn't it?", str_repeat( 'a', 180 ) . "This-is-a-Very-Long-1"], [str_repeat( 'a', 180 ) . "私は簡単にパブリッシュの記事で使用することができるようなも", str_repeat( 'a', 180 ) . "私は簡単にパ1"], [str_repeat( 'a', 180 ) . "私aはb簡c単dにeパfブgリhッシュの記事で使用することがで", str_repeat( 'a', 180 ) . "私aはb簡c単dにe1"]];
     }
 
     public function providerForTestImageNameByNodeObjectFalse()
     {
-        return array(
-            array(
-                str_repeat( 'a', 180 ) . "This is a Very Long Name isn't it?",
-                str_repeat( 'a', 180 ) . "This-is-a-Very-Long-"
-            ),
-            array(
-                str_repeat( 'a', 180 ) . "私は簡単にパブリッシュの記事で使用することができるようなも",
-                str_repeat( 'a', 180 ) . "私は簡単にパ"
-            ),
-            array(
-                str_repeat( 'a', 180 ) . "私aはb簡c単dにeパfブgリhッシュの記事で使用することができるようなも",
-                str_repeat( 'a', 180 ) . "私aはb簡c単dにe"
-            )
-        );
+        return [[str_repeat( 'a', 180 ) . "This is a Very Long Name isn't it?", str_repeat( 'a', 180 ) . "This-is-a-Very-Long-"], [str_repeat( 'a', 180 ) . "私は簡単にパブリッシュの記事で使用することができるようなも", str_repeat( 'a', 180 ) . "私は簡単にパ"], [str_repeat( 'a', 180 ) . "私aはb簡c単dにeパfブgリhッシュの記事で使用することができるようなも", str_repeat( 'a', 180 ) . "私aはb簡c単dにe"]];
     }
 
     /**
@@ -132,11 +107,11 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
         $handler = new eZImageAliasHandler( null );
         $language = "fre-FR";
         $contentVersionMock = $this->getMockBuilder( 'eZContentObjectVersion' )->disableOriginalConstructor()->getMock();
-        $contentVersionMock->expects( $this->any() )->method( 'versionName' )->will( $this->returnValue( $longName ) );
+        $contentVersionMock->expects( static::any() )->method( 'versionName' )->will( static::returnValue($longName) );
 
         $name = $handler->imageName( null, $contentVersionMock, $language );
 
-        $this->assertEquals( $expects, $name );
+        static::assertEquals($expects, $name);
 
         ezpINIHelper::setINISetting( 'site.ini', 'URLTranslator', 'TransformationGroup', 'urlalias' );
     }
@@ -151,11 +126,11 @@ class eZImageAliasHandlerRegression extends ezpDatabaseTestCase
         $language = "fre-FR";
 
         $mainNodeMock = $this->getMockBuilder( 'eZContentObjectTreeNode' )->disableOriginalConstructor()->getMock();
-        $mainNodeMock->expects( $this->any() )->method( 'getName' )->will( $this->returnValue( $longName ) );
+        $mainNodeMock->expects( static::any() )->method( 'getName' )->will( static::returnValue($longName) );
 
         $name = $handler->imageNameByNode( null, $mainNodeMock, $language );
 
-        $this->assertEquals( $expects, $name );
+        static::assertEquals($expects, $name);
 
         ezpINIHelper::setINISetting( 'site.ini', 'URLTranslator', 'TransformationGroup', 'urlalias' );
     }

@@ -20,14 +20,13 @@ class eZSOAPResponse extends eZSOAPEnvelope
     /**
      * Constructs a new SOAP response
      *
-     * @param string $name
-     * @param string $namespace
+     * @param string $Name
+     * @param string $Namespace
      */
-    public function __construct( $name="", $namespace="" )
+    public function __construct( /// Contains the name of the response, i.e. function call name
+    public $Name="", /// Contains the target namespace for the response
+    public $Namespace="" )
     {
-        $this->Name = $name;
-        $this->Namespace = $namespace;
-
         parent::__construct();
     }
 
@@ -96,7 +95,7 @@ class eZSOAPResponse extends eZSOAPEnvelope
                 if ( $responseAccessors->length > 0 )
                 {
                     $returnObject = $responseAccessors->item( 0 );
-                    $this->Value  = $this->decodeDataTypes( $returnObject );
+                    $this->Value  = static::decodeDataTypes($returnObject);
                 }
             }
             else
@@ -127,7 +126,7 @@ class eZSOAPResponse extends eZSOAPEnvelope
         $attributeValue = $attribute->value;
 
         $dataType = $type;
-        $attrParts = explode( ":", $attributeValue );
+        $attrParts = explode( ":", (string) $attributeValue );
         if ( $attrParts[1] )
         {
             $dataType = $attrParts[1];
@@ -170,14 +169,14 @@ TODO: add encoding checks with schema validation.
             {
                 // Get array type
                 $arrayType = $node->getAttributeNodeNS( eZSOAPEnvelope::ENC, 'arrayType' )->value;
-                $arrayTypeParts = explode( ":", $arrayType );
+                $arrayTypeParts = explode( ":", (string) $arrayType );
 
                 preg_match( "#(.*)\[(.*)\]#",  $arrayTypeParts[1], $matches );
 
                 $type = $matches[1];
                 $count = $matches[2];
 
-                $returnValue = array();
+                $returnValue = [];
                 foreach( $node->childNodes as $child )
                 {
                     if ( $child instanceof DOMElement )
@@ -189,7 +188,7 @@ TODO: add encoding checks with schema validation.
 
             case "SOAPStruct" :
             {
-                $returnValue = array();
+                $returnValue = [];
 
                 foreach( $node->childNodes as $child )
                 {
@@ -285,14 +284,14 @@ TODO: add encoding checks with schema validation.
     function stripHTTPHeader( $data )
     {
         $missingxml = false;
-        $start = strpos( $data, "<?xml" );
+        $start = strpos( (string) $data, "<?xml" );
         if ( $start === false )
         {
             eZDebug::writeWarning( "missing <?xml ...> in HTTP response, attempting workaround", __METHOD__ );
-            $start = strpos( $data, "<E:Envelope" );
+            $start = strpos( (string) $data, "<E:Envelope" );
             $missingxml = true;
         }
-        $data = substr( $data, $start, strlen( $data ) - $start );
+        $data = substr( (string) $data, $start, strlen( (string) $data ) - $start );
 
         if ( $missingxml == true )
         {
@@ -352,10 +351,6 @@ TODO: add encoding checks with schema validation.
     public $FaultCode = false;
     /// Contains true if the response was an fault
     public $IsFault = false;
-    /// Contains the name of the response, i.e. function call name
-    public $Name;
-    /// Contains the target namespace for the response
-    public $Namespace;
 
     /// Contains the DOM document for the current SOAP response
     public $DOMDocument = false;

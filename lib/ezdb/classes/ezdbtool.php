@@ -55,7 +55,7 @@ class eZDBTool
             {
                 // skip relations that shouldn't be touched
                 if ( $matchRegexp !== false and
-                     !preg_match( $matchRegexp, $relationItem ) )
+                     !preg_match( $matchRegexp, (string) $relationItem ) )
                     continue;
 
                 if ( !$db->removeRelation( $relationItem, $relationType ) )

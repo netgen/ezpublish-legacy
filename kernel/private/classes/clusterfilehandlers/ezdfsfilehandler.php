@@ -30,14 +30,14 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
      * @note This is primarily available for debugging purposes.
      * @var int
      */
-    const LOCAL_CACHE = 1;
+    final public const LOCAL_CACHE = 1;
 
     /**
      * Controls the maximum number of metdata entries to keep in memory for this request.
      * If the limit is reached the least used entries are removed.
      * @var int
      */
-    const INFOCACHE_MAX = 200;
+    final public const INFOCACHE_MAX = 200;
 
     /**
      * Constructor
@@ -63,9 +63,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
         {
             self::$dbbackend = eZExtension::getHandlerClass(
                 new ezpExtensionOptions(
-                    array( 'iniFile'     => 'file.ini',
-                           'iniSection'  => 'eZDFSClusteringSettings',
-                           'iniVariable' => 'DBBackend' ) ) );
+                    ['iniFile'     => 'file.ini', 'iniSection'  => 'eZDFSClusteringSettings', 'iniVariable' => 'DBBackend'] ) );
             self::$dbbackend->_connect( false );
 
             $fileINI = eZINI::instance( 'file.ini' );
@@ -76,12 +74,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
             {
                 $listener = eZExtension::getHandlerClass(
                     new ezpExtensionOptions(
-                        array(
-                            'iniFile'       => 'file.ini',
-                            'iniSection'    => 'ClusterEventsSettings',
-                            'iniVariable'   => 'Listener',
-                            'handlerParams' => array( new eZClusterEventLoggerEzdebug() )
-                        )
+                        ['iniFile'       => 'file.ini', 'iniSection'    => 'ClusterEventsSettings', 'iniVariable'   => 'Listener', 'handlerParams' => [new eZClusterEventLoggerEzdebug()]]
                     )
                 );
 
@@ -151,23 +144,16 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
 
         // Clean up old entries if the maximum count is reached
         if ( isset( $GLOBALS['eZClusterInfo'] ) &&
-             count( $GLOBALS['eZClusterInfo'] ) >= self::INFOCACHE_MAX )
+             (is_countable($GLOBALS['eZClusterInfo']) ? count( $GLOBALS['eZClusterInfo'] ) : 0) >= self::INFOCACHE_MAX )
         {
             usort( $GLOBALS['eZClusterInfo'], function ( $a, $b ) {
                 $a = $a['cnt'];
                 $b = $b['cnt'];
-                
-                if ( $a == $b )
-                {
-                    return 0;
-                }
-
-                return $a > $b ? -1 : 1;
+                return $b <=> $a;
             });
             array_pop( $GLOBALS['eZClusterInfo'] );
         }
-        $GLOBALS['eZClusterInfo'][$this->filePath] = array( 'cnt' => 1,
-                                                            'data' => $metaData );
+        $GLOBALS['eZClusterInfo'][$this->filePath] = ['cnt' => 1, 'data' => $metaData];
     }
 
     /**
@@ -494,7 +480,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
                             eZDebugSetting::writeDebug( 'kernel-clustering', "Processing local cache file {$this->filePath}", __METHOD__ );
                         }
 
-                        $args = array( $this->filePath, $mtime );
+                        $args = [$this->filePath, $mtime];
                         if ( $extraData !== null )
                             $args[] = $extraData;
                         $retval = call_user_func_array( $retrieveCallback, $args );
@@ -608,7 +594,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
                             touch( $this->filePath, $mtime, $mtime );
                             clearstatcache(); // Needed because of touch() call
 
-                            $args = array( $this->filePath, $mtime );
+                            $args = [$this->filePath, $mtime];
                             if ( $extraData !== null )
                                 $args[] = $extraData;
                             $retval = call_user_func_array( $retrieveCallback, $args );
@@ -622,7 +608,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
                         {
                             $uniquePath = $this->fetchUnique();
 
-                            $args = array( $uniquePath, $this->metaData['mtime'] );
+                            $args = [$uniquePath, $this->metaData['mtime']];
                             if ( $extraData !== null )
                                 $args[] = $extraData;
                             $retval = call_user_func_array( $retrieveCallback, $args );
@@ -663,7 +649,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
                     return null;
                 }
                 $message = $retval->message();
-                if ( strlen( $message ) > 0 )
+                if ( strlen( (string) $message ) > 0 )
                 {
                     eZDebugSetting::writeDebug( 'kernel-clustering', $retval->message(), __METHOD__ );
                 }
@@ -692,7 +678,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
                 // File in DB is outdated or non-existing, call write-callback to generate content
                 if ( $generateCallback )
                 {
-                    $args = array( $this->filePath );
+                    $args = [$this->filePath];
                     if ( $noCache )
                         $extraData['noCache'] = $noCache;
                     if ( $extraData !== null )
@@ -771,7 +757,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
      */
     public function isDBFileExpired( $expiry, $curtime, $ttl )
     {
-        $mtime = isset( $this->metaData['mtime'] ) ? $this->metaData['mtime'] : 0;
+        $mtime = $this->metaData['mtime'] ?? 0;
         return self::isFileExpired( $this->filePath, $mtime, $expiry, $curtime, $ttl );
     }
 
@@ -1120,7 +1106,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
             self::$dbbackend->_purge( $file, true, $expiry, 'purge' );
             if ( $printCallback )
             {
-                call_user_func_array( $printCallback, array( $file, $count ) );
+                call_user_func_array( $printCallback, [$file, $count] );
             }
 
             // @todo Compare $count to $max. If $count < $max, no more files are to
@@ -1273,8 +1259,8 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
     {
         if ( !is_string( $path ) )
             return $path;
-        return preg_replace( array( "#[/\\\\]+#", "#/$#" ),
-                             array( "/",        "" ),
+        return preg_replace( ["#[/\\\\]+#", "#/$#"],
+                             ["/", ""],
                              $path );
     }
 
@@ -1344,7 +1330,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
             {
                 return false;
             }
-        } catch( RuntimeException $e ) {
+        } catch( RuntimeException ) {
             eZDebug::writeError( "An error occured ending cache generation on '$this->realFilePath'", 'cluster.log' );
         }
     }
@@ -1381,9 +1367,9 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
      */
     protected function _cacheType()
     {
-        if ( strpos( $this->filePath, '/cache/content/' ) !== false )
+        if ( str_contains( $this->filePath, '/cache/content/' ) )
             return 'viewcache';
-        elseif ( strpos( $this->filePath, '/cache/template-block/' ) !== false )
+        elseif ( str_contains( $this->filePath, '/cache/template-block/' ) )
             return 'cacheblock';
         else
             return 'misc';
@@ -1450,7 +1436,7 @@ class eZDFSFileHandler implements eZClusterFileHandlerInterface, ezpDatabaseBase
      * @return array(filepath)
      * @since 4.5.0
      */
-    public function fetchExpiredItems( $scopes, $limit = array( 0 , 100 ), $expiry = false )
+    public function fetchExpiredItems( $scopes, $limit = [0, 100], $expiry = false )
     {
         return self::$dbbackend->expiredFilesList( $scopes, $limit, $expiry );
     }

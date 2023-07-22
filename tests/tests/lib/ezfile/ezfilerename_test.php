@@ -12,18 +12,18 @@ class eZFileRenameTest extends ezpTestCase
 {
     private $warningEnabledOrig;
 
-    private $fileDir;
+    private ?string $fileDir = null;
 
     private $file;
 
     private $destFile;
 
-    private $content;
+    private string|bool|null $content = null;
 
     public function setUp()
     {
         parent::setUp();
-        $this->fileDir = dirname( __FILE__ ) . "/data";
+        $this->fileDir = __DIR__ . "/data";
         $this->file = "$this->fileDir/file.txt";
         $this->destFile = "$this->fileDir/file2.txt";
         $this->content = file_get_contents( $this->file );

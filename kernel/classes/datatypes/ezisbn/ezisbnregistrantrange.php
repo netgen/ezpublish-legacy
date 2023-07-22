@@ -33,42 +33,7 @@ class eZISBNRegistrantRange extends eZPersistentObject
     */
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'from_number' => array( 'name' => 'FromNumber',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'to_number' => array( 'name' => 'ToNumber',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         'registrant_from' => array( 'name' => 'RegistrantFrom',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'registrant_to' => array( 'name' => 'RegistrantTo',
-                                                                  'datatype' => 'string',
-                                                                  'default' => '',
-                                                                  'required' => true ),
-                                         'registrant_length' => array( 'name' => 'RegistrantLength',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'isbn_group_id' => array( 'name' => 'ISBNGroupID',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZISBNGroup',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZISBNRegistrantRange',
-                      'name' => 'ezisbn_registrant_range' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'from_number' => ['name' => 'FromNumber', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'to_number' => ['name' => 'ToNumber', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'registrant_from' => ['name' => 'RegistrantFrom', 'datatype' => 'string', 'default' => '', 'required' => true], 'registrant_to' => ['name' => 'RegistrantTo', 'datatype' => 'string', 'default' => '', 'required' => true], 'registrant_length' => ['name' => 'RegistrantLength', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'isbn_group_id' => ['name' => 'ISBNGroupID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZISBNGroup', 'foreign_attribute' => 'id', 'multiplicity' => '1..*']], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZISBNRegistrantRange', 'name' => 'ezisbn_registrant_range'];
     }
 
     /*!
@@ -91,14 +56,7 @@ class eZISBNRegistrantRange extends eZPersistentObject
     */
     static function create( $ISBNGroupID, $fromNumber, $toNumber, $registrantFrom, $registrantTo, $length )
     {
-        $row = array(
-            'id' => null,
-            'from_number' => $fromNumber,
-            'to_number' => $toNumber,
-            'registrant_from' => $registrantFrom,
-            'registrant_to' => $registrantTo,
-            'registrant_length' => $length,
-            'isbn_group_id' => $ISBNGroupID );
+        $row = ['id' => null, 'from_number' => $fromNumber, 'to_number' => $toNumber, 'registrant_from' => $registrantFrom, 'registrant_to' => $registrantTo, 'registrant_length' => $length, 'isbn_group_id' => $ISBNGroupID];
         return new eZISBNRegistrantRange( $row );
     }
 
@@ -110,7 +68,7 @@ class eZISBNRegistrantRange extends eZPersistentObject
     static function removeByID( $id )
     {
         eZPersistentObject::removeObject( eZISBNRegistrantRange::definition(),
-                                          array( 'id' => $id ) );
+                                          ['id' => $id] );
     }
 
     /*!
@@ -125,8 +83,8 @@ class eZISBNRegistrantRange extends eZPersistentObject
     */
     static function fetchListByGroupID( $groupID, $asObject = true )
     {
-        $conditions = array( 'isbn_group_id' => $groupID );
-        $sortArray = array( array( 'from_number' => 'asc' ) );
+        $conditions = ['isbn_group_id' => $groupID];
+        $sortArray = [['from_number' => 'asc']];
         return eZPersistentObject::fetchObjectList( eZISBNRegistrantRange::definition(),
                                                     null, $conditions, $sortArray, null,
                                                     $asObject );
@@ -158,16 +116,14 @@ class eZISBNRegistrantRange extends eZPersistentObject
             $groupID = $group->attribute( 'id' );
 
             $registrantOffset = 3 + $groupLength;
-            $testSegment = substr( $isbnNr, $registrantOffset, 5 );
+            $testSegment = substr( (string) $isbnNr, $registrantOffset, 5 );
             if ( is_numeric( $testSegment ) )
             {
-                $conditions = array( 'from_number' => array( '<=', $testSegment ),
-                                     'to_number' => array( '>=', $testSegment ),
-                                     'isbn_group_id' => $groupID );
+                $conditions = ['from_number' => ['<=', $testSegment], 'to_number' => ['>=', $testSegment], 'isbn_group_id' => $groupID];
                 $groupRangeArray = eZPersistentObject::fetchObjectList( eZISBNRegistrantRange::definition(),
                                                                         null, $conditions, null, null,
                                                                         true );
-                if ( count( $groupRangeArray ) == 1 )
+                if ( count( (array) $groupRangeArray ) == 1 )
                 {
                     $length = $groupRangeArray[0]->attribute( 'registrant_length' );
 

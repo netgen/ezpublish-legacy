@@ -21,17 +21,16 @@
 
 class eZCountryType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezcountry';
+    final public const DATA_TYPE_STRING = 'ezcountry';
 
-    const DEFAULT_LIST_FIELD = 'data_text5';
+    final public const DEFAULT_LIST_FIELD = 'data_text5';
 
-    const MULTIPLE_CHOICE_FIELD = 'data_int1';
+    final public const MULTIPLE_CHOICE_FIELD = 'data_int1';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Country', 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_text' => 'country' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_text' => 'country']] );
     }
 
     /*!
@@ -59,11 +58,11 @@ class eZCountryType extends eZDataType
         $translatedCountryNames = $locale->translatedCountryNames();
         foreach ( array_keys( $countries ) as $countryKey )
         {
-            $translatedName = isset( $translatedCountryNames[$countryKey] ) ? $translatedCountryNames[$countryKey] : false;
+            $translatedName = $translatedCountryNames[$countryKey] ?? false;
             if ( $translatedName )
                 $countries[$countryKey]['Name'] = $translatedName;
         }
-        usort( $countries, array( 'eZCountryType', 'compareCountryNames' ) );
+        usort( $countries, ['eZCountryType', 'compareCountryNames'] );
     }
 
     /**
@@ -75,7 +74,7 @@ class eZCountryType extends eZDataType
      */
     protected static function compareCountryNames( $a, $b )
     {
-        return strcoll( $a["Name"], $b["Name"] );
+        return strcoll( (string) $a["Name"], (string) $b["Name"] );
     }
 
     /*!
@@ -88,7 +87,7 @@ class eZCountryType extends eZDataType
 
         $allCountries = eZCountryType::fetchCountryList();
         $result = false;
-        if ( $fetchBy == 'Alpha2' and isset( $allCountries[strtoupper( $value )] ) )
+        if ( $fetchBy == 'Alpha2' and isset( $allCountries[strtoupper( (string) $value )] ) )
         {
             $result = $allCountries[$value];
             return $result;
@@ -121,10 +120,10 @@ class eZCountryType extends eZDataType
             if ( $http->hasPostVariable( $base . "_ezcountry_default_country_list_". $classAttributeID ) )
             {
                 $defaultValues = $http->postVariable( $base . "_ezcountry_default_country_list_". $classAttributeID );
-                $defaultList = array();
+                $defaultList = [];
                 foreach ( $defaultValues as $alpha2 )
                 {
-                    if ( trim( $alpha2 ) == '' )
+                    if ( trim( (string) $alpha2 ) == '' )
                         continue;
                     // Fetch ezcountry by aplha2 code (as reserved in iso-3166 code list)
                     $eZCountry = eZCountryType::fetchCountry( $alpha2, 'Alpha2' );
@@ -135,7 +134,7 @@ class eZCountryType extends eZDataType
             }
             else
             {
-                $content['default_countries'] = array();
+                $content['default_countries'] = [];
             }
         }
         $classAttribute->setContent( $content );
@@ -146,7 +145,7 @@ class eZCountryType extends eZDataType
     function preStoreClassAttribute( $classAttribute, $version )
     {
         $content = $classAttribute->content();
-        return eZCountryType::storeClassAttributeContent( $classAttribute, $content );
+        return (new eZCountryType())->storeClassAttributeContent($classAttribute, $content);
     }
 
     function storeClassAttributeContent( $classAttribute, $content )
@@ -175,7 +174,7 @@ class eZCountryType extends eZDataType
         }
         else
         {
-            $default = array( 'value' => array() );
+            $default = ['value' => []];
             $contentObjectAttribute->setContent( $default );
         }
     }
@@ -189,7 +188,7 @@ class eZCountryType extends eZDataType
         {
             $data = $http->postVariable( $base . '_country_' . $contentObjectAttribute->attribute( 'id' ) );
 
-            if ( count( $data ) > 0 and $data[0] != '' )
+            if ( (is_countable($data) ? count( $data ) : 0) > 0 and $data[0] != '' )
                 return eZInputValidator::STATE_ACCEPTED;
         }
 
@@ -207,7 +206,7 @@ class eZCountryType extends eZDataType
         {
             $data = $http->postVariable( $base . '_country_' . $contentObjectAttribute->attribute( 'id' ) );
 
-            if ( count( $data ) > 0 and $data[0] != '' )
+            if ( (is_countable($data) ? count( $data ) : 0) > 0 and $data[0] != '' )
                 return eZInputValidator::STATE_ACCEPTED;
         }
 
@@ -224,12 +223,12 @@ class eZCountryType extends eZDataType
         if ( $http->hasPostVariable( $base . '_country_' . $contentObjectAttribute->attribute( 'id' ) ) )
         {
             $data = $http->postVariable( $base . '_country_' . $contentObjectAttribute->attribute( 'id' ) );
-            $defaultList = array();
+            $defaultList = [];
             if ( is_array( $data ) )
             {
                 foreach ( $data as $alpha2 )
                 {
-                    if ( trim( $alpha2 ) == '' )
+                    if ( trim( (string) $alpha2 ) == '' )
                         continue;
 
                     $eZCountry = eZCountryType::fetchCountry( $alpha2, 'Alpha2' );
@@ -248,13 +247,13 @@ class eZCountryType extends eZDataType
                     }
                 }
             }
-            $content = array( 'value' => $defaultList );
+            $content = ['value' => $defaultList];
 
             $contentObjectAttribute->setContent( $content );
         }
         else
         {
-            $content = array( 'value' => array() );
+            $content = ['value' => []];
             $contentObjectAttribute->setContent( $content );
         }
         return true;
@@ -298,9 +297,8 @@ class eZCountryType extends eZDataType
                                  $objectAttribute, $string,
                                  &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => true );
-        $content = array( 'value' => $string );
+        $result = ['errors' => [], 'require_storage' => true];
+        $content = ['value' => $string];
         $objectAttribute->setContent( $content );
         return true;
     }
@@ -312,19 +310,19 @@ class eZCountryType extends eZDataType
     {
         $value = $contentObjectAttribute->attribute( 'data_text' );
 
-        $countryList = explode( ',', $value );
-        $resultList = array();
+        $countryList = explode( ',', (string) $value );
+        $resultList = [];
         foreach ( $countryList as $alpha2 )
         {
             $eZCountry = eZCountryType::fetchCountry( $alpha2, 'Alpha2' );
-            $resultList[$alpha2] = $eZCountry ? $eZCountry : '';
+            $resultList[$alpha2] = $eZCountry ?: '';
         }
         // Supporting of previous version format.
         // For backwards compatibility.
         if ( count( $resultList ) == 1 and $resultList[$value] == '' )
             $resultList = $value;
 
-        $content = array( 'value' => $resultList );
+        $content = ['value' => $resultList];
         return $content;
     }
 
@@ -332,16 +330,15 @@ class eZCountryType extends eZDataType
     {
         $defaultCountry = $classAttribute->attribute( self::DEFAULT_LIST_FIELD );
         $multipleChoice = $classAttribute->attribute( self::MULTIPLE_CHOICE_FIELD );
-        $defaultCountryList = explode( ',', $defaultCountry );
-        $resultList = array();
+        $defaultCountryList = explode( ',', (string) $defaultCountry );
+        $resultList = [];
         foreach ( $defaultCountryList as $alpha2 )
         {
             $eZCountry = eZCountryType::fetchCountry( $alpha2, 'Alpha2' );
             if ( $eZCountry )
                 $resultList[$alpha2] = $eZCountry;
         }
-        $content = array( 'default_countries' => $resultList,
-                          'multiple_choice' => $multipleChoice );
+        $content = ['default_countries' => $resultList, 'multiple_choice' => $multipleChoice];
 
         return $content;
     }
@@ -406,7 +403,7 @@ class eZCountryType extends eZDataType
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
         $content = $contentObjectAttribute->content();
-        $result = ( ( !is_array( $content['value'] ) and trim( $content['value'] ) != '' ) or ( is_array( $content['value'] ) and count( $content['value'] ) > 0 ) );
+        $result = ( ( !is_array( $content['value'] ) and trim( (string) $content['value'] ) != '' ) or ( is_array( $content['value'] ) and count( $content['value'] ) > 0 ) );
         return $result;
     }
 

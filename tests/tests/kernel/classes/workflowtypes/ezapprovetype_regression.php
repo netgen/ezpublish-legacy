@@ -133,7 +133,7 @@ class eZApproveTypeRegression extends ezpDatabaseTestCase
         $approveEvent->setAttribute( "data_text3", $approvalUserID );
 
         $approveEvent->store();
-        $eventList = array( $approveEvent );
+        $eventList = [$approveEvent];
 
         $workflow->store( $eventList );
 
@@ -231,7 +231,7 @@ class eZApproveTypeRegression extends ezpDatabaseTestCase
                 $mementoData['skip_trigger'] = true;
                 $mementoData['memento_key'] = $process->attribute( 'memento_key' );
                 $bodyMemento->remove();
-                $operationParameters = array();
+                $operationParameters = [];
                 if ( isset( $mementoData['parameters'] ) )
                     $operationParameters = $mementoData['parameters'];
 

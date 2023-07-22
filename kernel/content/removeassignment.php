@@ -29,7 +29,7 @@ if ( $http->hasSessionVariable( 'AssignmentRemoveData' ) )
 else
 {
     eZDebug::writeError( "No assignments passed to content/removeassignment" );
-    return $module->redirectToView( 'view', array( 'full', 2 ) );
+    return $module->redirectToView( 'view', ['full', 2] );
 }
 
 // process current action
@@ -54,18 +54,18 @@ if ( $module->isCurrentAction( 'ConfirmRemoval' ) )
 
     $db->commit();
 
-    return $module->redirectToView( 'edit', array( $objectID, $editVersion, $editLanguage, $fromLanguage ) );
+    return $module->redirectToView( 'edit', [$objectID, $editVersion, $editLanguage, $fromLanguage] );
 }
 else if ( $module->isCurrentAction( 'CancelRemoval' ) )
 {
     $http->removeSessionVariable( 'AssignmentRemoveData' );
 
-    return $module->redirectToView( 'edit', array( $objectID, $editVersion, $editLanguage, $fromLanguage ) );
+    return $module->redirectToView( 'edit', [$objectID, $editVersion, $editLanguage, $fromLanguage] );
 }
 
 // default action: show the confirmation dialog
 $assignmentsToRemove = eZNodeAssignment::fetchListByID( $removeList );
-$removeList = array();
+$removeList = [];
 $canRemoveAll = true;
 foreach ( $assignmentsToRemove as $assignment )
 {
@@ -74,7 +74,7 @@ foreach ( $assignmentsToRemove as $assignment )
     // skip assignments which don't have associated node or node with no children
     if ( !$node )
         continue;
-    $count = $node->subTreeCount( array( 'Limitation' => array() ) );
+    $count = $node->subTreeCount( ['Limitation' => []] );
     if ( $count < 1 )
         continue;
 
@@ -88,7 +88,7 @@ foreach ( $assignmentsToRemove as $assignment )
     if ( $accessResult['accessWord'] == 'limited' )
     {
         $limitationList = $accessResult['policies'];
-        $removeableChildCount = $node->subTreeCount( array( 'Limitation' => $limitationList ) );
+        $removeableChildCount = $node->subTreeCount( ['Limitation' => $limitationList] );
         $canRemoveSubtree = ( $removeableChildCount == $count );
     }
     if ( !$canRemoveSubtree )
@@ -96,26 +96,18 @@ foreach ( $assignmentsToRemove as $assignment )
     $object = $node->object();
     $class = $object->contentClass();
 
-    $removeList[] = array( 'node' => $node,
-                           'object' => $object,
-                           'class' => $class,
-                           'count' => $count,
-                           'can_remove' => $canRemoveSubtree,
-                           'child_count' => $count );
+    $removeList[] = ['node' => $node, 'object' => $object, 'class' => $class, 'count' => $count, 'can_remove' => $canRemoveSubtree, 'child_count' => $count];
 }
 unset( $assignmentsToRemove );
 
-$assignmentData = array( 'object_id'      => $objectID,
-                         'object_version' => $editVersion,
-                         'remove_list'    => $removeList );
-$info = array( 'can_remove_all' => $canRemoveAll );
+$assignmentData = ['object_id'      => $objectID, 'object_version' => $editVersion, 'remove_list'    => $removeList];
+$info = ['can_remove_all' => $canRemoveAll];
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'assignment_data', $assignmentData );
 $tpl->setVariable( 'remove_info', $info );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:content/removeassignment.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/content', 'Remove location' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/content', 'Remove location' )]];
 ?>

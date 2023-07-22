@@ -26,7 +26,7 @@ class eZSectionTest extends ezpDatabaseTestCase
     {
         global $eZContentSectionObjectCache;
 
-        $section = new eZSection( array() );
+        $section = new eZSection( [] );
         $section->setAttribute( 'name', 'Test Section' );
         $section->setAttribute( 'identifier', 'test_section' );
         $section->store();
@@ -35,27 +35,27 @@ class eZSectionTest extends ezpDatabaseTestCase
 
         // assert that if the cache is set after fetching
         $section2 = eZSection::fetchByIdentifier( 'test_section' );
-        $this->assertEquals( $sectionID, $section2->attribute( 'id' ) );
+        static::assertEquals($sectionID, $section2->attribute( 'id' ));
 
         // assert that object is cached
-        $this->assertNotNull( $eZContentSectionObjectCache['test_section'] );
-        $this->assertNotNull( $eZContentSectionObjectCache[$sectionID] );
+        static::assertNotNull($eZContentSectionObjectCache['test_section']);
+        static::assertNotNull($eZContentSectionObjectCache[$sectionID]);
 
         // assert that the two object refer to same object
-        $this->assertSame( $eZContentSectionObjectCache[$sectionID] , $section2 );
-        $this->assertSame( eZSection::fetch( $sectionID ) , $section2 );
+        static::assertSame($eZContentSectionObjectCache[$sectionID], $section2);
+        static::assertSame(eZSection::fetch( $sectionID ), $section2);
 
         // fetchByID and fetchByIdentifier, assert that the result is the same
-        $section3 = new eZSection( array() );
+        $section3 = new eZSection( [] );
         $section3->setAttribute( 'name', 'Test Section3' );
         $section3->setAttribute( 'identifier', 'test_section3' );
         $section3->store();
         $objectByID = eZSection::fetch( $section3->attribute( 'id' ) );
         $objectByIdentifier = eZSection::fetchByIdentifier( 'test_section3' );
-        $this->assertSame( $objectByID, $objectByIdentifier );
+        static::assertSame($objectByID, $objectByIdentifier);
 
         $arrayByIdentifier = eZSection::fetch( $section3->attribute( 'id' ), false );
-        $this->assertTrue( is_array( $arrayByIdentifier ) );
+        static::assertTrue(is_array( $arrayByIdentifier ));
     }
 
 }

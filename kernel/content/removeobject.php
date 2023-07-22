@@ -33,7 +33,7 @@ else
     $contentLanguage = false;
 }
 if ( is_array( $deleteIDArray ) && count( $deleteIDArray ) <= 0 )
-    return $Module->redirectToView( 'view', array( $viewMode, $contentNodeID, $contentLanguage ) );
+    return $Module->redirectToView( 'view', [$viewMode, $contentNodeID, $contentLanguage] );
 
 // Cleanup and redirect back when cancel is clicked
 if ( $http->hasPostVariable( "CancelButton" ) )
@@ -53,7 +53,7 @@ if ( $http->hasPostVariable( "CancelButton" ) )
     }
     else
     {
-        return $Module->redirectToView( 'view', array( $viewMode, $contentNodeID, $contentLanguage ) );
+        return $Module->redirectToView( 'view', [$viewMode, $contentNodeID, $contentLanguage] );
     }
 }
 
@@ -85,8 +85,7 @@ if ( $http->hasPostVariable( "ConfirmButton" ) or
     {
         $operationResult = eZOperationHandler::execute( 'content',
                                                         'delete',
-                                                         array( 'node_id_list' => $deleteIDArray,
-                                                                'move_to_trash' => $moveToTrash ),
+                                                         ['node_id_list' => $deleteIDArray, 'move_to_trash' => $moveToTrash],
                                                           null, true );
     }
     else
@@ -103,7 +102,7 @@ if ( $http->hasPostVariable( "ConfirmButton" ) or
     }
     else
     {
-        return $Module->redirectToView( 'view', array( $viewMode, $contentNodeID, $contentLanguage ) );
+        return $Module->redirectToView( 'view', [$viewMode, $contentNodeID, $contentLanguage] );
     }
 }
 
@@ -116,7 +115,7 @@ $moveToTrashAllowed = $info['move_to_trash'];
 $totalChildCount    = $info['total_child_count'];
 $hasPendingObject   = $info['has_pending_object'];
 $exceededLimit      = false;
-$deleteNodeIdArray  = array();
+$deleteNodeIdArray  = [];
 
 // Check if number of nodes being removed not more then MaxNodesRemoveSubtree setting.
 $maxNodesRemoveSubtree = $contentINI->hasVariable( 'RemoveSettings', 'MaxNodesRemoveSubtree' ) ?
@@ -137,7 +136,7 @@ foreach ( array_keys( $deleteResult ) as $removeItemKey )
             continue;
 
         $nodeID = $nodeObj->attribute( 'node_id' );
-        $deleteIDArrayNew = array();
+        $deleteIDArrayNew = [];
         foreach ( $deleteIDArray as $deleteID )
         {
             if ( $deleteID != $nodeID )
@@ -169,8 +168,7 @@ if ( $totalChildCount == 0 )
         {
             $operationResult = eZOperationHandler::execute( 'content',
                                                             'removelocation',
-                                                             array( 'node_list' => array_keys( $deleteNodeIdArray ),
-                                                                    'move_to_trash' => $moveToTrash ),
+                                                             ['node_list' => array_keys( $deleteNodeIdArray ), 'move_to_trash' => $moveToTrash],
                                                               null, true );
         }
         else
@@ -187,7 +185,7 @@ if ( $totalChildCount == 0 )
         }
         else
         {
-            return $Module->redirectToView( 'view', array( $viewMode, $contentNodeID, $contentLanguage ) );
+            return $Module->redirectToView( 'view', [$viewMode, $contentNodeID, $contentLanguage] );
         }
     }
 }
@@ -208,8 +206,7 @@ $tpl->setVariable( 'delete_items_exist'     , $deleteItemsExist );
 $tpl->setVariable( 'move_to_trash'          , $moveToTrash );
 $tpl->setVariable( 'has_pending_object'     , $hasPendingObject );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:node/removeobject.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/content', 'Remove object' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/content', 'Remove object' )]];
 ?>

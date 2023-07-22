@@ -24,7 +24,7 @@ class eZSubtreeNotificationRuleRegression extends ezpDatabaseTestCase
         parent::setUp();
 
         $this->policy = eZPolicy::createNew(
-            1, array( 'ModuleName' => 'foo', 'FunctionName' => 'bar' )
+            1, ['ModuleName' => 'foo', 'FunctionName' => 'bar']
         );
 
         eZPolicyLimitation::createNew(
@@ -57,10 +57,10 @@ class eZSubtreeNotificationRuleRegression extends ezpDatabaseTestCase
         $access = eZSubtreeNotificationRule::checkObjectAccess(
             eZContentObject::fetch( 1 ),
             $this->policy->attribute( 'id' ),
-            array( 14 )
+            [14]
         );
 
-        $this->assertEquals( array( 14 ), $access );
+        static::assertEquals([14], $access);
     }
 }
 

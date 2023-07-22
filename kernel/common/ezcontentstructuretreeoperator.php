@@ -22,7 +22,7 @@ class eZContentStructureTreeOperator
      */
     public function __construct( $name = 'content_structure_tree' )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -38,27 +38,7 @@ class eZContentStructureTreeOperator
     */
     function namedParameterList()
     {
-        return array( 'root_node_id' => array( 'type' => 'int',
-                                               'required' => true,
-                                               'default' => 0 ),
-                      'class_filter' => array( 'type' => 'array',
-                                               'required' => false,
-                                               'default' => false ),
-                      'max_depth' => array( 'type' => 'int',
-                                            'required' => false,
-                                            'default' => 0 ),
-                      'max_nodes' => array( 'type' => 'int',
-                                            'required' => false,
-                                            'default' => 0 ),
-                      'sort_by' => array( 'type' => 'array',
-                                          'required' => false,
-                                          'default' => 'false' ),
-                      'fetch_hidden' => array( 'type' => 'bool',
-                                               'required' => false,
-                                               'default' => 'false' ),
-                      'unfold_node_id' => array( 'type' => 'int',
-                                               'required' => false,
-                                               'default' => 0 ) );
+        return ['root_node_id' => ['type' => 'int', 'required' => true, 'default' => 0], 'class_filter' => ['type' => 'array', 'required' => false, 'default' => false], 'max_depth' => ['type' => 'int', 'required' => false, 'default' => 0], 'max_nodes' => ['type' => 'int', 'required' => false, 'default' => 0], 'sort_by' => ['type' => 'array', 'required' => false, 'default' => 'false'], 'fetch_hidden' => ['type' => 'bool', 'required' => false, 'default' => 'false'], 'unfold_node_id' => ['type' => 'int', 'required' => false, 'default' => 0]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
@@ -69,19 +49,19 @@ class eZContentStructureTreeOperator
         {
             if( is_array($namedParameters[ 'sort_by' ]))
             {
-                $sortArray = array();
+                $sortArray = [];
                 foreach( $namedParameters[ 'sort_by' ] as $parameter )
                 {
-                    $sortingMethod = explode("/", $parameter );
+                    $sortingMethod = explode("/", (string) $parameter );
                     $sortingMethod[1] = ($sortingMethod[1] == 'ascending') ? '1' : '0';
                     $sortArray[] = $sortingMethod;
                 }
             }
             else
             {
-                $sortingMethod = explode("/", $namedParameters[ 'sort_by' ]);
+                $sortingMethod = explode("/", (string) $namedParameters[ 'sort_by' ]);
                 $sortingMethod[1] = ($sortingMethod[1] == 'ascending') ? '1' : '0';
-                $sortArray = array();
+                $sortArray = [];
                 $sortArray[] = $sortingMethod;
             }
         }
@@ -90,13 +70,7 @@ class eZContentStructureTreeOperator
         {
             $fetchHidden = true;
         }
-        $operatorValue = eZContentStructureTreeOperator::contentStructureTree( $namedParameters['root_node_id'],
-                                                                               $namedParameters['class_filter'],
-                                                                               $namedParameters['max_depth'],
-                                                                               $namedParameters['max_nodes'],
-                                                                               $sortArray,
-                                                                               $fetchHidden,
-                                                                               $namedParameters['unfold_node_id'] );
+        $operatorValue = (new eZContentStructureTreeOperator())->contentStructureTree($namedParameters['root_node_id'], $namedParameters['class_filter'], $namedParameters['max_depth'], $namedParameters['max_nodes'], $sortArray, $fetchHidden, $namedParameters['unfold_node_id']);
     }
 
     /*!
@@ -106,7 +80,7 @@ class eZContentStructureTreeOperator
     */
     function subTree( $params, $nodeID, $countChildren = false )
     {
-        $nodeListArray = array();
+        $nodeListArray = [];
 
         // sorting params
         $sortingInfo = eZContentObjectTreeNode::createSortingSQLStrings( $params['SortBy'] );
@@ -221,7 +195,7 @@ class eZContentStructureTreeOperator
     */
     function contentStructureTree( $rootNodeID, $classFilter, $maxDepth, $maxNodes, $sortArray, $fetchHidden, $unfoldNodeID )
     {
-        $contentTree = eZContentStructureTreeOperator::initContentStructureTree( $rootNodeID, $fetchHidden, $classFilter );
+        $contentTree = (new eZContentStructureTreeOperator())->initContentStructureTree($rootNodeID, $fetchHidden, $classFilter);
 
         // if root node is invisible then no point to fetch children
         //if ( count( $contentTree ) == 0 )
@@ -233,7 +207,7 @@ class eZContentStructureTreeOperator
         $nodesLeft = $maxNodes - 1;
         $depthLeft = $maxDepth - 1;
 
-        eZContentStructureTreeOperator::children( $contentTree, $classFilter, $depthLeft, $nodesLeft, $sortArray, $fetchHidden, $unfoldNodeID );
+        (new eZContentStructureTreeOperator())->children($contentTree, $classFilter, $depthLeft, $nodesLeft, $sortArray, $fetchHidden, $unfoldNodeID);
 
         return $contentTree;
     }
@@ -248,7 +222,7 @@ class eZContentStructureTreeOperator
     {
         $parentNode = $contentTree['parent_node'];
 
-        if ( !is_array( $parentNode ) || count( $parentNode['node'] ) == 0 )
+        if ( !is_array( $parentNode ) || (is_countable($parentNode['node']) ? count( $parentNode['node'] ) : 0) == 0 )
         {
             return false;
         }
@@ -264,14 +238,8 @@ class eZContentStructureTreeOperator
             // get children
             $sortArray = ( $sortBy == false ) ? $parentNode['node']['sort_array'] : $sortBy;
 
-            $children = eZContentStructureTreeOperator::subTree( array(  'SortBy' => $sortArray,
-                                                                         'ClassFilterType' => 'include',
-                                                                         'ClassFilterArray'=> $classFilter,
-                                                                         'NodePath' => $parentNode['node']['path_string'],
-                                                                         'NodeDepth' => $parentNode['node']['depth'],
-                                                                         'FetchHidden' => $fetchHidden ),
-                                                                 $parentNode['node']['node_id'] );
-            if ( $children && count( $children ) > 0 )
+            $children = (new eZContentStructureTreeOperator())->subTree(['SortBy' => $sortArray, 'ClassFilterType' => 'include', 'ClassFilterArray'=> $classFilter, 'NodePath' => $parentNode['node']['path_string'], 'NodeDepth' => $parentNode['node']['depth'], 'FetchHidden' => $fetchHidden], $parentNode['node']['node_id']);
+            if ( $children && (is_countable($children) ? count( $children ) : 0) > 0 )
             {
                 $childrenNodes =& $contentTree['children'];
                 // fill children attributes
@@ -281,20 +249,12 @@ class eZContentStructureTreeOperator
 
                     if ( $child['is_container'] == '1' )
                     {
-                        $childrenCount = eZContentStructureTreeOperator::subTree( array(  'SortBy' => false,
-                                                                              'ClassFilterType' => 'include',
-                                                                              'ClassFilterArray'=> $classFilter,
-                                                                              'NodePath' => $child['path_string'],
-                                                                              'NodeDepth' => $child['depth'],
-                                                                              'FetchHidden' => $fetchHidden ),
-                                                                      $child['node_id'],
-                                                                      true );
+                        $childrenCount = (new eZContentStructureTreeOperator())->subTree(['SortBy' => false, 'ClassFilterType' => 'include', 'ClassFilterArray'=> $classFilter, 'NodePath' => $child['path_string'], 'NodeDepth' => $child['depth'], 'FetchHidden' => $fetchHidden], $child['node_id'], true);
                     }
 
-                    $childNode = eZContentStructureTreeOperator::createContentStructureNode( $child, $childrenCount );
+                    $childNode = (new eZContentStructureTreeOperator())->createContentStructureNode($child, $childrenCount);
 
-                    $childrenNodes[] = array( 'parent_node' => $childNode,
-                                              'children' => array() );
+                    $childrenNodes[] = ['parent_node' => $childNode, 'children' => []];
 
                     --$nodesLeft;
                     if ( $nodesLeft == 0 )
@@ -325,7 +285,7 @@ class eZContentStructureTreeOperator
         if ( $depthLeft == 0 )
             return false;
 
-        if ( eZContentStructureTreeOperator::oneLevelChildren( $contentTree, $classFilter, $sortBy, $nodesLeft, $fetchHidden ) )
+        if ( (new eZContentStructureTreeOperator())->oneLevelChildren($contentTree, $classFilter, $sortBy, $nodesLeft, $fetchHidden) )
         {
             --$depthLeft;
             if ( $depthLeft != 0 )
@@ -339,7 +299,7 @@ class eZContentStructureTreeOperator
                     if ( $unfoldNodeID != 0 and $unfoldNodeID != $child['parent_node']['node']['node_id'] )
                         continue;
 
-                    if ( !eZContentStructureTreeOperator::children( $child, $classFilter, $currentDepth, $nodesLeft, $sortBy, $fetchHidden, 0 ) )
+                    if ( !(new eZContentStructureTreeOperator())->children($child, $classFilter, $currentDepth, $nodesLeft, $sortBy, $fetchHidden, 0) )
                     {
                         return false;
                     }
@@ -359,22 +319,7 @@ class eZContentStructureTreeOperator
     */
     function createContentStructureNode( &$treeNode, $childrenCount )
     {
-        $node = array( 'node' => array( 'node_id' => $treeNode['node_id'],
-                                        'path_identification_string' => $treeNode['path_identification_string'],
-                                        'children_count' => $childrenCount,
-                                        'sort_array' => eZContentObjectTreeNode::sortArrayBySortFieldAndSortOrder( $treeNode['sort_field'], $treeNode['sort_order'] ),
-                                        'path_string' => $treeNode['path_string'],
-                                        'depth' => $treeNode['depth'],
-                                        'is_hidden' => $treeNode['is_hidden'],
-                                        'is_invisible' => $treeNode['is_invisible'] ),
-                                        'classes_js_array' => eZContentObjectTreeNode::availableClassListJsArray( array( 'path_string' => $treeNode['path_string'], 'is_container' => $treeNode['is_container'], 'node_id' => $treeNode['node_id'] ) ),
-                       'object' => array( 'id' => $treeNode['id'],
-                                          'name' => $treeNode['name'],
-                                          'class_identifier' => $treeNode['class_identifier'],
-                                          'class_name' => eZContentClass::nameFromSerializedString( $treeNode['class_serialized_name_list'] ),
-                                          'published' => $treeNode['published'],
-                                          'is_container' => ( $treeNode['is_container'] == '1' ),
-                                          'language_js_array' => eZContentLanguage::jsArrayByMask( $treeNode['language_mask'] ) ) );
+        $node = ['node' => ['node_id' => $treeNode['node_id'], 'path_identification_string' => $treeNode['path_identification_string'], 'children_count' => $childrenCount, 'sort_array' => eZContentObjectTreeNode::sortArrayBySortFieldAndSortOrder( $treeNode['sort_field'], $treeNode['sort_order'] ), 'path_string' => $treeNode['path_string'], 'depth' => $treeNode['depth'], 'is_hidden' => $treeNode['is_hidden'], 'is_invisible' => $treeNode['is_invisible']], 'classes_js_array' => eZContentObjectTreeNode::availableClassListJsArray( ['path_string' => $treeNode['path_string'], 'is_container' => $treeNode['is_container'], 'node_id' => $treeNode['node_id']] ), 'object' => ['id' => $treeNode['id'], 'name' => $treeNode['name'], 'class_identifier' => $treeNode['class_identifier'], 'class_name' => eZContentClass::nameFromSerializedString( $treeNode['class_serialized_name_list'] ), 'published' => $treeNode['published'], 'is_container' => ( $treeNode['is_container'] == '1' ), 'language_js_array' => eZContentLanguage::jsArrayByMask( $treeNode['language_mask'] )]];
         return $node;
     }
 
@@ -410,25 +355,9 @@ class eZContentStructureTreeOperator
 
                 if ( $viewNodeAllowed )
                 {
-                    $rootNode = array( 'node' => array( 'node_id' => $rootTreeNode->attribute( 'node_id' ),
-                                                        'path_identification_string' => $rootTreeNode->pathWithNames(),
-                                                        'children_count' => $rootTreeNode->attribute( 'children_count' ),
-                                                        'sort_array' => $rootTreeNode->attribute( 'sort_array' ),
-                                                        'path_string' => $rootTreeNode->attribute( 'path_string' ),
-                                                        'depth' => $rootTreeNode->attribute( 'depth' ),
-                                                        'is_hidden' => $rootTreeNode->attribute( 'is_hidden' ),
-                                                        'is_invisible' => $rootTreeNode->attribute( 'is_invisible' ) ),
-                                                        'classes_js_array' => eZContentObjectTreeNode::availableClassListJsArray( array( 'node' => &$rootTreeNode ) ),
-                                       'object' => array( 'id' => $contentObject->attribute( 'id' ),
-                                                          'name' => $contentObject->attribute( 'name' ),
-                                                          'class_identifier' => $contentObject->attribute( 'class_identifier' ),
-                                                          'class_name' => $contentObject->attribute('class_name'),
-                                                          'published' => $contentObject->attribute( 'published' ),
-                                                          'is_container' => true,
-                                                          'language_js_array' => eZContentLanguage::jsArrayByMask( $contentObject->attribute( 'language_mask' ) ) ) );
+                    $rootNode = ['node' => ['node_id' => $rootTreeNode->attribute( 'node_id' ), 'path_identification_string' => $rootTreeNode->pathWithNames(), 'children_count' => $rootTreeNode->attribute( 'children_count' ), 'sort_array' => $rootTreeNode->attribute( 'sort_array' ), 'path_string' => $rootTreeNode->attribute( 'path_string' ), 'depth' => $rootTreeNode->attribute( 'depth' ), 'is_hidden' => $rootTreeNode->attribute( 'is_hidden' ), 'is_invisible' => $rootTreeNode->attribute( 'is_invisible' )], 'classes_js_array' => eZContentObjectTreeNode::availableClassListJsArray( ['node' => &$rootTreeNode] ), 'object' => ['id' => $contentObject->attribute( 'id' ), 'name' => $contentObject->attribute( 'name' ), 'class_identifier' => $contentObject->attribute( 'class_identifier' ), 'class_name' => $contentObject->attribute('class_name'), 'published' => $contentObject->attribute( 'published' ), 'is_container' => true, 'language_js_array' => eZContentLanguage::jsArrayByMask( $contentObject->attribute( 'language_mask' ) )]];
 
-                    $nodes = array( 'parent_node' => &$rootNode,
-                                    'children' => array() );
+                    $nodes = ['parent_node' => &$rootNode, 'children' => []];
                 }
             }
         }

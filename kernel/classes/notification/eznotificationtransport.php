@@ -31,7 +31,7 @@ class eZNotificationTransport
             $transport = $ini->variable( 'TransportSettings', 'DefaultTransport' );
         }
         $transportImpl =& $GLOBALS['eZNotificationTransportGlobalInstance_' . $transport ];
-        $class = $transportImpl !== null ? strtolower( get_class( $transportImpl ) ) : '';
+        $class = $transportImpl !== null ? strtolower( (string) $transportImpl::class ) : '';
 
         $fetchInstance = false;
         if ( !preg_match( '/.*?transport/', $class ) )
@@ -45,7 +45,7 @@ class eZNotificationTransport
         if ( $fetchInstance )
         {
             $extraPluginPathArray = $ini->variable( 'TransportSettings', 'TransportPluginPath' );
-            $pluginPathArray = array_merge( array( 'kernel/classes/notification/' ),
+            $pluginPathArray = array_merge( ['kernel/classes/notification/'],
                                             $extraPluginPathArray );
             foreach( $pluginPathArray as $pluginPath )
             {

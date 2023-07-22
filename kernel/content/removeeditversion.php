@@ -39,7 +39,7 @@ if ( $isConfirmed )
     }
     $versionObject = eZContentObjectVersion::fetch( $versionRows[0]['id'] );
     if ( is_object( $versionObject ) and
-         in_array( $versionObject->attribute( 'status' ), array( eZContentObjectVersion::STATUS_DRAFT, eZContentObjectVersion::STATUS_INTERNAL_DRAFT ) ) )
+         in_array( $versionObject->attribute( 'status' ), [eZContentObjectVersion::STATUS_DRAFT, eZContentObjectVersion::STATUS_INTERNAL_DRAFT] ) )
     {
         if ( !$object->attribute( 'can_edit' ) )
         {
@@ -57,7 +57,7 @@ if ( $isConfirmed )
             if ( !$allowEdit )
             {
                 $db->commit(); // We haven't made any changes, but commit here to avoid affecting any outer transactions.
-                return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array( 'AccessList' => $object->accessList( 'edit' ) ) );
+                return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', ['AccessList' => $object->accessList( 'edit' )] );
             }
         }
 
@@ -97,7 +97,7 @@ if ( $isConfirmed )
     }
     else
     {
-        return eZRedirectManager::redirectTo( $Module, '/', true, array( 'content/edit' ) );
+        return eZRedirectManager::redirectTo( $Module, '/', true, ['content/edit'] );
     }
 }
 
@@ -114,8 +114,7 @@ $tpl->setVariable( "Module", $Module );
 $tpl->setVariable( "object_id", $objectID );
 $tpl->setVariable( "object_version", $version );
 $tpl->setVariable( "object_language", $editLanguage );
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:content/removeeditversion.tpl" );
-$Result['path'] = array( array( 'url' => '/content/removeeditversion/',
-                                'text' => ezpI18n::tr( 'kernel/content', 'Remove editing version' ) ) );
+$Result['path'] = [['url' => '/content/removeeditversion/', 'text' => ezpI18n::tr( 'kernel/content', 'Remove editing version' )]];
 ?>

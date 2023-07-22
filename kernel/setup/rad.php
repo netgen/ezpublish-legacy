@@ -12,10 +12,9 @@ $module = $Params['Module'];
 $ini = eZINI::instance();
 $tpl = eZTemplate::factory();
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/rad.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'Rapid Application Development' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'Rapid Application Development' )]];
 
 
 ?>

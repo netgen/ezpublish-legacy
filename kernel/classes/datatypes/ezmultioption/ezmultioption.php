@@ -113,19 +113,18 @@
 class eZMultiOption
 {
     /*!
-
-    */
+     */
     /**
      * Initializes with empty multioption list.
      *
-     * @param string $name
+     * @param string $Name
      */
-    public function __construct( $name )
+    public function __construct(
+        /// \privatesection
+        /// Contains the Option name
+        public $Name
+    )
     {
-        $this->Name = $name;
-        $this->Options = array();
-        $this->MultiOptionCount = 0;
-        $this->OptionCounter = 0;
     }
 
     /*!
@@ -138,11 +137,7 @@ class eZMultiOption
     function addMultiOption( $name, $multiOptionPriority, $defaultValue )
     {
         $this->MultiOptionCount += 1;
-        $this->Options[$this->MultiOptionCount] = array( "id" => $this->MultiOptionCount,
-                                                         "name" => $name,
-                                                         'priority'=> $multiOptionPriority,
-                                                         "default_option_id" => $defaultValue,
-                                                         'optionlist' => array() );
+        $this->Options[$this->MultiOptionCount] = ["id" => $this->MultiOptionCount, "name" => $name, 'priority'=> $multiOptionPriority, "default_option_id" => $defaultValue, 'optionlist' => []];
         return $this->MultiOptionCount;
     }
 
@@ -154,16 +149,13 @@ class eZMultiOption
     */
     function addOption( $newID, $OptionID, $optionValue, $optionAdditionalPrice )
     {
-        $key = count( $this->Options[$newID]['optionlist'] ) + 1;
-        if ( strlen( $OptionID ) == 0 )
+        $key = (is_countable($this->Options[$newID]['optionlist']) ? count( $this->Options[$newID]['optionlist'] ) : 0) + 1;
+        if ( strlen( (string) $OptionID ) == 0 )
         {
             $this->OptionCounter += 1;
             $OptionID = $this->OptionCounter;
         }
-        $this->Options[$newID]['optionlist'][] = array( "id" => $key,
-                                                        "option_id" => $OptionID,
-                                                        "value" => $optionValue,
-                                                        'additional_price' => $optionAdditionalPrice );
+        $this->Options[$newID]['optionlist'][] = ["id" => $key, "option_id" => $OptionID, "value" => $optionValue, 'additional_price' => $optionAdditionalPrice];
     }
 
     /*!
@@ -173,14 +165,7 @@ class eZMultiOption
     */
     function sortMultiOptions()
     {
-        usort( $this->Options, function( $a, $b ) {
-            if ( $a['priority'] == $b['priority'] )
-            {
-                return 0;
-            }
-
-            return ( $a['priority'] < $b['priority'] ) ? -1 : 1;
-        });
+        usort( $this->Options, fn($a, $b) => $a['priority'] <=> $b['priority']);
         $this->changeMultiOptionID();
     }
 
@@ -260,8 +245,7 @@ class eZMultiOption
     */
     function attributes()
     {
-        return array( 'name',
-                      'multioption_list' );
+        return ['name', 'multioption_list'];
     }
 
     /*!
@@ -310,7 +294,7 @@ class eZMultiOption
     function decodeXML( $xmlString )
     {
         $this->OptionCounter = 0;
-        $this->Options = array();
+        $this->Options = [];
         if ( $xmlString != "" )
         {
             $dom = new DOMDocument( '1.0', 'utf-8' );
@@ -378,15 +362,11 @@ class eZMultiOption
         $xml = $doc->saveXML();
         return $xml;
     }
-
-    /// \privatesection
-    /// Contains the Option name
-    public $Name;
     /// Contains the Options
-    public $Options;
+    public $Options = [];
     /// Contains the multioption counter value
-    public $MultiOptionCount;
+    public $MultiOptionCount = 0;
     /// Contains the option counter value
-    public $OptionCounter;
+    public $OptionCounter = 0;
 }
 ?>

@@ -27,25 +27,9 @@ class eZMarkTemplateCompiler extends eZBenchmarkCase
     {
         $tpl = eZTemplate::factory();
         $tpl->setIsCachingAllowed( true );
-        eZTemplateCompiler::setSettings( array( 'compile' => true,
-                                                'comments' => false,
-                                                'accumulators' => false,
-                                                'timingpoints' => false,
-                                                'fallbackresource' => false,
-                                                'nodeplacement' => false,
-                                                'execution' => true,
-                                                'generate' => true,
-                                                'compilation-directory' => 'benchmarks/eztemplate/compilation' ) );
+        eZTemplateCompiler::setSettings( ['compile' => true, 'comments' => false, 'accumulators' => false, 'timingpoints' => false, 'fallbackresource' => false, 'nodeplacement' => false, 'execution' => true, 'generate' => true, 'compilation-directory' => 'benchmarks/eztemplate/compilation'] );
         $expected = $tpl->fetch( 'benchmarks/eztemplate/mark.tpl' );
-        eZTemplateCompiler::setSettings( array( 'compile' => true,
-                                                'comments' => false,
-                                                'accumulators' => false,
-                                                'timingpoints' => false,
-                                                'fallbackresource' => false,
-                                                'nodeplacement' => false,
-                                                'execution' => true,
-                                                'generate' => false,
-                                                'compilation-directory' => 'benchmarks/eztemplate/compilation' ) );
+        eZTemplateCompiler::setSettings( ['compile' => true, 'comments' => false, 'accumulators' => false, 'timingpoints' => false, 'fallbackresource' => false, 'nodeplacement' => false, 'execution' => true, 'generate' => false, 'compilation-directory' => 'benchmarks/eztemplate/compilation'] );
         $tpl->reset();
         $this->TPL = $tpl;
     }
@@ -66,7 +50,7 @@ class eZMarkTemplateCompiler extends eZBenchmarkCase
         $actual = $tpl->fetch( 'benchmarks/eztemplate/mark.tpl' );
     }
 
-    var $TPL;
+    public $TPL;
 }
 
 ?>

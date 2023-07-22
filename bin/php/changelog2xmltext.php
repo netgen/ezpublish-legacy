@@ -12,23 +12,19 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Changelog converter\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Changelog converter\n\n" .
                                                         "Converts a Changelog into XML text format usable in eZ Publish\n" .
-                                                        "The result is printed to the standard output" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "The result is printed to the standard output" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "",
                                 "[changelog]",
                                 false, false,
-                                array( 'log' => false,
-                                       'siteaccess' => false ) );
+                                ['log' => false, 'siteaccess' => false] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( "Missing changelog file" );
     $script->shutdown( 1 );
@@ -44,7 +40,7 @@ $lines = explode( "\n", $text );
 
 function isChangeEntry( $line, &$changeText )
 {
-    if ( preg_match( "/^- (.+)$/", $line, $matches ) )
+    if ( preg_match( "/^- (.+)$/", (string) $line, $matches ) )
     {
         $changeText = $matches[1];
         return true;
@@ -56,15 +52,15 @@ function addListItem( &$listLines, $changeText )
 {
     if ( $changeText !== false )
     {
-        $changeText = str_replace( array( "<", ">",   ),
-                                   array( "[", "]" ),
-                                   $changeText );
+        $changeText = str_replace( ["<", ">"],
+                                   ["[", "]"],
+                                   (string) $changeText );
         $methodText = 'http|https|ftp|sftp';
         $elements = preg_split( "#((?:(?:$methodText)://)(?:(?:[a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+(?:(?:[\/a-zA-Z0-9_+$-]+\\.)*(?:[\/a-zA-Z0-9_+$-])*))(?:\#[a-zA-Z0-9-]+)?\?*(?:[a-zA-Z0-9_-]+=[a-zA-Z0-9_-]+&*)*)#m",
                                 $changeText,
                                 false,
                                 PREG_SPLIT_DELIM_CAPTURE );
-        $newElements = array();
+        $newElements = [];
         $i = 0;
         foreach ( $elements as $element )
         {
@@ -81,7 +77,7 @@ function addListItem( &$listLines, $changeText )
                                 $changeText,
                                 false,
                                 PREG_SPLIT_DELIM_CAPTURE );
-        $newElements = array();
+        $newElements = [];
         $i = 0;
         foreach ( $elements as $element )
         {
@@ -98,7 +94,7 @@ function addListItem( &$listLines, $changeText )
                                 $changeText,
                                 false,
                                 PREG_SPLIT_DELIM_CAPTURE );
-        $newElements = array();
+        $newElements = [];
         $i = 0;
         foreach ( $elements as $element )
         {
@@ -113,31 +109,29 @@ function addListItem( &$listLines, $changeText )
 
         $changeText = preg_replace( "# *\( *?(:?manually +)?merged +from +[a-z0-9.-]+(?:/[a-z0-9.-]+)*[,/]? +(\([0-9](?:[.-][0-9a-z]+)*\))? *(?:rev|erv)(?:ision|\.)? *[0-9]+ *\)#i", '', $changeText );
 
-        $listLines[] = array( 'type' => 'li',
-                              'text' => $changeText );
+        $listLines[] = ['type' => 'li', 'text' => $changeText];
     }
 }
 
 function createList( &$newLines, &$listLines )
 {
-    if ( count( $listLines ) > 0 )
+    if ( (is_countable($listLines) ? count( $listLines ) : 0) > 0 )
     {
-        $ulEntry = array( 'type' => 'ul',
-                          'items' => $listLines );
+        $ulEntry = ['type' => 'ul', 'items' => $listLines];
         $newLines[] = $ulEntry;
-        $listLines = array();
+        $listLines = [];
     }
 }
 
 function isEmptyLine( $line )
 {
-    return strlen( trim( $line ) ) == 0;
+    return strlen( trim( (string) $line ) ) == 0;
 }
 
-$newLines = array();
+$newLines = [];
 $lineNumber = 0;
 $listCounter = 0;
-$listLines = array();
+$listLines = [];
 $currentListEntry = false;
 $lastSection = null;
 foreach ( $lines as $line )
@@ -147,8 +141,7 @@ foreach ( $lines as $line )
     ++$lineNumber;
     if ( $lineNumber == 1 )
     {
-        $newLines[] = array( 'type' => 'title',
-                             'name' => $line );
+        $newLines[] = ['type' => 'title', 'name' => $line];
         $newLines[] = '';
         continue;
     }
@@ -180,10 +173,7 @@ foreach ( $lines as $line )
         $headerLevel = 1;
         if ( !$matches[1] )
             $headerLevel += 1;
-        $section = array( 'type' => 'section',
-                          'level' => $headerLevel,
-                          'name' => "$header",
-                          'items' => array() );
+        $section = ['type' => 'section', 'level' => $headerLevel, 'name' => "$header", 'items' => []];
         $newLines[] = $section;
         unset( $lastSection );
         $lastSection =& $newLines[count( $newLines ) - 1];
@@ -223,7 +213,7 @@ function dumpToText( $nodes )
                 } break;
                 case 'section':
                 {
-                    if ( count( $node['items'] ) > 0 )
+                    if ( (is_countable($node['items']) ? count( $node['items'] ) : 0) > 0 )
                     {
                         $text .= "<header level='" . $node['level'] . "'>" . $node['name'] . "</header>\n";
                         $text .= dumpToText( $node['items'] );

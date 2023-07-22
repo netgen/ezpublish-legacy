@@ -23,6 +23,12 @@ class eZLDAPUser extends eZUser
     */
     static function loginUser( $login, $password, $authenticationMatch = false )
     {
+        $isEnabled = null;
+        $canLogin = null;
+        $userRow = [];
+        $LDAPFilters = [];
+        $LDAPUserGroupType = null;
+        $LDAPUserGroup = [];
         $http = eZHTTPTool::instance();
         $db = eZDB::instance();
 
@@ -34,7 +40,7 @@ class eZLDAPUser extends eZUser
 
         $loginLdapEscaped = self::ldap_escape( $login );
 
-        $loginArray = array();
+        $loginArray = [];
         if ( $authenticationMatch & eZUser::AUTHENTICATE_LOGIN )
             $loginArray[] = "login='$loginEscaped'";
         if ( $authenticationMatch & eZUser::AUTHENTICATE_EMAIL )
@@ -106,7 +112,7 @@ class eZLDAPUser extends eZUser
                     $userSetting = eZUserSetting::fetch( $userID );
                     $isEnabled = $userSetting->attribute( "is_enabled" );
                     if ( $hashType != eZUser::hashType() and
-                         strtolower( $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
+                         strtolower( (string) $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
                     {
                         $hashType = eZUser::hashType();
                         $hash = eZUser::createHash( $login, $password, eZUser::site(),
@@ -147,16 +153,16 @@ class eZLDAPUser extends eZUser
             $LDAPBindPassword       = $LDAPIni->variable( 'LDAPSettings', 'LDAPBindPassword' );
             $LDAPSearchScope        = $LDAPIni->variable( 'LDAPSettings', 'LDAPSearchScope' );
 
-            $LDAPLoginAttribute     = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPLoginAttribute' ) );
-            $LDAPFirstNameAttribute = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPFirstNameAttribute' ) );
+            $LDAPLoginAttribute     = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPLoginAttribute' ) );
+            $LDAPFirstNameAttribute = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPFirstNameAttribute' ) );
             $LDAPFirstNameIsCN      = $LDAPIni->variable( 'LDAPSettings', 'LDAPFirstNameIsCommonName' ) === 'true';
-            $LDAPLastNameAttribute  = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPLastNameAttribute' ) );
-            $LDAPEmailAttribute     = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPEmailAttribute' ) );
+            $LDAPLastNameAttribute  = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPLastNameAttribute' ) );
+            $LDAPEmailAttribute     = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPEmailAttribute' ) );
 
             $defaultUserPlacement   = $ini->variable( "UserSettings", "DefaultUserPlacement" );
 
-            $LDAPUserGroupAttributeType = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPUserGroupAttributeType' ) );
-            $LDAPUserGroupAttribute     = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPUserGroupAttribute' ) );
+            $LDAPUserGroupAttributeType = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPUserGroupAttributeType' ) );
+            $LDAPUserGroupAttribute     = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPUserGroupAttribute' ) );
 
             if ( $LDAPIni->hasVariable( 'LDAPSettings', 'Utf8Encoding' ) )
             {
@@ -182,26 +188,21 @@ class eZLDAPUser extends eZUser
             }
 
             $LDAPFilter = "( &";
-            if ( count( $LDAPFilters ) > 0 )
+            if ( (is_countable($LDAPFilters) ? count( $LDAPFilters ) : 0) > 0 )
             {
                 foreach ( array_keys( $LDAPFilters ) as $key )
                 {
                     $LDAPFilter .= "(" . $LDAPFilters[$key] . ")";
                 }
             }
-            $LDAPEqualSign = trim($LDAPIni->variable( 'LDAPSettings', "LDAPEqualSign" ) );
-            $LDAPBaseDN    = str_replace( $LDAPEqualSign, "=", $LDAPBaseDN );
+            $LDAPEqualSign = trim((string) $LDAPIni->variable( 'LDAPSettings', "LDAPEqualSign" ) );
+            $LDAPBaseDN    = str_replace( $LDAPEqualSign, "=", (string) $LDAPBaseDN );
             $LDAPFilter    = str_replace( $LDAPEqualSign, "=", $LDAPFilter );
-            $LDAPBindUser  = str_replace( $LDAPEqualSign, "=", $LDAPBindUser );
+            $LDAPBindUser  = str_replace( $LDAPEqualSign, "=", (string) $LDAPBindUser );
 
             if ( $LDAPDebugTrace )
             {
-                $debugArray = array( 'stage' => '1/5: Connecting and Binding to LDAP server',
-                                     'LDAPServer' => $LDAPServer,
-                                     'LDAPPort' => $LDAPPort,
-                                     'LDAPBindUser' => $LDAPBindUser,
-                                     'LDAPVersion' => $LDAPVersion
-                );
+                $debugArray = ['stage' => '1/5: Connecting and Binding to LDAP server', 'LDAPServer' => $LDAPServer, 'LDAPPort' => $LDAPPort, 'LDAPBindUser' => $LDAPBindUser, 'LDAPVersion' => $LDAPVersion];
                 // Set debug trace mode for ldap connections
                 if ( function_exists( 'ldap_set_option' ) )
                     ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 7);
@@ -242,21 +243,13 @@ class eZLDAPUser extends eZUser
                 ldap_set_option( $ds, LDAP_OPT_SIZELIMIT, 0 );
                 ldap_set_option( $ds, LDAP_OPT_TIMELIMIT, 0 );
 
-                $retrieveAttributes = array( $LDAPLoginAttribute,
-                                             $LDAPFirstNameAttribute,
-                                             $LDAPLastNameAttribute,
-                                             $LDAPEmailAttribute );
+                $retrieveAttributes = [$LDAPLoginAttribute, $LDAPFirstNameAttribute, $LDAPLastNameAttribute, $LDAPEmailAttribute];
                 if ( $LDAPUserGroupAttributeType )
                     $retrieveAttributes[] = $LDAPUserGroupAttribute;
 
                 if ( $LDAPDebugTrace )
                 {
-                    $debugArray = array( 'stage' => '2/5: finding user',
-                                         'LDAPFilter' => $LDAPFilter,
-                                         'retrieveAttributes' => $retrieveAttributes,
-                                         'LDAPSearchScope' => $LDAPSearchScope,
-                                         'LDAPBaseDN' => $LDAPBaseDN
-                    );
+                    $debugArray = ['stage' => '2/5: finding user', 'LDAPFilter' => $LDAPFilter, 'retrieveAttributes' => $retrieveAttributes, 'LDAPSearchScope' => $LDAPSearchScope, 'LDAPBaseDN' => $LDAPBaseDN];
                     eZDebug::writeNotice( var_export( $debugArray, true ), __METHOD__ );
                 }
 
@@ -288,9 +281,7 @@ class eZLDAPUser extends eZUser
                 }
                 else if ( $LDAPDebugTrace )
                 {
-                    $debugArray = array( 'stage' => '3/5: real authentication of user',
-                                         'info' => $info
-                    );
+                    $debugArray = ['stage' => '3/5: real authentication of user', 'info' => $info];
                     eZDebug::writeNotice( var_export( $debugArray, true ), __METHOD__ );
                 }
 
@@ -311,7 +302,7 @@ class eZLDAPUser extends eZUser
                     return $user;
                 }
 
-                $extraNodeAssignments = array();
+                $extraNodeAssignments = [];
                 $userGroupClassID = $ini->variable( "UserSettings", "UserGroupClassID" );
 
                 // default user group assigning
@@ -402,15 +393,13 @@ class eZLDAPUser extends eZUser
                 $LDAPUserGroupMap     = $LDAPIni->variable( 'LDAPSettings', 'LDAPUserGroupMap' );
 
                 if ( !is_array( $LDAPUserGroupMap ) )
-                    $LDAPUserGroupMap = array();
+                    $LDAPUserGroupMap = [];
 
                 // group mapping constants
                 $ByMemberAttribute             = 'SimpleMapping'; // by group's member attributes (with mapping)
                 $ByMemberAttributeHierarhicaly = 'GetGroupsTree'; // by group's member attributes hierarhically
                 $ByGroupAttribute              = 'UseGroupAttribute'; // by user's group attribute (old style)
-                $groupMappingTypes = array( $ByMemberAttribute,
-                                            $ByMemberAttributeHierarhicaly,
-                                            $ByGroupAttribute);
+                $groupMappingTypes = [$ByMemberAttribute, $ByMemberAttributeHierarhicaly, $ByGroupAttribute];
 
                 $userData =& $info[ 0 ];
 
@@ -422,13 +411,7 @@ class eZLDAPUser extends eZUser
 
                 if ( $LDAPDebugTrace )
                 {
-                    $debugArray = array( 'stage' => '4/5: group mapping init',
-                                         'LDAPUserGroupType' => $LDAPUserGroupType,
-                                         'LDAPGroupMappingType' => $LDAPGroupMappingType,
-                                         'LDAPUserGroup' => $LDAPUserGroup,
-                                         'defaultUserPlacement' => $defaultUserPlacement,
-                                         'extraNodeAssignments' => $extraNodeAssignments
-                    );
+                    $debugArray = ['stage' => '4/5: group mapping init', 'LDAPUserGroupType' => $LDAPUserGroupType, 'LDAPGroupMappingType' => $LDAPGroupMappingType, 'LDAPUserGroup' => $LDAPUserGroup, 'defaultUserPlacement' => $defaultUserPlacement, 'extraNodeAssignments' => $extraNodeAssignments];
                     eZDebug::writeNotice( var_export( $debugArray, true ), __METHOD__ );
                 }
 
@@ -436,17 +419,17 @@ class eZLDAPUser extends eZUser
                      $LDAPGroupMappingType == $ByMemberAttributeHierarhicaly )
                 {
                     $LDAPGroupBaseDN          = $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupBaseDN' );
-                    $LDAPGroupBaseDN          = str_replace( $LDAPEqualSign, '=', $LDAPGroupBaseDN );
+                    $LDAPGroupBaseDN          = str_replace( $LDAPEqualSign, '=', (string) $LDAPGroupBaseDN );
                     $LDAPGroupClass           = $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupClass' );
 
-                    $LDAPGroupNameAttribute   = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupNameAttribute' ) );
-                    $LDAPGroupMemberAttribute = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupMemberAttribute' ) );
-                    $LDAPGroupDescriptionAttribute = strtolower( $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupDescriptionAttribute' ) );
+                    $LDAPGroupNameAttribute   = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupNameAttribute' ) );
+                    $LDAPGroupMemberAttribute = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupMemberAttribute' ) );
+                    $LDAPGroupDescriptionAttribute = strtolower( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPGroupDescriptionAttribute' ) );
 
                     $groupSearchingDepth = ( $LDAPGroupMappingType == '1' ) ? 1 : 1000;
 
                     // now, get all parents for currently ldap authenticated user
-                    $requiredParams = array();
+                    $requiredParams = [];
                     $requiredParams[ 'LDAPLoginAttribute' ]       = $LDAPLoginAttribute;
                     $requiredParams[ 'LDAPGroupBaseDN' ]          = $LDAPGroupBaseDN;
                     $requiredParams[ 'LDAPGroupClass' ]           = $LDAPGroupClass;
@@ -459,22 +442,20 @@ class eZLDAPUser extends eZUser
                     else
                         $requiredParams[ 'TopUserGroupNodeID' ] = 5;
 
-                    $groupsTree = array();
-                    $stack = array();
+                    $groupsTree = [];
+                    $stack = [];
                     $newfilter = '(&(objectClass=' . $LDAPGroupClass . ')(' . $LDAPGroupMemberAttribute . '=' . $userData['dn'] . '))';
 
-                    $groupsTree[ $userData['dn'] ] = array( 'data' => & $userData,
-                                                                'parents' => array(),
-                                                                'children' => array() );
+                    $groupsTree[ $userData['dn'] ] = ['data' => & $userData, 'parents' => [], 'children' => []];
 
                     eZLDAPUser::getUserGroupsTree( $requiredParams, $newfilter, $userData['dn'], $groupsTree, $stack, $groupSearchingDepth );
                     $userRecord =& $groupsTree[ $userData['dn'] ];
 
                     if ( $LDAPGroupMappingType == $ByMemberAttribute )
                     {
-                        if ( count( $userRecord[ 'parents' ] ) > 0 )
+                        if ( (is_countable($userRecord[ 'parents' ]) ? count( $userRecord[ 'parents' ] ) : 0) > 0 )
                         {
-                            $remappedGroupNames = array();
+                            $remappedGroupNames = [];
                             foreach ( array_keys( $userRecord[ 'parents' ] ) as $key )
                             {
                                 $parentGroup =& $userRecord[ 'parents' ][ $key ];
@@ -508,11 +489,11 @@ class eZLDAPUser extends eZUser
                     }
                     else if ( $LDAPGroupMappingType == $ByMemberAttributeHierarhicaly )
                     {
-                        $stack = array();
+                        $stack = [];
                         self::goAndPublishGroups( $requiredParams, $userData['dn'], $groupsTree, $stack, $groupSearchingDepth, true );
                     }
                     if ( isset( $userRecord['new_parents'] ) and
-                         count( $userRecord['new_parents'] ) > 0 )
+                         (is_countable($userRecord['new_parents']) ? count( $userRecord['new_parents'] ) : 0) > 0 )
                     {
                         $defaultUserPlacement = $userRecord['new_parents'][0];
                         $extraNodeAssignments = array_merge( $extraNodeAssignments, $userRecord['new_parents'] );
@@ -536,7 +517,7 @@ class eZLDAPUser extends eZUser
                             {
                                 if ( $isUtf8Encoding )
                                 {
-                                    $groupName = utf8_decode( $info[0][$LDAPUserGroupAttribute][$i] );
+                                    $groupName = mb_convert_encoding( (string) $info[0][$LDAPUserGroupAttribute][$i], 'ISO-8859-1' );
                                 }
                                 else
                                 {
@@ -554,7 +535,7 @@ class eZLDAPUser extends eZUser
                             {
                                 if ( $isUtf8Encoding )
                                 {
-                                    $groupID = utf8_decode( $info[0][$LDAPUserGroupAttribute][$i] );
+                                    $groupID = mb_convert_encoding( (string) $info[0][$LDAPUserGroupAttribute][$i], 'ISO-8859-1' );
                                 }
                                 else
                                 {
@@ -594,30 +575,22 @@ class eZLDAPUser extends eZUser
                 // remove ' last_name' from first_name if cn is used for first name
                 if ( $LDAPFirstNameIsCN && isset( $userData[ $LDAPFirstNameAttribute ] ) && isset( $userData[ $LDAPLastNameAttribute ] ) )
                 {
-                    $userData[ $LDAPFirstNameAttribute ][0] = str_replace( ' ' . $userData[ $LDAPLastNameAttribute ][0], '', $userData[ $LDAPFirstNameAttribute ][0] );
+                    $userData[ $LDAPFirstNameAttribute ][0] = str_replace( ' ' . $userData[ $LDAPLastNameAttribute ][0], '', (string) $userData[ $LDAPFirstNameAttribute ][0] );
                 }
 
                 if ( isset( $userData[ $LDAPEmailAttribute ] ) )
                     $LDAPuserEmail = $userData[ $LDAPEmailAttribute ][0];
-                else if( trim( $LDAPIni->variable( 'LDAPSettings', 'LDAPEmailEmptyAttributeSuffix' ) ) )
+                else if( trim( (string) $LDAPIni->variable( 'LDAPSettings', 'LDAPEmailEmptyAttributeSuffix' ) ) )
                     $LDAPuserEmail = $login . $LDAPIni->variable( 'LDAPSettings', 'LDAPEmailEmptyAttributeSuffix' );
                 else
                     $LDAPuserEmail = false;
 
 
-                $userAttributes = array( 'login'      => $login,
-                                         'first_name' => isset( $userData[ $LDAPFirstNameAttribute ] ) ? $userData[ $LDAPFirstNameAttribute ][0] : false,
-                                         'last_name'  => isset( $userData[ $LDAPLastNameAttribute ] ) ? $userData[ $LDAPLastNameAttribute ][0] : false,
-                                         'email'      => $LDAPuserEmail );
+                $userAttributes = ['login'      => $login, 'first_name' => isset( $userData[ $LDAPFirstNameAttribute ] ) ? $userData[ $LDAPFirstNameAttribute ][0] : false, 'last_name'  => isset( $userData[ $LDAPLastNameAttribute ] ) ? $userData[ $LDAPLastNameAttribute ][0] : false, 'email'      => $LDAPuserEmail];
 
                 if ( $LDAPDebugTrace )
                 {
-                    $debugArray = array( 'stage' => '5/5: storing user',
-                                         'userAttributes' => $userAttributes,
-                                         'isUtf8Encoding' => $isUtf8Encoding,
-                                         'defaultUserPlacement' => $defaultUserPlacement,
-                                         'extraNodeAssignments' => $extraNodeAssignments
-                    );
+                    $debugArray = ['stage' => '5/5: storing user', 'userAttributes' => $userAttributes, 'isUtf8Encoding' => $isUtf8Encoding, 'defaultUserPlacement' => $defaultUserPlacement, 'extraNodeAssignments' => $extraNodeAssignments];
                     eZDebug::writeNotice( var_export( $debugArray, true ), __METHOD__ );
                 }
 
@@ -687,8 +660,8 @@ class eZLDAPUser extends eZUser
 
         if ( $isUtf8Encoding )
         {
-            $first_name = utf8_decode( $first_name );
-            $last_name = utf8_decode( $last_name );
+            $first_name = mb_convert_encoding( (string) $first_name, 'ISO-8859-1' );
+            $last_name = mb_convert_encoding( (string) $last_name, 'ISO-8859-1' );
         }
 
         $user = eZUser::fetchByName( $login );
@@ -825,18 +798,7 @@ class eZLDAPUser extends eZUser
         $user->setAttribute( 'password_hash_type', self::PASSWORD_HASH_EMPTY );
         $user->store();
 
-        $debugArray = array( 'Updating user data',
-                             'createNewUser' => $createNewUser,
-                             'userDataChanged' => isset( $userDataChanged ) ? $userDataChanged : null,
-                             'login' => $login,
-                             'first_name' => $first_name,
-                             'last_name' => $last_name,
-                             'email' => $email,
-                             'firstNameAttribute is_object' => is_object( $firstNameAttribute ),
-                             'lastNameAttribute is_object' => is_object( $lastNameAttribute ),
-                             'content object id' => $contentObjectID,
-                             'version id' => $version->attribute( 'version' )
-        );
+        $debugArray = ['Updating user data', 'createNewUser' => $createNewUser, 'userDataChanged' => $userDataChanged ?? null, 'login' => $login, 'first_name' => $first_name, 'last_name' => $last_name, 'email' => $email, 'firstNameAttribute is_object' => is_object( $firstNameAttribute ), 'lastNameAttribute is_object' => is_object( $lastNameAttribute ), 'content object id' => $contentObjectID, 'version id' => $version->attribute( 'version' )];
         eZDebug::writeNotice( var_export( $debugArray, true ), __METHOD__ );
         //================= common part 2: end ==========================
 
@@ -846,26 +808,26 @@ class eZLDAPUser extends eZUser
             // prepare node assignments for publishing new user
             foreach( $parentNodeIDs as $parentNodeID )
             {
-                $newNodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObjectID,
-                                                                      'contentobject_version' => 1,
-                                                                      'parent_node' => $parentNodeID,
-                                                                      // parent_remote_id in node assignment holds remote id of the tree node,
-                                                                      // not of the parent location or of the node assignment itself
-                                                                      'parent_remote_id' => uniqid( 'LDAP_' ),
-                                                                      'is_main' => ( $defaultUserPlacement == $parentNodeID ? 1 : 0 ) ) );
+                $newNodeAssignment = eZNodeAssignment::create( [
+                    'contentobject_id' => $contentObjectID,
+                    'contentobject_version' => 1,
+                    'parent_node' => $parentNodeID,
+                    // parent_remote_id in node assignment holds remote id of the tree node,
+                    // not of the parent location or of the node assignment itself
+                    'parent_remote_id' => uniqid( 'LDAP_' ),
+                    'is_main' => ( $defaultUserPlacement == $parentNodeID ? 1 : 0 ),
+                ] );
                 $newNodeAssignment->store();
             }
 
-            $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                         'version' => 1 ) );
+            $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => 1] );
         }
         else
         {
             if ( $userDataChanged )
             {
                 // Publish object
-                $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                             'version' => $version->attribute( 'version' ) ) );
+                $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => $version->attribute( 'version' )] );
                 // Refetch object
                 $contentObject = eZContentObject::fetch( $contentObjectID );
                 $version = $contentObject->attribute( 'current' );
@@ -884,7 +846,7 @@ class eZLDAPUser extends eZUser
 
                 // First check existing assignments, remove any that should not exist
                 $assignedNodesList = $contentObject->assignedNodes();
-                $existingParentNodeIDs = array();
+                $existingParentNodeIDs = [];
                 foreach ( $assignedNodesList as $node )
                 {
                     $parentNodeID = $node->attribute( 'parent_node_id' );
@@ -955,7 +917,7 @@ class eZLDAPUser extends eZUser
     */
     static function publishNewUserGroup( $parentNodeIDs, $newGroupAttributes, $isUtf8Encoding = false )
     {
-        $newNodeIDs = array();
+        $newNodeIDs = [];
 
         if ( !is_array( $newGroupAttributes ) or
              !isset( $newGroupAttributes[ 'name' ] ) or
@@ -988,24 +950,28 @@ class eZLDAPUser extends eZUser
         $defaultPlacement = current( $parentNodeIDs );
         array_shift( $parentNodeIDs );
 
-        $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObjectID,
-                                                           'contentobject_version' => 1,
-                                                           'parent_node' => $defaultPlacement,
-                                                           // parent_remote_id in node assignment holds remote id of the tree node,
-                                                           // not of the parent location or of the node assignment itself
-                                                           'parent_remote_id' => uniqid( 'LDAP_' ),
-                                                           'is_main' => 1 ) );
+        $nodeAssignment = eZNodeAssignment::create( [
+            'contentobject_id' => $contentObjectID,
+            'contentobject_version' => 1,
+            'parent_node' => $defaultPlacement,
+            // parent_remote_id in node assignment holds remote id of the tree node,
+            // not of the parent location or of the node assignment itself
+            'parent_remote_id' => uniqid( 'LDAP_' ),
+            'is_main' => 1,
+        ] );
         $nodeAssignment->store();
 
         foreach( $parentNodeIDs as $parentNodeID )
         {
-            $newNodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObjectID,
-                                                                  'contentobject_version' => 1,
-                                                                  'parent_node' => $parentNodeID,
-                                                                  // parent_remote_id in node assignment holds remote id of the tree node,
-                                                                  // not of the parent location or of the node assignment itself
-                                                                  'parent_remote_id' => uniqid( 'LDAP_' ),
-                                                                  'is_main' => 0 ) );
+            $newNodeAssignment = eZNodeAssignment::create( [
+                'contentobject_id' => $contentObjectID,
+                'contentobject_version' => 1,
+                'parent_node' => $parentNodeID,
+                // parent_remote_id in node assignment holds remote id of the tree node,
+                // not of the parent location or of the node assignment itself
+                'parent_remote_id' => uniqid( 'LDAP_' ),
+                'is_main' => 0,
+            ] );
             $newNodeAssignment->store();
         }
 
@@ -1035,7 +1001,7 @@ class eZLDAPUser extends eZUser
         if ( $nameContentAttribute )
         {
             if ( $isUtf8Encoding )
-                $newGroupAttributes[ 'name' ] = utf8_decode( $newGroupAttributes[ 'name' ] );
+                $newGroupAttributes[ 'name' ] = mb_convert_encoding( (string) $newGroupAttributes[ 'name' ], 'ISO-8859-1' );
             $nameContentAttribute->setAttribute( 'data_text', $newGroupAttributes[ 'name' ] );
             $nameContentAttribute->store();
         }
@@ -1043,13 +1009,12 @@ class eZLDAPUser extends eZUser
              isset( $newGroupAttributes[ 'description' ] ) )
         {
             if ( $isUtf8Encoding )
-                $newGroupAttributes[ 'description' ] = utf8_decode( $newGroupAttributes[ 'description' ] );
+                $newGroupAttributes[ 'description' ] = mb_convert_encoding( (string) $newGroupAttributes[ 'description' ], 'ISO-8859-1' );
             $descContentAttribute->setAttribute( 'data_text', $newGroupAttributes[ 'description' ] );
             $descContentAttribute->store();
         }
 
-        $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                     'version' => 1 ) );
+        $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => 1] );
         $newNodes = eZContentObjectTreeNode::fetchByContentObjectID( $contentObjectID, true, 1 );
         foreach ( $newNodes as $newNode )
         {
@@ -1114,7 +1079,7 @@ class eZLDAPUser extends eZUser
                     eZDebug::writeError( 'Recursion is detected in the user-groups tree while getting parent groups for ' . $curDN, __METHOD__ );
                     return false;
                 }
-                if ( isset( $parent[ 'nodes' ] ) and count( $parent[ 'nodes' ] ) > 0 )
+                if ( isset( $parent[ 'nodes' ] ) and (is_countable($parent[ 'nodes' ]) ? count( $parent[ 'nodes' ] ) : 0) > 0 )
                 {
                     continue;
                 }
@@ -1134,10 +1099,7 @@ class eZLDAPUser extends eZUser
             // We've reached a top node
             if ( !isset( $groupsTree[ 'root' ] ) )
             {
-                $groupsTree[ 'root' ] = array( 'data' => null,
-                                               'parents' => null,
-                                               'children' => array(),
-                                               'nodes' => array( $requiredParams[ 'TopUserGroupNodeID' ] ) );
+                $groupsTree[ 'root' ] = ['data' => null, 'parents' => null, 'children' => [], 'nodes' => [$requiredParams[ 'TopUserGroupNodeID' ]]];
             }
             if ( !isset( $groupsTree[ 'root' ][ 'children' ][ $curDN ] ) )
                 $groupsTree[ 'root' ][ 'children' ][ $curDN ] =& $current;
@@ -1146,9 +1108,9 @@ class eZLDAPUser extends eZUser
         }
 
         if ( !isset( $current[ 'nodes' ] ) )
-            $current[ 'nodes' ] = array();
+            $current[ 'nodes' ] = [];
 
-        $parentNodesForNew = array();
+        $parentNodesForNew = [];
         foreach( array_keys( $current[ 'parents' ] ) as $key )
         {
             $parent =& $groupsTree[ $key ];
@@ -1160,8 +1122,7 @@ class eZLDAPUser extends eZUser
                     $parentNode = eZContentObjectTreeNode::fetch( $parentNodeID );
                     if ( is_object( $parentNode ) )
                     {
-                        $params = array( 'AttributeFilter' => array( array( 'name', '=', $currentName ) ),
-                                         'Limitation' => array() );
+                        $params = ['AttributeFilter' => [['name', '=', $currentName]], 'Limitation' => []];
                         $nodes = eZContentObjectTreeNode::subTreeByNodeID( $params, $parentNodeID );
 
                         if ( is_array( $nodes ) and count( $nodes ) > 0 and !$isUser )
@@ -1197,12 +1158,11 @@ class eZLDAPUser extends eZUser
             if ( $isUser )
             {
                 $current[ 'new_parents' ] = $parentNodesForNew;
-                $newNodeIDs = array();
+                $newNodeIDs = [];
             }
             else
             {
-                $newNodeIDs = eZLDAPUser::publishNewUserGroup( $parentNodesForNew, array( 'name' => $currentName,
-                                                                                          'description' => '' ) );
+                $newNodeIDs = eZLDAPUser::publishNewUserGroup( $parentNodesForNew, ['name' => $currentName, 'description' => ''] );
             }
             $current[ 'nodes' ] = array_merge( $current[ 'nodes' ], $newNodeIDs );
         }
@@ -1252,8 +1212,7 @@ class eZLDAPUser extends eZUser
 
         $current =& $groupsTree[ $curDN ];
 
-        $retrieveAttributes = array( $LDAPGroupNameAttribute,
-                                     $LDAPGroupMemberAttribute );
+        $retrieveAttributes = [$LDAPGroupNameAttribute, $LDAPGroupMemberAttribute];
         $sr = ldap_search( $ds, $LDAPGroupBaseDN, $filter, $retrieveAttributes );
         $entries = ldap_get_entries( $ds, $sr );
 
@@ -1280,9 +1239,7 @@ class eZLDAPUser extends eZUser
 
                 if ( !isset( $groupsTree[ $parentDN ] ) )
                 {
-                    $groupsTree[ $parentDN ] = array( 'data' => $parent,
-                                                      'parents' => array(),
-                                                      'children' => array() );
+                    $groupsTree[ $parentDN ] = ['data' => $parent, 'parents' => [], 'children' => []];
                 }
                 $groupsTree[ $parentDN ][ 'children' ][ $curDN ] =& $current;
                 $current[ 'parents' ][ $parentDN ] =& $groupsTree[ $parentDN ];
@@ -1305,10 +1262,7 @@ class eZLDAPUser extends eZUser
             // We've reached a top node
             if ( !isset( $groupsTree[ 'root' ] ) )
             {
-                $groupsTree[ 'root' ] = array( 'data' => null,
-                                               'parents' => null,
-                                               'children' => array(),
-                                               'nodes' => array( $requiredParams[ 'TopUserGroupNodeID' ] ) );
+                $groupsTree[ 'root' ] = ['data' => null, 'parents' => null, 'children' => [], 'nodes' => [$requiredParams[ 'TopUserGroupNodeID' ]]];
             }
             if ( !isset( $groupsTree[ 'root' ][ 'children' ][ $curDN ] ) )
                 $groupsTree[ 'root' ][ 'children' ][ $curDN ] =& $current;
@@ -1367,13 +1321,13 @@ class eZLDAPUser extends eZUser
             return;
         }
 
-        $newNodeIDs = self::publishNewUserGroup( array( $parentNodeID ), array( 'name' => $groupName ) );
+        $newNodeIDs = self::publishNewUserGroup( [$parentNodeID], ['name' => $groupName] );
 
-        if ( count( $newNodeIDs ) > 0 and $isFirstGroupAssignment )
+        if ( (is_countable($newNodeIDs) ? count( $newNodeIDs ) : 0) > 0 and $isFirstGroupAssignment )
         {
             $defaultUserPlacement = $newNodeIDs[0]; // We only supplied one parent to publishNewUserGroup(), so there is only one node
         }
-        else if ( count( $newNodeIDs ) > 0 )
+        else if ( (is_countable($newNodeIDs) ? count( $newNodeIDs ) : 0) > 0 )
         {
             $extraNodeAssignments[] = $newNodeIDs[0]; // We only supplied one parent to publishNewUserGroup(), so there is only one node
         }
@@ -1390,7 +1344,7 @@ class eZLDAPUser extends eZUser
 
         // First, try to see if the $LDAPGroupNameAttribute is contained within the DN, in that case we can read it directly
         $groupDNParts = ldap_explode_dn( $groupDN, 0 );
-        list( $firstName, $firstValue ) = explode( '=', $groupDNParts[0] );
+        [$firstName, $firstValue] = explode( '=', (string) $groupDNParts[0] );
 
         if ( $firstName = $LDAPGroupNameAttribute ) // Read the group name attribute directly from the group DN
         {
@@ -1398,7 +1352,7 @@ class eZLDAPUser extends eZUser
         }
         else // Read the LDAP group object, get the group name attribute from it
         {
-            $sr = ldap_read( $ds, $groupDN, "($LDAPGroupNameAttribute=*)", array( $LDAPGroupNameAttribute ) );
+            $sr = ldap_read( $ds, $groupDN, "($LDAPGroupNameAttribute=*)", [$LDAPGroupNameAttribute] );
             $info = ldap_get_entries( $ds, $sr );
 
             if ( $info['count'] < 1 or $info[0]['count'] < 1 )
@@ -1426,16 +1380,16 @@ class eZLDAPUser extends eZUser
 
         if ( $for_dn )
         {
-            $metaChars = array( ',', '=', '+', '<', '>', ';', '\\', '"', '#' );
-            $quotedMetaChars = array( '\2c', '\3d', '\2b', '\3c', '\3e', '\3b', '\5c', '\22', '\23' );
+            $metaChars = [',', '=', '+', '<', '>', ';', '\\', '"', '#'];
+            $quotedMetaChars = ['\2c', '\3d', '\2b', '\3c', '\3e', '\3b', '\5c', '\22', '\23'];
         }
         else
         {
-            $metaChars = array( '*', '(', ')', '\\', chr(0) );
-            $quotedMetaChars = array( '\2a', '\28', '\29', '\5c', '\00' );
+            $metaChars = ['*', '(', ')', '\\', chr(0)];
+            $quotedMetaChars = ['\2a', '\28', '\29', '\5c', '\00'];
         }
 
-        return str_replace( $metaChars, $quotedMetaChars, $str );
+        return str_replace( $metaChars, $quotedMetaChars, (string) $str );
     }
 
 }

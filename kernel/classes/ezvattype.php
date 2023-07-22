@@ -19,23 +19,7 @@ class eZVatType extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "percentage" => array( 'name' => "Percentage",
-                                                                'datatype' => 'float',
-                                                                'default' => 0,
-                                                                'required' => true ) ),
-                      "function_attributes" => array( 'is_dynamic' => 'isDynamic' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZVatType",
-                      "name" => "ezvattype" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true], "percentage" => ['name' => "Percentage", 'datatype' => 'float', 'default' => 0, 'required' => true]], "function_attributes" => ['is_dynamic' => 'isDynamic'], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZVatType", "name" => "ezvattype"];
     }
 
     function getPercentage( $object, $country )
@@ -54,9 +38,7 @@ class eZVatType extends eZPersistentObject
 
     static function dynamicVatType( $asObject = true )
     {
-        $row = array( 'id' => -1,
-                      'name' => eZVatType::dynamicVatTypeName(),
-                      'percentage' => 0.0 );
+        $row = ['id' => -1, 'name' => eZVatType::dynamicVatTypeName(), 'percentage' => 0.0];
 
         if ( !$asObject )
             return $row;
@@ -89,7 +71,7 @@ class eZVatType extends eZPersistentObject
 
         return eZPersistentObject::fetchObject( eZVatType::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -105,10 +87,10 @@ class eZVatType extends eZPersistentObject
     {
         // Fetch "real" VAT types, stored in DB.
         $VATTypes = eZPersistentObject::fetchObjectList( eZVatType::definition(),
-                                                         null, null, array( 'id' => false ), null,
+                                                         null, null, ['id' => false], null,
                                                          $asObject );
         if ( !$VATTypes )
-            $VATTypes = array();
+            $VATTypes = [];
 
         // Add "fake" VAT type: dynamic.
         if ( !$skipDynamic )
@@ -171,10 +153,7 @@ class eZVatType extends eZPersistentObject
 
     static function create()
     {
-        $row = array(
-            "id" => null,
-            "name" => ezpI18n::tr( 'kernel/shop', 'VAT type' ),
-            "percentage" => 0.0 );
+        $row = ["id" => null, "name" => ezpI18n::tr( 'kernel/shop', 'VAT type' ), "percentage" => 0.0];
         return new eZVatType( $row );
     }
 
@@ -205,13 +184,13 @@ class eZVatType extends eZPersistentObject
         // Fetch the attributes by small portions to avoid memory overflow.
         for ( $offset = 0; true; $offset += 50 )
         {
-            $rows = $db->arrayQuery( $selectProductsQuery, array( 'offset' => $offset, 'limit' => 50 ) );
+            $rows = $db->arrayQuery( $selectProductsQuery, ['offset' => $offset, 'limit' => 50] );
             if ( !$rows )
                 break;
 
             foreach ( $rows as $row )
             {
-                list( $oldVatType, $vatExInc ) = explode( ',', $row['data_text'], 2 );
+                [$oldVatType, $vatExInc] = explode( ',', (string) $row['data_text'], 2 );
                 $updateQuery = "UPDATE ezcontentobject_attribute " .
                                "SET data_text = '" . $row['default_vat'] . ",$vatExInc' " .
                                "WHERE id=" . $row['id'];
@@ -253,7 +232,7 @@ class eZVatType extends eZPersistentObject
 
         // Remove the VAT type itself.
         eZPersistentObject::removeObject( eZVatType::definition(),
-                                          array( "id" => $vatID ) );
+                                          ["id" => $vatID] );
 
         $db->commit();
     }
@@ -264,7 +243,7 @@ class eZVatType extends eZPersistentObject
         {
             $this->VatTypeList = eZVatType::fetchList();
             if ( !isset( $this->VatTypeList ) )
-                $this->VatTypeList = array();
+                $this->VatTypeList = [];
         }
 
         return $this->VatTypeList;

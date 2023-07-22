@@ -58,32 +58,15 @@
 
 class eZMail
 {
-    const REGEXP = '(((\"[^\"\f\n\r\t\v\b]+\")|([A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+(\.[A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|((([A-Za-z0-9\-])+\.)+[A-Za-z\-]{2,})))';
+    final public const REGEXP = '(((\"[^\"\f\n\r\t\v\b]+\")|([A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+(\.[A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|((([A-Za-z0-9\-])+\.)+[A-Za-z\-]{2,})))';
 
     public function __construct()
     {
         $this->Mail = new ezpMail();
 
-        $this->ReceiverElements = array();
-        $this->From = false;
-        $this->CcElements = array();
-        $this->BccElements = array();
-        $this->ReplyTo = false;
-        $this->Subject = false;
-        $this->BodyText = false;
-        $this->ExtraHeaders = array();
-        $this->TextCodec = false;
-        $this->MessageID = false;
-
         // Sets some default values
         $version = eZPublishSDK::version();
-
-        $this->MIMEVersion = '1.0';
-        $this->ContentType = array( 'type' => 'text/plain',
-                                    'charset' => $this->usedCharset(),
-                                    'transfer-encoding' => '8bit',
-                                    'disposition' => 'inline',
-                                    'boundary' => false );
+        $this->ContentType = ['type' => 'text/plain', 'charset' => $this->usedCharset(), 'transfer-encoding' => '8bit', 'disposition' => 'inline', 'boundary' => false];
         $this->UserAgent = "eZ Publish, Version $version";
 
         $ini = eZINI::instance();
@@ -277,7 +260,7 @@ class eZMail
     function senderText( $convert = true )
     {
 //        return ezcMailTools::composeEmailAddress( $this->Mail->from );
-        $text = eZMail::composeEmailName( $this->From );
+        $text = (new eZMail())->composeEmailName($this->From);
         if ( !$convert )
             return $text;
         return $this->convertHeaderText( $text );
@@ -390,9 +373,9 @@ class eZMail
         if ( $this->Mail->body instanceof ezcMailText )
         {
             // if the content-type is in the form of e.g. 'text/plain'
-            if ( strpos( $this->ContentType['type'] ,'/' ) !== false )
+            if ( str_contains( (string) $this->ContentType['type'] ,'/' ) )
             {
-                list( $type, $subType ) = explode( '/', $this->ContentType['type'] );
+                [$type, $subType] = explode( '/', (string) $this->ContentType['type'] );
                 $this->Mail->body->subType = $subType;
             }
         }
@@ -416,10 +399,10 @@ class eZMail
     */
     function setReceiverElements( $toElements )
     {
-        $this->Mail->to = array();
+        $this->Mail->to = [];
         foreach ( $toElements as $address )
         {
-            $name = isset( $address['name'] ) ? $address['name'] : false;
+            $name = $address['name'] ?? false;
             $this->Mail->addTo( new ezcMailAddress( $address['email'], $name, $this->usedCharset() ) );
         }
         $this->ReceiverElements = $toElements;
@@ -434,9 +417,8 @@ class eZMail
     */
     function setReceiver( $email, $name = false )
     {
-        $this->Mail->to = array( new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->ReceiverElements = array( array( 'name' => $name,
-                                                'email' => $email ) );
+        $this->Mail->to = [new ezcMailAddress( $email, $name, $this->usedCharset() )];
+        $this->ReceiverElements = [['name' => $name, 'email' => $email]];
     }
 
     /*!
@@ -449,9 +431,8 @@ class eZMail
     function setReceiverText( $text )
     {
         $this->extractEmail( $text, $email, $name );
-        $this->Mail->to = array( new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->ReceiverElements = array( array( 'name' => $name,
-                                                'email' => $email ) );
+        $this->Mail->to = [new ezcMailAddress( $email, $name, $this->usedCharset() )];
+        $this->ReceiverElements = [['name' => $name, 'email' => $email]];
     }
 
     /*!
@@ -462,8 +443,7 @@ class eZMail
     function addReceiver( $email, $name = false )
     {
         $this->Mail->addTo( new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->ReceiverElements[] = array( 'name' => $name,
-                                           'email' => $email );
+        $this->ReceiverElements[] = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -474,8 +454,7 @@ class eZMail
     function setReplyTo( $email, $name = false )
     {
         $this->Mail->setHeader( 'Reply-To', new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->ReplyTo = array( 'name' => $name,
-                                'email' => $email );
+        $this->ReplyTo = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -486,8 +465,7 @@ class eZMail
     function setSender( $email, $name = false )
     {
         $this->Mail->from = new ezcMailAddress( $email, $name, $this->usedCharset() );
-        $this->From = array( 'name' => $name,
-                             'email' => $email );
+        $this->From = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -499,8 +477,7 @@ class eZMail
     {
         $this->extractEmail( $text, $email, $name );
         $this->Mail->from = new ezcMailAddress( $email, $name, $this->usedCharset() );
-        $this->From = array( 'name' => $name,
-                             'email' => $email );
+        $this->From = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -510,10 +487,10 @@ class eZMail
      */
     function setCcElements( $newCc )
     {
-        $this->Mail->cc = array();
+        $this->Mail->cc = [];
         foreach ( $newCc as $address )
         {
-            $name = isset( $address['name'] ) ? $address['name'] : false;
+            $name = $address['name'] ?? false;
             $this->Mail->addCc( new ezcMailAddress( $address['email'], $name, $this->usedCharset() ) );
         }
         $this->CcElements = $newCc;
@@ -527,8 +504,7 @@ class eZMail
     function addCc( $email, $name = false )
     {
         $this->Mail->addCc( new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->CcElements[] = array( 'name' => $name,
-                                     'email' => $email );
+        $this->CcElements[] = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -538,10 +514,10 @@ class eZMail
      */
     function setBccElements( $newBcc )
     {
-        $this->Mail->bcc = array();
+        $this->Mail->bcc = [];
         foreach ( $newBcc as $address )
         {
-            $name = isset( $address['name'] ) ? $address['name'] : false;
+            $name = $address['name'] ?? false;
             $this->Mail->addBcc( new ezcMailAddress( $address['email'], $name, $this->usedCharset() ) );
         }
         $this->BccElements = $newBcc;
@@ -555,8 +531,7 @@ class eZMail
     function addBcc( $email, $name = false )
     {
         $this->Mail->addBcc( new ezcMailAddress( $email, $name, $this->usedCharset() ) );
-        $this->BccElements[] = array( 'name' => $name,
-                                      'email' => $email );
+        $this->BccElements[] = ['name' => $name, 'email' => $email];
     }
 
     /*!
@@ -577,8 +552,7 @@ class eZMail
     function addExtraHeader( $headerName, $headerValue )
     {
         $this->Mail->setHeader( $headerName, $headerValue );
-        return $this->ExtraHeaders[] = array( 'name' => $headerName,
-                                              'content' => $headerValue );
+        return $this->ExtraHeaders[] = ['name' => $headerName, 'content' => $headerValue];
     }
 
     /*!
@@ -589,14 +563,13 @@ class eZMail
     function setExtraHeader( $headerName, $headerValue )
     {
         $this->Mail->setHeader( $headerName, $headerValue );
-        for ( $i = 0; $i < count( $this->ExtraHeaders ); ++$i )
+        for ( $i = 0; $i < (is_countable($this->ExtraHeaders) ? count( $this->ExtraHeaders ) : 0); ++$i )
         {
             $extraHeader =& $this->ExtraHeaders[$i];
             if ( isset( $extraHeader['name'] ) and
                  $extraHeader['name'] == $headerName )
             {
-                $extraHeader = array( 'name' => $headerName,
-                                      'content' => $headerValue );
+                $extraHeader = ['name' => $headerName, 'content' => $headerValue];
                 return true;
             }
         }
@@ -677,9 +650,9 @@ class eZMail
     */
     function setSubject( $newSubject )
     {
-        $this->Mail->subject = trim( $newSubject );
+        $this->Mail->subject = trim( (string) $newSubject );
         $this->Mail->subjectCharset = $this->usedCharset();
-        $this->Subject = trim( $newSubject );
+        $this->Subject = trim( (string) $newSubject );
     }
 
     /*!
@@ -713,13 +686,13 @@ class eZMail
             $this->Mail->body = new ezcMailText( $newBody, $this->usedCharset() );
 
             // if the content-type is in the form of 'text/plain'
-            if ( strpos( $this->ContentType['type'] ,'/' ) !== false )
+            if ( str_contains( (string) $this->ContentType['type'] ,'/' ) )
             {
-                list( $type, $subType ) = explode( '/', $this->ContentType['type'] );
+                [$type, $subType] = explode( '/', (string) $this->ContentType['type'] );
                 $this->Mail->body->subType = $subType;
             }
         }
-        $newBody = preg_replace( "/\r\n|\r|\n/", eZMail::lineSeparator(), $newBody );
+        $newBody = preg_replace( "/\r\n|\r|\n/", (string) eZMail::lineSeparator(), (string) $newBody );
         $this->BodyText = $newBody;
     }
 
@@ -731,7 +704,7 @@ class eZMail
     */
     static function &splitList( $emails )
     {
-        $emails = preg_split( "/[,;]/", $emails );
+        $emails = preg_split( "/[,;]/", (string) $emails );
         return $emails;
     }
 
@@ -745,7 +718,7 @@ class eZMail
     */
     static function validate( $address )
     {
-        return preg_match( '/^' . eZMail::REGEXP . '$/', $address );
+        return preg_match( '/^' . eZMail::REGEXP . '$/', (string) $address );
     }
 
     /*!
@@ -755,7 +728,7 @@ class eZMail
     */
     static function extractEmail( $text, &$email, &$name )
     {
-        if ( preg_match( "/([^<]+)<" . eZMail::REGEXP . ">/", $text, $matches ) )
+        if ( preg_match( "/([^<]+)<" . eZMail::REGEXP . ">/", (string) $text, $matches ) )
         {
             $email = $matches[2];
             $name = trim( $matches[1], '" ' );
@@ -777,7 +750,7 @@ class eZMail
     */
     static function stripEmail( $address )
     {
-        $res = preg_match( "/" . eZMail::REGEXP . "/", $address, $email );
+        $res = preg_match( "/" . eZMail::REGEXP . "/", (string) $address, $email );
 
         if ( $res )
             return $email[0];
@@ -793,7 +766,7 @@ class eZMail
     */
     static function blankNewlines( $text )
     {
-        return preg_replace( "/\r\n|\r|\n/", ' ', $text );
+        return preg_replace( "/\r\n|\r|\n/", ' ', (string) $text );
     }
 
     /*!
@@ -842,10 +815,10 @@ class eZMail
     */
     function composeEmailItems( $items, $join = true, $key = false, $convert = true )
     {
-        $textElements = array();
+        $textElements = [];
         foreach ( $items as $item )
         {
-            $textElements[] = eZMail::composeEmailName( $item, $key, $convert );
+            $textElements[] = (new eZMail())->composeEmailName($item, $key, $convert);
         }
 
         if ( $join )
@@ -866,72 +839,64 @@ class eZMail
 
       \deprecated
     */
-    function headers( $parameters = array() )
+    function headers( $parameters = [] )
     {
-        $parameters = array_merge( array( 'exclude-headers' => false ),
+        $parameters = array_merge( ['exclude-headers' => false],
                                    $parameters );
-        $excludeHeaders = array();
+        $excludeHeaders = [];
         if ( $parameters['exclude-headers'] )
         {
             foreach ( $parameters['exclude-headers'] as $excludeHeader )
             {
-                $excludeHeaders[] = strtolower( $excludeHeader );
+                $excludeHeaders[] = strtolower( (string) $excludeHeader );
             }
         }
-        $headers = array();
-        $headerNames = array();
+        $headers = [];
+        $headerNames = [];
         if ( !in_array( 'to', $excludeHeaders ) )
         {
-            $toHeaderContent = count( $this->ReceiverElements ) > 0 ? $this->composeEmailItems( $this->ReceiverElements ) : 'undisclosed-recipients:;';
-            $headers[] = array( 'name' => 'To',
-                                'content' => $toHeaderContent );
+            $toHeaderContent = (is_countable($this->ReceiverElements) ? count( $this->ReceiverElements ) : 0) > 0 ? $this->composeEmailItems( $this->ReceiverElements ) : 'undisclosed-recipients:;';
+            $headers[] = ['name' => 'To', 'content' => $toHeaderContent];
             $headerNames[] = 'to';
         }
         if ( !in_array( 'date', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Date',
-                                'content' => date( 'r' ) );
+            $headers[] = ['name' => 'Date', 'content' => date( 'r' )];
             $headerNames[] = 'date';
         }
         if ( $this->Subject !== false and
              !in_array( 'subject', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Subject',
-                                'content' => $this->subject() );
+            $headers[] = ['name' => 'Subject', 'content' => $this->subject()];
             $headerNames[] = 'subject';
         }
         if ( $this->From !== false and
              !in_array( 'from', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'From',
-                                'content' => $this->composeEmailName( $this->From ) );
+            $headers[] = ['name' => 'From', 'content' => $this->composeEmailName( $this->From )];
             $headerNames[] = 'from';
         }
-        if ( count( $this->CcElements ) > 0 and
+        if ( (is_countable($this->CcElements) ? count( $this->CcElements ) : 0) > 0 and
              !in_array( 'cc', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Cc',
-                                'content' => $this->composeEmailItems( $this->CcElements ) );
+            $headers[] = ['name' => 'Cc', 'content' => $this->composeEmailItems( $this->CcElements )];
             $headerNames[] = 'cc';
         }
-        if ( count( $this->BccElements ) > 0 and
+        if ( (is_countable($this->BccElements) ? count( $this->BccElements ) : 0) > 0 and
              !in_array( 'bcc', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Bcc',
-                                'content' => $this->composeEmailItems( $this->BccElements ) );
+            $headers[] = ['name' => 'Bcc', 'content' => $this->composeEmailItems( $this->BccElements )];
             $headerNames[] = 'bcc';
         }
         if ( $this->ReplyTo !== false and
              !in_array( 'reply-to', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Reply-To',
-                                'content' => $this->composeEmailName( $this->ReplyTo ) );
+            $headers[] = ['name' => 'Reply-To', 'content' => $this->composeEmailName( $this->ReplyTo )];
             $headerNames[] = 'reply-to';
         }
         if ( !in_array( 'mime-version', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'MIME-Version',
-                                'content' => $this->MIMEVersion );
+            $headers[] = ['name' => 'MIME-Version', 'content' => $this->MIMEVersion];
             $headerNames[] = 'mime-version';
         }
         if ( !in_array( 'content-type', $excludeHeaders ) )
@@ -939,40 +904,34 @@ class eZMail
             $charset = $this->usedCharset();
             if ( $this->ContentType['boundary'] )
             {
-            $headers[] = array( 'name' => 'Content-Type',
-                                'content' => array( $this->ContentType['type'], 'charset='. $charset, 'boundary="'. $this->ContentType['boundary'] . '"' ) );
+            $headers[] = ['name' => 'Content-Type', 'content' => [$this->ContentType['type'], 'charset='. $charset, 'boundary="'. $this->ContentType['boundary'] . '"']];
             }
             else
             {
-                $headers[] = array( 'name' => 'Content-Type',
-                                    'content' => array( $this->ContentType['type'], 'charset='. $charset ) );
+                $headers[] = ['name' => 'Content-Type', 'content' => [$this->ContentType['type'], 'charset='. $charset]];
             }
             $headerNames[] = 'content-type';
         }
         if ( !in_array( 'content-transfer-encoding', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Content-Transfer-Encoding',
-                                'content' => $this->ContentType['transfer-encoding'] );
+            $headers[] = ['name' => 'Content-Transfer-Encoding', 'content' => $this->ContentType['transfer-encoding']];
             $headerNames[] = 'content-transfer-encoding';
         }
         if ( !in_array( 'content-disposition', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'Content-Disposition',
-                                'content' => $this->ContentType['disposition'] );
+            $headers[] = ['name' => 'Content-Disposition', 'content' => $this->ContentType['disposition']];
             $headerNames[] = 'content-disposition';
         }
         if ( !in_array( 'user-agent', $excludeHeaders ) )
         {
-            $headers[] = array( 'name' => 'User-Agent',
-                                'content' => $this->UserAgent );
+            $headers[] = ['name' => 'User-Agent', 'content' => $this->UserAgent];
             $headerNames[] = 'user-agent';
         }
         if ( !in_array( 'message-id', $excludeHeaders ) )
         {
             if ( $this->MessageID )
             {
-                $headers[] = array( 'name' => 'Message-Id',
-                                    'content' => $this->MessageID );
+                $headers[] = ['name' => 'Message-Id', 'content' => $this->MessageID];
                 $headerNames[] = 'message-id';
             }
         }
@@ -980,8 +939,8 @@ class eZMail
         $extraHeaders = $this->ExtraHeaders;
         foreach ( $extraHeaders as $extraHeader )
         {
-            if ( !in_array( strtolower( $extraHeader['name'] ), $excludeHeaders ) and
-                 !in_array( strtolower( $extraHeader['name'] ), $headerNames ) )
+            if ( !in_array( strtolower( (string) $extraHeader['name'] ), $excludeHeaders ) and
+                 !in_array( strtolower( (string) $extraHeader['name'] ), $headerNames ) )
                 $headers[] = $extraHeader;
         }
         return $headers;
@@ -993,12 +952,12 @@ class eZMail
 
       \deprecated
     */
-    function headerTextList( $parameters = array() )
+    function headerTextList( $parameters = [] )
     {
         $convert = true;
         if ( isset( $parameters['convert'] ) )
             $convert = $parameters['convert'];
-        $textElements = array();
+        $textElements = [];
         $headers = $this->headers( $parameters );
         foreach ( $headers as $header )
         {
@@ -1016,7 +975,7 @@ class eZMail
 
       \deprecated
     */
-    function headerText( $parameters = array() )
+    function headerText( $parameters = [] )
     {
         $convert = true;
         if ( isset( $parameters['convert'] ) )
@@ -1065,17 +1024,17 @@ class eZMail
 
         if ( function_exists( "mb_encode_mimeheader" ) )
         {
-            $encoded = mb_encode_mimeheader( $str, $this->TextCodec->InputCharsetCode, "B", eZMail::lineSeparator() );
+            $encoded = mb_encode_mimeheader( (string) $str, $this->TextCodec->InputCharsetCode, "B", eZMail::lineSeparator() );
         }
         else
         {
-            if (  0 == preg_match_all( '/[\000-\010\013\014\016-\037\177-\377]/', $str, $matches ) )
+            if (  0 == preg_match_all( '/[\000-\010\013\014\016-\037\177-\377]/', (string) $str, $matches ) )
                 return $str;
 
-            $maxlen = 75 - 7 - strlen( $this->TextCodec->InputCharsetCode );
+            $maxlen = 75 - 7 - strlen( (string) $this->TextCodec->InputCharsetCode );
 
             $encoding = 'B';
-            $encoded = base64_encode( $str );
+            $encoded = base64_encode( (string) $str );
             $maxlen -= $maxlen % 4;
             $encoded = trim( chunk_split( $encoded, $maxlen, "\n" ) );
 
@@ -1190,7 +1149,7 @@ class eZMail
         }
         else
         {
-            $separator = urldecode( $ending );
+            $separator = urldecode( (string) $ending );
         }
 
         return $separator;
@@ -1201,19 +1160,19 @@ class eZMail
 */
 
     /// \privatesection
-    public $ReceiverElements;
-    public $From;
-    public $CcElements;
-    public $BccElements;
+    public $ReceiverElements = [];
+    public $From = false;
+    public $CcElements = [];
+    public $BccElements = [];
     public $ContentType;
     public $UserAgent;
-    public $ReplyTo;
-    public $Subject;
-    public $BodyText;
-    public $ExtraHeaders;
-    public $TextCodec;
-    public $MessageID;
-    public $MIMEVersion;
+    public $ReplyTo = false;
+    public $Subject = false;
+    public $BodyText = false;
+    public $ExtraHeaders = [];
+    public $TextCodec = false;
+    public $MessageID = false;
+    public $MIMEVersion = '1.0';
 
     /**
      * Contains an object of type ezcMail, which is used to store the

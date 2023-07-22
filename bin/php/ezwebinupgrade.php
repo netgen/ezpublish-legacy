@@ -30,7 +30,7 @@ include_once( 'bin/php/ezwebincommon.php' );
 
 function execUpdateFunction( $funcName, $toVersion )
 {
-    $funcName = "$funcName" . "_" . preg_replace( "/[.-]/", "_", $toVersion );
+    $funcName = "$funcName" . "_" . preg_replace( "/[.-]/", "_", (string) $toVersion );
 
     if ( function_exists( $funcName ) )
     {
@@ -46,36 +46,15 @@ function upgradePackageListByWebinVersion( $version )
     {
         case '1.2-0':
             {
-                $packageList = array(   'ezwebin_classes'
-                                      , 'ezwebin_extension'
-                                      // skipping content for now
-                                      //, 'ezwebin_banners'
-                                      //, 'ezwebin_democontent'
-                                      , 'ezwebin_design'
-                                      , 'ezwebin_site' );
+                $packageList = ['ezwebin_classes', 'ezwebin_extension', 'ezwebin_design', 'ezwebin_site'];
             } break;
         case '1.3-0':
             {
-                $packageList = array(   'ezwebin_classes'
-                                      , 'ezwebin_extension'
-                                      // skipping content for now
-                                      //, 'ezwebin_banners'
-                                      //, 'ezwebin_democontent'
-                                      , 'ezwebin_design_blue'
-                                      , 'ezwebin_design_gray'
-                                      , 'ezwebin_site' );
+                $packageList = ['ezwebin_classes', 'ezwebin_extension', 'ezwebin_design_blue', 'ezwebin_design_gray', 'ezwebin_site'];
             } break;
         case '1.4-0':
             {
-                $packageList = array(   'ezwebin_classes'
-                                      , 'ezwebin_extension'
-                                      // skipping content for now
-                                      //, 'ezwebin_banners'
-                                      //, 'ezwebin_democontent'
-                                      , 'ezwebin_design_blue'
-                                      , 'ezwebin_design_gray'
-                                      , 'ezwebin_design_cleangray'
-                                      , 'ezwebin_site' );
+                $packageList = ['ezwebin_classes', 'ezwebin_extension', 'ezwebin_design_blue', 'ezwebin_design_gray', 'ezwebin_design_cleangray', 'ezwebin_site'];
             }
         default:
             break;
@@ -92,36 +71,13 @@ function updateClasses_1_2_0()
 {
     $installer = new eZWebinInstaller();
 
-    $installer->addClassAttributes( array( 'class' => array( 'identifier' => 'folder' ),
-                                           'attributes' => array( array( 'identifier' => 'tags',
-                                                                         'name' => 'Tags',
-                                                                         'data_type_string' => 'ezkeyword' ),
-                                                                  array( 'identifier' => 'publish_date',
-                                                                         'name' => 'Publish date',
-                                                                         'data_type_string' => 'ezdatetime',
-                                                                         'default_value' => 0 ) ) ) );
+    $installer->addClassAttributes( ['class' => ['identifier' => 'folder'], 'attributes' => [['identifier' => 'tags', 'name' => 'Tags', 'data_type_string' => 'ezkeyword'], ['identifier' => 'publish_date', 'name' => 'Publish date', 'data_type_string' => 'ezdatetime', 'default_value' => 0]]] );
 
-    $installer->addClassAttributes( array( 'class' => array( 'identifier' => 'template_look' ),
-                                           'attributes' => array( array( 'data_type_string' => 'ezurl',
-                                                                         'name' => 'Tag Cloud URL',
-                                                                         'identifier' => 'tag_cloud_url' ) ) ) );
+    $installer->addClassAttributes( ['class' => ['identifier' => 'template_look'], 'attributes' => [['data_type_string' => 'ezurl', 'name' => 'Tag Cloud URL', 'identifier' => 'tag_cloud_url']]] );
 
-    $installer->updateClassAttributes( array( 'class' => array( 'identifier' => 'folder' ),
-                                              'attributes' => array( array( 'identifier' => 'show_children',
-                                                                            'new_name' => 'Display sub items' ) ) ) );
+    $installer->updateClassAttributes( ['class' => ['identifier' => 'folder'], 'attributes' => [['identifier' => 'show_children', 'new_name' => 'Display sub items']]] );
 
-    $installer->setRSSExport( array( 'creator' => '14',
-                                     'access_url' => 'my_feed',
-                                     'main_node_only' => '1',
-                                     'number_of_objects' => '10',
-                                     'rss_version' => '2.0',
-                                     'status' => '1',
-                                     'title' => 'My RSS Feed',
-                                     'rss_export_itmes' => array( 0 => array( 'class_id' => '16',
-                                                                              'description' => 'intro',
-                                                                              'source_node_id' => '153',
-                                                                              'status' => '1',
-                                                                              'title' => 'title' ) ) ) );
+    $installer->setRSSExport( ['creator' => '14', 'access_url' => 'my_feed', 'main_node_only' => '1', 'number_of_objects' => '10', 'rss_version' => '2.0', 'status' => '1', 'title' => 'My RSS Feed', 'rss_export_itmes' => [0 => ['class_id' => '16', 'description' => 'intro', 'source_node_id' => '153', 'status' => '1', 'title' => 'title']]] );
 }
 
 /*!
@@ -131,12 +87,9 @@ function updateObjects_1_2_0()
 {
     $installer = new eZWebinInstaller();
 
-    $templateLookData = array( "tag_cloud_url" => array( "DataText" => "Tag cloud",
-                                                         "Content" => "/content/view/tagcloud/2" ),
-                               "footer_text" => array( "DataText" => "Copyright &#169; 1999-2014 eZ Systems AS. All rights reserved." ) );
+    $templateLookData = ["tag_cloud_url" => ["DataText" => "Tag cloud", "Content" => "/content/view/tagcloud/2"], "footer_text" => ["DataText" => "Copyright &#169; 1999-2014 eZ Systems AS. All rights reserved."]];
 
-    $installer->updateContentObjectAttributes( array( 'object_id' => $installer->setting( 'template_look_object_id' ),
-                                                      'attributes_data' => $templateLookData ) );
+    $installer->updateContentObjectAttributes( ['object_id' => $installer->setting( 'template_look_object_id' ), 'attributes_data' => $templateLookData] );
 }
 
 
@@ -147,13 +100,13 @@ function updateINI_1_2_0()
     showMessage2( "Updating INI-files..." );
 
     $siteaccessList = getUserInput( "Please specify the eZ webin siteaccesses on your site (separated with space, for example eng nor): ");
-    $siteaccessList = explode( ' ', $siteaccessList );
+    $siteaccessList = explode( ' ', (string) $siteaccessList );
 
     $ezWebinSiteacceses = siteAccessMap( $siteaccessList );
 
-    $parameters = array();
+    $parameters = [];
 
-    $extraSettings = array();
+    $extraSettings = [];
     $extraSettings[] = eZSiteOverrideINISettings();
     $extraSettings[] = eZSiteImageINISettings();
     $extraSettings[] = eZSiteContentINISettings( $parameters );
@@ -161,11 +114,11 @@ function updateINI_1_2_0()
     $extraSettings[] = eZSiteBrowseINISettings( $parameters );
     $extraSettings[] = eZSiteTemplateINISettings( $parameters );
 
-    $extraCommonSettings = array();
+    $extraCommonSettings = [];
     $extraCommonSettings[] = eZCommonContentINISettings( $parameters );
 
     //The following INI-files should be modified instead of being replaced
-    $modifiableINIFiles = array();
+    $modifiableINIFiles = [];
     $modifiableINIFiles[] = 'design.ini';
 
 
@@ -244,27 +197,16 @@ function updateINI_1_4_0()
     showMessage2( "Updating INI-files..." );
 
     $siteaccessList = getUserInput( "Please specify the eZ webin siteaccesses on your site (separated with space, for example eng nor): ");
-    $siteaccessList = explode( ' ', $siteaccessList );
+    $siteaccessList = explode( ' ', (string) $siteaccessList );
 
-    $translationSA = array();
+    $translationSA = [];
     foreach( $siteaccessList as $siteaccess )
     {
         if( !file_exists( 'settings/siteaccess/' . $siteaccess ) )
             continue;
 
         /* Update override.ini.append.php part */
-        $settings = array( 'full_silverlight' => array( 'Source' => 'node/view/full.tpl',
-                                                        'MatchFile' => 'full/silverlight.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'class_identifier' => 'silverlight' )  ),
-                           'line_silverlight' => array( 'Source' => 'node/view/line.tpl',
-                                                        'MatchFile' => 'line/silverlight.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'class_identifier' => 'silverlight' )  ),
-                           'edit_ezsubtreesubscription_forum_topic' => array( 'Source' => 'content/datatype/edit/ezsubtreesubscription.tpl',
-                                                                              'MatchFile' => 'datatype/edit/ezsubtreesubscription/forum_topic.tpl',
-                                                                              'Subdir' => 'templates',
-                                                                              'Match' => array( 'class_identifier' => 'forum_topic' )  ) );
+        $settings = ['full_silverlight' => ['Source' => 'node/view/full.tpl', 'MatchFile' => 'full/silverlight.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'silverlight']], 'line_silverlight' => ['Source' => 'node/view/line.tpl', 'MatchFile' => 'line/silverlight.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'silverlight']], 'edit_ezsubtreesubscription_forum_topic' => ['Source' => 'content/datatype/edit/ezsubtreesubscription.tpl', 'MatchFile' => 'datatype/edit/ezsubtreesubscription/forum_topic.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'forum_topic']]];
         $ini = eZINI::instance( 'override.ini', 'settings/siteaccess/' . $siteaccess, null, null, false, true );
         $ini->setReadOnlySettingsCheck( false );
         $ini->setVariables( $settings );
@@ -272,48 +214,12 @@ function updateINI_1_4_0()
 
         /* Get site.ini for ContentObjectLocale code */
         $ini = eZINI::instance( 'site.ini', 'settings/siteaccess/' . $siteaccess, null, null, false, true );
-        $contentObjectLocale = explode( '-', $ini->variable( 'RegionalSettings', 'ContentObjectLocale' ) );
+        $contentObjectLocale = explode( '-', (string) $ini->variable( 'RegionalSettings', 'ContentObjectLocale' ) );
 
         $translationSA[$siteaccess] = ucfirst( $contentObjectLocale[0] );
     }
 
-    $settings = array( array( 'name' => 'site.ini',
-                              'settings' => array( 'RegionalSettings' => array( 'TranslationSA' => $translationSA ) ) ),
-                       array( 'name' => 'content.ini',
-                              'settings' => array( 'table' => array( 'CustomAttributes' => array( '0' => 'summary',
-                                                                                                  '1' => 'caption' ) ),
-                                                   'td' => array( 'CustomAttributes' => array( '0' => 'valign' ) ),
-                                                   'th' => array( 'CustomAttributes' => array( '0' => 'scope',
-                                                                                               '1' => 'abbr',
-                                                                                               '2' => 'valign' ) ),
-                                                   'CustomTagSettings' => array( 'AvailableCustomTags' => array( '0' => 'underline' ),
-                                                                                                                 'IsInline' => array( 'underline' => 'true') ),
-                                                   'embed-type_images' => array( 'AvailableClasses' => array() ) ) ),
-                       array( 'name' => 'ezoe_attributes.ini',
-                              'settings' => array( 'CustomAttribute_table_summary' => array( 'Name' => 'Summary (WAI)',
-                                                                                             'Required' => 'true' ),
-                                                   'CustomAttribute_scope' => array( 'Name' => 'Scope',
-                                                                                     'Title' => 'The scope attribute defines a way to associate header cells and data cells in a table.',
-                                                                                     'Type' => 'select',
-                                                                                     'Selection' => array( '0' => '',
-                                                                                                           'col' => 'Column',
-                                                                                                           'row' => 'Row' ) ),
-                                                   'CustomAttribute_valign' => array( 'Title' => 'Lets you define the vertical alignment of the table cell/ header.',
-                                                                                      'Type' => 'select',
-                                                                                      'Selection' => array( '0' => '',
-                                                                                                            'top' => 'Top',
-                                                                                                            'middle' => 'Middle',
-                                                                                                            'bottom' => 'Bottom',
-                                                                                                            'baseline' => 'Baseline' ) ),
-                                                   'Attribute_table_border' => array( 'Type' => 'htmlsize',
-                                                                                      'AllowEmpty' => 'true' ),
-                                                   'CustomAttribute_embed_offset' => array( 'Type' => 'int',
-                                                                                            'AllowEmpty' => 'true' ),
-                                                   'CustomAttribute_embed_limit' => array( 'Type' => 'int',
-                                                                                           'AllowEmpty' => 'true' ) ) ),
-                       array( 'name' => 'ezxml.ini',
-                              'settings' => array( 'TagSettings' => array( 'TagPresets' => array( '0' => '',
-                                                                                                  'mini' => 'Simple formatting' ) ) ) ) );
+    $settings = [['name' => 'site.ini', 'settings' => ['RegionalSettings' => ['TranslationSA' => $translationSA]]], ['name' => 'content.ini', 'settings' => ['table' => ['CustomAttributes' => ['0' => 'summary', '1' => 'caption']], 'td' => ['CustomAttributes' => ['0' => 'valign']], 'th' => ['CustomAttributes' => ['0' => 'scope', '1' => 'abbr', '2' => 'valign']], 'CustomTagSettings' => ['AvailableCustomTags' => ['0' => 'underline'], 'IsInline' => ['underline' => 'true']], 'embed-type_images' => ['AvailableClasses' => []]]], ['name' => 'ezoe_attributes.ini', 'settings' => ['CustomAttribute_table_summary' => ['Name' => 'Summary (WAI)', 'Required' => 'true'], 'CustomAttribute_scope' => ['Name' => 'Scope', 'Title' => 'The scope attribute defines a way to associate header cells and data cells in a table.', 'Type' => 'select', 'Selection' => ['0' => '', 'col' => 'Column', 'row' => 'Row']], 'CustomAttribute_valign' => ['Title' => 'Lets you define the vertical alignment of the table cell/ header.', 'Type' => 'select', 'Selection' => ['0' => '', 'top' => 'Top', 'middle' => 'Middle', 'bottom' => 'Bottom', 'baseline' => 'Baseline']], 'Attribute_table_border' => ['Type' => 'htmlsize', 'AllowEmpty' => 'true'], 'CustomAttribute_embed_offset' => ['Type' => 'int', 'AllowEmpty' => 'true'], 'CustomAttribute_embed_limit' => ['Type' => 'int', 'AllowEmpty' => 'true']]], ['name' => 'ezxml.ini', 'settings' => ['TagSettings' => ['TagPresets' => ['0' => '', 'mini' => 'Simple formatting']]]]];
     foreach ( $settings as $setting )
     {
         $iniName = $setting['name'];
@@ -356,32 +262,22 @@ function isValidWebinUpgradeVersion( $version )
 
 // script initializing
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "\n" .
-                                                        "This script will upgrade ezwebin." ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true,
-                                     'user' => true ) );
+$script = eZScript::instance( ['description' => ( "\n" .
+                                                        "This script will upgrade ezwebin." ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true, 'user' => true] );
 $script->startup();
 
 $scriptOptions = $script->getOptions( "[to-version:][repository:][package:][package-dir:][url:][auto-mode:]",
                                       "",
-                                      array( 'to-version' => "Specify what upgrade path to use. \n" .
+                                      ['to-version' => "Specify what upgrade path to use. \n" .
                                                              " available options: '1.2-0' - upgrade 1.1-1 to 1.2-0\n" .
                                                              "                    '1.3-0' - upgrade 1.2-0 to 1.3-0\n" .
-                                                             "                    '1.4-0' - upgrade 1.3-0 to 1.4-0",
-                                             'repository' => "Path to repository where unpacked(unarchived) packages are \n" .
-                                                         "placed. it's relative to 'var/[site.ini].[FileSettings].[StorageDir]/[package.ini].[RepositorySettings].[RepositoryDirectory]' \n".
-                                                         "(default is 'var/storage/packages/ez_systems')",
-                                             'package' => "Package(s) to install, f.e. 'ezwebin_classes'",
-                                             'package-dir' => "Path to directory with packed(ezpkg) packages(default is '/tmp/ezwebin') ",
-                                             'url' => "URL to download packages, f.e. 'http://packages.ez.no/ezpublish/3.9'.\n" .
-                                                      "'package-dir' can be specified to store uploaded packages on local computer.\n" .
-                                                      "if 'package-dir' is not specified then default dir('/tmp/ezwebin') will be used.",
-                                             'auto-mode' => "[on/off]. Do not ask what to do in case of confilicts. By default is 'on'"
-                                           ),
+                                                             "                    '1.4-0' - upgrade 1.3-0 to 1.4-0", 'repository' => "Path to repository where unpacked(unarchived) packages are \n" .
+                                                  "placed. it's relative to 'var/[site.ini].[FileSettings].[StorageDir]/[package.ini].[RepositorySettings].[RepositoryDirectory]' \n".
+                                                  "(default is 'var/storage/packages/ez_systems')", 'package' => "Package(s) to install, f.e. 'ezwebin_classes'", 'package-dir' => "Path to directory with packed(ezpkg) packages(default is '/tmp/ezwebin') ", 'url' => "URL to download packages, f.e. 'http://packages.ez.no/ezpublish/3.9'.\n" .
+                                               "'package-dir' can be specified to store uploaded packages on local computer.\n" .
+                                               "if 'package-dir' is not specified then default dir('/tmp/ezwebin') will be used.", 'auto-mode' => "[on/off]. Do not ask what to do in case of confilicts. By default is 'on'"],
                                       false,
-                                      array( 'user' => true )
+                                      ['user' => true]
                                      );
 
 
@@ -444,13 +340,13 @@ if ( !$packageList )
 }
 else
 {
-    $packageList = explode( ' ', $packageList );
+    $packageList = explode( ' ', (string) $packageList );
 }
 
 //
 // 'package-dir' option
 //
-$packageDir = $scriptOptions['package-dir'] ? $scriptOptions['package-dir'] : "/tmp/ezwebin";
+$packageDir = $scriptOptions['package-dir'] ?: "/tmp/ezwebin";
 
 //
 // 'url' option
@@ -477,7 +373,7 @@ if( $autoMode != 'off' )
                  "- installing of existing classes will be skipped;\n" .
                  "- all files(extesion, design, downloaded and imported packages) will be overwritten;" );
     $action = getUserInput( "Continue? [y/n]: ");
-    if( strpos( $action, 'y' ) !== 0 )
+    if( !str_starts_with((string) $action, 'y') )
         $script->shutdown( 0, 'Done' );
 }
 

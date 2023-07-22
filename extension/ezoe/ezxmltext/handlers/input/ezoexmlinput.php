@@ -72,10 +72,7 @@ class eZOEXMLInput extends eZXMLInputHandler
      *
      * @static
      */
-    public static $nativeCustomTags = array(
-                  'sup' => 'sup',
-                  'sub' => 'sub'
-                  );
+    public static $nativeCustomTags = ['sup' => 'sup', 'sub' => 'sub'];
 
     /**
      * List of template callable attributes
@@ -84,16 +81,7 @@ class eZOEXMLInput extends eZXMLInputHandler
      */
     function attributes()
     {
-        return array_merge( array(
-                      'is_editor_enabled',
-                      'can_disable',
-                      'editor_layout_settings',
-                      'browser_supports_dhtml_type',
-                      'is_compatible_version',
-                      'version',
-                      'ezpublish_version',
-                      'xml_tag_alias',
-                      'json_xml_tag_alias' ),
+        return array_merge( ['is_editor_enabled', 'can_disable', 'editor_layout_settings', 'browser_supports_dhtml_type', 'is_compatible_version', 'version', 'ezpublish_version', 'xml_tag_alias', 'json_xml_tag_alias'],
                       parent::attributes() );
     }
 
@@ -122,7 +110,7 @@ class eZOEXMLInput extends eZXMLInputHandler
         else if ( $name === 'xml_tag_alias' )
             $attr =  self::getXmlTagAliasList();
         else if ( $name === 'json_xml_tag_alias' )
-            $attr =  json_encode( self::getXmlTagAliasList() );
+            $attr =  json_encode( self::getXmlTagAliasList(), JSON_THROW_ON_ERROR );
         else
             $attr = parent::attribute( $name );
         return $attr;
@@ -142,49 +130,49 @@ class eZOEXMLInput extends eZXMLInputHandler
             self::$browserType = false;
             $userAgent = eZSys::serverVariable( 'HTTP_USER_AGENT' );
             // Opera 9.6+
-            if ( strpos( $userAgent, 'Presto' ) !== false &&
-                 preg_match('/Presto\/([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            if ( str_contains( (string) $userAgent, 'Presto' ) &&
+                 preg_match('/Presto\/([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 2.1 )
                     self::$browserType = 'Presto';
             }
             // IE 8.0+
-            else if ( strpos( $userAgent, 'Trident' ) !== false &&
-                      preg_match('/Trident\/([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            else if ( str_contains( (string) $userAgent, 'Trident' ) &&
+                      preg_match('/Trident\/([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 4.0 )
                     self::$browserType = 'Trident';
             }
             // IE 6 & 7
-            else if ( strpos( $userAgent, 'MSIE' ) !== false &&
-                      preg_match('/MSIE[ \/]([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            else if ( str_contains( (string) $userAgent, 'MSIE' ) &&
+                      preg_match('/MSIE[ \/]([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 6.0 )
                     self::$browserType = 'Trident';
             }
             // Firefox 3+
-            else if ( strpos( $userAgent, 'Gecko' ) !== false &&
-                      preg_match('/rv:([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            else if ( str_contains( (string) $userAgent, 'Gecko' ) &&
+                      preg_match('/rv:([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 1.9 )
                     self::$browserType = 'Gecko';
             }
             // Safari 4+ (and Chrome)
-            else if ( strpos( $userAgent, 'WebKit' ) !== false &&
-                      strpos( $userAgent, 'Mobile' ) === false &&
-                      strpos( $userAgent, 'Android' ) === false &&
-                      strpos( $userAgent, 'iPad' ) === false &&
-                      strpos( $userAgent, 'iPhone' ) === false &&
-                      strpos( $userAgent, 'iPod' ) === false &&
-                      preg_match('/WebKit\/([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            else if ( str_contains( (string) $userAgent, 'WebKit' ) &&
+                      !str_contains( (string) $userAgent, 'Mobile' ) &&
+                      !str_contains( (string) $userAgent, 'Android' ) &&
+                      !str_contains( (string) $userAgent, 'iPad' ) &&
+                      !str_contains( (string) $userAgent, 'iPhone' ) &&
+                      !str_contains( (string) $userAgent, 'iPod' ) &&
+                      preg_match('/WebKit\/([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 528.16 )
                     self::$browserType = 'WebKit';
             }
             // iOS 5+
-            else if ( strpos( $userAgent, 'AppleWebKit' ) !== false &&
-                      strpos( $userAgent, 'Mobile' ) !== false &&
-                      preg_match('/AppleWebKit\/([0-9\.]+)/i', $userAgent, $browserInfo ) )
+            else if ( str_contains( (string) $userAgent, 'AppleWebKit' ) &&
+                      str_contains( (string) $userAgent, 'Mobile' ) &&
+                      preg_match('/AppleWebKit\/([0-9\.]+)/i', (string) $userAgent, $browserInfo ) )
             {
                 if ( $browserInfo[1] >= 534.46 )
                     self::$browserType = 'MobileWebKit';
@@ -376,7 +364,7 @@ class eZOEXMLInput extends eZXMLInputHandler
                                     $path = $node->attribute( 'path_string' );
                                     foreach ( $valueList as $subtreeString )
                                     {
-                                        if ( strstr( $path, $subtreeString ) )
+                                        if ( strstr( (string) $path, (string) $subtreeString ) )
                                         {
                                             self::$userAccessHash[ $view ] = true;
                                             break 4;
@@ -404,11 +392,7 @@ class eZOEXMLInput extends eZXMLInputHandler
         if ( self::$editorGlobalLayoutSettings === null )
         {
             $oeini = eZINI::instance( 'ezoe.ini' );
-            self::$editorGlobalLayoutSettings = array(
-                'buttons' => $oeini->variable('EditorLayout', 'Buttons' ),
-                'toolbar_location' => $oeini->variable('EditorLayout', 'ToolbarLocation' ),
-                'path_location' => $oeini->variable('EditorLayout', 'PathLocation' ),
-            );
+            self::$editorGlobalLayoutSettings = ['buttons' => $oeini->variable('EditorLayout', 'Buttons' ), 'toolbar_location' => $oeini->variable('EditorLayout', 'ToolbarLocation' ), 'path_location' => $oeini->variable('EditorLayout', 'PathLocation' )];
         }
         return self::$editorGlobalLayoutSettings;
     }
@@ -433,7 +417,7 @@ class eZOEXMLInput extends eZXMLInputHandler
             // get custom layout features, works only in eZ Publish 4.1 and higher
             $contentClassAttribute = $this->ContentObjectAttribute->attribute('contentclass_attribute');
             $buttonPreset = $contentClassAttribute->attribute('data_text2');
-            $buttonPresets = $xmlini->hasVariable( 'TagSettings', 'TagPresets' ) ? $xmlini->variable( 'TagSettings', 'TagPresets' ) : array();
+            $buttonPresets = $xmlini->hasVariable( 'TagSettings', 'TagPresets' ) ? $xmlini->variable( 'TagSettings', 'TagPresets' ) : [];
 
             if( $buttonPreset && isset( $buttonPresets[$buttonPreset] ) )
             {
@@ -456,8 +440,8 @@ class eZOEXMLInput extends eZXMLInputHandler
 
             $contentini = eZINI::instance( 'content.ini' );
             $tags = $contentini->variable('CustomTagSettings', 'AvailableCustomTags' );
-            $hideButtons = array();
-            $showButtons = array();
+            $hideButtons = [];
+            $showButtons = [];
 
             // filter out custom tag icons if the custom tag is not enabled
             if ( !in_array('underline', $tags ) )
@@ -492,16 +476,16 @@ class eZOEXMLInput extends eZXMLInputHandler
 
             foreach( $editorLayoutSettings['buttons'] as $buttonString )
             {
-                if ( strpos( $buttonString, ',' ) !== false )
+                if ( str_contains( (string) $buttonString, ',' ) )
                 {
-                    foreach( explode( ',', $buttonString ) as $button )
+                    foreach( explode( ',', (string) $buttonString ) as $button )
                     {
                         if ( !in_array( $button, $hideButtons ) )
                             $showButtons[] = trim( $button );
                     }
                 }
                 else if ( !in_array( $buttonString, $hideButtons ) )
-                    $showButtons[] = trim( $buttonString );
+                    $showButtons[] = trim( (string) $buttonString );
             }
 
             $editorLayoutSettings['buttons'] = $showButtons;
@@ -546,7 +530,7 @@ class eZOEXMLInput extends eZXMLInputHandler
      */
     function validateInput( $http, $base, $contentObjectAttribute )
     {
-        if ( !$this->isEditorEnabled() )
+        if ( !static::isEditorEnabled() )
         {
             $aliasedHandler = $this->attribute( 'aliased_handler' );
             return $aliasedHandler->validateInput( $http, $base, $contentObjectAttribute );
@@ -557,7 +541,7 @@ class eZOEXMLInput extends eZXMLInputHandler
 
             if ( self::browserSupportsDHTMLType() === 'Trident' ) // IE
             {
-                $text = str_replace( "\t", '', $text);
+                $text = str_replace( "\t", '', (string) $text);
             }
 
             eZDebugSetting::writeDebug( 'kernel-datatype-ezxmltext-ezoe',
@@ -680,9 +664,7 @@ class eZOEXMLInput extends eZXMLInputHandler
                         $subNode = new DOMElemenetNode( 'section' );
                         $currentNode->appendChild( $subNode );
                         $childTag = $this->SectionArray;
-                        $TagStack[] = array( 'TagName' => 'section',
-                                             'ParentNodeObject' => &$currentNode,
-                                             'ChildTag' => $childTag );
+                        $TagStack[] = ['TagName' => 'section', 'ParentNodeObject' => &$currentNode, 'ChildTag' => $childTag];
                         $currentNode = $subNode;
                     }
                     $sectionLevel = $headerLevel;
@@ -746,7 +728,7 @@ class eZOEXMLInput extends eZXMLInputHandler
             $output = str_replace( '<p></p>', '<p><br /></p>', $output );
         }
 
-        $output = str_replace( array( "\n", "\xC2\xA0" ), array( '', '&nbsp;' ), $output );
+        $output = str_replace( ["\n", "\xC2\xA0"], ['', '&nbsp;'], $output );
 
         if ( $output )
         {
@@ -819,21 +801,10 @@ class eZOEXMLInput extends eZXMLInputHandler
                                                     __METHOD__ . ' tag content of <header>' );
                     }
 
-                    switch ( $sectionLevel )
-                    {
-                        case '2':
-                        case '3':
-                        case '4':
-                        case '5':
-                        case '6':
-                        {
-                            $level = $sectionLevel;
-                        }break;
-                        default:
-                        {
-                            $level = 1;
-                        }break;
-                    }
+                    $level = match ($sectionLevel) {
+                        '2', '3', '4', '5', '6' => $sectionLevel,
+                        default => 1,
+                    };
                     $archorName = $sectionNode->getAttribute( 'anchor_name' );
                     if ( $archorName != null )
                     {
@@ -1065,12 +1036,12 @@ class eZOEXMLInput extends eZXMLInputHandler
             case '#text' :
             {
                 $tagContent = $tag->textContent;
-                if ( !strlen( $tagContent ) )
+                if ( !strlen( (string) $tagContent ) )
                 {
                     break;
                 }
 
-                $tagContent = htmlspecialchars( $tagContent );
+                $tagContent = htmlspecialchars( (string) $tagContent );
                 $tagContent = str_replace ( '&amp;nbsp;', '&nbsp;', $tagContent );
 
                 if ( $this->allowMultipleSpaces )
@@ -1089,7 +1060,7 @@ class eZOEXMLInput extends eZXMLInputHandler
                 }
 
                 if ( $this->allowNumericEntities )
-                    $tagContent = preg_replace( '/&amp;#([0-9]+);/', '&#\1;', $tagContent );
+                    $tagContent = preg_replace( '/&amp;#([0-9]+);/', '&#\1;', (string) $tagContent );
 
                 $output .= $tagContent;
 
@@ -1239,7 +1210,7 @@ class eZOEXMLInput extends eZXMLInputHandler
                         $objectAttr .= ' class="' . $className . '"';
 
                     $output .= '<img id="' . $idString . '" title="' . $objectName . '" src="' .
-                               htmlspecialchars( $srcString ) . '" width="' . $imageWidth . '" height="' . $imageHeight .
+                               htmlspecialchars( (string) $srcString ) . '" width="' . $imageWidth . '" height="' . $imageHeight .
                                '" ' . $objectAttr . $customAttributePart . $styleString . ' />';
                 }
                 else if ( self::embedTagIsCompatibilityMode() )
@@ -1264,42 +1235,29 @@ class eZOEXMLInput extends eZXMLInputHandler
 
                     if ( $className )
                         $objectAttr .= ' class="ezoeItemNonEditable ' . $className . ' ezoeItemContentType' .
-                                       ucfirst( $embedContentType ) . '"';
+                                       ucfirst( (string) $embedContentType ) . '"';
                     else
                         $objectAttr .= ' class="ezoeItemNonEditable ezoeItemContentType' .
-                                       ucfirst( $embedContentType ) . '"';
+                                       ucfirst( (string) $embedContentType ) . '"';
 
                     if ( $tagName === 'embed-inline' )
                         $htmlTagName = 'span';
                     else
                         $htmlTagName = 'div';
 
-                    $objectParam = array( 'size' => $size, 'align' => $alignment, 'show_path' => $showPath );
+                    $objectParam = ['size' => $size, 'align' => $alignment, 'show_path' => $showPath];
                     if ( $htmlID ) $objectParam['id'] = $htmlID;
 
                     $res = eZTemplateDesignResource::instance();
-                    $res->setKeys( array( array('classification', $className) ) );
+                    $res->setKeys( [['classification', $className]] );
 
                     if ( isset( $node ) )
                     {
-                        $templateOutput = self::fetchTemplate( 'design:content/datatype/view/ezxmltags/' . $tagName . $tplSuffix . '.tpl', array(
-                            'view' => $view,
-                            'object' => $object,
-                            'link_parameters' => array(),
-                            'classification' => $className,
-                            'object_parameters' => $objectParam,
-                            'node' => $node,
-                        ));
+                        $templateOutput = self::fetchTemplate( 'design:content/datatype/view/ezxmltags/' . $tagName . $tplSuffix . '.tpl', ['view' => $view, 'object' => $object, 'link_parameters' => [], 'classification' => $className, 'object_parameters' => $objectParam, 'node' => $node]);
                     }
                     else
                     {
-                        $templateOutput = self::fetchTemplate( 'design:content/datatype/view/ezxmltags/' . $tagName . $tplSuffix . '.tpl', array(
-                            'view' => $view,
-                            'object' => $object,
-                            'link_parameters' => array(),
-                            'classification' => $className,
-                            'object_parameters' => $objectParam,
-                        ));
+                        $templateOutput = self::fetchTemplate( 'design:content/datatype/view/ezxmltags/' . $tagName . $tplSuffix . '.tpl', ['view' => $view, 'object' => $object, 'link_parameters' => [], 'classification' => $className, 'object_parameters' => $objectParam]);
                     }
 
                     $output .= '<' . $htmlTagName . ' id="' . $idString . '" title="' . $objectName . '"' .
@@ -1616,7 +1574,7 @@ class eZOEXMLInput extends eZXMLInputHandler
                 $showPath = $tag->getAttribute( 'show_path' );
                 $htmlID = $tag->getAttributeNS( 'http://ez.no/namespaces/ezpublish3/xhtml/', 'id' );
                 $htmlTitle = $tag->getAttributeNS( 'http://ez.no/namespaces/ezpublish3/xhtml/', 'title' );
-                $attributes = array();
+                $attributes = [];
 
                 if ( $objectID != null )
                 {
@@ -1713,10 +1671,10 @@ class eZOEXMLInput extends eZXMLInputHandler
             // font tag in certain circumstances
             $oeini = eZINI::instance( 'ezoe.ini' );
             $styles = $oeini->variable('EditorSettings', 'CustomAttributeStyleMap' );
-            $customAttributeStyleMap = array();
+            $customAttributeStyleMap = [];
             foreach( $styles as $name => $style )
             {
-                if ( preg_match("/(margin|border|padding|width|height)/", $style ) )
+                if ( preg_match("/(margin|border|padding|width|height)/", (string) $style ) )
                 {
                     self::$customAttributeStyleMap[$name] = $style;
                 }
@@ -1736,12 +1694,12 @@ class eZOEXMLInput extends eZXMLInputHandler
                 if ( $customAttributePart === '' )
                 {
                     $customAttributePart = ' customattributes="';
-                    $customAttributePart .= $attribute->name . '|' . htmlspecialchars( $attribute->value );
+                    $customAttributePart .= $attribute->name . '|' . htmlspecialchars( (string) $attribute->value );
                 }
                 else
                 {
                    $customAttributePart .= 'attribute_separation' . $attribute->name . '|' .
-                       htmlspecialchars( $attribute->value );
+                       htmlspecialchars( (string) $attribute->value );
                 }
                 if ( isset( self::$customAttributeStyleMap[$attribute->name] ) )
                 {
@@ -1807,7 +1765,7 @@ class eZOEXMLInput extends eZXMLInputHandler
     /*
      * Get design file (template) for use in embed tags
      */
-    public static function getDesignFile( $file, $triedFiles = array() )
+    public static function getDesignFile( $file, $triedFiles = [] )
     {
         if ( self::$designBases === null )
         {
@@ -1834,7 +1792,7 @@ class eZOEXMLInput extends eZXMLInputHandler
     {
         $ini = eZINI::instance( 'content.ini' );
         $customInlineTagList = $ini->variable( 'CustomTagSettings', 'IsInline' );
-        $customInlineIconPath = array();
+        $customInlineIconPath = [];
         if ( $ini->hasVariable( 'CustomTagSettings', 'InlineImageIconPath' ) )
         {
             $customInlineIconPath = $ini->variable(
@@ -1897,7 +1855,7 @@ class eZOEXMLInput extends eZXMLInputHandler
 
         foreach ( $contentIni->variable( 'RelationGroupSettings', 'Groups' ) as $group )
         {
-            $settingName = ucfirst( $group ) . 'ClassList';
+            $settingName = ucfirst( (string) $group ) . 'ClassList';
             if ( $contentIni->hasVariable( 'RelationGroupSettings', $settingName ) )
             {
                 if ( in_array( $classIdentifier, $contentIni->variable( 'RelationGroupSettings', $settingName ) ) )
@@ -1946,10 +1904,10 @@ class eZOEXMLInput extends eZXMLInputHandler
      * @param array $parameters Hash with name and value
      * @return string
      */
-    protected static function fetchTemplate( $template, $parameters = array() )
+    protected static function fetchTemplate( $template, $parameters = [] )
     {
         $tpl = eZTemplate::factory();
-        $existingPramas = array();
+        $existingPramas = [];
 
         foreach( $parameters as $name => $value )
         {
@@ -1975,7 +1933,7 @@ class eZOEXMLInput extends eZXMLInputHandler
     protected static $serverURL   = null;
     protected static $browserType = null;
     protected static $designBases = null;
-    protected static $userAccessHash = array();
+    protected static $userAccessHash = [];
     protected static $customAttributeStyleMap = null;
     protected static $embedIsCompatibilityMode = null;
     protected static $xmlTagAliasList = null;
@@ -1985,13 +1943,13 @@ class eZOEXMLInput extends eZXMLInputHandler
 
     protected static $showEmbedValidationErrors = null;
 
-    public $LineTagArray = array( 'emphasize', 'strong', 'link', 'a', 'em', 'i', 'b', 'bold', 'anchor' );
+    public $LineTagArray = ['emphasize', 'strong', 'link', 'a', 'em', 'i', 'b', 'bold', 'anchor'];
 
     /// Contains the XML data
     public $XMLData;
 
     public $IsStrictHeader = false;
-    public $SectionArray = array(  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'section' );
+    public $SectionArray = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'section'];
 
     public $eZPublishVersion;
 

@@ -31,14 +31,14 @@ class ezpMobileDeviceDetectFilterTest extends ezpTestCase
     {
         $mobileDeviceDetectFilter = ezpMobileDeviceDetectFilter::getFilter();
 
-        $this->assertNotNull( $mobileDeviceDetectFilter );
-        $this->assertInstanceOf( 'ezpMobileDeviceDetectFilterInterface', $mobileDeviceDetectFilter );
+        static::assertNotNull($mobileDeviceDetectFilter);
+        static::assertInstanceOf('ezpMobileDeviceDetectFilterInterface', $mobileDeviceDetectFilter);
 
         ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileDeviceFilterClass', '' );
 
         $mobileDeviceDetectFilter = ezpMobileDeviceDetectFilter::getFilter();
 
-        $this->assertNull( $mobileDeviceDetectFilter );
+        static::assertNull($mobileDeviceDetectFilter);
 
         ezpINIHelper::restoreINISettings();
     }

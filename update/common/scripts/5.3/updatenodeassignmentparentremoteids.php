@@ -12,38 +12,23 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Updates 'parent_remote_id' column in 'eznode_assignment' table.\n" .
-            "Can be used on a live site to update node assignments for Locations of unpublished Content, see https://jira.ez.no/browse/EZP-22260.",
-        'use-session' => false,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Updates 'parent_remote_id' column in 'eznode_assignment' table.\n" .
+        "Can be used on a live site to update node assignments for Locations of unpublished Content, see https://jira.ez.no/browse/EZP-22260.", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[n][iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)',
-        'iteration-limit' => 'Batch size (default: 100)',
-        'n' => 'Do not wait 30 seconds before starting'
-    )
+    ['iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)', 'iteration-limit' => 'Batch size (default: 100)', 'n' => 'Do not wait 30 seconds before starting']
 );
 $optIterationSleep = (int)$options['iteration-sleep'] ?: 1;
 $optIterationLimit = (int)$options['iteration-limit'] ?: 100;
 
 $script->initialize();
 
-$condition = array(
-    "op_code" => eZNodeAssignment::OP_CODE_CREATE,
-    "parent_remote_id" => "",
-);
-$limit = array(
-    "offset" => 0,
-    "limit" => $optIterationLimit,
-);
+$condition = ["op_code" => eZNodeAssignment::OP_CODE_CREATE, "parent_remote_id" => ""];
+$limit = ["offset" => 0, "limit" => $optIterationLimit];
 $count = 0;
 $totalCount = eZPersistentObject::count( eZNodeAssignment::definition(), $condition );
 

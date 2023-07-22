@@ -7,16 +7,10 @@ if ( !function_exists( 'eZUpdateDebugSettings' ) )
     function eZUpdateDebugSettings()
     {
         $ini = eZINI::instance();
-        $debugSettings = array( 'debug-enabled' => false );
+        $debugSettings = ['debug-enabled' => false];
         $logList = $ini->variable( 'DebugSettings', 'AlwaysLog' );
-        $logMap = array(
-            'notice' => eZDebug::LEVEL_NOTICE,
-            'warning' => eZDebug::LEVEL_WARNING,
-            'error' => eZDebug::LEVEL_ERROR,
-            'debug' => eZDebug::LEVEL_DEBUG,
-            'strict' => eZDebug::LEVEL_STRICT
-        );
-        $debugSettings['always-log'] = array();
+        $logMap = ['notice' => eZDebug::LEVEL_NOTICE, 'warning' => eZDebug::LEVEL_WARNING, 'error' => eZDebug::LEVEL_ERROR, 'debug' => eZDebug::LEVEL_DEBUG, 'strict' => eZDebug::LEVEL_STRICT];
+        $debugSettings['always-log'] = [];
         foreach ( $logMap as $name => $level )
         {
             $debugSettings['always-log'][$level] = in_array( $name, $logList );

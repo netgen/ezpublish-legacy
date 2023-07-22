@@ -10,7 +10,7 @@ $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
 
 $Offset = $Params['Offset'];
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $user = eZUser::currentUser();
 $userID = $user->id();
@@ -37,10 +37,8 @@ if ( $Module->isCurrentAction( 'Remove' )  )
 }
 else if ( $Module->isCurrentAction( 'Add' )  )
 {
-    return eZContentBrowse::browse( array( 'action_name' => 'AddBookmark',
-                                           'description_template' => 'design:content/browse_bookmark.tpl',
-                                           'from_page' => "/content/bookmark" ),
-                                    $Module );
+    return eZContentBrowse::browse( $Module,
+                                    ['action_name' => 'AddBookmark', 'description_template' => 'design:content/browse_bookmark.tpl', 'from_page' => "/content/bookmark"] );
 }
 else if ( $Module->isCurrentAction( 'AddBookmark' )  )
 {
@@ -65,10 +63,9 @@ else if ( $Module->isCurrentAction( 'AddBookmark' )  )
 $tpl = eZTemplate::factory();
 $tpl->setVariable('view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/bookmark.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'My bookmarks' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'My bookmarks' ), 'url' => false]];
 
 
 ?>

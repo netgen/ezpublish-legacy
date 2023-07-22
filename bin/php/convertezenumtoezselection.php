@@ -13,7 +13,7 @@ require_once 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Convert attributes of the type ezenum to ezselection';
 $scriptSettings['use-session'] = true;
 $scriptSettings['use-modules'] = true;
@@ -24,14 +24,14 @@ $script->startup();
 
 $config = '[preview]';
 $argumentConfig = '[ATTRIBUTE_ID]';
-$optionHelp = array( 'preview' => 'show a preview, do not really make changes' );
+$optionHelp = ['preview' => 'show a preview, do not really make changes'];
 $arguments = false;
 $useStandardOptions = true;
 
 $options = $script->getOptions( $config, $argumentConfig, $optionHelp, $arguments, $useStandardOptions );
 $script->initialize();
 
-if ( count( $options['arguments'] ) != 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) != 1 )
 {
     $script->shutdown( 1, 'wrong argument count' );
 }
@@ -69,8 +69,8 @@ $classAttribute->setAttribute( 'data_int1', $isMultiple );
 
 $enumValues = $enum->attribute( 'enum_list' );
 
-$oldOptions = array();
-$oldToNewIDMap = array();
+$oldOptions = [];
+$oldToNewIDMap = [];
 
 foreach ( $enumValues as $enumValue )
 {
@@ -109,7 +109,7 @@ $classAttribute->store();
 
 $attributes = eZContentObjectAttribute::fetchSameClassAttributeIDList( $classAttribute->attribute( 'id' ) );
 
-$count = count( $attributes );
+$count = count( (array) $attributes );
 $cli->output( 'number of object attributes to convert: ' . $count );
 
 $script->setIterationData( '.', '~' );
@@ -119,7 +119,7 @@ for ( $i = 0; $i < $count; $i++ )
     $objectAttributeID = $attributes[$i]->attribute( 'id' );
     $objectAttributeVersion = $attributes[$i]->attribute( 'version' );
 
-    $selectOptions = array();
+    $selectOptions = [];
     $enumContent = $attributes[$i]->attribute( 'content' );
     $enumObjectValues = $enumContent->attribute( 'enumobject_list' );
 

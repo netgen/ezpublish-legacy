@@ -16,21 +16,16 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "\n" .
-                                                         "This script will make a remove of a content object subtrees.\n" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => ( "\n" .
+                                                         "This script will make a remove of a content object subtrees.\n" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 $script->startup();
 
 $scriptOptions = $script->getOptions( "[nodes-id:][ignore-trash]",
                                       "",
-                                      array( 'nodes-id' => "Subtree nodes ID (separated by comma ',').",
-                                             'ignore-trash' => "Ignore trash ('move to trash' by default)."
-                                             ),
+                                      ['nodes-id' => "Subtree nodes ID (separated by comma ',').", 'ignore-trash' => "Ignore trash ('move to trash' by default)."],
                                       false );
 $script->initialize();
-$srcNodesID  = $scriptOptions[ 'nodes-id' ] ? trim( $scriptOptions[ 'nodes-id' ] ) : false;
+$srcNodesID  = $scriptOptions[ 'nodes-id' ] ? trim( (string) $scriptOptions[ 'nodes-id' ] ) : false;
 $moveToTrash = $scriptOptions[ 'ignore-trash' ] ? false : true;
 $deleteIDArray = $srcNodesID ? explode( ',', $srcNodesID ) : false;
 
@@ -52,7 +47,7 @@ if ( !$user )
 }
 eZUser::setCurrentlyLoggedInUser( $user, $userCreatorID );
 
-$deleteIDArrayResult = array();
+$deleteIDArrayResult = [];
 foreach ( $deleteIDArray as $nodeID )
 {
     $node = eZContentObjectTreeNode::fetch( $nodeID );
@@ -68,7 +63,7 @@ $info = eZContentObjectTreeNode::subtreeRemovalInformation( $deleteIDArrayResult
 
 $deleteResult = $info['delete_list'];
 
-if ( count( $deleteResult ) == 0 )
+if ( (is_countable($deleteResult) ? count( $deleteResult ) : 0) == 0 )
 {
     $cli->output( "\nExit." );
     $script->shutdown( 1 );
@@ -111,14 +106,14 @@ foreach ( $deleteResult as $deleteItem )
     $cli->output( "Object node count: $objectNodeCount" );
 
     // Remove subtrees
-    eZContentObjectTreeNode::removeSubtrees( array( $nodeID ), $moveToTrash );
+    eZContentObjectTreeNode::removeSubtrees( [$nodeID], $moveToTrash );
 
     // We should make sure that all subitems have been removed.
-    $itemInfo = eZContentObjectTreeNode::subtreeRemovalInformation( array( $nodeID ) );
+    $itemInfo = eZContentObjectTreeNode::subtreeRemovalInformation( [$nodeID] );
     $itemTotalChildCount = $itemInfo['total_child_count'];
     $itemDeleteList = $itemInfo['delete_list'];
 
-    if ( count( $itemDeleteList ) != 0 or ( $childCount != 0 and $itemTotalChildCount != 0 ) )
+    if ( (is_countable($itemDeleteList) ? count( $itemDeleteList ) : 0) != 0 or ( $childCount != 0 and $itemTotalChildCount != 0 ) )
         $cli->error( "\nWARNING!\nSome subitems have not been removed.\n" );
     else
         $cli->output( "Successfuly DONE.\n" );

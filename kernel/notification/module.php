@@ -6,35 +6,18 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZNotification",
-                 "variable_params" => true );
+$Module = ["name" => "eZNotification", "variable_params" => true];
 
 
-$ViewList = array();
-$ViewList["settings"] = array(
-    "functions" => array( 'use' ),
-    "script" => "settings.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezmynavigationpart',
-    "params" => array( ),
-    'unordered_params' => array( 'offset' => 'Offset' ) );
+$ViewList = [];
+$ViewList["settings"] = ["functions" => ['use'], "script" => "settings.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezmynavigationpart', "params" => [], 'unordered_params' => ['offset' => 'Offset']];
 
-$ViewList["runfilter"] = array(
-    "functions" => array( 'administrate' ),
-    "script" => "runfilter.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    "params" => array( ) );
+$ViewList["runfilter"] = ["functions" => ['administrate'], "script" => "runfilter.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezsetupnavigationpart', "params" => []];
 
-$ViewList["addtonotification"] = array(
-    "functions" => array( 'use' ),
-    "script" => "addtonotification.php",
-    'ui_context' => 'administration',
-    "default_navigation_part" => 'ezcontentnavigationpart',
-    "params" => array( 'ContentNodeID' ) );
+$ViewList["addtonotification"] = ["functions" => ['use'], "script" => "addtonotification.php", 'ui_context' => 'administration', "default_navigation_part" => 'ezcontentnavigationpart', "params" => ['ContentNodeID']];
 
-$FunctionList['use'] = array( );
-$FunctionList['administrate'] = array( );
+$FunctionList['use'] = [];
+$FunctionList['administrate'] = [];
 
 
 ?>

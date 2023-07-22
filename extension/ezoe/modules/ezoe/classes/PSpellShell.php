@@ -30,20 +30,20 @@ class PSpellShell extends SpellChecker {
 		$data = shell_exec($cmd);
 		@unlink($this->_tmpfile);
 
-		$returnData = array();
+		$returnData = [];
 		$dataArr = preg_split("/[\r\n]/", $data, -1, PREG_SPLIT_NO_EMPTY);
 
 		foreach ($dataArr as $dstr) {
-			$matches = array();
+			$matches = [];
 
 			// Skip this line.
-			if (strpos($dstr, "@") === 0)
+			if (str_starts_with($dstr, "@"))
 				continue;
 
 			preg_match("/\& ([^ ]+) .*/i", $dstr, $matches);
 
 			if (!empty($matches[1]))
-				$returnData[] = utf8_encode(trim($matches[1]));
+				$returnData[] = mb_convert_encoding(trim($matches[1]), 'UTF-8', 'ISO-8859-1');
 		}
 
 		return $returnData;
@@ -60,9 +60,9 @@ class PSpellShell extends SpellChecker {
 		$cmd = $this->_getCMD($lang);
 
         if (function_exists("mb_convert_encoding"))
-            $word = mb_convert_encoding($word, "ISO-8859-1", mb_detect_encoding($word, "UTF-8"));
+            $word = mb_convert_encoding((string) $word, "ISO-8859-1", mb_detect_encoding((string) $word, "UTF-8"));
         else
-            $word = utf8_encode($word);
+            $word = mb_convert_encoding((string) $word, 'UTF-8', 'ISO-8859-1');
 
 		if ($fh = fopen($this->_tmpfile, "w")) {
 			fwrite($fh, "!\n");
@@ -74,14 +74,14 @@ class PSpellShell extends SpellChecker {
 		$data = shell_exec($cmd);
 		@unlink($this->_tmpfile);
 
-		$returnData = array();
+		$returnData = [];
 		$dataArr = preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
 
 		foreach($dataArr as $dstr) {
-			$matches = array();
+			$matches = [];
 
 			// Skip this line.
-			if (strpos($dstr, "@") === 0)
+			if (str_starts_with($dstr, "@"))
 				continue;
 
 			preg_match("/\&[^:]+:(.*)/i", $dstr, $matches);
@@ -96,16 +96,16 @@ class PSpellShell extends SpellChecker {
 			}
 		}
 
-		return array();
+		return [];
 	}
 
 	function _getCMD($lang) {
 		$this->_tmpfile = tempnam($this->_config['PSpellShell.tmp'], "tinyspell");
 
 		if(preg_match("#win#i", php_uname()))
-			return $this->_config['PSpellShell.aspell'] . " -a --lang=". escapeshellarg($lang) . " --encoding=utf-8 -H < " . $this->_tmpfile . " 2>&1";
+			return $this->_config['PSpellShell.aspell'] . " -a --lang=". escapeshellarg((string) $lang) . " --encoding=utf-8 -H < " . $this->_tmpfile . " 2>&1";
 
-		return "cat ". $this->_tmpfile ." | " . $this->_config['PSpellShell.aspell'] . " -a --encoding=utf-8 -H --lang=". escapeshellarg($lang);
+		return "cat ". $this->_tmpfile ." | " . $this->_config['PSpellShell.aspell'] . " -a --encoding=utf-8 -H --lang=". escapeshellarg((string) $lang);
 	}
 }
 

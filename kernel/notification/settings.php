@@ -32,16 +32,15 @@ foreach ( $availableHandlers as $handler )
 }
 $db->commit();
 
-$viewParameters = array( 'offset' => $Params['Offset'] );
+$viewParameters = ['offset' => $Params['Offset']];
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'user', $user );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:notification/settings.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/notification', 'Notification settings' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/notification', 'Notification settings' )]];
 
 
 ?>

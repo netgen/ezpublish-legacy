@@ -19,7 +19,6 @@ class eZInformationCollectionAttribute extends eZPersistentObject
 {
     public function __construct( $row )
     {
-        $this->Content = null;
         parent::__construct( $row );
     }
 
@@ -28,62 +27,7 @@ class eZInformationCollectionAttribute extends eZPersistentObject
     */
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'informationcollection_id' => array( 'name' => 'InformationCollectionID',
-                                                                              'datatype' => 'integer',
-                                                                              'default' => 0,
-                                                                              'required' => true,
-                                                                              'foreign_class' => 'eZInformationCollection',
-                                                                              'foreign_attribute' => 'id',
-                                                                              'multiplicity' => '1..*' ),
-                                         'contentclass_attribute_id' => array( 'name' => 'ContentClassAttributeID',
-                                                                               'datatype' => 'integer',
-                                                                               'default' => 0,
-                                                                               'required' => true,
-                                                                               'foreign_class' => 'eZContentClassAttribute',
-                                                                               'foreign_attribute' => 'id',
-                                                                               'multiplicity' => '1..*' ),
-                                         'contentobject_attribute_id' => array( 'name' => 'ContentObjectAttributeID',
-                                                                                'datatype' => 'integer',
-                                                                                'default' => 0,
-                                                                                'required' => true,
-                                                                                'foreign_class' => 'eZContentObjectAttribute',
-                                                                                'foreign_attribute' => 'id',
-                                                                                'multiplicity' => '1..*' ),
-                                         'contentobject_id' => array( 'name' => 'ContentObjectID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         'data_text' => array( 'name' => 'DataText',
-                                                               'datatype' => 'text',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         'data_int' => array( 'name' => 'DataInt',
-                                                              'datatype' => 'integer',
-                                                              'default' => null,
-                                                              'required' => true ),
-                                         'data_float' => array( 'name' => 'DataFloat',
-                                                                'datatype' => 'float',
-                                                                'default' => 0,
-                                                                'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'contentclass_attribute_name' => 'contentClassAttributeName',
-                                                      'contentclass_attribute' => 'contentClassAttribute',
-                                                      'contentobject_attribute' => 'contentObjectAttribute',
-                                                      'contentobject' => 'contentObject',
-                                                      'result_template' => 'resultTemplateName',
-                                                      'has_content' => 'hasContent',
-                                                      'content' => 'content',
-                                                      'class_content' => 'classContent' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZInformationCollectionAttribute',
-                      'name' => 'ezinfocollection_attribute' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'informationcollection_id' => ['name' => 'InformationCollectionID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZInformationCollection', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'contentclass_attribute_id' => ['name' => 'ContentClassAttributeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentClassAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'contentobject_attribute_id' => ['name' => 'ContentObjectAttributeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'contentobject_id' => ['name' => 'ContentObjectID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'data_text' => ['name' => 'DataText', 'datatype' => 'text', 'default' => '', 'required' => true], 'data_int' => ['name' => 'DataInt', 'datatype' => 'integer', 'default' => null, 'required' => true], 'data_float' => ['name' => 'DataFloat', 'datatype' => 'float', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'function_attributes' => ['contentclass_attribute_name' => 'contentClassAttributeName', 'contentclass_attribute' => 'contentClassAttribute', 'contentobject_attribute' => 'contentObjectAttribute', 'contentobject' => 'contentObject', 'result_template' => 'resultTemplateName', 'has_content' => 'hasContent', 'content' => 'content', 'class_content' => 'classContent'], 'increment_key' => 'id', 'class_name' => 'eZInformationCollectionAttribute', 'name' => 'ezinfocollection_attribute'];
     }
 
     /*!
@@ -182,7 +126,7 @@ class eZInformationCollectionAttribute extends eZPersistentObject
     */
     static function create( $informationCollectionID )
     {
-        $row = array( 'informationcollection_id' => $informationCollectionID );
+        $row = ['informationcollection_id' => $informationCollectionID];
         return new eZInformationCollectionAttribute( $row );
     }
 
@@ -194,8 +138,7 @@ class eZInformationCollectionAttribute extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZInformationCollectionAttribute::definition(),
                                                 null,
-                                                array( 'informationcollection_id' => $id,
-                                                       'contentobject_attribute_id' => $contentobjectAttributeID ),
+                                                ['informationcollection_id' => $id, 'contentobject_attribute_id' => $contentobjectAttributeID],
                                                 $asObject );
     }
 
@@ -212,7 +155,7 @@ class eZInformationCollectionAttribute extends eZPersistentObject
     }
 
     // Contains the content for this attribute
-    public $Content;
+    public $Content = null;
 }
 
 ?>

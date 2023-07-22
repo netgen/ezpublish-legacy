@@ -15,8 +15,8 @@
  */
 class ezpOauthUtility extends ezpRestModel
 {
-    const AUTH_HEADER_NAME     = 'Authorization';
-    const AUTH_CGI_HEADER_NAME = 'HTTP_AUTHORIZATION';
+    final public const AUTH_HEADER_NAME     = 'Authorization';
+    final public const AUTH_CGI_HEADER_NAME = 'HTTP_AUTHORIZATION';
 
     /**
      * Retrieving token as per section 5 of draft-ietf-oauth-v2-10
@@ -43,7 +43,7 @@ class ezpOauthUtility extends ezpRestModel
         //    when available, automatically.
 
         $token = null;
-        $checkStack = array( 'header', 'get', 'post' );
+        $checkStack = ['header', 'get', 'post'];
 
         foreach ( $checkStack as $step )
         {
@@ -94,7 +94,7 @@ class ezpOauthUtility extends ezpRestModel
         $authHeader = null;
         if ( function_exists( 'apache_request_headers' ) )
         {
-            $apacheHeaders = apache_request_headers();
+            $apacheHeaders = getallheaders();
             if ( isset( $apacheHeaders[self::AUTH_HEADER_NAME] ) )
                 $authHeader = $apacheHeaders[self::AUTH_HEADER_NAME];
         }
@@ -107,7 +107,7 @@ class ezpOauthUtility extends ezpRestModel
         if ( isset( $authHeader ) )
         {
             $tokenPattern = "/^(?P<authscheme>OAuth)\s(?P<token>[a-zA-Z0-9]+)$/";
-            $match = preg_match( $tokenPattern, $authHeader, $m );
+            $match = preg_match( $tokenPattern, (string) $authHeader, $m );
             if ( $match > 0 )
             {
                 $token = $m['token'];

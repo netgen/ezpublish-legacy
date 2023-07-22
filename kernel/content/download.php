@@ -33,7 +33,7 @@ if ( $contentObjectID != $contentObjectIDAttr or !$contentObject->attribute( 'ca
 
 // Get locations.
 $nodeAssignments = $contentObject->attribute( 'assigned_nodes' );
-if ( count( $nodeAssignments ) === 0 )
+if ( (is_countable($nodeAssignments) ? count( $nodeAssignments ) : 0) === 0 )
 {
     // oops, no locations. probably it's related object. Let's check his owners
     $ownerList = eZContentObject::fetch( $contentObjectID )->reverseRelatedObjectList( false, false, false, false );
@@ -72,8 +72,7 @@ if ( $version != $currentVersion || $isContentDraft )
 
 ezpEvent::getInstance()->notify(
     'content/download',
-    array( 'contentObjectID' => $contentObjectID,
-           'contentObjectAttributeID' => $contentObjectAttributeID ) );
+    ['contentObjectID' => $contentObjectID, 'contentObjectAttributeID' => $contentObjectAttributeID] );
 
 $fileHandler = eZBinaryFileHandler::instance();
 $result = $fileHandler->handleDownload( $contentObject, $contentObjectAttribute, eZBinaryFileHandler::TYPE_FILE );

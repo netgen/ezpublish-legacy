@@ -8,9 +8,8 @@
 
 $tpl = eZTemplate::factory();
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Preferred currency' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Preferred currency' ), 'url' => false]];
 $Result['content'] = $tpl->fetch( "design:shop/preferredcurrency.tpl" );
 
 

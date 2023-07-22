@@ -15,17 +15,12 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Remove archived content object versions according to "
-            . "[VersionManagement/DefaultVersionHistoryLimit and "
-            . "[VersionManagement]/VersionHistoryClass settings",
-        'use-session' => false,
-        'use-modules' => true,
-        'use-extensions' => true
-    )
+    ['description' => "Remove archived content object versions according to "
+        . "[VersionManagement/DefaultVersionHistoryLimit and "
+        . "[VersionManagement]/VersionHistoryClass settings", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true]
 );
 $script->startup();
-$options = $script->getOptions( "[n]", "", array( "n" => "Do not wait" ) );
+$options = $script->getOptions( "[n]", "", ["n" => "Do not wait"] );
 $script->initialize();
 
 if ( !isset( $options['n'] ) )
@@ -38,12 +33,7 @@ if ( !isset( $options['n'] ) )
     $cli->output();
 }
 
-$subTreeParams = array(
-    'Limitation' => array(),
-    'MainNodeOnly' => true,
-    'LoadDataMap' => false,
-    'IgnoreVisibility' => true,
-);
+$subTreeParams = ['Limitation' => [], 'MainNodeOnly' => true, 'LoadDataMap' => false, 'IgnoreVisibility' => true];
 $total = eZContentObjectTreeNode::subTreeCountByNodeID( $subTreeParams, 1 );
 $cli->output( "{$total} objects to check... (In the progess bar, 'R' means that at least a version was removed)" );
 
@@ -77,11 +67,7 @@ while ( true )
         $batchVersionsToRemove = 20;
         while ( $removedVersions < $versionsToRemove )
         {
-            $versions = $object->versions( true, array(
-                'conditions' => array( 'status' => eZContentObjectVersion::STATUS_ARCHIVED ),
-                'sort' => array( 'modified' => 'asc' ),
-                'limit' => array( 'limit' => $batchVersionsToRemove, 'offset' => $removedVersions ),
-            ) );
+            $versions = $object->versions( true, ['conditions' => ['status' => eZContentObjectVersion::STATUS_ARCHIVED], 'sort' => ['modified' => 'asc'], 'limit' => ['limit' => $batchVersionsToRemove, 'offset' => $removedVersions]] );
 
             $db->begin();
             foreach( $versions as $version )

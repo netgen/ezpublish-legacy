@@ -43,394 +43,369 @@ class eZMailTest extends ezpTestCase
 
     public static function providerTestValidate()
     {
-        return array(
-            array( 'kc@ez.no',      1 ),
-            array( 'kc+list@ez.no', 1 ),
-            array( "kc'@ez.no",     1 ),
-            array( "k..c'@ez.no",   0 ),
-            array( ".kc@ez.no",     0 ),
-
-            array( 'johndoe@example.com', 1 ),
-            array( 'johndoe@example.org', 1 ),
-            array( 'johndoe@example.gov', 1 ),
-            array( 'johndoe@example.biz', 1 ),
-            array( 'johndoe@example.net', 1 ),
-            array( 'johndoe@example.mil', 1 ),
-            array( 'johndoe@example.xxx', 1 ),
-            array( 'johndoe@example.info', 1 ),
-            array( 'johndoe@example.aero', 1 ),
-            array( 'johndoe@example.jobs', 1 ),
-            array( 'johndoe@example.name', 1 ),
-            array( 'johndoe@example.museum', 1 ),
-            array( 'johndoe@example.solarspace', 1 ),
-            array( 'johndoe@example.co.uk', 1 ),
-            array( 'johndoe@e.x.a.m.p.l.e.com', 1 ),
-            array( 'johndoe@e-x-a-m-p-l-e.com', 1 ),
-            array( 'johndoe@e.x-a.m-p.l-e.com', 1 ),
-            array( 'johndoe@example.xx', 1 ),
-            array( 'johndoe@-example.com', 1 ),
-            array( 'johndoe@example-.com', 1 ),
-            array( 'johndoe@1example.com', 1 ),
-            array( 'johndoe@example.c-m', 1 ),
-            array( 'johndoe@1.aa', 1 ),
-
+        return [
+            ['kc@ez.no', 1],
+            ['kc+list@ez.no', 1],
+            ["kc'@ez.no", 1],
+            ["k..c'@ez.no", 0],
+            [".kc@ez.no", 0],
+            ['johndoe@example.com', 1],
+            ['johndoe@example.org', 1],
+            ['johndoe@example.gov', 1],
+            ['johndoe@example.biz', 1],
+            ['johndoe@example.net', 1],
+            ['johndoe@example.mil', 1],
+            ['johndoe@example.xxx', 1],
+            ['johndoe@example.info', 1],
+            ['johndoe@example.aero', 1],
+            ['johndoe@example.jobs', 1],
+            ['johndoe@example.name', 1],
+            ['johndoe@example.museum', 1],
+            ['johndoe@example.solarspace', 1],
+            ['johndoe@example.co.uk', 1],
+            ['johndoe@e.x.a.m.p.l.e.com', 1],
+            ['johndoe@e-x-a-m-p-l-e.com', 1],
+            ['johndoe@e.x-a.m-p.l-e.com', 1],
+            ['johndoe@example.xx', 1],
+            ['johndoe@-example.com', 1],
+            ['johndoe@example-.com', 1],
+            ['johndoe@1example.com', 1],
+            ['johndoe@example.c-m', 1],
+            ['johndoe@1.aa', 1],
             // doma'in part as IP address
-            array( 'johndoe@0.0.0.0', 1 ),
-            array( 'johndoe@11.11.11.11', 1 ),
-            array( 'johndoe@111.111.111.111', 1 ),
-            array( 'johndoe@127.0.0.1', 1 ),
-            array( 'johndoe@[127.0.0.1]', 1 ),
-            array( 'johndoe@1.12.123.1', 1 ),
-            array( 'johndoe@255.255.255.255', 1 ),
-
-            array( 'a@example.com', 1 ),
-            array( 'A@example.com', 1 ),
-            array( '1@example.com', 1 ),
-
-            array( '+@example.com', 1 ),
-            array( '*@example.com', 1 ),
-            array( '{@example.com', 1 ),
-            array( '}@example.com', 1 ),
-            array( '|@example.com', 1 ),
-            array( '~@example.com', 1 ),
-            array( '/@example.com', 1 ),
-            array( '\'@example.com', 1 ),
-            array( '-@example.com', 1 ),
-            array( '_@example.com', 1 ),
-            array( '`@example.com', 1 ),
-            array( '^@example.com', 1 ),
-            array( '$@example.com', 1 ),
-            array( '%@example.com', 1 ),
-            array( '&@example.com', 1 ),
-            array( '!@example.com', 1 ),
-
-            array( 'john+doe@example.com', 1 ),
-            array( 'john*doe@example.com', 1 ),
-            array( 'john{doe@example.com', 1 ),
-            array( 'john}doe@example.com', 1 ),
-            array( 'john|doe@example.com', 1 ),
-            array( 'john~doe@example.com', 1 ),
-            array( 'john/doe@example.com', 1 ),
-            array( 'john\'doe@example.com', 1 ),
-            array( 'john-doe@example.com', 1 ),
-            array( 'john_doe@example.com', 1 ),
-            array( 'john`doe@example.com', 1 ),
-            array( 'john^doe@example.com', 1 ),
-            array( 'john$doe@example.com', 1 ),
-            array( 'john%doe@example.com', 1 ),
-            array( 'john&doe@example.com', 1 ),
-            array( 'john!doe@example.com', 1 ),
-
-            array( 'johndoe+@example.com', 1 ),
-            array( 'johndoe*@example.com', 1 ),
-            array( 'johndoe{@example.com', 1 ),
-            array( 'johndoe}@example.com', 1 ),
-            array( 'johndoe|@example.com', 1 ),
-            array( 'johndoe~@example.com', 1 ),
-            array( 'johndoe/@example.com', 1 ),
-            array( 'johndoe\'@example.com', 1 ),
-            array( 'johndoe-@example.com', 1 ),
-            array( 'johndoe_@example.com', 1 ),
-            array( 'johndoe`@example.com', 1 ),
-            array( 'johndoe^@example.com', 1 ),
-            array( 'johndoe$@example.com', 1 ),
-            array( 'johndoe%@example.com', 1 ),
-            array( 'johndoe&@example.com', 1 ),
-            array( 'johndoe!@example.com', 1 ),
-
-            array( 'j.o.h.n.d.o.e@example.com', 1 ),
-            array( 'john-doe@example.com', 1 ),
-            array( 'j-o-h-n-d-o-e@example.com', 1 ),
-            array( 'j._-oh.n---d.__--o.___---e@example.com', 1 ),
-            array( 'john_doe@example.com', 1 ),
-            array( 'john/doe@example.com', 1 ),
-            array( 'j_o_h_n_d_o_e@example.com', 1 ),
-            array( 'j.o_h-n.d_o-e@example.com', 1 ),
-            array( 'johndoe1@example.com', 1 ),
-            array( 'j1o2h3n4d5o6e7@example.com', 1 ),
-            array( 'j1.o2_h3-n4.d5_o6-e7@example.com', 1 ),
-            array( '1johndoe@example.com', 1 ),
-            array( '+1~1+@example.com', 1 ),
-            array( '{johndoe}@example.com', 1 ),
-            array( '{_johndoe_}@example.com', 1 ),
-            array( '|johndoe|@example.com', 1 ),
-            array( '-johndoe-@example.com', 1 ),
-            array( '`johndoe`@example.com', 1 ),
-            array( '\'johndoe\'@example.com', 1 ),
-            array( '"[[ johndoe ]]"@example.com', 1 ),
-            array( '"john.\'doe\'"@example.com', 1 ),
-
-            array( '"john doe"@example.com', 1 ),
-            array( '"john\doe"@example.com', 1 ),
-            array( '"john?doe"@example.com', 1 ),
-            array( '"john,doe"@example.com', 1 ),
-            array( '"john@doe"@example.com', 1 ),
-            array( '"john=doe"@example.com', 1 ),
-            array( '"john<doe"@example.com', 1 ),
-            array( '"john>doe"@example.com', 1 ),
-            array( '"john;doe"@example.com', 1 ),
-            array( '"john:doe"@example.com', 1 ),
-            array( '"john¢doe"@example.com', 1 ),
-            array( '"john±doe"@example.com', 1 ),
-            array( '"john³doe"@example.com', 1 ),
-            array( '"johnµdoe"@example.com', 1 ),
-            array( '"john¶doe"@example.com', 1 ),
-            array( '"john·doe"@example.com', 1 ),
-            array( '"john¸doe"@example.com', 1 ),
-            array( '"john¹doe"@example.com', 1 ),
-            array( '"john°doe"@example.com', 1 ),
-            array( '"john½doe"@example.com', 1 ),
-            array( '"john»doe"@example.com', 1 ),
-            array( '"john§doe"@example.com', 1 ),
-            array( '"john®doe"@example.com', 1 ),
-            array( '"john¯doe"@example.com', 1 ),
-            array( '"john¬doe"@example.com', 1 ),
-            array( '"john¼doe"@example.com', 1 ),
-            array( '"johnþdoe"@example.com', 1 ),
-            array( '"john¡doe"@example.com', 1 ),
-            array( '"john£doe"@example.com', 1 ),
-            array( '"john¤doe"@example.com', 1 ),
-            array( '"john¥doe"@example.com', 1 ),
-            array( '"johnÞdoe"@example.com', 1 ),
-            array( '"john¦doe"@example.com', 1 ),
-            array( '"johnªdoe"@example.com', 1 ),
-            array( '"john¨doe"@example.com', 1 ),
-            array( '"john©doe"@example.com', 1 ),
-            array( '"john¿doe"@example.com', 1 ),
-            array( '"john¾doe"@example.com', 1 ),
-            array( '"john¼doe"@example.com', 1 ),
-            array( '"john«doe"@example.com', 1 ),
-
+            ['johndoe@0.0.0.0', 1],
+            ['johndoe@11.11.11.11', 1],
+            ['johndoe@111.111.111.111', 1],
+            ['johndoe@127.0.0.1', 1],
+            ['johndoe@[127.0.0.1]', 1],
+            ['johndoe@1.12.123.1', 1],
+            ['johndoe@255.255.255.255', 1],
+            ['a@example.com', 1],
+            ['A@example.com', 1],
+            ['1@example.com', 1],
+            ['+@example.com', 1],
+            ['*@example.com', 1],
+            ['{@example.com', 1],
+            ['}@example.com', 1],
+            ['|@example.com', 1],
+            ['~@example.com', 1],
+            ['/@example.com', 1],
+            ['\'@example.com', 1],
+            ['-@example.com', 1],
+            ['_@example.com', 1],
+            ['`@example.com', 1],
+            ['^@example.com', 1],
+            ['$@example.com', 1],
+            ['%@example.com', 1],
+            ['&@example.com', 1],
+            ['!@example.com', 1],
+            ['john+doe@example.com', 1],
+            ['john*doe@example.com', 1],
+            ['john{doe@example.com', 1],
+            ['john}doe@example.com', 1],
+            ['john|doe@example.com', 1],
+            ['john~doe@example.com', 1],
+            ['john/doe@example.com', 1],
+            ['john\'doe@example.com', 1],
+            ['john-doe@example.com', 1],
+            ['john_doe@example.com', 1],
+            ['john`doe@example.com', 1],
+            ['john^doe@example.com', 1],
+            ['john$doe@example.com', 1],
+            ['john%doe@example.com', 1],
+            ['john&doe@example.com', 1],
+            ['john!doe@example.com', 1],
+            ['johndoe+@example.com', 1],
+            ['johndoe*@example.com', 1],
+            ['johndoe{@example.com', 1],
+            ['johndoe}@example.com', 1],
+            ['johndoe|@example.com', 1],
+            ['johndoe~@example.com', 1],
+            ['johndoe/@example.com', 1],
+            ['johndoe\'@example.com', 1],
+            ['johndoe-@example.com', 1],
+            ['johndoe_@example.com', 1],
+            ['johndoe`@example.com', 1],
+            ['johndoe^@example.com', 1],
+            ['johndoe$@example.com', 1],
+            ['johndoe%@example.com', 1],
+            ['johndoe&@example.com', 1],
+            ['johndoe!@example.com', 1],
+            ['j.o.h.n.d.o.e@example.com', 1],
+            ['john-doe@example.com', 1],
+            ['j-o-h-n-d-o-e@example.com', 1],
+            ['j._-oh.n---d.__--o.___---e@example.com', 1],
+            ['john_doe@example.com', 1],
+            ['john/doe@example.com', 1],
+            ['j_o_h_n_d_o_e@example.com', 1],
+            ['j.o_h-n.d_o-e@example.com', 1],
+            ['johndoe1@example.com', 1],
+            ['j1o2h3n4d5o6e7@example.com', 1],
+            ['j1.o2_h3-n4.d5_o6-e7@example.com', 1],
+            ['1johndoe@example.com', 1],
+            ['+1~1+@example.com', 1],
+            ['{johndoe}@example.com', 1],
+            ['{_johndoe_}@example.com', 1],
+            ['|johndoe|@example.com', 1],
+            ['-johndoe-@example.com', 1],
+            ['`johndoe`@example.com', 1],
+            ['\'johndoe\'@example.com', 1],
+            ['"[[ johndoe ]]"@example.com', 1],
+            ['"john.\'doe\'"@example.com', 1],
+            ['"john doe"@example.com', 1],
+            ['"john\doe"@example.com', 1],
+            ['"john?doe"@example.com', 1],
+            ['"john,doe"@example.com', 1],
+            ['"john@doe"@example.com', 1],
+            ['"john=doe"@example.com', 1],
+            ['"john<doe"@example.com', 1],
+            ['"john>doe"@example.com', 1],
+            ['"john;doe"@example.com', 1],
+            ['"john:doe"@example.com', 1],
+            ['"john¢doe"@example.com', 1],
+            ['"john±doe"@example.com', 1],
+            ['"john³doe"@example.com', 1],
+            ['"johnµdoe"@example.com', 1],
+            ['"john¶doe"@example.com', 1],
+            ['"john·doe"@example.com', 1],
+            ['"john¸doe"@example.com', 1],
+            ['"john¹doe"@example.com', 1],
+            ['"john°doe"@example.com', 1],
+            ['"john½doe"@example.com', 1],
+            ['"john»doe"@example.com', 1],
+            ['"john§doe"@example.com', 1],
+            ['"john®doe"@example.com', 1],
+            ['"john¯doe"@example.com', 1],
+            ['"john¬doe"@example.com', 1],
+            ['"john¼doe"@example.com', 1],
+            ['"johnþdoe"@example.com', 1],
+            ['"john¡doe"@example.com', 1],
+            ['"john£doe"@example.com', 1],
+            ['"john¤doe"@example.com', 1],
+            ['"john¥doe"@example.com', 1],
+            ['"johnÞdoe"@example.com', 1],
+            ['"john¦doe"@example.com', 1],
+            ['"johnªdoe"@example.com', 1],
+            ['"john¨doe"@example.com', 1],
+            ['"john©doe"@example.com', 1],
+            ['"john¿doe"@example.com', 1],
+            ['"john¾doe"@example.com', 1],
+            ['"john¼doe"@example.com', 1],
+            ['"john«doe"@example.com', 1],
             // incorrect addresses
-            array( 'name', 0 ),
-            array( 'johndoe', 0 ),
-            array( 'johndoe@', 0 ),
-            array( 'johndoe@.', 0 ),
-            array( 'johndoe@a.a', 0 ),
-            array( 'johndoe@1.a', 0 ),
-            array( 'johndoe@example', 0 ),
-            array( 'johndoe@example.x', 0 ),
-            array( 'johndoe@example.0', 0 ),
-            array( 'johndoe@example.00', 0 ),
-            array( 'johndoe@example.000', 0 ),
-            array( 'johndoe@example,com', 0 ),
-            array( 'johndoe@e$ample.com', 0 ),
-            array( 'johndoe@e!ample.com', 0 ),
-            array( 'johndoe@e?ample.com', 0 ),
-            array( 'johndoe@e\'ample.com', 0 ),
-            array( 'johndoe@e"ample.com', 0 ),
-            array( 'johndoe@e^ample.com', 0 ),
-            array( 'johndoe@e%ample.com', 0 ),
-            array( 'johndoe@e~ample.com', 0 ),
-            array( 'johndoe@e`ample.com', 0 ),
-            array( 'johndoe@examp|e.com', 0 ),
-            array( 'johndoe@e#ample.com', 0 ),
-            array( 'johndoe@e ample.com', 0 ),
-            array( 'johndoe@e_ample.com', 0 ),
-            array( 'johndoe@e%20ample.com', 0 ),
-            array( 'johndoe@example.c m', 0 ),
-            array( 'johndoe@{example}.com', 0 ),
-            array( 'johndoe@(example).com', 0 ),
-            array( 'johndoe@[example].com', 0 ),
-            array( 'johndoe@"example".com', 0 ),
-            array( 'johndoe@\'example\'.com', 0 ),
-            array( 'johndoe@example.$$$', 0 ),
-            array( 'johndoe@example.!!!', 0 ),
-            array( 'johndoe@example.???', 0 ),
-            array( 'johndoe@example.###', 0 ),
-            array( 'johndoe@example....', 0 ),
-            array( 'johndoe@example.,,,', 0 ),
-            array( 'johndoe@example.[]', 0 ),
-            array( 'johndoe@example.{}', 0 ),
-            array( 'johndoe@example.()', 0 ),
-            array( 'johndoe@example.""', 0 ),
-            array( 'johndoe@example.\'\'', 0 ),
-            array( 'johndoe@example.||', 0 ),
-            array( 'johndoe@`example.com', 0 ),
-            array( 'johndoe@|example.com', 0 ),
-            array( 'johndoe@,example.com', 0 ),
-            array( 'johndoe@.example.com', 0 ),
-            array( '@', 0 ),
-            array( '@.', 0 ),
-
+            ['name', 0],
+            ['johndoe', 0],
+            ['johndoe@', 0],
+            ['johndoe@.', 0],
+            ['johndoe@a.a', 0],
+            ['johndoe@1.a', 0],
+            ['johndoe@example', 0],
+            ['johndoe@example.x', 0],
+            ['johndoe@example.0', 0],
+            ['johndoe@example.00', 0],
+            ['johndoe@example.000', 0],
+            ['johndoe@example,com', 0],
+            ['johndoe@e$ample.com', 0],
+            ['johndoe@e!ample.com', 0],
+            ['johndoe@e?ample.com', 0],
+            ['johndoe@e\'ample.com', 0],
+            ['johndoe@e"ample.com', 0],
+            ['johndoe@e^ample.com', 0],
+            ['johndoe@e%ample.com', 0],
+            ['johndoe@e~ample.com', 0],
+            ['johndoe@e`ample.com', 0],
+            ['johndoe@examp|e.com', 0],
+            ['johndoe@e#ample.com', 0],
+            ['johndoe@e ample.com', 0],
+            ['johndoe@e_ample.com', 0],
+            ['johndoe@e%20ample.com', 0],
+            ['johndoe@example.c m', 0],
+            ['johndoe@{example}.com', 0],
+            ['johndoe@(example).com', 0],
+            ['johndoe@[example].com', 0],
+            ['johndoe@"example".com', 0],
+            ['johndoe@\'example\'.com', 0],
+            ['johndoe@example.$$$', 0],
+            ['johndoe@example.!!!', 0],
+            ['johndoe@example.???', 0],
+            ['johndoe@example.###', 0],
+            ['johndoe@example....', 0],
+            ['johndoe@example.,,,', 0],
+            ['johndoe@example.[]', 0],
+            ['johndoe@example.{}', 0],
+            ['johndoe@example.()', 0],
+            ['johndoe@example.""', 0],
+            ['johndoe@example.\'\'', 0],
+            ['johndoe@example.||', 0],
+            ['johndoe@`example.com', 0],
+            ['johndoe@|example.com', 0],
+            ['johndoe@,example.com', 0],
+            ['johndoe@.example.com', 0],
+            ['@', 0],
+            ['@.', 0],
             // domain part as IP address
-            array( 'johndoe@1111.111.11.1', 0 ),
-            array( 'johndoe@256.256.256.256', 0 ),
-            array( 'johndoe@FF.0F.FF.7A', 0 ),
-            array( 'johndoe@1-7.0.0.1', 0 ),
-            array( 'johndoe@127.0.0.[1]', 0 ),
-            array( 'johndoe@(127.0.0.1)', 0 ),
-            array( 'johndoe@{127.0.0.1}    ', 0 ),
-            array( 'johndoe@"127.0.0.1"', 0 ),
-            array( 'johndoe@\'127.0.0.1\'', 0 ),
-            array( 'johndoe@|127.0.0.1|', 0 ),
-            array( 'johndoe@`127.0.0.1`', 0 ),
-            array( 'johndoe@127.0.0', 0 ),
-            array( 'johndoe@127.0', 0 ),
-            array( 'johndoe@127', 0 ),
-            array( 'johndoe@0.00', 0 ),
-
+            ['johndoe@1111.111.11.1', 0],
+            ['johndoe@256.256.256.256', 0],
+            ['johndoe@FF.0F.FF.7A', 0],
+            ['johndoe@1-7.0.0.1', 0],
+            ['johndoe@127.0.0.[1]', 0],
+            ['johndoe@(127.0.0.1)', 0],
+            ['johndoe@{127.0.0.1}    ', 0],
+            ['johndoe@"127.0.0.1"', 0],
+            ['johndoe@\'127.0.0.1\'', 0],
+            ['johndoe@|127.0.0.1|', 0],
+            ['johndoe@`127.0.0.1`', 0],
+            ['johndoe@127.0.0', 0],
+            ['johndoe@127.0', 0],
+            ['johndoe@127', 0],
+            ['johndoe@0.00', 0],
             // localpart
-            array( 'example.com', 0 ),
-            array( '@example.com', 0 ),
-
-            array( '.@example.com', 0 ),
-            array( ',@example.com', 0 ),
-            array( '\@example.com', 0 ),
-            array( '"@example.com', 0 ),
-            array( '=@example.com', 0 ),
-            array( '?@example.com', 0 ),
-            array( '<@example.com', 0 ),
-            array( '>@example.com', 0 ),
-            array( ':@example.com', 0 ),
-            array( ';@example.com', 0 ),
-            array( '¢@example.com', 0 ),
-            array( '±@example.com', 0 ),
-            array( '³@example.com', 0 ),
-            array( 'µ@example.com', 0 ),
-            array( '¶@example.com', 0 ),
-            array( '·@example.com', 0 ),
-            array( '¸@example.com', 0 ),
-            array( '¹@example.com', 0 ),
-            array( '°@example.com', 0 ),
-            array( '½@example.com', 0 ),
-            array( '»@example.com', 0 ),
-            array( '§@example.com', 0 ),
-            array( '®@example.com', 0 ),
-            array( '¯@example.com', 0 ),
-            array( '¬@example.com', 0 ),
-            array( '¼@example.com', 0 ),
-            array( 'þ@example.com', 0 ),
-            array( '¡@example.com', 0 ),
-            array( '£@example.com', 0 ),
-            array( '¤@example.com', 0 ),
-            array( '¥@example.com', 0 ),
-            array( 'Þ@example.com', 0 ),
-            array( '¦@example.com', 0 ),
-            array( 'ª@example.com', 0 ),
-            array( '¨@example.com', 0 ),
-            array( '©@example.com', 0 ),
-            array( '¿@example.com', 0 ),
-            array( '¾@example.com', 0 ),
-            array( '¼@example.com', 0 ),
-            array( '«@example.com', 0 ),
-
-            array( '.johndoe@example.com', 0 ),
-            array( 'johndoe.@example.com', 0 ),
-            array( 'johndoe,@example.com', 0 ),
-            array( 'johndoe\@example.com', 0 ),
-            array( 'johndoe"@example.com', 0 ),
-            array( 'johndoe=@example.com', 0 ),
-            array( 'johndoe?@example.com', 0 ),
-            array( 'johndoe<@example.com', 0 ),
-            array( 'johndoe>@example.com', 0 ),
-            array( 'johndoe:@example.com', 0 ),
-            array( 'johndoe;@example.com', 0 ),
-            array( 'johndoe¢@example.com', 0 ),
-            array( 'johndoe±@example.com', 0 ),
-            array( 'johndoe³@example.com', 0 ),
-            array( 'johndoeµ@example.com', 0 ),
-            array( 'johndoe¶@example.com', 0 ),
-            array( 'johndoe·@example.com', 0 ),
-            array( 'johndoe¸@example.com', 0 ),
-            array( 'johndoe¹@example.com', 0 ),
-            array( 'johndoe°@example.com', 0 ),
-            array( 'johndoe½@example.com', 0 ),
-            array( 'johndoe»@example.com', 0 ),
-            array( 'johndoe§@example.com', 0 ),
-            array( 'johndoe®@example.com', 0 ),
-            array( 'johndoe¯@example.com', 0 ),
-            array( 'johndoe¬@example.com', 0 ),
-            array( 'johndoe¼@example.com', 0 ),
-            array( 'johndoeþ@example.com', 0 ),
-            array( 'johndoe¡@example.com', 0 ),
-            array( 'johndoe£@example.com', 0 ),
-            array( 'johndoe¤@example.com', 0 ),
-            array( 'johndoe¥@example.com', 0 ),
-            array( 'johndoeÞ@example.com', 0 ),
-            array( 'johndoe¦@example.com', 0 ),
-            array( 'johndoeª@example.com', 0 ),
-            array( 'johndoe¨@example.com', 0 ),
-            array( 'johndoe©@example.com', 0 ),
-            array( 'johndoe¿@example.com', 0 ),
-            array( 'johndoe¾@example.com', 0 ),
-            array( 'johndoe¼@example.com', 0 ),
-            array( 'johndoe«@example.com', 0 ),
-            array( 'john doe@example.com', 0 ),
-
-            array( 'john,doe@example.com', 0 ),
-            array( 'john"doe@example.com', 0 ),
-            array( 'john@doe@example.com', 0 ),
-            array( 'john\doe@example.com', 0 ),
-            array( 'john=doe@example.com', 0 ),
-            array( 'john?doe@example.com', 0 ),
-            array( 'john<doe@example.com', 0 ),
-            array( 'john>doe@example.com', 0 ),
-            array( 'john;doe@example.com', 0 ),
-            array( 'john:doe@example.com', 0 ),
-            array( 'john¢doe@example.com', 0 ),
-            array( 'john±doe@example.com', 0 ),
-            array( 'john³doe@example.com', 0 ),
-            array( 'johnµdoe@example.com', 0 ),
-            array( 'john¶doe@example.com', 0 ),
-            array( 'john·doe@example.com', 0 ),
-            array( 'john¸doe@example.com', 0 ),
-            array( 'john¹doe@example.com', 0 ),
-            array( 'john°doe@example.com', 0 ),
-            array( 'john½doe@example.com', 0 ),
-            array( 'john»doe@example.com', 0 ),
-            array( 'john§doe@example.com', 0 ),
-            array( 'john®doe@example.com', 0 ),
-            array( 'john¯doe@example.com', 0 ),
-            array( 'john¬doe@example.com', 0 ),
-            array( 'john¼doe@example.com', 0 ),
-            array( 'johnþdoe@example.com', 0 ),
-            array( 'john¡doe@example.com', 0 ),
-            array( 'john£doe@example.com', 0 ),
-            array( 'john¤doe@example.com', 0 ),
-            array( 'john¥doe@example.com', 0 ),
-            array( 'johnÞdoe@example.com', 0 ),
-            array( 'john¦doe@example.com', 0 ),
-            array( 'johnªdoe@example.com', 0 ),
-            array( 'john¨doe@example.com', 0 ),
-            array( 'john©doe@example.com', 0 ),
-            array( 'john¿doe@example.com', 0 ),
-            array( 'john¾doe@example.com', 0 ),
-            array( 'john¼doe@example.com', 0 ),
-            array( 'john«doe@example.com', 0 ),
-
-            array( '- johndoe -@example.com', 0 ),
-            array( '[johndoe]@example.com', 0 ),
-            array( '(johndoe)@example.com', 0 ),
-            array( '<johndoe>@example.com', 0 ),
-        );
+            ['example.com', 0],
+            ['@example.com', 0],
+            ['.@example.com', 0],
+            [',@example.com', 0],
+            ['\@example.com', 0],
+            ['"@example.com', 0],
+            ['=@example.com', 0],
+            ['?@example.com', 0],
+            ['<@example.com', 0],
+            ['>@example.com', 0],
+            [':@example.com', 0],
+            [';@example.com', 0],
+            ['¢@example.com', 0],
+            ['±@example.com', 0],
+            ['³@example.com', 0],
+            ['µ@example.com', 0],
+            ['¶@example.com', 0],
+            ['·@example.com', 0],
+            ['¸@example.com', 0],
+            ['¹@example.com', 0],
+            ['°@example.com', 0],
+            ['½@example.com', 0],
+            ['»@example.com', 0],
+            ['§@example.com', 0],
+            ['®@example.com', 0],
+            ['¯@example.com', 0],
+            ['¬@example.com', 0],
+            ['¼@example.com', 0],
+            ['þ@example.com', 0],
+            ['¡@example.com', 0],
+            ['£@example.com', 0],
+            ['¤@example.com', 0],
+            ['¥@example.com', 0],
+            ['Þ@example.com', 0],
+            ['¦@example.com', 0],
+            ['ª@example.com', 0],
+            ['¨@example.com', 0],
+            ['©@example.com', 0],
+            ['¿@example.com', 0],
+            ['¾@example.com', 0],
+            ['¼@example.com', 0],
+            ['«@example.com', 0],
+            ['.johndoe@example.com', 0],
+            ['johndoe.@example.com', 0],
+            ['johndoe,@example.com', 0],
+            ['johndoe\@example.com', 0],
+            ['johndoe"@example.com', 0],
+            ['johndoe=@example.com', 0],
+            ['johndoe?@example.com', 0],
+            ['johndoe<@example.com', 0],
+            ['johndoe>@example.com', 0],
+            ['johndoe:@example.com', 0],
+            ['johndoe;@example.com', 0],
+            ['johndoe¢@example.com', 0],
+            ['johndoe±@example.com', 0],
+            ['johndoe³@example.com', 0],
+            ['johndoeµ@example.com', 0],
+            ['johndoe¶@example.com', 0],
+            ['johndoe·@example.com', 0],
+            ['johndoe¸@example.com', 0],
+            ['johndoe¹@example.com', 0],
+            ['johndoe°@example.com', 0],
+            ['johndoe½@example.com', 0],
+            ['johndoe»@example.com', 0],
+            ['johndoe§@example.com', 0],
+            ['johndoe®@example.com', 0],
+            ['johndoe¯@example.com', 0],
+            ['johndoe¬@example.com', 0],
+            ['johndoe¼@example.com', 0],
+            ['johndoeþ@example.com', 0],
+            ['johndoe¡@example.com', 0],
+            ['johndoe£@example.com', 0],
+            ['johndoe¤@example.com', 0],
+            ['johndoe¥@example.com', 0],
+            ['johndoeÞ@example.com', 0],
+            ['johndoe¦@example.com', 0],
+            ['johndoeª@example.com', 0],
+            ['johndoe¨@example.com', 0],
+            ['johndoe©@example.com', 0],
+            ['johndoe¿@example.com', 0],
+            ['johndoe¾@example.com', 0],
+            ['johndoe¼@example.com', 0],
+            ['johndoe«@example.com', 0],
+            ['john doe@example.com', 0],
+            ['john,doe@example.com', 0],
+            ['john"doe@example.com', 0],
+            ['john@doe@example.com', 0],
+            ['john\doe@example.com', 0],
+            ['john=doe@example.com', 0],
+            ['john?doe@example.com', 0],
+            ['john<doe@example.com', 0],
+            ['john>doe@example.com', 0],
+            ['john;doe@example.com', 0],
+            ['john:doe@example.com', 0],
+            ['john¢doe@example.com', 0],
+            ['john±doe@example.com', 0],
+            ['john³doe@example.com', 0],
+            ['johnµdoe@example.com', 0],
+            ['john¶doe@example.com', 0],
+            ['john·doe@example.com', 0],
+            ['john¸doe@example.com', 0],
+            ['john¹doe@example.com', 0],
+            ['john°doe@example.com', 0],
+            ['john½doe@example.com', 0],
+            ['john»doe@example.com', 0],
+            ['john§doe@example.com', 0],
+            ['john®doe@example.com', 0],
+            ['john¯doe@example.com', 0],
+            ['john¬doe@example.com', 0],
+            ['john¼doe@example.com', 0],
+            ['johnþdoe@example.com', 0],
+            ['john¡doe@example.com', 0],
+            ['john£doe@example.com', 0],
+            ['john¤doe@example.com', 0],
+            ['john¥doe@example.com', 0],
+            ['johnÞdoe@example.com', 0],
+            ['john¦doe@example.com', 0],
+            ['johnªdoe@example.com', 0],
+            ['john¨doe@example.com', 0],
+            ['john©doe@example.com', 0],
+            ['john¿doe@example.com', 0],
+            ['john¾doe@example.com', 0],
+            ['john¼doe@example.com', 0],
+            ['john«doe@example.com', 0],
+            ['- johndoe -@example.com', 0],
+            ['[johndoe]@example.com', 0],
+            ['(johndoe)@example.com', 0],
+            ['<johndoe>@example.com', 0],
+        ];
     }
 
     public static function providerTestExtractEmail()
     {
-        return array(
-                        array( 'John Doe <jdoe+subaddr@test.example.com>', 'John Doe', 'jdoe+subaddr@test.example.com' ),
-                        array( 'John Doe <jdoe@test.example.com>', 'John Doe', 'jdoe@test.example.com' ),
-                        array( 'John Doe <jdoe@example.com>', 'John Doe', 'jdoe@example.com' ),
-                        array( '豆豆龍 <jdoe@example.com>', '豆豆龍', 'jdoe@example.com' ),
-                        array( '小丁噹 <"小丁噹"@example.com>', '小丁噹', '"小丁噹"@example.com' ),
-                    );
+        return [['John Doe <jdoe+subaddr@test.example.com>', 'John Doe', 'jdoe+subaddr@test.example.com'], ['John Doe <jdoe@test.example.com>', 'John Doe', 'jdoe@test.example.com'], ['John Doe <jdoe@example.com>', 'John Doe', 'jdoe@example.com'], ['豆豆龍 <jdoe@example.com>', '豆豆龍', 'jdoe@example.com'], ['小丁噹 <"小丁噹"@example.com>', '小丁噹', '"小丁噹"@example.com']];
     }
 
     public static function providerTestStripEmail()
     {
-        return array(
-                        array( 'Bla bla bla bla "楊大葶" <user@example.com>  test test <anotheruser@example.com> test', 'user@example.com' ),
-                        array( 'Bla bla bla bla "楊大葶"@example.com test <anotheruser@example.com> test test', '"楊大葶"@example.com' ),
-                        array( 'Bla bla bla bla John Doe <jdoe+subaddr@test.example.com> test <anotheruser@example.com> test test', 'jdoe+subaddr@test.example.com' ),
-                    );
+        return [['Bla bla bla bla "楊大葶" <user@example.com>  test test <anotheruser@example.com> test', 'user@example.com'], ['Bla bla bla bla "楊大葶"@example.com test <anotheruser@example.com> test test', '"楊大葶"@example.com'], ['Bla bla bla bla John Doe <jdoe+subaddr@test.example.com> test <anotheruser@example.com> test test', 'jdoe+subaddr@test.example.com']];
     }
 
     public static function getTestAccounts()
     {
         $ini = eZINI::instance( 'test_ezmail_plain.ini' );
-        $testAccounts = $ini->hasVariable( 'TestAccounts', 'Account' ) ? $ini->variable( 'TestAccounts', 'Account' ) : array();
-        $accountResult = array();
+        $testAccounts = $ini->hasVariable( 'TestAccounts', 'Account' ) ? $ini->variable( 'TestAccounts', 'Account' ) : [];
+        $accountResult = [];
         foreach( $testAccounts as $account )
         {
             $user = $ini->variable( 'TestAccounts', $account );
@@ -445,7 +420,7 @@ class eZMailTest extends ezpTestCase
         $endl = "\r\n";
 
         if ( empty( $users ) )
-            return array( array( '', '' ) );
+            return [['', '']];
 
         /*
             Each entry in this array is an array consisting of two arrays.
@@ -453,276 +428,31 @@ class eZMailTest extends ezpTestCase
             The second is the expected result. Since the result may be different for each recipient,
             this array is per recipient, using the email as array key.
         */
-        return array(
-            array( // Testing simple mail
-                array( 'to' => array( $users['01'] ),
-                       'replyTo' => null,
-                       'sender' => $users['02'],
-                       'cc' => null,
-                       'bcc' => null,
-                       'subject' => 'Luke',
-                       'body' => 'Told you, I did. Reckless, is he. Now, matters are worse.'
-                ),
-                array(
-                    $users['01']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['02']['email'],
-                                                                       'name' => $users['02']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['02']['email'],
-                                                                    'name' => $users['02']['name'] ) ),
-                                            'subject' => 'Luke'
-                        ),
-                        'body' => 'Told you, I did. Reckless, is he. Now, matters are worse.' . $endl
-                    )
-                )
-            ),
-            array( // Testing multiple CC recipients
-                array( 'to' => array( $users['01'] ),
-                       'replyTo' => null,
-                       'sender' => $users['02'],
-                       'cc' => array( $users['03'], $users['04'] ),
-                       'bcc' => null,
-                       'subject' => 'Mos Eisley',
-                       'body' => 'You will never find a more wretched hive of scum and villainy.'
-                ),
-                array(
-                    $users['01']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['02']['email'],
-                                                                       'name' => $users['02']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['02']['email'],
-                                                                    'name' => $users['02']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['03']['email'],
-                                                                  'name' => $users['03']['name'] ),
-                                                           array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'Mos Eisley'
-                        ),
-                        'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl
-                    ),
-                    $users['03']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['02']['email'],
-                                                                       'name' => $users['02']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['02']['email'],
-                                                                    'name' => $users['02']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['03']['email'],
-                                                                  'name' => $users['03']['name'] ),
-                                                           array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'Mos Eisley'
-                        ),
-                        'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl
-                    ),
-                    $users['04']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['02']['email'],
-                                                                       'name' => $users['02']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['02']['email'],
-                                                                    'name' => $users['02']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['03']['email'],
-                                                                  'name' => $users['03']['name'] ),
-                                                           array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'Mos Eisley'
-                        ),
-                        'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl
-                    )
-                )
-            ),
-            array( // Testing multiple BCC recipients
-                array( 'to' => array( $users['01'] ),
-                       'replyTo' => null,
-                       'sender' => $users['01'],
-                       'cc' => null,
-                       'bcc' => array( $users['04'], $users['05'] ),
-                       'subject' => 'Death Star',
-                       'body' => 'Now witness the firepower of this fully armed and operational battle station!'
-                ),
-                array(
-                    $users['01']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'subject' => 'Death Star'
-                        ),
-                        'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl
-                    ),
-                    $users['04']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'subject' => 'Death Star'
-                        ),
-                        'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl
-                    ),
-                    $users['05']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'subject' => 'Death Star'
-                        ),
-                        'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl
-                    )
-                )
-            ),
-            array( // Testing DebugSending = enabled with sendmail (cc and bcc headers must be stripped)
-                array( 'to' => array( $users['02'], $users['03'] ),
-                       'replyTo' => null,
-                       'sender' => $users['01'],
-                       'cc' => array( $users['04'] ),
-                       'bcc' => array( $users['05'] ),
-                       'subject' => 'That ancient religion',
-                       'body' => 'I find your lack of faith disturbing.',
-                       'DebugSending' => true
-                ),
-                array(
-                    $users['01']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                    $users['02']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['03']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['04']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['05']['email'] => array(
-                        'messageCount' => 0
-                    )
-                )
-            ),
-            array( // Testing DebugSending = enabled with SMTP (cc is empty in debug mode)
-                array( 'to' => array( $users['02'], $users['03'] ),
-                       'replyTo' => null,
-                       'sender' => $users['01'],
-                       'cc' => array( $users['04'] ),
-                       'bcc' => array( $users['05'] ),
-                       'subject' => 'That ancient religion',
-                       'body' => 'I find your lack of faith disturbing.',
-                       'DebugSending' => true,
-                       'Transport' => 'SMTP'
-                ),
-                array(
-                    $users['01']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['01']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                    $users['02']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['03']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['04']['email'] => array(
-                        'messageCount' => 0
-                    ),
-                    $users['05']['email'] => array(
-                        'messageCount' => 0
-                    )
-                )
-            ),
-            array( // Testing DebugSending = disabled with SMTP (cc headers are kept, bcc headers may be kept)
-                array( 'to' => array( $users['02'], $users['03'] ),
-                       'replyTo' => null,
-                       'sender' => $users['01'],
-                       'cc' => array( $users['04'] ),
-                       'bcc' => array( $users['05'] ),
-                       'subject' => 'That ancient religion',
-                       'body' => 'I find your lack of faith disturbing.',
-                       'DebugSending' => false,
-                       'Transport' => 'SMTP'
-                ),
-                array(
-                    $users['02']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['02']['email'] ),
-                                                           array( 'email' => $users['03']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                    $users['03']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['02']['email'] ),
-                                                           array( 'email' => $users['03']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                    $users['04']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['02']['email'] ),
-                                                           array( 'email' => $users['03']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                    $users['05']['email'] => array(
-                        'messageCount' => 1,
-                        'headers' => array( 'to' => array( array( 'email' => $users['02']['email'] ),
-                                                           array( 'email' => $users['03']['email'] ) ),
-                                            'replyTo' => array( array( 'email' => $users['01']['email'],
-                                                                       'name' => $users['01']['name'] ) ),
-                                            'from' => array( array( 'email' => $users['01']['email'],
-                                                                    'name' => $users['01']['name'] ) ),
-                                            'cc' => array( array( 'email' => $users['04']['email'],
-                                                                  'name' => $users['04']['name'] ) ),
-                                            'subject' => 'That ancient religion'
-                        ),
-                        'body' => 'I find your lack of faith disturbing.' . $endl
-                    ),
-                )
-            )
-        );
+        return [[
+            // Testing simple mail
+            ['to' => [$users['01']], 'replyTo' => null, 'sender' => $users['02'], 'cc' => null, 'bcc' => null, 'subject' => 'Luke', 'body' => 'Told you, I did. Reckless, is he. Now, matters are worse.'],
+            [$users['01']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'from' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'subject' => 'Luke'], 'body' => 'Told you, I did. Reckless, is he. Now, matters are worse.' . $endl]],
+        ], [
+            // Testing multiple CC recipients
+            ['to' => [$users['01']], 'replyTo' => null, 'sender' => $users['02'], 'cc' => [$users['03'], $users['04']], 'bcc' => null, 'subject' => 'Mos Eisley', 'body' => 'You will never find a more wretched hive of scum and villainy.'],
+            [$users['01']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'from' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'cc' => [['email' => $users['03']['email'], 'name' => $users['03']['name']], ['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'Mos Eisley'], 'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl], $users['03']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'from' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'cc' => [['email' => $users['03']['email'], 'name' => $users['03']['name']], ['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'Mos Eisley'], 'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl], $users['04']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'from' => [['email' => $users['02']['email'], 'name' => $users['02']['name']]], 'cc' => [['email' => $users['03']['email'], 'name' => $users['03']['name']], ['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'Mos Eisley'], 'body' => 'You will never find a more wretched hive of scum and villainy.' . $endl]],
+        ], [
+            // Testing multiple BCC recipients
+            ['to' => [$users['01']], 'replyTo' => null, 'sender' => $users['01'], 'cc' => null, 'bcc' => [$users['04'], $users['05']], 'subject' => 'Death Star', 'body' => 'Now witness the firepower of this fully armed and operational battle station!'],
+            [$users['01']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'subject' => 'Death Star'], 'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl], $users['04']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'subject' => 'Death Star'], 'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl], $users['05']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'subject' => 'Death Star'], 'body' => 'Now witness the firepower of this fully armed and operational battle station!' . $endl]],
+        ], [
+            // Testing DebugSending = enabled with sendmail (cc and bcc headers must be stripped)
+            ['to' => [$users['02'], $users['03']], 'replyTo' => null, 'sender' => $users['01'], 'cc' => [$users['04']], 'bcc' => [$users['05']], 'subject' => 'That ancient religion', 'body' => 'I find your lack of faith disturbing.', 'DebugSending' => true],
+            [$users['01']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl], $users['02']['email'] => ['messageCount' => 0], $users['03']['email'] => ['messageCount' => 0], $users['04']['email'] => ['messageCount' => 0], $users['05']['email'] => ['messageCount' => 0]],
+        ], [
+            // Testing DebugSending = enabled with SMTP (cc is empty in debug mode)
+            ['to' => [$users['02'], $users['03']], 'replyTo' => null, 'sender' => $users['01'], 'cc' => [$users['04']], 'bcc' => [$users['05']], 'subject' => 'That ancient religion', 'body' => 'I find your lack of faith disturbing.', 'DebugSending' => true, 'Transport' => 'SMTP'],
+            [$users['01']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['01']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl], $users['02']['email'] => ['messageCount' => 0], $users['03']['email'] => ['messageCount' => 0], $users['04']['email'] => ['messageCount' => 0], $users['05']['email'] => ['messageCount' => 0]],
+        ], [
+            // Testing DebugSending = disabled with SMTP (cc headers are kept, bcc headers may be kept)
+            ['to' => [$users['02'], $users['03']], 'replyTo' => null, 'sender' => $users['01'], 'cc' => [$users['04']], 'bcc' => [$users['05']], 'subject' => 'That ancient religion', 'body' => 'I find your lack of faith disturbing.', 'DebugSending' => false, 'Transport' => 'SMTP'],
+            [$users['02']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['02']['email']], ['email' => $users['03']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'cc' => [['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl], $users['03']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['02']['email']], ['email' => $users['03']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'cc' => [['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl], $users['04']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['02']['email']], ['email' => $users['03']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'cc' => [['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl], $users['05']['email'] => ['messageCount' => 1, 'headers' => ['to' => [['email' => $users['02']['email']], ['email' => $users['03']['email']]], 'replyTo' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'from' => [['email' => $users['01']['email'], 'name' => $users['01']['name']]], 'cc' => [['email' => $users['04']['email'], 'name' => $users['04']['name']]], 'subject' => 'That ancient religion'], 'body' => 'I find your lack of faith disturbing.' . $endl]],
+        ]];
     }
 
     /**
@@ -730,7 +460,7 @@ class eZMailTest extends ezpTestCase
      */
     public function testValidate( $email, $valid )
     {
-        $this->assertEquals( $valid, eZMail::validate( $email ) );
+        static::assertEquals($valid, eZMail::validate( $email ));
     }
 
     /**
@@ -757,11 +487,11 @@ class eZMailTest extends ezpTestCase
     {
         if( empty( $sendData ) )
         {
-            $this->markTestSkipped( 'No $sendData from data provider.' );
+            static::markTestSkipped('No $sendData from data provider.');
         }
         if ( !self::imapIsEnabled() )
         {
-            $this->markTestSkipped( 'IMAP is not loaded' );
+            static::markTestSkipped('IMAP is not loaded');
             return;
         }
 
@@ -793,9 +523,9 @@ class eZMailTest extends ezpTestCase
         foreach ( $recipients as $recipient )
         {
             // Accept only testing accounts as recipients
-            if ( preg_match( '/^ezp-unittests-\d\d\@mail\.ez\.no$/', $recipient['email'] ) != 1 )
+            if ( preg_match( '/^ezp-unittests-\d\d\@mail\.ez\.no$/', (string) $recipient['email'] ) != 1 )
             {
-                $this->markTestSkipped( 'Refusing to use other than testing accounts' );
+                static::markTestSkipped('Refusing to use other than testing accounts');
                 return;
             }
 
@@ -803,7 +533,7 @@ class eZMailTest extends ezpTestCase
             $mbox = @imap_open( $mboxString, $recipient['username'], $recipient['password'] );
             if ( !$mbox )
             {
-                $this->markTestSkipped( 'Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error() );
+                static::markTestSkipped('Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error());
                 return;
             }
 
@@ -820,7 +550,7 @@ class eZMailTest extends ezpTestCase
         // Create and send email
         $mail = new eZMail();
 
-        if ( count( $sendData['to'] ) == 1 )
+        if ( (is_countable($sendData['to']) ? count( $sendData['to'] ) : 0) == 1 )
             $mail->setReceiver( $sendData['to'][0]['email'], $sendData['to'][0]['name'] );
         else
             $mail->setReceiverElements( $sendData['to'] );
@@ -834,7 +564,7 @@ class eZMailTest extends ezpTestCase
 
         if ( $sendData['cc'] )
         {
-            if ( count( $sendData['cc'] ) == 1 )
+            if ( (is_countable($sendData['cc']) ? count( $sendData['cc'] ) : 0) == 1 )
                 $mail->addCc( $sendData['cc'][0]['email'], $sendData['cc'][0]['name'] );
             else
                 $mail->setCcElements( $sendData['cc'] );
@@ -842,7 +572,7 @@ class eZMailTest extends ezpTestCase
 
         if ( $sendData['bcc'] )
         {
-            if ( count( $sendData['bcc'] ) == 1 )
+            if ( (is_countable($sendData['bcc']) ? count( $sendData['bcc'] ) : 0) == 1 )
                 $mail->addBcc( $sendData['bcc'][0]['email'], $sendData['bcc'][0]['name'] );
             else
                 $mail->setBccElements( $sendData['bcc'] );
@@ -852,7 +582,7 @@ class eZMailTest extends ezpTestCase
         $mail->setBody( $sendData['body'] );
 
         $sendResult = eZMailTransport::send( $mail );
-        $this->assertEquals( true, $sendResult );
+        static::assertEquals(true, $sendResult);
 
         // Wait for it...
         sleep( 2 );
@@ -863,48 +593,45 @@ class eZMailTest extends ezpTestCase
             $mbox = @imap_open( $mboxString, $recipient['username'], $recipient['password'] );
             if ( !$mbox )
             {
-                $this->markTestSkipped( 'Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error() );
+                static::markTestSkipped('Cannot open mailbox for ' . $recipient['username'] . ': ' . imap_last_error());
                 return;
             }
 
             // Check message count before we try to open anything, in case nothing is there
             $status = imap_status( $mbox, $mboxString, SA_MESSAGES );
-            $this->assertEquals( $expectedResult[ $recipient['email'] ]['messageCount'], $status->messages );
+            static::assertEquals($expectedResult[ $recipient['email'] ]['messageCount'], $status->messages);
 
             // Build actual result array, and check against the expected result
-            $actualResult = array( 'messageCount' => $status->messages );
+            $actualResult = ['messageCount' => $status->messages];
             for ( $i = 1; $i <= $status->messages; $i++ )
             {
                 $headers = imap_headerinfo( $mbox, $i );
-                $actualResult['headers'] = array();
+                $actualResult['headers'] = [];
 
-                $actualResult['headers']['to'] = array();
+                $actualResult['headers']['to'] = [];
                 foreach ( $headers->to as $item )
                 {
-                    $actualResult['headers']['to'][] = array( 'email' => $item->mailbox . '@' . $item->host );
+                    $actualResult['headers']['to'][] = ['email' => $item->mailbox . '@' . $item->host];
                 }
 
-                $actualResult['headers']['replyTo'] = array();
+                $actualResult['headers']['replyTo'] = [];
                 foreach ( $headers->reply_to as $item )
                 {
-                    $actualResult['headers']['replyTo'][] = array( 'email' => $item->mailbox . '@' . $item->host,
-                                                                   'name' => $item->personal );
+                    $actualResult['headers']['replyTo'][] = ['email' => $item->mailbox . '@' . $item->host, 'name' => $item->personal];
                 }
 
-                $actualResult['headers']['from'] = array();
+                $actualResult['headers']['from'] = [];
                 foreach ( $headers->from as $item )
                 {
-                    $actualResult['headers']['from'][] = array( 'email' => $item->mailbox . '@' . $item->host,
-                                                                'name' => $item->personal );
+                    $actualResult['headers']['from'][] = ['email' => $item->mailbox . '@' . $item->host, 'name' => $item->personal];
                 }
 
                 if ( isset( $headers->cc ) )
                 {
-                    $actualResult['headers']['cc'] = array();
+                    $actualResult['headers']['cc'] = [];
                     foreach ( $headers->cc as $item )
                     {
-                        $actualResult['headers']['cc'][] = array( 'email' => $item->mailbox . '@' . $item->host,
-                                                                  'name' => $item->personal );
+                        $actualResult['headers']['cc'][] = ['email' => $item->mailbox . '@' . $item->host, 'name' => $item->personal];
                     }
                 }
 
@@ -913,7 +640,7 @@ class eZMailTest extends ezpTestCase
                 $body = imap_body( $mbox, $i );
                 $actualResult['body'] = $body;
 
-                $this->assertEquals( $expectedResult[ $recipient['email'] ], $actualResult );
+                static::assertEquals($expectedResult[ $recipient['email'] ], $actualResult);
             }
             imap_close( $mbox );
         }
@@ -926,7 +653,7 @@ class eZMailTest extends ezpTestCase
     {
         self::markTestSkipped( "Tests needs to use other email addresses" );
         ezpINIHelper::setINISetting( 'site.ini', 'MailSettings', 'Transport', 'SMTP' );
-        ezpINIHelper::setINISetting( 'site.ini', 'MailSettings', 'ExcludeHeaders', array( 'bcc' ) );
+        ezpINIHelper::setINISetting( 'site.ini', 'MailSettings', 'ExcludeHeaders', ['bcc'] );
 
         $mail = new eZMail();
         $mail->setReceiver( 'johndoe@example.com', 'John Doe' );
@@ -936,13 +663,13 @@ class eZMailTest extends ezpTestCase
         $mail->setBody( 'Jim should not get this email.' );
 
         // BCC should be set at this point
-        $this->assertTrue( strpos( $mail->Mail->generateHeaders(), 'Bcc: Jim Doe <jimdoe@example.com>' ) > 0 );
+        static::assertTrue(strpos( $mail->Mail->generateHeaders(), 'Bcc: Jim Doe <jimdoe@example.com>' ) > 0);
 
         // We don't care if the mail gets sent. What's important is what happens to the headers.
         eZMailTransport::send( $mail );
 
         // BCC should not be set anymore at this point, because of ExcludeHeaders
-        $this->assertFalse( strpos( $mail->Mail->generateHeaders(), 'Bcc: Jim Doe <jimdoe@example.com>' ) > 0 );
+        static::assertFalse(strpos( $mail->Mail->generateHeaders(), 'Bcc: Jim Doe <jimdoe@example.com>' ) > 0);
     }
 
     public function testSSLSending()
@@ -957,7 +684,7 @@ class eZMailTest extends ezpTestCase
         }
         $siteINI = eZINI::instance();
         $backupSetting = $siteINI->group( 'MailSettings' );
-        $siteINI->setVariables( array( 'MailSettings' => $mailSetting ) );
+        $siteINI->setVariables( ['MailSettings' => $mailSetting] );
 
         $mail = new eZMail();
 
@@ -966,9 +693,9 @@ class eZMailTest extends ezpTestCase
         $mail->setSubject( 'SSL EMAIL TESTING' );
         $mail->setBody( 'This is a mail testing. TEST SSL in ' . __METHOD__ );
         $result = eZMailTransport::send( $mail );
-        $this->assertTrue( $result );
+        static::assertTrue($result);
 
-        $siteINI->setVariables( array( 'MailSettings' => $backupSetting ) );
+        $siteINI->setVariables( ['MailSettings' => $backupSetting] );
 
         //todo: delete the received mails in teardown.
     }

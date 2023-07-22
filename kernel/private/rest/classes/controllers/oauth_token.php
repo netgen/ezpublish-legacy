@@ -39,13 +39,13 @@ class ezpRestOauthTokenController extends ezcMvcController
         // REQUIRED: refresh_token
 
         // Defining the required params for each stage of operation
-        $initialRequiredParams = array( 'grant_type', 'client_id', 'client_secret' );
+        $initialRequiredParams = ['grant_type', 'client_id', 'client_secret'];
 
         // params for grant_type=authorization_code
-        $codeRequiredParams = array( 'code', 'redirect_uri' );
+        $codeRequiredParams = ['code', 'redirect_uri'];
 
         // params for grant_type=refresh_token
-        $refreshRequiredParams = array( 'refresh_token' );
+        $refreshRequiredParams = ['refresh_token'];
 
         $this->checkParams( $initialRequiredParams );
 
@@ -96,7 +96,7 @@ class ezpRestOauthTokenController extends ezcMvcController
     {
         foreach( $paramsToCheck as $param )
         {
-            $missingParams = array();
+            $missingParams = [];
             if ( !isset( $this->request->post[$param] ) )
             {
                 $missingParams[] = $param;
@@ -116,9 +116,7 @@ class ezpRestOauthTokenController extends ezcMvcController
 
     protected function validateGrantType( $grant )
     {
-        $allowedGrantTypes = array( 'authorization_code',
-                                    'refresh_token',
-                                  );
+        $allowedGrantTypes = ['authorization_code', 'refresh_token'];
 
 
         return in_array( $grant, $allowedGrantTypes );

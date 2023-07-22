@@ -10,13 +10,8 @@
 
 class ezpRestHttpResponse implements ezcMvcResultStatusObject
 {
-    public $code;
-    public $message;
-
-    public function __construct( $code = null, $message = null )
+    public function __construct(public $code = null, public $message = null)
     {
-        $this->code = $code;
-        $this->message = $message;
     }
 
     public function process( ezcMvcResponseWriter $writer )
@@ -29,7 +24,7 @@ class ezpRestHttpResponse implements ezcMvcResultStatusObject
         if ( $this->message !== null )
         {
             $writer->headers['Content-Type'] = 'application/json; charset=UTF-8';
-            $writer->response->body = json_encode( array( 'error_message' => $this->message ) );
+            $writer->response->body = json_encode( ['error_message' => $this->message], JSON_THROW_ON_ERROR );
         }
     }
 }

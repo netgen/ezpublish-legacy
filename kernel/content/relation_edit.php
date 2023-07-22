@@ -13,8 +13,8 @@ function checkRelationAssignments( $module, $class, $object, $version, $contentO
     if ( $module->isCurrentAction( 'AddRelatedObject' ) )
     {
         $selectedObjectIDArray = eZContentBrowse::result( 'AddRelatedObject' );
-        $relatedObjects = $object->relatedContentObjectArray( $editVersion, false, 0, array( 'AllRelations' => eZContentObject::RELATION_COMMON ) );
-        $relatedObjectIDArray = array();
+        $relatedObjects = $object->relatedContentObjectArray( $editVersion, false, 0, ['AllRelations' => eZContentObject::RELATION_COMMON] );
+        $relatedObjectIDArray = [];
         $objectID = $object->attribute( 'id' );
 
         foreach (  $relatedObjects as  $relatedObject )
@@ -32,7 +32,7 @@ function checkRelationAssignments( $module, $class, $object, $version, $contentO
             $db->commit();
         }
 
-        $module->redirectToView( 'edit', array( $object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage ),
+        $module->redirectToView( 'edit', [$object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage],
                                  null, false, 'content-relation-items' );
         return eZModule::HOOK_STATUS_CANCEL_RUN;
     }
@@ -49,7 +49,7 @@ function checkRelationAssignments( $module, $class, $object, $version, $contentO
         // We redirect to the edit page to get the correct url,
         // also we use the anchor 'content-relation-items' to make sure the
         // browser scrolls down the relation list (if the anchor exists).
-        $module->redirectToView( 'edit', array( $object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage ),
+        $module->redirectToView( 'edit', [$object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage],
                                  null, false, 'content-relation-items' );
         return eZModule::HOOK_STATUS_CANCEL_RUN;
     }
@@ -67,23 +67,13 @@ function checkRelationActions( $module, $class, $object, $version, $contentObjec
         $objectID = $object->attribute( 'id' );
 
         $assignedNodes = $object->attribute( 'assigned_nodes' );
-        $assignedNodesIDs = array();
+        $assignedNodesIDs = [];
         foreach ( $assignedNodes as $node )
             $assignedNodesIDs = $node->attribute( 'node_id' );
         unset( $assignedNodes );
 
-        eZContentBrowse::browse( array( 'action_name' => 'AddRelatedObject',
-                                        'description_template' => 'design:content/browse_related.tpl',
-                                        'content' => array( 'object_id' => $objectID,
-                                                            'object_version' => $editVersion,
-                                                            'object_language' => $editLanguage ),
-                                        'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                         'class_id' => $class->attribute( 'identifier' ),
-                                                         'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                         'section' => $object->attribute( 'section_id' ) ),
-                                        'ignore_nodes_select' => $assignedNodesIDs,
-                                        'from_page' => $module->redirectionURI( 'content', 'edit', array( $objectID, $editVersion, $editLanguage, $fromLanguage ) ) ),
-                                 $module );
+        eZContentBrowse::browse( $module,
+                                 ['action_name' => 'AddRelatedObject', 'description_template' => 'design:content/browse_related.tpl', 'content' => ['object_id' => $objectID, 'object_version' => $editVersion, 'object_language' => $editLanguage], 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'ignore_nodes_select' => $assignedNodesIDs, 'from_page' => $module->redirectionURI( 'content', 'edit', [$objectID, $editVersion, $editLanguage, $fromLanguage] )] );
 
         return eZModule::HOOK_STATUS_CANCEL_RUN;
     }
@@ -121,21 +111,8 @@ function checkRelationActions( $module, $class, $object, $version, $contentObjec
         }
         else
         {
-            eZContentUpload::upload( array( 'action_name' => 'RelatedObjectUpload',
-                                            'description_template' => 'design:content/upload_related.tpl',
-                                            'navigation_part_identifier' => $navigationPart,
-                                            'content' => array( 'object_id' => $objectID,
-                                                                'object_version' => $editVersion,
-                                                                'object_language' => $editLanguage ),
-                                            'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                             'class_id' => $class->attribute( 'identifier' ),
-                                                             'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                             'section' => $object->attribute( 'section_id' ) ),
-                                            'result_action_name' => 'UploadedFileRelation',
-                                            'ui_context' => 'edit',
-                                            'result_module' => array( 'content', 'edit',
-                                                                      array( $objectID, $editVersion, $editLanguage, $fromLanguage ) ) ),
-                                     $module );
+            eZContentUpload::upload( $module,
+                                     ['action_name' => 'RelatedObjectUpload', 'description_template' => 'design:content/upload_related.tpl', 'navigation_part_identifier' => $navigationPart, 'content' => ['object_id' => $objectID, 'object_version' => $editVersion, 'object_language' => $editLanguage], 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'result_action_name' => 'UploadedFileRelation', 'ui_context' => 'edit', 'result_module' => ['content', 'edit', [$objectID, $editVersion, $editLanguage, $fromLanguage]]] );
             return eZModule::HOOK_STATUS_CANCEL_RUN;
         }
     }
@@ -148,7 +125,7 @@ function checkRelationActions( $module, $class, $object, $version, $contentObjec
         }
         else
         {
-            $relationObjectIDs = array();
+            $relationObjectIDs = [];
         }
 
         $db = eZDB::instance();
@@ -186,21 +163,15 @@ function checkRelationActions( $module, $class, $object, $version, $contentObjec
                 $db = eZDB::instance();
                 $db->begin();
                 $assignmentHandler = new eZContentObjectAssignmentHandler( $relatedContentObject, $relatedContentVersion );
-                $sectionID = (int) $assignmentHandler->setupAssignments( array( 'group-name' => 'RelationAssignmentSettings',
-                                                                   'default-variable-name' => 'DefaultAssignment',
-                                                                   'specific-variable-name' => 'ClassSpecificAssignment',
-                                                                   'section-id-wanted' => true,
-                                                                   'fallback-node-id' => $object->attribute( 'main_node_id' ) ) );
+                $sectionID = (int) $assignmentHandler->setupAssignments( ['group-name' => 'RelationAssignmentSettings', 'default-variable-name' => 'DefaultAssignment', 'specific-variable-name' => 'ClassSpecificAssignment', 'section-id-wanted' => true, 'fallback-node-id' => $object->attribute( 'main_node_id' )] );
 
-                $http->setSessionVariable( 'ParentObject', array( $object->attribute( 'id' ), $editVersion, $editLanguage ) );
+                $http->setSessionVariable( 'ParentObject', [$object->attribute( 'id' ), $editVersion, $editLanguage] );
                 $http->setSessionVariable( 'NewObjectID', $newObjectID );
 
                 /* Change section ID to the same one as the main node placement */
                 $db->query("UPDATE ezcontentobject SET section_id = {$sectionID} WHERE id = {$newObjectID}");
                 $db->commit();
-                $module->redirectToView( 'edit', array( $relatedContentObject->attribute( 'id' ),
-                                                        $relatedContentObject->attribute( 'current_version' ),
-                                                        false ) );
+                $module->redirectToView( 'edit', [$relatedContentObject->attribute( 'id' ), $relatedContentObject->attribute( 'current_version' ), false] );
             }
             else
             {
@@ -220,18 +191,18 @@ function handleRelationTemplate( $module, $class, $object, $version, $contentObj
     $relatedObjects = $object->relatedContentObjectArray( $editVersion );
     $tpl->setVariable( 'related_contentobjects', $relatedObjects );
 
-    $relatedObjectsTyped = array();
-    $relatedObjectsTyped['common'] = $object->relatedContentObjectArray( $editVersion, false, 0, array( 'AllRelations' => eZContentObject::RELATION_COMMON ) );
-    $relatedObjectsTyped['xml_embed'] = $object->relatedContentObjectArray( $editVersion, false, 0, array( 'AllRelations' => eZContentObject::RELATION_EMBED ) );
+    $relatedObjectsTyped = [];
+    $relatedObjectsTyped['common'] = $object->relatedContentObjectArray( $editVersion, false, 0, ['AllRelations' => eZContentObject::RELATION_COMMON] );
+    $relatedObjectsTyped['xml_embed'] = $object->relatedContentObjectArray( $editVersion, false, 0, ['AllRelations' => eZContentObject::RELATION_EMBED] );
     if ( eZContentObject::isObjectRelationTyped() )
     {
-        $relatedObjectsTyped['xml_link'] = $object->relatedContentObjectArray( $editVersion, false, 0, array( 'AllRelations' => eZContentObject::RELATION_LINK ) );
+        $relatedObjectsTyped['xml_link'] = $object->relatedContentObjectArray( $editVersion, false, 0, ['AllRelations' => eZContentObject::RELATION_LINK] );
     }
 
-    $relatedObjectsTypedIDArray = array();
+    $relatedObjectsTypedIDArray = [];
     foreach ( $relatedObjectsTyped as $relationTypeName => $relatedObjectsByType )
     {
-        $relatedObjectsTypedIDArray[$relationTypeName] = array();
+        $relatedObjectsTypedIDArray[$relationTypeName] = [];
         foreach ( $relatedObjectsByType as $relatedObjectByType )
         {
             $relatedObjectsTypedIDArray[$relationTypeName][] = $relatedObjectByType->ID;
@@ -244,20 +215,20 @@ function handleRelationTemplate( $module, $class, $object, $version, $contentObj
     $groups = $ini->variable( 'RelationGroupSettings', 'Groups' );
     $defaultGroup = $ini->variable( 'RelationGroupSettings', 'DefaultGroup' );
 
-    $groupedRelatedObjects = array();
-    $groupClassLists = array();
-    $classGroupMap = array();
+    $groupedRelatedObjects = [];
+    $groupClassLists = [];
+    $classGroupMap = [];
     foreach ( $groups as $groupName )
     {
-        $groupedRelatedObjects[$groupName] = array();
-        $setting = strtoupper( $groupName[0] ) . substr( $groupName, 1 ) . 'ClassList';
+        $groupedRelatedObjects[$groupName] = [];
+        $setting = strtoupper( (string) $groupName[0] ) . substr( (string) $groupName, 1 ) . 'ClassList';
         $groupClassLists[$groupName] = $ini->variable( 'RelationGroupSettings', $setting );
         foreach ( $groupClassLists[$groupName] as $classIdentifier )
         {
             $classGroupMap[$classIdentifier] = $groupName;
         }
     }
-    $groupedRelatedObjects[$defaultGroup] = array();
+    $groupedRelatedObjects[$defaultGroup] = [];
 
     foreach ( $relatedObjects as $relatedObjectKey => $relatedObject )
     {

@@ -22,14 +22,13 @@ $template = $view->template();
 
 // $collaborationHandlers =& eZCollaborationItemHandler::fetchList();
 
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( $template );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/collaboration', 'Collaboration' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/collaboration', 'Collaboration' )]];
 
 ?>

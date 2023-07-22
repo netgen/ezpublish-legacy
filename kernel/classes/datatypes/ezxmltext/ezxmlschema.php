@@ -10,134 +10,7 @@
 
 class eZXMLSchema
 {
-    public $Schema = array(
-        'section'   => array( 'blockChildrenAllowed' => array( 'header', 'paragraph', 'section' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => false,
-                              'attributes' => array( 'xmlns:image', 'xmlns:xhtml', 'xmlns:custom', 'xmlns:tmp' ) ),
-
-        'embed'     => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => null,
-                              'isInline' => true,
-                              'attributes' => array( 'object_id', 'node_id', 'show_path', 'size',
-                                                     'align', 'view', 'xhtml:id', 'class', 'target' ),
-                              'attributesDefaults' => array( 'align' => '', 'view' => 'embed', 'class' => '' ) ),
-
-        'embed-inline' => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => null,
-                              'isInline' => true,
-                              'attributes' => array( 'object_id', 'node_id', 'show_path', 'size',
-                                                     'align', 'view', 'xhtml:id', 'class', 'target' ),
-                              'attributesDefaults' => array( 'align' => '', 'view' => 'embed-inline', 'class' => '' ) ),
-
-        'table'     => array( 'blockChildrenAllowed' => array( 'tr' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class', 'width', 'border', 'align' ) ),
-
-        'tr'        => array( 'blockChildrenAllowed' => array( 'td', 'th' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => false,
-                              'attributes' => array( 'class' ) ),
-
-        'td'        => array( 'blockChildrenAllowed' => array( 'header', 'paragraph', 'section', 'table' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => false,
-                              'attributes' => array( 'class', 'align', 'xhtml:width', 'xhtml:colspan', 'xhtml:rowspan' ) ),
-
-        'th'        => array( 'blockChildrenAllowed' => array( 'header', 'paragraph', 'section', 'table' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => false,
-                              'attributes' => array( 'class', 'align', 'xhtml:width', 'xhtml:colspan', 'xhtml:rowspan' ) ),
-
-        'ol'        => array( 'blockChildrenAllowed' => array( 'li' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class' ) ),
-
-        'ul'        => array( 'blockChildrenAllowed' => array( 'li' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class' ) ),
-
-        'li'        => array( 'blockChildrenAllowed' => array( 'paragraph' ),
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class' ) ),
-
-        'header'    => array( 'blockChildrenAllowed' => array( 'line' ),
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class', 'anchor_name', 'align' ) ),
-
-        'paragraph' => array( 'blockChildrenAllowed' => array( 'line', 'link', 'embed', 'table', 'ol', 'ul', 'custom', 'literal' ),
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class', 'align' ) ),
-
-        'line'      => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => false ),
-
-        'literal'   => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => array( '#text' ),
-                              'childrenRequired' => true,
-                              'isInline' => false,
-                              'attributes' => array( 'class' ) ),
-
-        'strong'    => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => true,
-                              'attributes' => array( 'class' ) ),
-
-        'emphasize' => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => true,
-                              'attributes' => array( 'class' ) ),
-
-        'link'      => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => true,
-                              'isInline' => true,
-                              'attributes' => array( 'class', 'xhtml:id', 'target', 'xhtml:title',
-                                                     'object_id', 'node_id', 'show_path', 'anchor_name',
-                                                     'url_id', 'id', 'view' ),
-                              'attributesDefaults' => array( 'target' => '_self' ) ),
-
-        'anchor'    => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => true,
-                              'attributes' => array( 'name' ) ),
-
-        'custom'    => array( 'blockChildrenAllowed' => true,
-                              'inlineChildrenAllowed' => true,
-                              'childrenRequired' => false,
-                              'isInline' => null,
-                              'attributes' => array( 'name', 'align' ) ),
-
-        '#text'     => array( 'blockChildrenAllowed' => false,
-                              'inlineChildrenAllowed' => false,
-                              'childrenRequired' => false,
-                              'isInline' => true,
-                              'attributes' => false )
-    );
+    public $Schema = ['section'   => ['blockChildrenAllowed' => ['header', 'paragraph', 'section'], 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => false, 'attributes' => ['xmlns:image', 'xmlns:xhtml', 'xmlns:custom', 'xmlns:tmp']], 'embed'     => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => false, 'childrenRequired' => null, 'isInline' => true, 'attributes' => ['object_id', 'node_id', 'show_path', 'size', 'align', 'view', 'xhtml:id', 'class', 'target'], 'attributesDefaults' => ['align' => '', 'view' => 'embed', 'class' => '']], 'embed-inline' => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => false, 'childrenRequired' => null, 'isInline' => true, 'attributes' => ['object_id', 'node_id', 'show_path', 'size', 'align', 'view', 'xhtml:id', 'class', 'target'], 'attributesDefaults' => ['align' => '', 'view' => 'embed-inline', 'class' => '']], 'table'     => ['blockChildrenAllowed' => ['tr'], 'inlineChildrenAllowed' => false, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class', 'width', 'border', 'align']], 'tr'        => ['blockChildrenAllowed' => ['td', 'th'], 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => false, 'attributes' => ['class']], 'td'        => ['blockChildrenAllowed' => ['header', 'paragraph', 'section', 'table'], 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => false, 'attributes' => ['class', 'align', 'xhtml:width', 'xhtml:colspan', 'xhtml:rowspan']], 'th'        => ['blockChildrenAllowed' => ['header', 'paragraph', 'section', 'table'], 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => false, 'attributes' => ['class', 'align', 'xhtml:width', 'xhtml:colspan', 'xhtml:rowspan']], 'ol'        => ['blockChildrenAllowed' => ['li'], 'inlineChildrenAllowed' => false, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class']], 'ul'        => ['blockChildrenAllowed' => ['li'], 'inlineChildrenAllowed' => false, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class']], 'li'        => ['blockChildrenAllowed' => ['paragraph'], 'inlineChildrenAllowed' => false, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class']], 'header'    => ['blockChildrenAllowed' => ['line'], 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class', 'anchor_name', 'align']], 'paragraph' => ['blockChildrenAllowed' => ['line', 'link', 'embed', 'table', 'ol', 'ul', 'custom', 'literal'], 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class', 'align']], 'line'      => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => false, 'attributes' => false], 'literal'   => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => ['#text'], 'childrenRequired' => true, 'isInline' => false, 'attributes' => ['class']], 'strong'    => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => true, 'attributes' => ['class']], 'emphasize' => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => true, 'attributes' => ['class']], 'link'      => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => true, 'childrenRequired' => true, 'isInline' => true, 'attributes' => ['class', 'xhtml:id', 'target', 'xhtml:title', 'object_id', 'node_id', 'show_path', 'anchor_name', 'url_id', 'id', 'view'], 'attributesDefaults' => ['target' => '_self']], 'anchor'    => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => true, 'attributes' => ['name']], 'custom'    => ['blockChildrenAllowed' => true, 'inlineChildrenAllowed' => true, 'childrenRequired' => false, 'isInline' => null, 'attributes' => ['name', 'align']], '#text'     => ['blockChildrenAllowed' => false, 'inlineChildrenAllowed' => false, 'childrenRequired' => false, 'isInline' => true, 'attributes' => false]];
 
     /**
      * Constructor
@@ -149,11 +22,11 @@ class eZXMLSchema
         // Get inline custom tags list
         $this->Schema['custom']['isInline'] = $ini->variable( 'CustomTagSettings', 'IsInline' );
         if ( !is_array( $this->Schema['custom']['isInline'] ) )
-            $this->Schema['custom']['isInline'] = array();
+            $this->Schema['custom']['isInline'] = [];
 
         $this->Schema['custom']['tagList'] = $ini->variable( 'CustomTagSettings', 'AvailableCustomTags' );
         if ( !is_array( $this->Schema['custom']['tagList'] ) )
-            $this->Schema['custom']['tagList'] = array();
+            $this->Schema['custom']['tagList'] = [];
 
         $eZPublishVersion = eZPublishSDK::majorVersion() + eZPublishSDK::minorVersion() * 0.1;
 
@@ -166,10 +39,10 @@ class eZXMLSchema
                 if ( is_array( $avail ) && count( $avail ) )
                     $this->Schema[$tagName]['classesList'] = $avail;
                 else
-                    $this->Schema[$tagName]['classesList'] = array();
+                    $this->Schema[$tagName]['classesList'] = [];
             }
             else
-                $this->Schema[$tagName]['classesList'] = array();
+                $this->Schema[$tagName]['classesList'] = [];
         }
 
 
@@ -192,10 +65,10 @@ class eZXMLSchema
                         if ( is_array( $avail ) && count( $avail ) )
                             $this->Schema['custom']['customAttributes'][$customTagName] = $avail;
                         else
-                            $this->Schema['custom']['customAttributes'][$customTagName] = array();
+                            $this->Schema['custom']['customAttributes'][$customTagName] = [];
                     }
                     else
-                        $this->Schema['custom']['customAttributes'][$customTagName] = array();
+                        $this->Schema['custom']['customAttributes'][$customTagName] = [];
                 }
             }
             else
@@ -207,10 +80,10 @@ class eZXMLSchema
                     if ( is_array( $avail ) && count( $avail ) )
                         $this->Schema[$tagName]['customAttributes'] = $avail;
                     else
-                        $this->Schema[$tagName]['customAttributes'] = array();
+                        $this->Schema[$tagName]['customAttributes'] = [];
                 }
                 else
-                    $this->Schema[$tagName]['customAttributes'] = array();
+                    $this->Schema[$tagName]['customAttributes'] = [];
             }
         }
     }
@@ -353,7 +226,7 @@ class eZXMLSchema
                 return $this->Schema[$element->nodeName]['customAttributes'];
             }
         }
-        return array();
+        return [];
     }
 
     function attrDefaultValue( $tagName, $attrName )
@@ -361,7 +234,7 @@ class eZXMLSchema
         if ( isset( $this->Schema[$tagName]['attributesDefaults'][$attrName] ) )
             return $this->Schema[$tagName]['attributesDefaults'][$attrName];
         else
-            return array();
+            return [];
     }
 
     function attrDefaultValues( $tagName )
@@ -369,7 +242,7 @@ class eZXMLSchema
         if ( isset( $this->Schema[$tagName]['attributesDefaults'] ) )
             return $this->Schema[$tagName]['attributesDefaults'];
         else
-            return array();
+            return [];
     }
 
     function exists( $element )
@@ -404,13 +277,13 @@ class eZXMLSchema
         if ( isset( $this->Schema[$tagName]['classesList'] ) )
             return $this->Schema[$tagName]['classesList'];
         else
-            return array();
+            return [];
     }
 
     function addAvailableClass( $tagName, $class )
     {
         if ( !isset( $this->Schema[$tagName]['classesList'] ) )
-            $this->Schema[$tagName]['classesList'] = array();
+            $this->Schema[$tagName]['classesList'] = [];
 
         $this->Schema[$tagName]['classesList'][] = $class;
     }

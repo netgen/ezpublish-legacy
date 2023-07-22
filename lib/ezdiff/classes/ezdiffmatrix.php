@@ -67,12 +67,12 @@ class eZDiffMatrix
     {
         $pos = $row * $this->Cols + $col;
         $pos = base_convert( $pos, 10, 36 );
-        return isset( $this->Matrix["*$pos"] ) ? $this->Matrix["*$pos"] : 0;
+        return $this->Matrix["*$pos"] ?? 0;
     }
 
     ///\privatesection
     /// Internal array, holding necessary values.
-    public $Matrix = array();
+    public $Matrix = [];
 
     /// Internal variable, width of the matrix.
     public $Cols;

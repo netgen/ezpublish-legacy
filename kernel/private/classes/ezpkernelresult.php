@@ -13,27 +13,11 @@
 class ezpKernelResult
 {
     /**
-     * Kernel result as an HTML string
-     *
-     * @var string
-     */
-    private $content;
-
-    /**
-     * Arbitrary attributes that can be used to make the result's state vary (e.g. meta information)
-     *
-     * @var array
-     */
-    private $attributes;
-
-    /**
      * @param string $content The result's main content
-     * @param array $defaultAttributes
+     * @param array $attributes
      */
-    public function __construct( $content = null, array $defaultAttributes = array() )
+    public function __construct(private $content = null, private array $attributes = [])
     {
-        $this->content = $content;
-        $this->attributes = $defaultAttributes;
     }
 
     /**
@@ -60,9 +44,8 @@ class ezpKernelResult
      * Sets an attribute
      *
      * @param string $name
-     * @param mixed $value
      */
-    public function setAttribute( $name, $value )
+    public function setAttribute( $name, mixed $value )
     {
         $this->attributes[$name] = $value;
     }
@@ -72,9 +55,9 @@ class ezpKernelResult
      * @param mixed $defaultValue Default value to return if the attribute doesn't exist.
      * @return mixed
      */
-    public function getAttribute( $name, $defaultValue = null )
+    public function getAttribute( $name, mixed $defaultValue = null )
     {
-        return isset( $this->attributes[$name] ) ? $this->attributes[$name] : $defaultValue;
+        return $this->attributes[$name] ?? $defaultValue;
     }
 
     /**
@@ -100,8 +83,6 @@ class ezpKernelResult
 
     /**
      * Sets multiple attributes at once. Internal ones that are not inside $attributes won't be overridden.
-     *
-     * @param array $attributes
      */
     public function setAttributes( array $attributes )
     {
@@ -110,8 +91,6 @@ class ezpKernelResult
 
     /**
      * Replaces internal attributes entirely.
-     *
-     * @param array $attributes
      */
     public function replaceAttributes( array $attributes )
     {

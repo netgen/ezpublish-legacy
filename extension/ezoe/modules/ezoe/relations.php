@@ -31,7 +31,7 @@ include_once( 'kernel/common/template.php' );
 $objectID        = isset( $Params['ObjectID'] ) ? (int) $Params['ObjectID'] : 0;
 $objectVersion   = isset( $Params['ObjectVersion'] ) ? (int) $Params['ObjectVersion'] : 0;
 $embedInline     = isset( $Params['EmbedInline'] ) ? $Params['EmbedInline'] === 'true' : false;
-$embedSize       = isset( $Params['EmbedSize'] ) ? $Params['EmbedSize'] : '';
+$embedSize       = $Params['EmbedSize'] ?? '';
 $embedObjectJSON = 'false';
 $embedId         = 0;
 $tagName         = $embedInline ? 'embed-inline' : 'embed';
@@ -47,7 +47,7 @@ if ( isset( $Params['ContentType'] ) && $Params['ContentType'] !== '' )
 
 if ( $objectID === 0  || $objectVersion === 0 )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'ObjectID/ObjectVersion' ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, ['%parameter' => 'ObjectID/ObjectVersion'] );
    eZExecution::cleanExit();
 }
 
@@ -59,7 +59,7 @@ if ( $user instanceOf eZUser )
 }
 else
 {
-    $result = array('accessWord' => 'no');
+    $result = ['accessWord' => 'no'];
 }
 
 if ( $result['accessWord'] === 'no' )
@@ -71,11 +71,11 @@ if ( $result['accessWord'] === 'no' )
 
 $object    = eZContentObject::fetch( $objectID );
 $imageIni  = eZINI::instance( 'image.ini' );
-$params    = array('loadImages' => true, 'imagePreGenerateSizes' => array('small', 'original') );
+$params    = ['loadImages' => true, 'imagePreGenerateSizes' => ['small', 'original']];
 
 if ( !$object instanceof eZContentObject || !$object->canRead() )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'ObjectId', '%value' => $objectID ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'ObjectId', '%value' => $objectID] );
    eZExecution::cleanExit();
 }
 
@@ -86,7 +86,7 @@ if ( isset( $Params['EmbedID'] )  && $Params['EmbedID'])
     if ( is_numeric( $Params['EmbedID'] ) )
         $embedId = $Params['EmbedID'];
     else
-        list($embedType, $embedId) = explode('_', $Params['EmbedID']);
+        [$embedType, $embedId] = explode('_', (string) $Params['EmbedID']);
     if ( $embedType === 'eZNode' )
         $embedObject = eZContentObject::fetchByNodeID( $embedId );
     else
@@ -97,7 +97,7 @@ if ( isset( $Params['EmbedID'] )  && $Params['EmbedID'])
 
 if ( !$embedObject instanceof eZContentObject || !$embedObject->canRead()  )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'EmbedID', '%value' => (int)$Params['EmbedID'] ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'EmbedID', '%value' => (int)$Params['EmbedID']] );
    eZExecution::cleanExit();
 }
 
@@ -108,13 +108,13 @@ $contentIni      = eZINI::instance( 'content.ini' );
 $ezoeIni         = eZINI::instance( 'ezoe.ini' );
 $embedClassIdentifier = $embedObject->attribute( 'class_identifier' );
 $embedClassID    = $embedObject->attribute( 'contentclass_id' );
-$sizeTypeArray   = array();
+$sizeTypeArray   = [];
 
 
 if ( $contentType === 'auto' )
 {
     // figgure out what content type group this class is in
-    $contentType = eZOEXMLInput::embedTagContentType( $embedClassIdentifier, $embedClassID );
+    $contentType = eZOEXMLInput::embedTagContentType( $embedClassIdentifier );
 }
 
 
@@ -130,13 +130,13 @@ foreach( $imageSizeArray as $size )
     if ( $imageIni->hasVariable( $size, 'GUIName' ) )
         $sizeTypeArray[$size] = $imageIni->variable( $size, 'GUIName' );
     else
-        $sizeTypeArray[$size] = ucfirst( $size );
+        $sizeTypeArray[$size] = ucfirst( (string) $size );
     $imagePixelSize = '';
     foreach( $imageIni->variable( $size, 'Filters' ) as $filter )
     {
-        if ( strpos( $filter, 'geometry/scale' ) !== false or strpos( $filter, 'geometry/crop' ) !== false )
+        if ( str_contains( (string) $filter, 'geometry/scale' ) or str_contains( (string) $filter, 'geometry/crop' ) )
         {
-            $filter = explode( '=', $filter );
+            $filter = explode( '=', (string) $filter );
             $filter = $filter[1];
             $filter = explode( ';', $filter );
             // Only support scale and crop that uses both width and height for now
@@ -171,15 +171,15 @@ else if ( $contentIni->hasVariable( 'embed-inline', 'AvailableClasses' ) )
 if ( $contentIni->hasVariable( 'embed', 'ClassDescription' ) )
     $classListDescription = $contentIni->variable( 'embed', 'ClassDescription' );
 else
-    $classListDescription = array();
+    $classListDescription = [];
 
 if ( $contentIni->hasVariable( 'embed-inline', 'ClassDescription' ) )
     $classListDescriptionInline = $contentIni->variable( 'embed-inline', 'ClassDescription' );
 else
-    $classListDescriptionInline = array();
+    $classListDescriptionInline = [];
 
 // generate class hash
-$classList = array();
+$classList = [];
 if ( $classListData )
 {
     $classList['-0-'] = 'None';
@@ -192,7 +192,7 @@ if ( $classListData )
     }
 }
 
-$classListInline = array();
+$classListInline = [];
 if ( $classListInlineData )
 {
     $classListInline['-0-'] = 'None';
@@ -209,12 +209,12 @@ if ( $classListInlineData )
 if ( $contentIni->hasVariable( 'embed', 'Defaults' ) )
     $attributeDefaults = $contentIni->variable( 'embed', 'Defaults' );
 else
-    $attributeDefaults = array();
+    $attributeDefaults = [];
 
 if ( $contentIni->hasVariable( 'embed-inline', 'Defaults' ) )
     $attributeDefaultsInline = $contentIni->variable( 'embed-inline', 'Defaults' );
 else
-    $attributeDefaultsInline = array();
+    $attributeDefaultsInline = [];
 
 
 // view mode list
@@ -223,17 +223,17 @@ if ( $contentIni->hasVariable( 'embed_' . $embedClassIdentifier, 'AvailableViewM
 elseif ( $contentIni->hasVariable( 'embed', 'AvailableViewModes' ) )
     $viewList = array_unique( $contentIni->variable( 'embed', 'AvailableViewModes' ) );
 else
-    $viewList = array();
+    $viewList = [];
 
 if ( $contentIni->hasVariable( 'embed-inline_' . $embedClassIdentifier, 'AvailableViewModes' ) )
     $viewListInline = array_unique( $contentIni->variable( 'embed-inline_' . $embedClassIdentifier, 'AvailableViewModes' ) );
 elseif ( $contentIni->hasVariable( 'embed-inline', 'AvailableViewModes' ) )
     $viewListInline = array_unique( $contentIni->variable( 'embed-inline', 'AvailableViewModes' ) );
 else
-    $viewListInline = array();
+    $viewListInline = [];
 
 // custom attributes
-$customAttributes = array( 'embed' => array(), 'embed-inline' => array() );
+$customAttributes = ['embed' => [], 'embed-inline' => []];
 
 if ( $contentIni->hasVariable( 'embed_' . $embedClassIdentifier, 'CustomAttributes' ) )
     $customAttributes['embed'] = $contentIni->variable( 'embed_' . $embedClassIdentifier, 'CustomAttributes' );
@@ -259,7 +259,7 @@ $tpl->setVariable( 'embed_type', $embedType );
 $tpl->setVariable( 'embed_object', $embedObject );
 $tpl->setVariable( 'embed_data', ezjscAjaxContent::nodeEncode( $embedObject, $params ) );
 $tpl->setVariable( 'content_type', $contentType );
-$tpl->setVariable( 'content_type_name', ucfirst( rtrim( $contentType, 's' ) ) );
+$tpl->setVariable( 'content_type_name', ucfirst( rtrim( (string) $contentType, 's' ) ) );
 $tpl->setVariable( 'compatibility_mode', $ezoeIni->variable('EditorSettings', 'CompatibilityMode' ) );
 
 $tpl->setVariable( 'tag_name', $tagName );
@@ -270,9 +270,9 @@ if ( isset( $xmlTagAliasList[$tagName] ) )
 else
     $tpl->setVariable( 'tag_name_alias', $tagName );
 
-$tpl->setVariable( 'view_list', json_encode( array( 'embed' => $viewList, 'embed-inline' => $viewListInline ) ) );
-$tpl->setVariable( 'class_list', json_encode( array( 'embed' => $classList, 'embed-inline' => $classListInline ) ) );
-$tpl->setVariable( 'attribute_defaults', json_encode( array( 'embed' => $attributeDefaults, 'embed-inline' => $attributeDefaultsInline ) ) );
+$tpl->setVariable( 'view_list', json_encode( ['embed' => $viewList, 'embed-inline' => $viewListInline], JSON_THROW_ON_ERROR ) );
+$tpl->setVariable( 'class_list', json_encode( ['embed' => $classList, 'embed-inline' => $classListInline], JSON_THROW_ON_ERROR ) );
+$tpl->setVariable( 'attribute_defaults', json_encode( ['embed' => $attributeDefaults, 'embed-inline' => $attributeDefaultsInline], JSON_THROW_ON_ERROR ) );
 
 
 $tpl->setVariable( 'custom_attributes', $customAttributes );
@@ -286,13 +286,13 @@ if ( $contentIni->hasVariable( 'ImageSettings', 'DefaultCropAlias' ) )
 else
     $tpl->setVariable( 'default_crop_size', $defaultSize );
 
-$tpl->setVariable( 'custom_attribute_style_map', json_encode( $ezoeIni->variable('EditorSettings', 'CustomAttributeStyleMap' ) ) );
+$tpl->setVariable( 'custom_attribute_style_map', json_encode( $ezoeIni->variable('EditorSettings', 'CustomAttributeStyleMap' ), JSON_THROW_ON_ERROR ) );
 
-$tpl->setVariable( 'persistent_variable', array() );
+$tpl->setVariable( 'persistent_variable', [] );
 
 $tpl->setVariable( 'original_uri_string', eZURI::instance()->originalURIString() );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:ezoe/tag_embed_' . $contentType . '.tpl' );
 $Result['pagelayout'] = 'design:ezoe/popup_pagelayout.tpl';
 $Result['persistent_variable'] = $tpl->variable( 'persistent_variable' );

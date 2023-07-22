@@ -29,7 +29,7 @@ function sectionEditActionCheck( $module, $class, $object, $version, $contentObj
 
     $selectedSection->applyTo( $object );
                     eZContentCacheManager::clearContentCacheIfNeeded( $object->attribute( 'id' ) );
-    $module->redirectToView( 'edit', array( $object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage ) );
+    $module->redirectToView( 'edit', [$object->attribute( 'id' ), $editVersion, $editLanguage, $fromLanguage] );
 }
 
 function sectionEditPreTemplate( $module, $class, $object, $version, $contentObjectAttributes, $editVersion, $editLanguage, $tpl )

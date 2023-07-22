@@ -31,7 +31,7 @@ class eZStepPackageLanguageOptions extends eZStepInstaller
 
     function processPostData()
     {
-        $languageMap = array();
+        $languageMap = [];
         if( $this->Http->hasPostVariable( 'eZSetupPackageLanguageMap' ) )
         {
             $languageMap = $this->Http->postVariable( 'eZSetupPackageLanguageMap' );
@@ -73,8 +73,8 @@ class eZStepPackageLanguageOptions extends eZStepInstaller
         //
         $siteLanguageLocaleList = $this->PersistenceList['regional_info']['languages'];
 
-        $packageNameList = array();
-        $packageLanguageLocaleList = array();
+        $packageNameList = [];
+        $packageLanguageLocaleList = [];
 
         $sitePackageName = $this->chosenSitePackage();
         $sitePackage = eZPackage::fetch( $sitePackageName, false, false, false );
@@ -104,8 +104,8 @@ class eZStepPackageLanguageOptions extends eZStepInstaller
             //
             // Get language names
             //
-            $siteLanguageList = array();
-            $packageLanguageList = array();
+            $siteLanguageList = [];
+            $packageLanguageList = [];
             foreach( $languages as $language )
             {
                 $locale = $language->attribute( 'locale_code' );
@@ -113,14 +113,12 @@ class eZStepPackageLanguageOptions extends eZStepInstaller
 
                 if( in_array( $locale, $siteLanguageLocaleList ) )
                 {
-                    $siteLanguageList[] = array( 'locale' => $locale,
-                                                 'name' => $name );
+                    $siteLanguageList[] = ['locale' => $locale, 'name' => $name];
                 }
 
                 if( in_array( $locale, $packageLanguageLocaleList ) )
                 {
-                    $packageLanguageList[] = array( 'locale' => $locale,
-                                                    'name' => $name );
+                    $packageLanguageList[] = ['locale' => $locale, 'name' => $name];
                 }
             }
 
@@ -142,11 +140,10 @@ class eZStepPackageLanguageOptions extends eZStepInstaller
         $this->Tpl->setVariable( 'package_language_list', $packageLanguageList );
         $this->Tpl->setVariable( 'site_language_list', $siteLanguageList );
 
-        $result = array();
+        $result = [];
         $result['content'] = $this->Tpl->fetch( "design:setup/init/package_language_options.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Package language options' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Package language options' ), 'url' => false]];
         return $result;
     }
 

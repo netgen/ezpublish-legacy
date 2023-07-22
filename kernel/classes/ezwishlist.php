@@ -23,29 +23,7 @@ class eZWishList extends eZPersistentObject
     */
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => "UserID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "productcollection_id" => array( 'name' => "ProductCollectionID",
-                                                                          'datatype' => 'integer',
-                                                                          'default' => 0,
-                                                                          'required' => true,
-                                                                          'foreign_class' => 'eZProductCollection',
-                                                                         'foreign_attribute' => 'id',
-                                                                         'multiplicity' => '1..*' ) ),
-                      "keys" => array( "id" ),
-                      'function_attributes' => array( 'items' => 'items' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZWishList",
-                      "name" => "ezwishlist" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => "UserID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "productcollection_id" => ['name' => "ProductCollectionID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZProductCollection', 'foreign_attribute' => 'id', 'multiplicity' => '1..*']], "keys" => ["id"], 'function_attributes' => ['items' => 'items'], "increment_key" => "id", "class_name" => "eZWishList", "name" => "ezwishlist"];
     }
 
 
@@ -55,7 +33,7 @@ class eZWishList extends eZPersistentObject
         $user = eZUser::currentUser();
         $userID = $user->attribute( 'contentobject_id' );
         $nodes = eZContentObjectTreeNode::fetchByContentObjectID( $userID );
-        $idArray = array();
+        $idArray = [];
         $idArray[] = $userID;
         foreach ( $nodes as $node )
         {
@@ -75,15 +53,14 @@ class eZWishList extends eZPersistentObject
     function itemCount( $alternativeProductionID = false )
     {
         $countRes = eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
-                                                         array(),
-                                                         array( "productcollection_id" => ( $alternativeProductionID === false ) ? $this->ProductCollectionID : $alternativeProductionID ),
+                                                         [],
+                                                         ["productcollection_id" => ( $alternativeProductionID === false ) ? $this->ProductCollectionID : $alternativeProductionID],
                                                          false,
                                                          null,
                                                          false,
                                                          false,
-                                                         array( array( 'operation' => 'count( id )',
-                                                                       'name' => 'count' ) ),
-                                                         array( 'ezcontentobject_tree' ),
+                                                         [['operation' => 'count( id )', 'name' => 'count']],
+                                                         ['ezcontentobject_tree'],
                                                          ' AND ezproductcollection_item.contentobject_id = ezcontentobject_tree.contentobject_id' );
         return $countRes[0]['count'];
     }
@@ -92,13 +69,12 @@ class eZWishList extends eZPersistentObject
     {
         $productItems = eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
                                                        null,
-                                                       array( 'productcollection_id' => ( $alternativeProductionID === false ) ? $this->ProductCollectionID : $alternativeProductionID ),
+                                                       ['productcollection_id' => ( $alternativeProductionID === false ) ? $this->ProductCollectionID : $alternativeProductionID],
                                                        null,
-                                                       array( 'offset' => $offset,
-                                                              'length' => $limit ),
+                                                       ['offset' => $offset, 'length' => $limit],
                                                        $asObject );
 //        $discountPercent = $this->discountPercent();
-        $addedProducts = array();
+        $addedProducts = [];
         foreach ( $productItems as  $productItem )
         {
             $discountPercent = 0.0;
@@ -132,17 +108,7 @@ class eZWishList extends eZPersistentObject
                 $totalPriceExVAT = $count * $priceExVAT  * ( 100 - $discountPercent ) / 100;
                 $totalPriceIncVAT = $count * $priceIncVAT * ( 100 - $discountPercent ) / 100 ;
 
-                $addedProduct = array( "id" => $id,
-                                       "vat_value" => $vatValue,
-                                       "item_count" => $count,
-                                       "node_id" => $nodeID,
-                                       "object_name" => $objectName,
-                                       "price_ex_vat" => $priceExVAT,
-                                       "price_inc_vat" => $priceIncVAT,
-                                       "discount_percent" => $discountPercent,
-                                       "total_price_ex_vat" => $totalPriceExVAT,
-                                       "total_price_inc_vat" => $totalPriceIncVAT,
-                                       'item_object' =>$productItem );
+                $addedProduct = ["id" => $id, "vat_value" => $vatValue, "item_count" => $count, "node_id" => $nodeID, "object_name" => $objectName, "price_ex_vat" => $priceExVAT, "price_inc_vat" => $priceIncVAT, "discount_percent" => $discountPercent, "total_price_ex_vat" => $totalPriceExVAT, "total_price_inc_vat" => $totalPriceIncVAT, 'item_object' =>$productItem];
                 $addedProducts[] = $addedProduct;
             }
         }
@@ -172,19 +138,17 @@ class eZWishList extends eZPersistentObject
         $user = eZUser::currentUser();
         $userID = $user->attribute( 'contentobject_id' );
         $WishListArray = eZPersistentObject::fetchObjectList( eZWishList::definition(),
-                                                          null, array( "user_id" => $userID
-                                                                       ),
+                                                          null, ["user_id" => $userID],
                                                           null, null,
                                                           $asObject );
 
         $currentWishList = false;
-        if ( count( $WishListArray ) == 0 )
+        if ( count( (array) $WishListArray ) == 0 )
         {
             $collection = eZProductCollection::create();
             $collection->store();
 
-            $currentWishList = new eZWishList( array( "user_id" => $userID,
-                                              "productcollection_id" => $collection->attribute( "id" ) ) );
+            $currentWishList = new eZWishList( ["user_id" => $userID, "productcollection_id" => $collection->attribute( "id" )] );
             $currentWishList->store();
         }
         else
@@ -207,7 +171,7 @@ class eZWishList extends eZPersistentObject
         $rows = $db->arrayQuery( "SELECT productcollection_id FROM ezwishlist" );
         if ( count( $rows ) > 0 )
         {
-            $productCollectionIDList = array();
+            $productCollectionIDList = [];
             foreach ( $rows as $row )
             {
                 $productCollectionIDList[] = $row['productcollection_id'];
@@ -224,7 +188,7 @@ class eZWishList extends eZPersistentObject
     static function removeByUserID( $userID )
     {
         eZPersistentObject::removeObject( eZWishList::definition(),
-                                          array( 'user_id' => $userID ) );
+                                          ['user_id' => $userID] );
     }
 }
 

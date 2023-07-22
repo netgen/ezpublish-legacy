@@ -21,19 +21,17 @@
 
 class eZImageAnalyzer
 {
-    const MODE_INDEXED = 1;
-    const MODE_TRUECOLOR = 2;
+    final public const MODE_INDEXED = 1;
+    final public const MODE_TRUECOLOR = 2;
 
-    const TIMER_HUNDRETHS_OF_A_SECOND = 1;
+    final public const TIMER_HUNDRETHS_OF_A_SECOND = 1;
 
-    const TRANSPARENCY_OPAQUE = 1;
-    const TRANSPARENCY_TRANSPARENT = 2;
-    const TRANSPARENCY_TRANSLUCENT = 3;
+    final public const TRANSPARENCY_OPAQUE = 1;
+    final public const TRANSPARENCY_TRANSPARENT = 2;
+    final public const TRANSPARENCY_TRANSLUCENT = 3;
 
     public function __construct()
     {
-        $this->Name = false;
-        $this->MIMEList = array();
     }
 
     /*!
@@ -42,7 +40,7 @@ class eZImageAnalyzer
      information on the analysis.
      \return \c false if the analysis fails.
     */
-    function process( $mimeData, $parameters = array() )
+    function process( $mimeData, $parameters = [] )
     {
         return false;
     }
@@ -69,24 +67,13 @@ class eZImageAnalyzer
         $analyzerData = eZImageAnalyzer::analyzerData();
         if ( !isset( $analyzerData['handlers'][$analyzerName] ) )
         {
-            if ( eZExtension::findExtensionType( array( 'ini-name' => 'image.ini',
-                                                        'repository-group' => 'AnalyzerSettings',
-                                                        'repository-variable' => 'RepositoryList',
-                                                        'extension-group' => 'AnalyzerSettings',
-                                                        'extension-variable' => 'ExtensionList',
-                                                        'extension-subdir' => 'imageanalyzer',
-                                                        'alias-group' => 'AnalyzerSettings',
-                                                        'alias-variable' => 'ImageAnalyzerAlias',
-                                                        'suffix-name' => 'imageanalyzer.php',
-                                                        'type-directory' => false,
-                                                        'type' => $analyzerName ),
+            if ( eZExtension::findExtensionType( ['ini-name' => 'image.ini', 'repository-group' => 'AnalyzerSettings', 'repository-variable' => 'RepositoryList', 'extension-group' => 'AnalyzerSettings', 'extension-variable' => 'ExtensionList', 'extension-subdir' => 'imageanalyzer', 'alias-group' => 'AnalyzerSettings', 'alias-variable' => 'ImageAnalyzerAlias', 'suffix-name' => 'imageanalyzer.php', 'type-directory' => false, 'type' => $analyzerName],
                                                  $result ) )
             {
                 $filepath = $result['found-file-path'];
                 include_once( $filepath );
                 $className = $result['type'] . 'imageanalyzer';
-                $analyzerData['handlers'][$analyzerName] = array( 'classname' => $className,
-                                                                  'filepath' => $filepath );
+                $analyzerData['handlers'][$analyzerName] = ['classname' => $className, 'filepath' => $filepath];
             }
             else
             {
@@ -122,8 +109,8 @@ class eZImageAnalyzer
         $ini = eZINI::instance( 'image.ini' );
         $analyzerData['analyzers'] = $ini->variable( 'AnalyzerSettings', 'ImageAnalyzers' );
         $analyzerData['mime_list'] = $ini->variable( 'AnalyzerSettings', 'AnalyzerMIMEList' );
-        $analyzerData['analyzer_map'] = array();
-        $analyzerData['analyzer'] = array();
+        $analyzerData['analyzer_map'] = [];
+        $analyzerData['analyzer'] = [];
         return $analyzerData;
     }
 
@@ -141,8 +128,7 @@ class eZImageAnalyzer
             {
                 $handler = $ini->variable( $iniGroup, 'Handler' );
                 $mimeList = $ini->variable( $iniGroup, 'MIMEList' );
-                $analyzerData['analyzer'][$analyzerName] = array( 'handler' => $handler,
-                                                                  'mime_list' => $mimeList );
+                $analyzerData['analyzer'][$analyzerName] = ['handler' => $handler, 'mime_list' => $mimeList];
                 foreach ( $mimeList as $mimeItem )
                 {
                     $analyzerData['analyzer_map'][$mimeItem] = $analyzerName;
@@ -157,8 +143,8 @@ class eZImageAnalyzer
 
     /// \privatesection
 
-    public $MIMEList;
-    public $Name;
+    public $MIMEList = [];
+    public $Name = false;
 }
 
 ?>

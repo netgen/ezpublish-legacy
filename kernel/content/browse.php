@@ -15,7 +15,7 @@ $Offset = $Params['Offset'];
 if ( !is_numeric( $Offset ) )
     $Offset = 0;
 
-$parents = array();
+$parents = [];
 
 // Make sure user has session (if not, then this can't possible be a valid browse request)
 if ( !eZSession::userHasSessionCookie() )
@@ -86,8 +86,8 @@ if ( isset( $NodeID ) )
     $parents = $node->attribute( 'path' );
 }
 
-$cancelAction = trim( $browse->attribute( 'cancel_page' ) );
-if ( $cancelAction == trim( $browse->attribute( 'from_page' ) ) )
+$cancelAction = trim( (string) $browse->attribute( 'cancel_page' ) );
+if ( $cancelAction == trim( (string) $browse->attribute( 'from_page' ) ) )
 {
     $cancelAction = false;
 }
@@ -95,7 +95,7 @@ if ( $cancelAction == trim( $browse->attribute( 'from_page' ) ) )
 //setting keys for override
 $res = eZTemplateDesignResource::instance();
 
-$keyArray = array();
+$keyArray = [];
 if ( $browse->hasAttribute( 'keys' ) )
 {
     $attributeKeys = $browse->attribute( 'keys' );
@@ -103,7 +103,7 @@ if ( $browse->hasAttribute( 'keys' ) )
     {
         foreach ( $attributeKeys as $attributeKey => $attributeValue )
         {
-            $keyArray[] = array( $attributeKey, $attributeValue );
+            $keyArray[] = [$attributeKey, $attributeValue];
         }
     }
     $res->setKeys( $keyArray );
@@ -134,9 +134,9 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
-$viewParameters = array( 'offset' => $Offset, 'namefilter' => false );
+$viewParameters = ['offset' => $Offset, 'namefilter' => false];
 $viewParameters = array_merge( $viewParameters, $UserParameters );
 
 $tpl->setVariable( 'view_parameters', $viewParameters );
@@ -149,7 +149,7 @@ if (isset( $GLOBALS['eZDesignKeys']['section'] ))
     unset($GLOBALS['eZDesignKeys']['section']);
 }
 
-$Result = array();
+$Result = [];
 $Result['view_parameters'] = $viewParameters;
 
 // Fetch the navigation part from the section information
@@ -164,26 +164,29 @@ if ( isset( $object ) && isset( $node ) )
     }
     $Result['node_id'] = $node->attribute( 'node_id' );
 
-    $res->setKeys( array( array( 'object', $object->attribute( 'id' ) ), // Object ID
-                          array( 'node', $node->attribute( 'node_id' ) ), // Node ID
-                          array( 'parent_node', $node->attribute( 'parent_node_id' ) ), // Parent Node ID
-                          array( 'class', $object->attribute( 'contentclass_id' ) ), // Class ID
-                          array( 'depth', $node->attribute( 'depth' ) ),
-                          array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                          array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                          array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                          array( 'class_identifier', $node->attribute( 'class_identifier' ) ),
-                          array( 'section', $object->attribute('section_id') ),
-                          array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) ),
-                          array( 'state', $object->attribute( 'state_id_array' ) ),
-                          array( 'state_identifier', $object->attribute( 'state_identifier_array' ) )
-                          ) );
+    $res->setKeys( [
+        ['object', $object->attribute( 'id' )],
+        // Object ID
+        ['node', $node->attribute( 'node_id' )],
+        // Node ID
+        ['parent_node', $node->attribute( 'parent_node_id' )],
+        // Parent Node ID
+        ['class', $object->attribute( 'contentclass_id' )],
+        // Class ID
+        ['depth', $node->attribute( 'depth' )],
+        ['remote_id', $object->attribute( 'remote_id' )],
+        ['node_remote_id', $node->attribute( 'remote_id' )],
+        ['url_alias', $node->attribute( 'url_alias' )],
+        ['class_identifier', $node->attribute( 'class_identifier' )],
+        ['section', $object->attribute('section_id')],
+        ['class_group', $object->attribute( 'match_ingroup_id_list' )],
+        ['state', $object->attribute( 'state_id_array' )],
+        ['state_identifier', $object->attribute( 'state_identifier_array' )],
+    ] );
 
 }
 
-$res->setKeys( array( array( 'view_offset', $Offset ),
-                      array( 'navigation_part_identifier', $Result['navigation_part'] )
-                      ) );
+$res->setKeys( [['view_offset', $Offset], ['navigation_part_identifier', $Result['navigation_part']]] );
 
 //$Result['path'] = $path;
 $Result['content'] = $tpl->fetch( 'design:content/browse.tpl' );
@@ -200,21 +203,16 @@ if ( $templatePath )
 }
 elseif ( isset( $nodeList ) && !( isset( $object ) && isset( $node ) ) )
 {
-    $Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Search' ),
-                                    'url' => false ) );
+    $Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Search' ), 'url' => false]];
 }
 else
 {
-    $path = array();
+    $path = [];
     foreach ( $parents as $parent )
     {
-        $path[] = array( 'text' => $parent->attribute( 'name' ),
-                         'url' => '/content/browse/' . $parent->attribute( 'node_id' ) . '/',
-                         'node_id' => $parent->attribute( 'node_id' ) );
+        $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/browse/' . $parent->attribute( 'node_id' ) . '/', 'node_id' => $parent->attribute( 'node_id' )];
     }
-    $path[] = array( 'text' => $object->attribute( 'name' ),
-                     'url' => false,
-                     'node_id' => $node->attribute( 'node_id' ) );
+    $path[] = ['text' => $object->attribute( 'name' ), 'url' => false, 'node_id' => $node->attribute( 'node_id' )];
     $Result['path'] = $path;
 }
 

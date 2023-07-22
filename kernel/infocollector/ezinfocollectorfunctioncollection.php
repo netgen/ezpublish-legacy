@@ -22,13 +22,13 @@ class eZInfocollectorFunctionCollection
             $count = eZInformationCollection::fetchCountForAttribute( $objectAttributeID, $value );
         else
             $count = eZInformationCollection::fetchCollectionsCount( $objectID, $creatorID, $userIdentifier );
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     static public function fetchCollectedInfoCountList( $objectAttributeID )
     {
         $count = eZInformationCollection::fetchCountList( $objectAttributeID );
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     static public function fetchCollectedInfoCollection( $collectionID, $contentObjectID )
@@ -41,7 +41,7 @@ class eZInfocollectorFunctionCollection
             $userIdentifier = eZInformationCollection::currentUserIdentifier();
             $collection = eZInformationCollection::fetchByUserIdentifier( $userIdentifier, $contentObjectID );
         }
-        return array( 'result' => $collection );
+        return ['result' => $collection];
     }
 
     static public function fetchCollectionsList( $objectID = false, $creatorID = false, $userIdentifier = false, $limit = false, $offset = false, $sortBy = false )
@@ -49,10 +49,10 @@ class eZInfocollectorFunctionCollection
         $collection = eZInformationCollection::fetchCollectionsList( $objectID,
                                                                      $creatorID,
                                                                      $userIdentifier,
-                                                                     array( 'limit' => $limit, 'offset' => $offset ),
+                                                                     ['limit' => $limit, 'offset' => $offset],
                                                                      $sortBy
                                                                    );
-        return array( 'result' => $collection );
+        return ['result' => $collection];
      }
 
 

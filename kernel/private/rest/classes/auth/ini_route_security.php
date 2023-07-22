@@ -10,8 +10,8 @@
 
 class ezpRestIniRouteFilter extends ezpRestRouteFilterInterface
 {
-    private static $skipRoutes;
-    private static $parsedSkipRoutes;
+    private static array $skipRoutes;
+    private static ?array $parsedSkipRoutes = null;
 
     public function __construct()
     {
@@ -38,10 +38,10 @@ class ezpRestIniRouteFilter extends ezpRestRouteFilterInterface
     {
         if (self::$parsedSkipRoutes === null )
         {
-            self::$parsedSkipRoutes = array();
+            self::$parsedSkipRoutes = [];
             foreach ( self::$skipRoutes as $routeRule )
             {
-                list( $routeController, $routeAction ) = explode( '_', $routeRule[0] );
+                [$routeController, $routeAction] = explode( '_', (string) $routeRule[0] );
                 $routeVersion = isset( $routeRule[1] ) ? (int)$routeRule[1] : 1;
                 self::$parsedSkipRoutes[$routeController][$routeAction] = $routeVersion;
             }

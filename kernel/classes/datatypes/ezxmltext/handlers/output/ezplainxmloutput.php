@@ -12,7 +12,7 @@ class eZPlainXMLOutput extends eZXMLOutputHandler
 {
     function &outputText()
     {
-        $retText = "<pre>" . htmlspecialchars( $this->xmlData() ) . "</pre>";
+        $retText = "<pre>" . htmlspecialchars( (string) $this->xmlData() ) . "</pre>";
         return $retText;
     }
 }

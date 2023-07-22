@@ -82,7 +82,7 @@ class ezpExtensionHelper
             return false;
         }
 
-        $ini->setVariable( 'ExtensionSettings', 'ActiveExtensions', array_diff( $activeExtensions, array( $extension ) ) );
+        $ini->setVariable( 'ExtensionSettings', 'ActiveExtensions', array_diff( $activeExtensions, [$extension] ) );
         $ini->removeOverrideDir( 'extension:' . $extension );
         eZExtension::clearActiveExtensionsMemoryCache();
         return true;

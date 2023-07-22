@@ -22,15 +22,14 @@ if ( $http->hasPostVariable( 'RunFilterButton' ) )
 }
 else if ( $http->hasPostVariable( 'SpawnTimeEventButton' ) )
 {
-    $event = eZNotificationEvent::create( 'ezcurrenttime', array() );
+    $event = eZNotificationEvent::create( 'ezcurrenttime', [] );
     $event->store();
     $tpl->setVariable( 'time_event_created', true );
 
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:notification/runfilter.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/notification', 'Notification settings' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/notification', 'Notification settings' )]];
 
 ?>

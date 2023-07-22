@@ -18,25 +18,14 @@ class eZProductCategory extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZProductCategory",
-                      "name" => "ezproductcategory" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZProductCategory", "name" => "ezproductcategory"];
     }
 
     static function fetch( $id, $asObject = true )
     {
         return eZPersistentObject::fetchObject( eZProductCategory::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -44,14 +33,14 @@ class eZProductCategory extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZProductCategory::definition(),
                                                 null,
-                                                array( "name" => $name ),
+                                                ["name" => $name],
                                                 $asObject );
     }
 
     static function fetchList( $asObject = true )
     {
         return eZPersistentObject::fetchObjectList( eZProductCategory::definition(),
-                                                    null, null, array( 'name' => 'asc' ), null,
+                                                    null, null, ['name' => 'asc'], null,
                                                     $asObject );
     }
 
@@ -86,9 +75,7 @@ class eZProductCategory extends eZPersistentObject
 
     static function create()
     {
-        $row = array(
-            "id" => null,
-            "name" => ezpI18n::tr( 'kernel/shop/productcategories', 'Product category' ) );
+        $row = ["id" => null, "name" => ezpI18n::tr( 'kernel/shop/productcategories', 'Product category' )];
         return new eZProductCategory( $row );
     }
 
@@ -135,7 +122,7 @@ class eZProductCategory extends eZPersistentObject
 
         // Remove the category itself.
         eZPersistentObject::removeObject( eZProductCategory::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
 
         $db->commit();
     }

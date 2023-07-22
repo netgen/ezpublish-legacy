@@ -65,19 +65,7 @@ class eZTemplateTypeOperator
                                       $getTypeName = "get_type",
                                       $getClassName = "get_class" )
     {
-        $this->Operators = array( $isArrayName,
-                                  $isBooleanName,
-                                  $isIntegerName,
-                                  $isFloatName,
-                                  $isNumericName,
-                                  $isStringName,
-                                  $isObjectName,
-                                  $isClassName,
-                                  $isNullName,
-                                  $isSetName,
-                                  $isUnsetName,
-                                  $getTypeName,
-                                  $getClassName );
+        $this->Operators = [$isArrayName, $isBooleanName, $isIntegerName, $isFloatName, $isNumericName, $isStringName, $isObjectName, $isClassName, $isNullName, $isSetName, $isUnsetName, $getTypeName, $getClassName];
         $this->IsArrayName = $isArrayName;
         $this->IsBooleanName = $isBooleanName;
         $this->IsIntegerName = $isIntegerName;
@@ -91,14 +79,7 @@ class eZTemplateTypeOperator
         $this->IsUnsetName = $isUnsetName;
         $this->GetTypeName = $getTypeName;
         $this->GetClassName = $getClassName;
-        $this->PHPNameMap = array( $isArrayName => 'is_array',
-                                   $isBooleanName => 'is_bool',
-                                   $isIntegerName => 'is_integer',
-                                   $isFloatName => 'is_float',
-                                   $isNumericName => 'is_numeric',
-                                   $isStringName => 'is_string',
-                                   $isObjectName => 'is_object',
-                                   $isNullName => 'is_null' );
+        $this->PHPNameMap = [$isArrayName => 'is_array', $isBooleanName => 'is_bool', $isIntegerName => 'is_integer', $isFloatName => 'is_float', $isNumericName => 'is_numeric', $isStringName => 'is_string', $isObjectName => 'is_object', $isNullName => 'is_null'];
     }
 
     /*!
@@ -111,103 +92,13 @@ class eZTemplateTypeOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->IsArrayName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => true,
-                                                   'element-transformation-func' => 'isTransform'),
-                      $this->IsBooleanName => array( 'input' => true,
-                                                     'output' => true,
-                                                     'parameters' => true,
-                                                     'element-transformation' => true,
-                                                     'transform-parameters' => true,
-                                                     'input-as-parameter' => true,
-                                                     'element-transformation-func' => 'isTransform' ),
-                      $this->IsIntegerName => array( 'input' => true,
-                                                     'output' => true,
-                                                     'parameters' => true,
-                                                     'element-transformation' => true,
-                                                     'transform-parameters' => true,
-                                                     'input-as-parameter' => true,
-                                                     'element-transformation-func' => 'isTransform' ),
-                      $this->IsFloatName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => true,
-                                                   'element-transformation-func' => 'isTransform' ),
-                      $this->IsNumericName => array( 'input' => true,
-                                                     'output' => true,
-                                                     'parameters' => true,
-                                                     'element-transformation' => true,
-                                                     'transform-parameters' => true,
-                                                     'input-as-parameter' => true,
-                                                     'element-transformation-func' => 'isTransform' ),
-                      $this->IsStringName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => true,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => true,
-                                                    'element-transformation-func' => 'isTransform' ),
-                      $this->IsObjectName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => true,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => true,
-                                                    'element-transformation-func' => 'isTransform' ),
-                      $this->IsClassName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => true,
-                                                   'element-transformation-func' => 'isTransform' ),
-                      $this->IsNullName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => true,
-                                                  'element-transformation-func' => 'isTransform' ),
-                      $this->IsSetName => array( 'input' => true,
-                                                 'output' => true,
-                                                 'parameters' => true,
-                                                 'element-transformation' => true,
-                                                 'transform-parameters' => true,
-                                                 'input-as-parameter' => true,
-                                                 'element-transformation-func' => 'isTransform' ),
-                      $this->IsUnsetName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => true,
-                                                   'element-transformation-func' => 'isTransform' ),
-                      $this->GetTypeName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => true,
-                                                   'element-transformation-func' => 'isTransform' ),
-                      $this->GetClassName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => true,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => true,
-                                                    'element-transformation-func' => 'isTransform' ) );
+        return [$this->IsArrayName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsBooleanName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsIntegerName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsFloatName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsNumericName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsStringName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsObjectName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsClassName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsNullName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsSetName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->IsUnsetName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->GetTypeName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform'], $this->GetClassName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'isTransform']];
     }
 
     function isTransform( $operatorName, &$node, $tpl, &$resourceData,
                           $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $values[] = $parameters[0];
         $code = '%output% = ';
 
@@ -280,7 +171,7 @@ class eZTemplateTypeOperator
             } break;
         }
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
     }
 
     /*!
@@ -296,7 +187,7 @@ class eZTemplateTypeOperator
     */
     function namedParameterList()
     {
-        return array();
+        return [];
     }
 
     /*!
@@ -314,24 +205,24 @@ class eZTemplateTypeOperator
         {
             case $this->IsClassName:
             {
-                if ( count( $operatorParameters ) == 1 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) == 1 )
                 {
                     $className = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement );
-                    $value = strtolower( get_class( $value ) ) == strtolower( $className );
+                    $value = strtolower( (string) $value::class ) == strtolower( (string) $className );
                 }
                 else
                 {
                     $className = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement );
-                    $value = strtolower( get_class( $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace, $placement ) ) ) == strtolower( $className );
+                    $value = strtolower( (string) $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace, $placement )::class ) == strtolower( (string) $className );
                 }
             } break;
             case $this->IsSetName:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
-                    if ( count( $operatorParameters ) > 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                     {
-                        $tpl->extraParameters( $operatorName, count( $operatorParameters ), 1 );
+                        $tpl->extraParameters( $operatorName, is_countable($operatorParameters) ? count( $operatorParameters ) : 0, 1 );
                     }
 
                     $operand = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement, true );
@@ -345,11 +236,11 @@ class eZTemplateTypeOperator
             } break;
             case $this->IsUnsetName:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
-                    if ( count( $operatorParameters ) > 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                         $tpl->extraParameters( $operatorName,
-                                               count( $operatorParameters ),
+                                               is_countable($operatorParameters) ? count( $operatorParameters ) : 0,
                                                1 );
                     $operand = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement, true );
                     $value = $operand === null;
@@ -359,11 +250,11 @@ class eZTemplateTypeOperator
             } break;
             case $this->GetTypeName:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
-                    if ( count( $operatorParameters ) > 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                         $tpl->extraParameters( $operatorName,
-                                               count( $operatorParameters ),
+                                               is_countable($operatorParameters) ? count( $operatorParameters ) : 0,
                                                1 );
                     $operand = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement );
                 }
@@ -374,7 +265,7 @@ class eZTemplateTypeOperator
                 else if ( is_bool( $operand ) )
                     $value = 'boolean[' . ( $operand ? 'true' : 'false' ) . ']';
                 else if ( is_object( $operand ) )
-                    $value = 'object[' . get_class( $operand ) . ']';
+                    $value = 'object[' . $operand::class . ']';
                 else if ( is_array( $operand ) )
                     $value = 'array[' . count( $operand ) . ']';
                 else if ( is_string( $operand ) )
@@ -384,18 +275,18 @@ class eZTemplateTypeOperator
             } break;
             case $this->GetClassName:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
-                    if ( count( $operatorParameters ) > 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                         $tpl->extraParameters( $operatorName,
-                                               count( $operatorParameters ),
+                                               is_countable($operatorParameters) ? count( $operatorParameters ) : 0,
                                                1 );
                     $operand = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace, $placement );
-                    $value = strtolower( get_class( $operand ) );
+                    $value = strtolower( (string) $operand::class );
                 }
                 else
                 {
-                    $value = strtolower( get_class( $value ) );
+                    $value = strtolower( (string) $value::class );
                 }
             } break;
         }
@@ -403,10 +294,10 @@ class eZTemplateTypeOperator
 
     function checkType( $typeFunction, $tpl, &$value, $operatorParameters, $rootNamespace, $currentNamespace, $placement )
     {
-        if ( count( $operatorParameters ) > 0 )
+        if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
         {
             $value = true;
-            for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+            for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
             {
                 $operand = $tpl->elementValue( $operatorParameters[$i], $rootNamespace, $currentNamespace, $placement );
                 if ( !$typeFunction( $operand) )

@@ -13,7 +13,7 @@
  */
 function applyChanges( $module, $http, $productCategories = false )
 {
-    $errors = array();
+    $errors = [];
     if ( $productCategories === false )
         $productCategories = eZProductCategory::fetchList();
 
@@ -56,7 +56,7 @@ function generateUniqueCategoryName( $productCategories )
     {
         $catName = $cat->attribute( 'name' );
 
-        if ( !preg_match( "/^$commonPart (\d+)/", $catName, $matches ) )
+        if ( !preg_match( "/^$commonPart (\d+)/", (string) $catName, $matches ) )
             continue;
 
         $curNumber = $matches[1];
@@ -82,7 +82,7 @@ if ( $module->isCurrentAction( 'Remove' ) )
     $errors = applyChanges( $module, $http );
 
     if ( !$module->hasActionParameter( 'CategoryIDList' ) )
-        $catIDList = array();
+        $catIDList = [];
     else
         $catIDList = $module->actionParameter( 'CategoryIDList' );
 
@@ -90,7 +90,7 @@ if ( $module->isCurrentAction( 'Remove' ) )
     {
         // Find dependencies for the categories being removed.
 
-        $deps = array();
+        $deps = [];
         foreach ( $catIDList as $catID )
         {
             $category = eZProductCategory::fetch( $catID );
@@ -100,9 +100,7 @@ if ( $module->isCurrentAction( 'Remove' ) )
             $catName  = $category->attribute( 'name' );
             $dependantRulesCount = eZVatRule::fetchCountByCategory( $catID );
             $dependantProductsCount = eZProductCategory::fetchProductCountByCategory( $catID );
-            $deps[$catID] = array( 'name' => $catName,
-                                   'affected_rules_count'    => $dependantRulesCount,
-                                   'affected_products_count' => $dependantProductsCount );
+            $deps[$catID] = ['name' => $catName, 'affected_rules_count'    => $dependantRulesCount, 'affected_products_count' => $dependantProductsCount];
         }
 
         // Skip the confirmation dialog if the categories
@@ -119,9 +117,8 @@ if ( $module->isCurrentAction( 'Remove' ) )
         {
             $tpl->setVariable( 'dependencies', $deps );
             $tpl->setVariable( 'category_ids', join( ',', $catIDList ) );
-            $path = array( array( 'text' => ezpI18n::tr( 'kernel/shop/productcategories', 'Product categories' ),
-                                  'url' => false ) );
-            $Result = array();
+            $path = [['text' => ezpI18n::tr( 'kernel/shop/productcategories', 'Product categories' ), 'url' => false]];
+            $Result = [];
             $Result['path'] = $path;
             $Result['content'] = $tpl->fetch( "design:shop/removeproductcategories.tpl" );
             return;
@@ -138,7 +135,7 @@ if ( $module->isCurrentAction( 'Remove' ) )
 if ( $module->isCurrentAction( 'ConfirmRemoval' ) )
 {
     if ( !$module->hasActionParameter( 'CategoryIDList' ) )
-        $catIDList = array();
+        $catIDList = [];
     else
     {
         // The list of categories is a string if passed from the confirmation dialog
@@ -180,10 +177,9 @@ if ( is_array( $errors ) )
 $tpl->setVariable( 'categories', $productCategories );
 $tpl->setVariable( 'errors', $errors );
 
-$path = array();
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop/productcategories', 'Product categories' ),
-                 'url' => false );
-$Result = array();
+$path = [];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop/productcategories', 'Product categories' ), 'url' => false];
+$Result = [];
 $Result['path'] = $path;
 $Result['content'] = $tpl->fetch( "design:shop/productcategories.tpl" );
 

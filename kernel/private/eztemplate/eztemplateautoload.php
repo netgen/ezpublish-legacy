@@ -8,8 +8,7 @@
  * @package kernel
  */
 
-$eZTemplateOperatorArray = array();
-$eZTemplateOperatorArray[] = array( 'class' => 'ezpLanguageSwitcherOperator',
-                                    'operator_names' => array( 'language_switcher' ) );
+$eZTemplateOperatorArray = [];
+$eZTemplateOperatorArray[] = ['class' => 'ezpLanguageSwitcherOperator', 'operator_names' => ['language_switcher']];
 
 ?>

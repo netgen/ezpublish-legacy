@@ -109,7 +109,7 @@ The following characters are recognized in the format string:
 
 class eZLocale
 {
-    const DEBUG_INTERNALS = false;
+    final public const DEBUG_INTERNALS = false;
 
     /**
      * Initializes the locale with the locale string \a $localeString.
@@ -119,45 +119,17 @@ class eZLocale
      */
     public function __construct( $localeString )
     {
-        $this->IsValid = false;
-        $this->TimePHPArray = array( 'g', 'G', 'h', 'H', 'i', 's', 'U', 'I', 'L', 't' );
-        $this->DatePHPArray = array( 'd', 'j', 'm', 'n', 'O', 'S', 'T', 'U', 'w', 'W', 'Y', 'y', 'z', 'Z', 'I', 'L', 't' );
-        $this->DateTimePHPArray = array( 'd', 'j', 'm', 'n', 'O', 'T', 'U', 'w', 'W', 'Y', 'y', 'z', 'Z',
-                                         'g', 'G', 'h', 'H', 'i', 's', 'S', 'U', 'I', 'L', 't', 'a', 'c', 'r' );
-        $this->TimeArray = preg_replace( '/.+/', '%$0', $this->TimePHPArray );
-        $this->DateArray = preg_replace( '/.+/', '%$0', $this->DatePHPArray );
-        $this->DateTimeArray = preg_replace( '/.+/', '%$0', $this->DateTimePHPArray );
+        $this->TimeArray = preg_replace( '/.+/', '%$0', (string) $this->TimePHPArray );
+        $this->DateArray = preg_replace( '/.+/', '%$0', (string) $this->DatePHPArray );
+        $this->DateTimeArray = preg_replace( '/.+/', '%$0', (string) $this->DateTimePHPArray );
 
-        $this->TimeSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', $this->TimePHPArray );
-        $this->DateSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', $this->DatePHPArray );
-        $this->DateTimeSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', $this->DateTimePHPArray );
+        $this->TimeSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', (string) $this->TimePHPArray );
+        $this->DateSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', (string) $this->DatePHPArray );
+        $this->DateTimeSlashInputArray = preg_replace( '/.+/', '/(?<!%)$0/', (string) $this->DateTimePHPArray );
 
-        $this->TimeSlashOutputArray = preg_replace( '/.+/', '\\\\$0', $this->TimePHPArray );
-        $this->DateSlashOutputArray = preg_replace( '/.+/', '\\\\$0', $this->DatePHPArray );
-        $this->DateTimeSlashOutputArray = preg_replace( '/.+/', '\\\\$0', $this->DateTimePHPArray );
-
-        $this->HTTPLocaleCode = '';
-        $this->functionMap = array(
-            'time' => 'formatTime',
-            'shorttime' => 'formatShortTime',
-            'date' => 'formatDate',
-            'shortdate' => 'formatShortDate',
-            'datetime' => 'formatDateTime',
-            'shortdatetime' => 'formatShortDateTime',
-            'currency' => 'formatCurrencyWithSymbol',
-            'clean_currency' => 'formatCleanCurrency',
-            'number' => 'formatNumber',
-        );
-
-        $this->DayNames = array( 0 => 'sun', 1 => 'mon', 2 => 'tue',
-                                 3 => 'wed', 4 => 'thu', 5 => 'fri', 6 => 'sat' );
-        $this->MonthNames = array( 1 => 'jan', 2 => 'feb', 3 => 'mar',
-                                   4 => 'apr', 5 => 'may', 6 => 'jun',
-                                   7 => 'jul', 8 => 'aug', 9 => 'sep',
-                                   10 => 'oct', 11 => 'nov', 12 => 'dec' );
-        $this->WeekDays = array( 0, 1, 2, 3, 4, 5, 6 );
-        $this->Months = array( 1, 2, 3, 4, 5, 6,
-                               7, 8, 9, 10, 11, 12 );
+        $this->TimeSlashOutputArray = preg_replace( '/.+/', '\\\\$0', (string) $this->TimePHPArray );
+        $this->DateSlashOutputArray = preg_replace( '/.+/', '\\\\$0', (string) $this->DatePHPArray );
+        $this->DateTimeSlashOutputArray = preg_replace( '/.+/', '\\\\$0', (string) $this->DateTimePHPArray );
 
         $locale = eZLocale::localeInformation( $localeString );
 
@@ -168,10 +140,6 @@ class eZLocale
         $this->TranslationCode = $locale['locale'];
         $this->Charset = $locale['charset'];
         $this->OverrideCharset = $locale['charset'];
-
-        $this->LocaleINI = array( 'default' => null, 'variation' => null );
-        $this->CountryINI = array( 'default' => null, 'variation' => null );
-        $this->LanguageINI = array( 'default' => null, 'variation' => null );
 
         // Figure out if we use one locale file or separate country/language file.
         $localeINI = $this->localeFile();
@@ -282,26 +250,26 @@ class eZLocale
         $this->LanguageName = '';
         $this->LanguageComment = '';
         $this->IntlLanguageName = '';
-        $this->AllowedCharsets = array();
+        $this->AllowedCharsets = [];
 
-        $this->ShortDayNames = array();
-        $this->LongDayNames = array();
+        $this->ShortDayNames = [];
+        $this->LongDayNames = [];
         foreach ( $this->DayNames as $day )
         {
             $this->ShortDayNames[$day] = '';
             $this->LongDayNames[$day] = '';
         }
 
-        $this->ShortMonthNames = array();
-        $this->LongMonthNames = array();
+        $this->ShortMonthNames = [];
+        $this->LongMonthNames = [];
         foreach ( $this->MonthNames as $month )
         {
             $this->ShortMonthNames[$month] = '';
             $this->LongMonthNames[$month] = '';
         }
 
-        $this->ShortWeekDayNames = array();
-        $this->LongWeekDayNames = array();
+        $this->ShortWeekDayNames = [];
+        $this->LongWeekDayNames = [];
         foreach( $this->WeekDays as $wday )
         {
             $code = $this->DayNames[$wday];
@@ -331,7 +299,7 @@ class eZLocale
         $countryINI->assign( 'DateTime', 'ShortDateTimeFormat', $this->ShortDateTimeFormat );
 
         if ( $countryINI->hasVariable( 'DateTime', 'MondayFirst' ) )
-            $this->MondayFirst = strtolower( $countryINI->variable( 'DateTime', 'MondayFirst' ) ) == 'yes';
+            $this->MondayFirst = strtolower( (string) $countryINI->variable( 'DateTime', 'MondayFirst' ) ) == 'yes';
 
         $countryINI->assign( 'RegionalSettings', 'Country', $this->Country );
         $countryINI->assign( "RegionalSettings", "CountryComment", $this->CountryComment );
@@ -389,14 +357,14 @@ class eZLocale
 
 
         if ( !is_array( $this->ShortDayNames ) )
-            $this->ShortDayNames = array();
+            $this->ShortDayNames = [];
         if ( !is_array( $this->LongDayNames ) )
-            $this->LongDayNames = array();
+            $this->LongDayNames = [];
 
-        $tmpShortDayNames = array();
+        $tmpShortDayNames = [];
         if ( $languageINI->hasGroup( 'ShortDayNames' ) )
             $tmpShortDayNames = $languageINI->variableMulti( 'ShortDayNames', $this->DayNames );
-        $tmpLongDayNames = array();
+        $tmpLongDayNames = [];
         if ( $languageINI->hasGroup( 'LongDayNames' ) )
             $tmpLongDayNames = $languageINI->variableMulti( 'LongDayNames', $this->DayNames );
         foreach ( $this->DayNames as $key => $day )
@@ -409,14 +377,14 @@ class eZLocale
 
 
         if ( !is_array( $this->ShortMonthNames ) )
-            $this->LongMonthNames = array();
+            $this->LongMonthNames = [];
         if ( !is_array( $this->ShortMonthNames ) )
-            $this->LongMonthNames = array();
+            $this->LongMonthNames = [];
 
-        $tmpShortMonthNames = array();
+        $tmpShortMonthNames = [];
         if ( $languageINI->hasGroup( 'ShortMonthNames' ) )
             $tmpShortMonthNames = $languageINI->variableMulti( 'ShortMonthNames', $this->MonthNames );
-        $tmpLongMonthNames = array();
+        $tmpLongMonthNames = [];
         if ( $languageINI->hasGroup( 'LongMonthNames' ) )
             $tmpLongMonthNames = $languageINI->variableMulti( 'LongMonthNames', $this->MonthNames );
         foreach ( $this->MonthNames as $key => $day )
@@ -429,9 +397,9 @@ class eZLocale
 
 
         if ( !is_array( $this->ShortWeekDayNames ) )
-            $this->ShortWeekDayNames = array();
+            $this->ShortWeekDayNames = [];
         if ( !is_array( $this->LongWeekDayNames ) )
-            $this->LongWeekDayNames = array();
+            $this->LongWeekDayNames = [];
 
         foreach ( $this->WeekDays as $key => $day )
         {
@@ -473,9 +441,9 @@ class eZLocale
     function localeInformation( $localeString )
     {
         $info = null;
-        if ( preg_match( '/^([a-zA-Z]+)([_-]([a-zA-Z]+))?(\.([a-zA-Z-]+))?(@([a-zA-Z0-9]+))?/', $localeString, $regs ) )
+        if ( preg_match( '/^([a-zA-Z]+)([_-]([a-zA-Z]+))?(\.([a-zA-Z-]+))?(@([a-zA-Z0-9]+))?/', (string) $localeString, $regs ) )
         {
-            $info = array();
+            $info = [];
             $language = strtolower( $regs[1] );
             $country = '';
             if ( isset( $regs[3] ) )
@@ -497,8 +465,8 @@ class eZLocale
         }
         else
         {
-            $info = array();
-            $locale = strtolower( $localeString );
+            $info = [];
+            $locale = strtolower( (string) $localeString );
             $language = $locale;
             $info['language'] = $language;
             $info['country'] = '';
@@ -558,39 +526,7 @@ class eZLocale
 
     function attributeFunctionMap()
     {
-        return array( 'charset' => 'charset',
-                      'allowed_charsets' => 'allowedCharsets',
-                      'country_name' => 'countryName',
-                      'country_comment' => 'countryComment',
-                      'country_code' => 'countryCode',
-                      'country_variation' => 'countryVariation',
-                      'language_name' => 'languageName',
-                      'intl_language_name' => 'internationalLanguageName',
-                      'language_code' => 'languageCode',
-                      'language_comment' => 'languageComment',
-                      'locale_code' => 'localeCode',
-                      'locale_full_code' => 'localeFullCode',
-                      'http_locale_code' => 'httpLocaleCode',
-                      'decimal_symbol' => 'decimalSymbol',
-                      'thousands_separator' => 'thousandsSeparator',
-                      'decimal_count' => 'decimalCount',
-                      'negative_symbol' => 'negativeSymbol',
-                      'positive_symbol' => 'positiveSymbol',
-                      'currency_decimal_symbol' => 'currencyDecimalSymbol',
-                      'currency_thousands_separator' => 'currencyThousandsSeparator',
-                      'currency_decimal_count' => 'currencyDecimalCount',
-                      'currency_negative_symbol' => 'currencyNegativeSymbol',
-                      'currency_positive_symbol' => 'currencyPositiveSymbol',
-                      'currency_symbol' => 'currencySymbol',
-                      'currency_name' => 'currencyName',
-                      'currency_short_name' => 'currencyShortName',
-                      'is_monday_first' => 'isMondayFirst',
-                      'weekday_name_list' => 'weekDayNames',
-                      'weekday_short_name_list' => 'weekDayShortNames',
-                      'weekday_number_list' => 'weekDays',
-                      'month_list' => 'months',
-                      'month_name_list' => 'monthsNames',
-                      'is_valid' => 'isValid' );
+        return ['charset' => 'charset', 'allowed_charsets' => 'allowedCharsets', 'country_name' => 'countryName', 'country_comment' => 'countryComment', 'country_code' => 'countryCode', 'country_variation' => 'countryVariation', 'language_name' => 'languageName', 'intl_language_name' => 'internationalLanguageName', 'language_code' => 'languageCode', 'language_comment' => 'languageComment', 'locale_code' => 'localeCode', 'locale_full_code' => 'localeFullCode', 'http_locale_code' => 'httpLocaleCode', 'decimal_symbol' => 'decimalSymbol', 'thousands_separator' => 'thousandsSeparator', 'decimal_count' => 'decimalCount', 'negative_symbol' => 'negativeSymbol', 'positive_symbol' => 'positiveSymbol', 'currency_decimal_symbol' => 'currencyDecimalSymbol', 'currency_thousands_separator' => 'currencyThousandsSeparator', 'currency_decimal_count' => 'currencyDecimalCount', 'currency_negative_symbol' => 'currencyNegativeSymbol', 'currency_positive_symbol' => 'currencyPositiveSymbol', 'currency_symbol' => 'currencySymbol', 'currency_name' => 'currencyName', 'currency_short_name' => 'currencyShortName', 'is_monday_first' => 'isMondayFirst', 'weekday_name_list' => 'weekDayNames', 'weekday_short_name_list' => 'weekDayShortNames', 'weekday_number_list' => 'weekDays', 'month_list' => 'months', 'month_name_list' => 'monthsNames', 'is_valid' => 'isValid'];
     }
 
     /*!
@@ -880,7 +816,7 @@ class eZLocale
         else
             $dayList = $this->LongWeekDayNames;
 
-        $resultDayList = array();
+        $resultDayList = [];
         foreach ( $this->WeekDays as $day )
         {
             $resultDayList[ $day ] = $dayList[ $day ];
@@ -955,9 +891,8 @@ class eZLocale
             $time = time();
 
         $text = date( eZLocale::transformToPHPFormat( $fmt, $this->TimePHPArray ), $time );
-        return  str_replace( array( '%a', '%A' ),
-                             array( $this->meridiemName( $time, false ),
-                                    $this->meridiemName( $time, true ) ),
+        return  str_replace( ['%a', '%A'],
+                             [$this->meridiemName( $time, false ), $this->meridiemName( $time, true )],
                              $text );
     }
 
@@ -976,7 +911,7 @@ class eZLocale
         $hour = date( 'G', $time );
         $name = $hour < 12 ? $this->AM : $this->PM;
         if ( $upcase )
-            $name = strtoupper( $name );
+            $name = strtoupper( (string) $name );
         return $name;
     }
 
@@ -1033,11 +968,8 @@ class eZLocale
         }
 
         $text = date( eZLocale::transformToPHPFormat( $fmt, $this->DatePHPArray ), $date );
-        return str_replace( array( '%D', '%l', '%M', '%F' ),
-                            array( $this->shortDayName( date( 'w', $date ) ),
-                                   $this->longDayName( date( 'w', $date ) ),
-                                   $this->shortMonthName( date( 'n', $date ) ),
-                                   $this->longMonthName( date( 'n', $date ) ) ),
+        return str_replace( ['%D', '%l', '%M', '%F'],
+                            [$this->shortDayName( date( 'w', $date ) ), $this->longDayName( date( 'w', $date ) ), $this->shortMonthName( date( 'n', $date ) ), $this->longMonthName( date( 'n', $date ) )],
                             $text );
     }
 
@@ -1060,14 +992,8 @@ class eZLocale
         $text = date( eZLocale::transformToPHPFormat( $fmt, $this->DateTimePHPArray ), $datetime );
         // Replace some special 'date' formats that needs to be handled
         // internally by the i18n system and not by PHP
-        return str_replace( array( '%D', '%l', '%M', '%F',
-                                   '%a', '%A' ),
-                            array( $this->shortDayName( date( 'w', $datetime ) ),
-                                   $this->longDayName( date( 'w', $datetime ) ),
-                                   $this->shortMonthName( date( 'n', $datetime ) ),
-                                   $this->longMonthName( date( 'n', $datetime ) ),
-                                   $this->meridiemName( $datetime, false ),
-                                   $this->meridiemName( $datetime, true ) ),
+        return str_replace( ['%D', '%l', '%M', '%F', '%a', '%A'],
+                            [$this->shortDayName( date( 'w', $datetime ) ), $this->longDayName( date( 'w', $datetime ) ), $this->shortMonthName( date( 'n', $datetime ) ), $this->longMonthName( date( 'n', $datetime ) ), $this->meridiemName( $datetime, false ), $this->meridiemName( $datetime, true )],
                             $text );
     }
 
@@ -1091,7 +1017,7 @@ class eZLocale
         // A special case is formats of the type %%, they will become %
         $dateFmt = '';
         $offs = 0;
-        $len = strlen( $fmt );
+        $len = strlen( (string) $fmt );
         while ( $offs < $len )
         {
             $char = $fmt[$offs];
@@ -1154,9 +1080,9 @@ class eZLocale
     */
     function internalNumber( $number )
     {
-        if ( preg_match( '/^(['.$this->PositiveSymbol.']|['.$this->NegativeSymbol.'])?([0-9]*|[0-9]{1,3}(['.$this->ThousandsSeparator.'][0-9]{3,3})*)(['.$this->DecimalSymbol.'][0-9]+)?$/', trim( $number ) ) )
+        if ( preg_match( '/^(['.$this->PositiveSymbol.']|['.$this->NegativeSymbol.'])?([0-9]*|[0-9]{1,3}(['.$this->ThousandsSeparator.'][0-9]{3,3})*)(['.$this->DecimalSymbol.'][0-9]+)?$/', trim( (string) $number ) ) )
         {
-            $number = str_replace( ' ', '', $number );
+            $number = str_replace( ' ', '', (string) $number );
             if ( $this->PositiveSymbol )
                 $number = str_replace( $this->PositiveSymbol, '', $number );
             $number = str_replace( $this->NegativeSymbol, '-', $number );
@@ -1184,7 +1110,7 @@ class eZLocale
     function formatCleanCurrency( $number )
     {
         $text = $this->formatCurrencyWithSymbol( $number, '' );
-        return trim( $text );
+        return trim( (string) $text );
     }
 
     function formatCurrencyWithSymbol( $number, $symbol )
@@ -1193,10 +1119,8 @@ class eZLocale
         $num = $neg ? -$number : $number;
         $num_text = number_format( $num, $this->CurrencyFractDigits,
                                    $this->CurrencyDecimalSymbol, $this->CurrencyThousandsSeparator );
-        return str_replace( array( '%c', '%p', '%q' ),
-                            array( $symbol,
-                                   $neg ? $this->CurrencyNegativeSymbol : $this->CurrencyPositiveSymbol,
-                                   $num_text ),
+        return str_replace( ['%c', '%p', '%q'],
+                            [$symbol, $neg ? $this->CurrencyNegativeSymbol : $this->CurrencyPositiveSymbol, $num_text],
                             $neg ? $this->CurrencyNegativeFormat : $this->CurrencyPositiveFormat );
     }
 
@@ -1210,9 +1134,9 @@ class eZLocale
     */
     function internalCurrency( $number )
     {
-        if ( preg_match( '/^(['.$this->CurrencyPositiveSymbol.']|['.$this->CurrencyNegativeSymbol.'])?([0-9]*|[0-9]{1,3}(['.$this->ThousandsSeparator.'][0-9]{3,3})*)(['.$this->CurrencyDecimalSymbol.'][0-9]+)?$/', trim( $number ) ) )
+        if ( preg_match( '/^(['.$this->CurrencyPositiveSymbol.']|['.$this->CurrencyNegativeSymbol.'])?([0-9]*|[0-9]{1,3}(['.$this->ThousandsSeparator.'][0-9]{3,3})*)(['.$this->CurrencyDecimalSymbol.'][0-9]+)?$/', trim( (string) $number ) ) )
         {
-            $number = str_replace( ' ', '', $number );
+            $number = str_replace( ' ', '', (string) $number );
             if ( $this->CurrencyPositiveSymbol )
                 $number = str_replace( $this->CurrencyPositiveSymbol, '', $number );
             $number = str_replace( $this->CurrencyNegativeSymbol, '-', $number );
@@ -1352,7 +1276,7 @@ class eZLocale
         if ( !is_array( $locales ) )
         {
             $localeRegexp = eZLocale::localeRegexp( $withVariations, false );
-            $locales = array();
+            $locales = [];
             $dir = opendir( 'share/locale' );
             while( ( $file = readdir( $dir ) ) !== false )
             {
@@ -1366,7 +1290,7 @@ class eZLocale
             sort( $locales );
             if ( $asObject )
             {
-                $localeObjects = array();
+                $localeObjects = [];
                 foreach ( $locales as $locale )
                 {
                     $localeInstance = eZLocale::instance( $locale );
@@ -1391,7 +1315,7 @@ class eZLocale
         if ( !is_array( $countries ) )
         {
             $localeRegexp = eZLocale::localeRegexp( $withVariations, false );
-            $countries = array();
+            $countries = [];
             $dir = opendir( 'share/locale' );
             while( ( $file = readdir( $dir ) ) !== false )
             {
@@ -1419,7 +1343,7 @@ class eZLocale
         if ( !is_array( $languages ) )
         {
             $localeRegexp = eZLocale::localeRegexp( $withVariations, false );
-            $languages = array();
+            $languages = [];
             $dir = opendir( 'share/locale' );
             while( ( $file = readdir( $dir ) ) !== false )
             {
@@ -1617,7 +1541,7 @@ class eZLocale
     }
 
     //@{
-    public $IsValid;
+    public $IsValid = false;
     //@}
 
     //@{
@@ -1658,23 +1582,23 @@ class eZLocale
 
     //@{
     /// Help arrays
-    public $DayNames;
+    public $DayNames = [0 => 'sun', 1 => 'mon', 2 => 'tue', 3 => 'wed', 4 => 'thu', 5 => 'fri', 6 => 'sat'];
     public $ShortDayNames, $LongDayNames;
-    public $MonthNames;
+    public $MonthNames = [1 => 'jan', 2 => 'feb', 3 => 'mar', 4 => 'apr', 5 => 'may', 6 => 'jun', 7 => 'jul', 8 => 'aug', 9 => 'sep', 10 => 'oct', 11 => 'nov', 12 => 'dec'];
     public $ShortMonthNames, $LongMonthNames;
-    public $WeekDays, $Months;
+    public $WeekDays = [0, 1, 2, 3, 4, 5, 6], $Months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     public $ShortWeekDayNames, $LongWeekDayNames;
 
     public $TimeArray;
     public $DateArray;
-    public $TimePHPArray;
+    public $TimePHPArray = ['g', 'G', 'h', 'H', 'i', 's', 'U', 'I', 'L', 't'];
     public $TimeSlashInputArray;
     public $TimeSlashOutputArray;
     public $DateTimeSlashInputArray;
     public $DateSlashOutputArray;
     public $DateTimeSlashOutputArray;
-    public $HTTPLocaleCode;
-    public $functionMap;
+    public $HTTPLocaleCode = '';
+    public $functionMap = ['time' => 'formatTime', 'shorttime' => 'formatShortTime', 'date' => 'formatDate', 'shortdate' => 'formatShortDate', 'datetime' => 'formatDateTime', 'shortdatetime' => 'formatShortDateTime', 'currency' => 'formatCurrencyWithSymbol', 'clean_currency' => 'formatCleanCurrency', 'number' => 'formatNumber'];
     public $LocaleCode;
     public $TranslationCode;
     public $Charset;
@@ -1685,9 +1609,9 @@ class eZLocale
     public $CurrencyShortName;
     public $AllowedCharsets;
     public $DateSlashInputArray;
-    public $DatePHPArray;
+    public $DatePHPArray = ['d', 'j', 'm', 'n', 'O', 'S', 'T', 'U', 'w', 'W', 'Y', 'y', 'z', 'Z', 'I', 'L', 't'];
     public $DateTimeArray;
-    public $DateTimePHPArray;
+    public $DateTimePHPArray = ['d', 'j', 'm', 'n', 'O', 'T', 'U', 'w', 'W', 'Y', 'y', 'z', 'Z', 'g', 'G', 'h', 'H', 'i', 's', 'S', 'U', 'I', 'L', 't', 'a', 'c', 'r'];
 
     //@}
 
@@ -1698,9 +1622,9 @@ class eZLocale
     public $CountryVariation;
     public $CountryComment;
     public $LanguageComment;
-    public $LocaleINI;
-    public $CountryINI;
-    public $LanguageINI;
+    public $LocaleINI = ['default' => null, 'variation' => null];
+    public $CountryINI = ['default' => null, 'variation' => null];
+    public $LanguageINI = ['default' => null, 'variation' => null];
     /// The language code, for instance nor-NO, or eng-GB
     public $LanguageCode;
     /// Name of the language

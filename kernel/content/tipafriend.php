@@ -14,7 +14,7 @@ $Module = $Params['Module'];
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'action', '' );
 
-$error_strings = array();
+$error_strings = [];
 $yourName = '';
 $yourEmail = '';
 $user = eZUser::currentUser();
@@ -45,11 +45,11 @@ else
 $object = $node->object();
 if ( !$object->canRead() )
 {
-    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array( 'AccessList' => $object->accessList( 'read' ) ) );
+    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', ['AccessList' => $object->accessList( 'read' )] );
 }
 
 $hostName = eZSys::hostname();
-$subject = ezpI18n::tr( 'kernel/content', 'Tip from %1: %2', null, array( $hostName, $nodeName ) );
+$subject = ezpI18n::tr( 'kernel/content', 'Tip from %1: %2', null, [$hostName, $nodeName] );
 $comment = '';
 $overrideKeysAreSet = false;
 
@@ -97,8 +97,8 @@ if ( $http->hasPostVariable( 'SendButton' ) )
 
     if ( $http->hasSessionVariable('ezpContentTipafriendList') )
     {
-        if ( strpos( $http->sessionVariable('ezpContentTipafriendList'), $NodeID . '|' . $receiversEmail ) !== false )
-            $error_strings[] = ezpI18n::tr( 'kernel/content', "You have already sent a tipafriend mail to this receiver regarding '%1' content", null, array( $nodeName ) );
+        if ( str_contains( (string) $http->sessionVariable('ezpContentTipafriendList'), $NodeID . '|' . $receiversEmail ) )
+            $error_strings[] = ezpI18n::tr( 'kernel/content', "You have already sent a tipafriend mail to this receiver regarding '%1' content", null, [$nodeName] );
     }
 
     if ( !isset( $error_strings[0] ) && !eZTipafriendRequest::checkReceiver( $receiversEmail ) )
@@ -116,19 +116,7 @@ if ( $http->hasPostVariable( 'SendButton' ) )
         $sectionID = $object->attribute( 'section_id' );
         $section = eZSection::fetch( $sectionID );
         $res = eZTemplateDesignResource::instance();
-        $res->setKeys( array( array( 'object',           $object->attribute( 'id' ) ),
-                              array( 'remote_id',        $object->attribute( 'remote_id' ) ),
-                              array( 'node_remote_id',   $node->attribute( 'remote_id' ) ),
-                              array( 'class',            $object->attribute( 'contentclass_id' ) ),
-                              array( 'class_identifier', $object->attribute( 'class_identifier' ) ),
-                              array( 'class_group',      $object->attribute( 'match_ingroup_id_list' ) ),
-                              array( 'section',          $object->attribute( 'section_id' ) ),
-                              array( 'section_identifier', $section->attribute( 'identifier' ) ),
-                              array( 'node',             $NodeID ),
-                              array( 'parent_node',      $node->attribute( 'parent_node_id' ) ),
-                              array( 'depth',            $node->attribute( 'depth' ) ),
-                              array( 'url_alias',        $node->attribute( 'url_alias' ) )
-                              ) );
+        $res->setKeys( [['object', $object->attribute( 'id' )], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $object->attribute( 'class_identifier' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['section', $object->attribute( 'section_id' )], ['section_identifier', $section->attribute( 'identifier' )], ['node', $NodeID], ['parent_node', $node->attribute( 'parent_node_id' )], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )]] );
         $overrideKeysAreSet = true;
 
         // fetch text from mail template
@@ -190,19 +178,7 @@ if ( !$overrideKeysAreSet )
     $sectionID = $object->attribute( 'section_id' );
     $section = eZSection::fetch( $sectionID );
     $res = eZTemplateDesignResource::instance();
-    $res->setKeys( array( array( 'object',           $object->attribute( 'id' ) ),
-                          array( 'remote_id',        $object->attribute( 'remote_id' ) ),
-                          array( 'node_remote_id',   $node->attribute( 'remote_id' ) ),
-                          array( 'class',            $object->attribute( 'contentclass_id' ) ),
-                          array( 'class_identifier', $object->attribute( 'class_identifier' ) ),
-                          array( 'class_group',      $object->attribute( 'match_ingroup_id_list' ) ),
-                          array( 'section',          $object->attribute( 'section_id' ) ),
-                          array( 'section_identifier', $section->attribute( 'identifier' ) ),
-                          array( 'node',             $NodeID ),
-                          array( 'parent_node',      $node->attribute( 'parent_node_id' ) ),
-                          array( 'depth',            $node->attribute( 'depth' ) ),
-                          array( 'url_alias',        $node->attribute( 'url_alias' ) )
-                          ) );
+    $res->setKeys( [['object', $object->attribute( 'id' )], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $object->attribute( 'class_identifier' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['section', $object->attribute( 'section_id' )], ['section_identifier', $section->attribute( 'identifier' )], ['node', $NodeID], ['parent_node', $node->attribute( 'parent_node_id' )], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )]] );
 }
 
 $Module->setTitle( 'Tip a friend' );
@@ -217,9 +193,8 @@ $tpl->setVariable( 'receivers_email', $receiversEmail );
 $tpl->setVariable( 'subject', $subject );
 $tpl->setVariable( 'comment', $comment );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/tipafriend.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Tip a friend' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Tip a friend' ), 'url' => false]];
 
 ?>

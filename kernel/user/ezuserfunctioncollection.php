@@ -21,12 +21,11 @@ class eZUserFunctionCollection
         $user = eZUser::currentUser();
         if ( $user === null )
         {
-            $result = array( 'error' => array( 'error_type' => 'kernel',
-                                               'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            $result = ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
         }
         else
         {
-            $result = array( 'result' => $user );
+            $result = ['result' => $user];
         }
         return $result;
     }
@@ -34,31 +33,31 @@ class eZUserFunctionCollection
     function fetchIsLoggedIn( $userID )
     {
         $isLoggedIn = eZUser::isUserLoggedIn( $userID );
-        return array( 'result' => $isLoggedIn );
+        return ['result' => $isLoggedIn];
     }
 
     function fetchLoggedInCount()
     {
         $count = eZUser::fetchLoggedInCount();
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     function fetchAnonymousCount()
     {
         $count = eZUser::fetchAnonymousCount();
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     function fetchLoggedInList( $sortBy, $offset, $limit )
     {
         $list = eZUser::fetchLoggedInList( false, $offset, $limit, $sortBy );
-        return array( 'result' => $list );
+        return ['result' => $list];
     }
 
     function fetchLoggedInUsers( $sortBy, $offset, $limit )
     {
         $list = eZUser::fetchLoggedInList( true, $offset, $limit, $sortBy );
-        return array( 'result' => $list );
+        return ['result' => $list];
     }
 
     /**
@@ -74,15 +73,15 @@ class eZUserFunctionCollection
         if ( $user instanceof eZUser )
             $roleList = $user->roles();
         else // user group or other non user classes:
-            $roleList = eZRole::fetchByUser( array( $id ), true );
+            $roleList = eZRole::fetchByUser( [$id], true );
 
-        $accessArray = array();
+        $accessArray = [];
         foreach ( array_keys ( $roleList ) as $roleKey )
         {
             $role = $roleList[$roleKey];
             $accessArray = array_merge_recursive( $accessArray, $role->accessArray( true ) );
         }
-        $resultArray = array();
+        $resultArray = [];
         foreach ( $accessArray as $moduleKey => $module )
         {
             $moduleName = $moduleKey;
@@ -100,7 +99,7 @@ class eZUserFunctionCollection
                             {
                                 $hasLimitation = false;
                                 $limitationValue = '*';
-                                $resultArray[] = array( 'moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue );
+                                $resultArray[] = ['moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue];
                             }
                         }
                         if ( $hasLimitation )
@@ -109,7 +108,7 @@ class eZUserFunctionCollection
                             {
                                 if ( $limitationKey !== '*' )
                                 {
-                                    $policyID = str_replace( 'p_', '', $limitationKey );
+                                    $policyID = str_replace( 'p_', '', (string) $limitationKey );
                                     $userRoleIdSeperator = strpos( $policyID, '_' );
 
                                     if ( $userRoleIdSeperator !== false )
@@ -118,12 +117,12 @@ class eZUserFunctionCollection
                                     }
 
                                     $limitationValue = eZPolicyLimitation::fetchByPolicyID( $policyID );
-                                    $resultArray[] = array( 'moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue );
+                                    $resultArray[] = ['moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue];
                                 }
                                 else
                                 {
                                     $limitationValue = '*';
-                                    $resultArray[] = array( 'moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue );
+                                    $resultArray[] = ['moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue];
                                     break;
                                 }
                             }
@@ -132,7 +131,7 @@ class eZUserFunctionCollection
                     else
                     {
                         $limitationValue = '*';
-                        $resultArray[] = array( 'moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue );
+                        $resultArray[] = ['moduleName' => $moduleName, 'functionName' => $functionName, 'limitation' =>  $limitationValue];
                         break;
                     }
                 }
@@ -140,11 +139,11 @@ class eZUserFunctionCollection
             else
             {
                 $functionName = '*';
-                $resultArray[] = array( 'moduleName' => '*', 'functionName' => $functionName, 'limitation' => '*' );
+                $resultArray[] = ['moduleName' => '*', 'functionName' => $functionName, 'limitation' => '*'];
                 break;
             }
         }
-        return array( 'result' => $resultArray );
+        return ['result' => $resultArray];
     }
 
     /**
@@ -160,9 +159,9 @@ class eZUserFunctionCollection
         if ( $user instanceof eZUser )
             $roleList = $user->roles();
         else // user group or other non user classes:
-            $roleList = eZRole::fetchByUser( array( $id ), true );
+            $roleList = eZRole::fetchByUser( [$id], true );
 
-        return array( 'result' => $roleList );
+        return ['result' => $roleList];
     }
 
     function hasAccessTo( $module, $view, $userID )
@@ -178,11 +177,11 @@ class eZUserFunctionCollection
         if ( is_object( $user ) )
         {
             $result = $user->hasAccessTo( $module, $view );
-            return array( 'result' => $result['accessWord'] != 'no' );
+            return ['result' => $result['accessWord'] != 'no'];
         }
         else
         {
-            return array( 'result' => false );
+            return ['result' => false];
         }
     }
 }

@@ -20,27 +20,27 @@ class eZSiteAccess
      *
      * @since 4.4
      */
-    const TYPE_DEFAULT = 1;
-    const TYPE_URI = 2;
-    const TYPE_PORT = 3;
-    const TYPE_HTTP_HOST = 4;
-    const TYPE_INDEX_FILE = 5;
-    const TYPE_STATIC = 6;
-    const TYPE_SERVER_VAR = 7;
-    const TYPE_URL = 8;
-    const TYPE_HTTP_HOST_URI = 9;
-    const TYPE_CUSTOM = 10;
+    final public const TYPE_DEFAULT = 1;
+    final public const TYPE_URI = 2;
+    final public const TYPE_PORT = 3;
+    final public const TYPE_HTTP_HOST = 4;
+    final public const TYPE_INDEX_FILE = 5;
+    final public const TYPE_STATIC = 6;
+    final public const TYPE_SERVER_VAR = 7;
+    final public const TYPE_URL = 8;
+    final public const TYPE_HTTP_HOST_URI = 9;
+    final public const TYPE_CUSTOM = 10;
 
-    const SUBTYPE_PRE = 1;
-    const SUBTYPE_POST = 2;
+    final public const SUBTYPE_PRE = 1;
+    final public const SUBTYPE_POST = 2;
 
     static function siteAccessList()
     {
-        $siteAccessList = array();
+        $siteAccessList = [];
         $ini = eZINI::instance();
         $availableSiteAccessList = $ini->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );
         if ( !is_array( $availableSiteAccessList ) )
-            $availableSiteAccessList = array();
+            $availableSiteAccessList = [];
 
         $serverSiteAccess = eZSys::serverVariable( $ini->variable( 'SiteAccessSettings', 'ServerVariableName' ), true );
         if ( $serverSiteAccess )
@@ -49,7 +49,7 @@ class eZSiteAccess
         $availableSiteAccessList = array_unique( $availableSiteAccessList );
         foreach ( $availableSiteAccessList as $siteAccessName )
         {
-            $siteAccessItem = array();
+            $siteAccessItem = [];
             $siteAccessItem['name'] = $siteAccessName;
             $siteAccessItem['id'] = eZSys::ezcrc32( $siteAccessName );
             $siteAccessList[] = $siteAccessItem;
@@ -94,7 +94,6 @@ class eZSiteAccess
      *  uri_part => array(string) List of path elements that was used in start of url for the match
      *
      * @since 4.4
-     * @param eZURI $uri
      * @param string $host
      * @param string(numeric) $port
      * @param string $file Example '/index.php'
@@ -102,28 +101,21 @@ class eZSiteAccess
      */
     public static function match( eZURI $uri, $host, $port = 80, $file = '/index.php' )
     {
-        eZDebugSetting::writeDebug( 'kernel-siteaccess', array( 'uri' => $uri,
-                                                                'host' => $host,
-                                                                'port' => $port,
-                                                                'file' => $file ), __METHOD__ );
+        eZDebugSetting::writeDebug( 'kernel-siteaccess', ['uri' => $uri, 'host' => $host, 'port' => $port, 'file' => $file], __METHOD__ );
         $ini = eZINI::instance();
         if ( $ini->hasVariable( 'SiteAccessSettings', 'StaticMatch' ) )
         {
             $match = $ini->variable( 'SiteAccessSettings', 'StaticMatch' );
             if ( $match != '' )
             {
-                $access = array( 'name' => $match,
-                                 'type' => eZSiteAccess::TYPE_STATIC,
-                                 'uri_part' => array() );
+                $access = ['name' => $match, 'type' => eZSiteAccess::TYPE_STATIC, 'uri_part' => []];
                 return $access;
             }
         }
 
-        list( $siteAccessList, $order ) =
-            $ini->variableMulti( 'SiteAccessSettings', array( 'AvailableSiteAccessList', 'MatchOrder' ) );
-        $access = array( 'name' => $ini->variable( 'SiteSettings', 'DefaultAccess' ),
-                         'type' => eZSiteAccess::TYPE_DEFAULT,
-                         'uri_part' => array() );
+        [$siteAccessList, $order] =
+            $ini->variableMulti( 'SiteAccessSettings', ['AvailableSiteAccessList', 'MatchOrder'] );
+        $access = ['name' => $ini->variable( 'SiteSettings', 'DefaultAccess' ), 'type' => eZSiteAccess::TYPE_DEFAULT, 'uri_part' => []];
 
         if ( $order == 'none' )
             return $access;
@@ -144,7 +136,7 @@ class eZSiteAccess
             $name = '';
             $type = '';
             $match_type = '';
-            $uri_part = array();
+            $uri_part = [];
 
             switch( $matchprobe )
             {
@@ -187,7 +179,7 @@ class eZSiteAccess
                                 $matchMapAccess = $matchMapItem[1];
                                 if ( $access['name']  == $matchMapAccess and in_array( $matchMapAccess, $siteAccessList ) )
                                 {
-                                    $uri_part = array( $matchMapURI );
+                                    $uri_part = [$matchMapURI];
                                 }
                                 if ( $matchMapURI == $match_item and in_array( $matchMapAccess, $siteAccessList ) )
                                 {
@@ -195,7 +187,7 @@ class eZSiteAccess
                                     $uri->dropBase();
                                     $access['name'] = $matchMapAccess;
                                     $access['type'] = $type;
-                                    $access['uri_part'] = array( $matchMapURI );
+                                    $access['uri_part'] = [$matchMapURI];
                                     return $access;
                                 }
                             }
@@ -280,7 +272,7 @@ class eZSiteAccess
                             $matchHost       = $matchMapItem[0];
                             $matchURI        = $matchMapItem[1];
                             $matchAccess     = $matchMapItem[2];
-                            $matchHostMethod = isset( $matchMapItem[3] ) ? $matchMapItem[3] : $defaultHostMatchMethod;
+                            $matchHostMethod = $matchMapItem[3] ?? $defaultHostMatchMethod;
 
                             if ( $matchURI !== '' && !preg_match( "@^$matchURI\b@u", $uriString ) )
                                 continue;
@@ -293,15 +285,15 @@ class eZSiteAccess
                                 } break;
                                 case 'start':
                                 {
-                                    $hasHostMatch = ( strpos($host, $matchHost) === 0 );
+                                    $hasHostMatch = ( str_starts_with($host, (string) $matchHost) );
                                 } break;
                                 case 'end':
                                 {
-                                    $hasHostMatch = ( strstr($host, $matchHost) === $matchHost );
+                                    $hasHostMatch = ( strstr($host, (string) $matchHost) === $matchHost );
                                 } break;
                                 case 'part':
                                 {
-                                    $hasHostMatch = ( strpos($host, $matchHost) !== false );
+                                    $hasHostMatch = ( str_contains($host, (string) $matchHost) );
                                 } break;
                                 default:
                                 {
@@ -314,7 +306,7 @@ class eZSiteAccess
                             {
                                 if ( $matchURI !== '' )
                                 {
-                                    $matchURIFolders = explode( '/', $matchURI );
+                                    $matchURIFolders = explode( '/', (string) $matchURI );
                                     $uri->increase( count( $matchURIFolders ) );
                                     $uri->dropBase();
                                     $access['uri_part'] = $matchURIFolders;
@@ -529,9 +521,9 @@ class eZSiteAccess
                 if ( $ini->hasVariable('SiteSettings', 'SiteUriParts') )
                     $access['uri_part'] = $ini->variable('SiteSettings', 'SiteUriParts');
                 else if ( isset( $access['type'] ) && $access['type'] === eZSiteAccess::TYPE_URI )
-                    $access['uri_part'] = array( $access['name'] );
+                    $access['uri_part'] = [$access['name']];
                 else
-                    $access['uri_part'] = array();
+                    $access['uri_part'] = [];
             }
 
             eZSys::setAccessPath( $access['uri_part'], $name );
@@ -560,8 +552,8 @@ class eZSiteAccess
     private static function washName( $name )
     {
         return preg_replace(
-            array( '/[^a-zA-Z0-9]+/', '/_+/', '/^_/', '/_$/' ),
-            array( '_', '_', '', '' ),
+            ['/[^a-zA-Z0-9]+/', '/_+/', '/^_/', '/_$/'],
+            ['_', '_', '', ''],
             $name
         );
     }
@@ -645,9 +637,7 @@ class eZSiteAccess
         $siteIni = new eZINI( 'site.ini', 'settings', null, null, true );
 
         // create a dummy access definition (not used as long as $siteIni is sent to self::load() )
-        $access = array( 'name' => $siteAccess,
-                         'type' => eZSiteAccess::TYPE_STATIC,
-                         'uri_part' => array() );
+        $access = ['name' => $siteAccess, 'type' => eZSiteAccess::TYPE_STATIC, 'uri_part' => []];
 
         // Load siteaccess but on our locale instance of site.ini only
         $access = self::load( $access, $siteIni );

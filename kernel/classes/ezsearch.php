@@ -111,7 +111,7 @@ class eZSearch
      \static
      Runs a query to the search engine.
     */
-    static function search( $searchText, $params, $searchTypes = array() )
+    static function search( $searchText, $params, $searchTypes = [] )
     {
         $searchEngine = eZSearch::getEngine();
 
@@ -144,9 +144,9 @@ class eZSearch
     {
         $searchEngine = eZSearch::getEngine();
 
-        $searchArray = array();
-        $andSearchParts = array();
-        $searchTypesDefinition = array( 'types' => array(), 'general_filter' => array() );
+        $searchArray = [];
+        $andSearchParts = [];
+        $searchTypesDefinition = ['types' => [], 'general_filter' => []];
 
         if ( $searchEngine instanceof ezpSearchEngine )
         {
@@ -168,9 +168,9 @@ class eZSearch
             $postVariablePrefix = 'Content_search_' . $searchType['type'] . '_' . $searchType['subtype'] . '_';
             //print $postVariablePrefix . "\n";
             //print_r( $searchType['params'] );
-            $searchArrayPartForType = array();
+            $searchArrayPartForType = [];
 
-            $searchPart = array();
+            $searchPart = [];
             $valuesFetched = false;
             $valuesMissing = false;
             foreach ( $searchType['params'] as $parameter )
@@ -247,7 +247,7 @@ class eZSearch
 
                                 case 'integers':
                                 {
-                                    if ( !isset( $part['values'] ) || count( $part['values'] ) == 0 )
+                                    if ( !isset( $part['values'] ) || (is_countable($part['values']) ? count( $part['values'] ) : 0) == 0 )
                                         $removePart = true;
                                 }
                                 break;
@@ -277,7 +277,7 @@ class eZSearch
 
                                 case 'integersbyidentifier':
                                 {
-                                    if ( !isset( $part['values'] ) || count( $part['values'] ) == 0 )
+                                    if ( !isset( $part['values'] ) || (is_countable($part['values']) ? count( $part['values'] ) : 0) == 0 )
                                         $removePart = true;
                                 }
                                 break;
@@ -306,15 +306,15 @@ class eZSearch
                 $andSearchParts = array_merge( $andSearchParts, $searchArrayPartForType );
             }
         }
-        $generalFilter = array();
+        $generalFilter = [];
         foreach ( $searchTypesDefinition['general_filter'] as $searchType )
         {
 
             $postVariablePrefix = 'Content_search_' . $searchType['type'] . '_' . $searchType['subtype'] . '_';
 
-            $searchArrayPartForType = array();
+            $searchArrayPartForType = [];
 
-            $searchPart = array();
+            $searchPart = [];
             $valuesFetched = false;
             $valuesMissing = false;
 
@@ -406,7 +406,7 @@ class eZSearch
                     }
                 }
 
-                $generalFilter = array_merge( $generalFilter, array( $searchArrayPartForType ) );
+                $generalFilter = [...$generalFilter, $searchArrayPartForType];
             }
 
 
@@ -461,7 +461,7 @@ class eZSearch
             $searchEngineString = $ini->variable( 'SearchSettings', 'SearchEngine' );
         }
 
-        $directoryList = array();
+        $directoryList = [];
         if ( $ini->hasVariable( 'SearchSettings', 'ExtensionDirectories' ) )
         {
             $extensionDirectories = $ini->variable( 'SearchSettings', 'ExtensionDirectories' );
@@ -471,12 +471,12 @@ class eZSearch
             }
         }
 
-        $kernelDir = array( 'kernel/search/plugins' );
+        $kernelDir = ['kernel/search/plugins'];
         $directoryList = array_merge( $kernelDir, $directoryList );
 
         foreach( $directoryList as $directory )
         {
-            $searchEngineFile = implode( '/', array( $directory, strtolower( $searchEngineString ), strtolower( $searchEngineString ) ) ) . '.php';
+            $searchEngineFile = implode( '/', [$directory, strtolower( (string) $searchEngineString ), strtolower( (string) $searchEngineString )] ) . '.php';
 
             if ( file_exists( $searchEngineFile ) )
             {
@@ -497,7 +497,6 @@ class eZSearch
      * Notifies search engine about the change of section of a set of objects
      *
      * @since 4.6
-     * @param array $objectIDs
      * @param int $sectionID
      * @return false|mixed false in case method is undefined, otherwise return the result of the search engine call
      */
@@ -643,13 +642,13 @@ class eZSearch
      * @param array $nodeIdList
      * @return false|mixed False in case method is undefined, otherwise return the result of the search engine call
      */
-    public static function swapNode( $nodeID, $selectedNodeID, $nodeIdList = array() )
+    public static function swapNode( $nodeID, $selectedNodeID, $nodeIdList = [] )
     {
         $searchEngine = eZSearch::getEngine();
 
         if ( $searchEngine instanceof ezpSearchEngine && method_exists( $searchEngine, 'swapNode' ) )
         {
-            return $searchEngine->swapNode( $nodeID, $selectedNodeID, $nodeIdList = array() );
+            return $searchEngine->swapNode( $nodeID, $selectedNodeID, $nodeIdList = [] );
         }
 
         return false;

@@ -19,12 +19,12 @@
 
 class eZSelectionType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezselection";
+    final public const DATA_TYPE_STRING = "ezselection";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Selection", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -79,8 +79,7 @@ class eZSelectionType extends eZDataType
                 $currentCount = max( $currentCount, $option['id'] );
             }
             $currentCount += 1;
-            $currentOptions[] = array( 'id' => $currentCount,
-                                       'name' => '' );
+            $currentOptions[] = ['id' => $currentCount, 'name' => ''];
             $hasPostData = true;
 
         }
@@ -236,7 +235,7 @@ class eZSelectionType extends eZDataType
     */
     function objectAttributeContent( $contentObjectAttribute )
     {
-        $idString = explode( '-', $contentObjectAttribute->attribute( 'data_text' ) );
+        $idString = explode( '-', (string) $contentObjectAttribute->attribute( 'data_text' ) );
         return $idString;
     }
 
@@ -247,7 +246,7 @@ class eZSelectionType extends eZDataType
     {
         $dom = new DOMDocument( '1.0', 'utf-8' );
         $xmlString = $classAttribute->attribute( 'data_text5' );
-        $optionArray = array();
+        $optionArray = [];
         if ( $xmlString != '' )
         {
             $success = $dom->loadXML( $xmlString );
@@ -257,19 +256,16 @@ class eZSelectionType extends eZDataType
 
                 foreach ( $options as $optionNode )
                 {
-                    $optionArray[] = array( 'id' => $optionNode->getAttribute( 'id' ),
-                                            'name' => $optionNode->getAttribute( 'name' ) );
+                    $optionArray[] = ['id' => $optionNode->getAttribute( 'id' ), 'name' => $optionNode->getAttribute( 'name' )];
                 }
             }
         }
 
         if ( count( $optionArray ) == 0 )
         {
-            $optionArray[] = array( 'id' => 0,
-                                    'name' => '' );
+            $optionArray[] = ['id' => 0, 'name' => ''];
         }
-        $attrValue = array( 'options' => $optionArray,
-                            'is_multiselect' => $classAttribute->attribute( 'data_int1' ) );
+        $attrValue = ['options' => $optionArray, 'is_multiselect' => $classAttribute->attribute( 'data_int1' )];
         return $attrValue;
     }
 
@@ -281,7 +277,7 @@ class eZSelectionType extends eZDataType
         $selected = $this->objectAttributeContent( $contentObjectAttribute );
         $classContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
         $return = '';
-        if ( count( $selected ) == 0)
+        if ( (is_countable($selected) ? count( $selected ) : 0) == 0)
         {
             return '';
         }
@@ -307,9 +303,9 @@ class eZSelectionType extends eZDataType
         $selected = $this->objectAttributeContent( $contentObjectAttribute );
         $classContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
 
-        if ( count( $selected ) )
+        if ( is_countable($selected) ? count( $selected ) : 0 )
         {
-            $returnData = array();
+            $returnData = [];
             $optionArray = $classContent['options'];
             foreach ( $selected as $id )
             {
@@ -331,7 +327,7 @@ class eZSelectionType extends eZDataType
         if ( $string == '' )
             return true;
         $selectedNames = eZStringUtils::explodeStr( $string, '|' );
-        $selectedIDList = array();
+        $selectedIDList = [];
         $classContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
         $optionArray = $classContent['options'];
         foreach ( $selectedNames as $name )
@@ -356,9 +352,9 @@ class eZSelectionType extends eZDataType
         $selected = $this->objectAttributeContent( $contentObjectAttribute );
         $classContent = $this->classAttributeContent( $contentObjectAttribute->attribute( 'contentclass_attribute' ) );
         $return = '';
-        if ( count( $selected ) )
+        if ( is_countable($selected) ? count( $selected ) : 0 )
         {
-            $selectedNames = array();
+            $selectedNames = [];
             foreach ( $classContent['options'] as $option )
             {
                 if ( in_array( $option['id'], $selected ) )
@@ -377,7 +373,7 @@ class eZSelectionType extends eZDataType
 
     function sortKey( $contentObjectAttribute )
     {
-        return strtolower( $contentObjectAttribute->attribute( 'data_text' ) );
+        return strtolower( (string) $contentObjectAttribute->attribute( 'data_text' ) );
     }
 
     function sortKeyType()

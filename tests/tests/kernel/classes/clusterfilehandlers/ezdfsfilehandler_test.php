@@ -26,7 +26,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
     /**
      * @var array
      **/
-    protected $sqlFiles = array( 'kernel/sql/', 'cluster_dfs_schema.sql' );
+    protected $sqlFiles = ['kernel/sql/', 'cluster_dfs_schema.sql'];
 
     protected $clusterClass = 'eZDFSFileHandler';
 
@@ -52,7 +52,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
         parent::setUp();
         eZClusterFileHandler::resetHandler();
 
-        self::setUpDatabase( $this->clusterClass );
+        self::setUpDatabase();
 
         if ( !file_exists( self::$DFSPath ) )
         {
@@ -65,6 +65,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
 
     public static function setUpDatabase()
     {
+        $backend = null;
         $dsn = ezpTestRunner::dsn()->parts;
         switch ( $dsn['phptype'] )
         {
@@ -183,7 +184,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
         if ( file_exists( $DFSPath ) and is_file( $DFSPath ) )
             unlink( $DFSPath );
         $this->db->query( 'DELETE FROM ' . self::$tableDefault .
-                          ' WHERE name_hash = \'' . md5( $filePath ) . '\'' );
+                          ' WHERE name_hash = \'' . md5( (string) $filePath ) . '\'' );
     }
 
     /**
@@ -200,14 +201,14 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
      *        created
      * @return void
      **/
-    protected function createFile( $filePath, $fileContents = 'foobar', $params = array() )
+    protected function createFile( $filePath, $fileContents = 'foobar', $params = [] )
     {
-        $datatype = isset( $params['datatype'] ) ? $params['datatype'] : 'text/test';
-        $scope = isset( $params['scope'] ) ? $params['scope'] : 'test';
-        $mtime = isset( $params['mtime'] ) ? $params['mtime'] : time();
-        $expired = isset( $params['expired'] ) ? $params['expired'] : 0;
-        $createLocalFile = isset( $params['create_local_file'] ) ? $params['create_local_file'] : false;
-        $remove = isset( $params['remove'] ) ? $params['remove'] : true;
+        $datatype = $params['datatype'] ?? 'text/test';
+        $scope = $params['scope'] ?? 'test';
+        $mtime = $params['mtime'] ?? time();
+        $expired = $params['expired'] ?? 0;
+        $createLocalFile = $params['create_local_file'] ?? false;
+        $remove = $params['remove'] ?? true;
 
         if ( $remove )
         {
@@ -509,7 +510,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
         // negative mtime: expired
         // file will be created with current time as mtime()
         $testFile = 'var/testFileForTestIsExpiredWithNegativeMtime.txt';
-        $this->createFile( $testFile, 'contents', array( 'mtime' => time() * -1 ) );
+        $this->createFile( $testFile, 'contents', ['mtime' => time() * -1] );
 
         $clusterHandler = eZClusterFileHandler::instance( $testFile );
         self::assertTrue( $clusterHandler->isExpired( $expiry = time() - 3600, time(), null ),
@@ -522,7 +523,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
     {
         // file will be created with current time as mtime()
         $testFile = 'var/testFileForTestIsLocalFileExpired.txt';
-        $this->createFile( $testFile, 'foobar', array( 'create_local_file' => true ) );
+        $this->createFile( $testFile, 'foobar', ['create_local_file' => true] );
 
         $clusterHandler = eZClusterFileHandler::instance( $testFile );
         self::assertFalse( $clusterHandler->isLocalFileExpired( $expiry = time() - 3600, time(), null ),
@@ -605,7 +606,7 @@ class eZDFSFileHandlerTest extends eZDBBasedClusterFileHandlerAbstractTest
         $contents = 'mycontents';
         $curtime = time();
 
-        $this->createFile( $testFile, $contents, array( 'mtime' => $curtime) );
+        $this->createFile( $testFile, $contents, ['mtime' => $curtime] );
 
         $clusterHandler = eZClusterFileHandler::instance( $testFile );
         $mtime = $clusterHandler->mtime();

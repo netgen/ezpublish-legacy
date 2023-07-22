@@ -26,12 +26,12 @@ class eZSearchLog
         $db->lock( "ezsearch_search_phrase" );
 
         $trans = eZCharTransform::instance();
-        $phrase = $trans->transformByGroup( trim( $phrase ), 'search' );
+        $phrase = $trans->transformByGroup( trim( (string) $phrase ), 'search' );
 
         // 250 is the numbers of characters accepted by the DB table, so shorten to fit
-        if ( strlen( $phrase ) > 250 )
+        if ( strlen( (string) $phrase ) > 250 )
         {
-            $phrase = substr( $phrase , 0 , 247 ) . "...";
+            $phrase = substr( (string) $phrase , 0 , 247 ) . "...";
         }
         $phrase = $db->escapeString( $phrase );
 
@@ -59,7 +59,7 @@ class eZSearchLog
     /*!
      Returns the most frequent search phrases, which did not get hits.
     */
-    static function mostFrequentPhraseArray( $parameters = array( ) )
+    static function mostFrequentPhraseArray( $parameters = [] )
     {
         $db = eZDB::instance();
 

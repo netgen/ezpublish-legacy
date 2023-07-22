@@ -15,8 +15,8 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
      */
     public function testPersistentObjectInterface()
     {
-        $this->assertTrue( is_subclass_of( 'eZPendingActions', 'eZPersistentObject' ) );
-        $this->assertTrue( method_exists( 'eZPendingActions', 'definition' ) );
+        static::assertTrue(is_subclass_of( 'eZPendingActions', 'eZPersistentObject' ));
+        static::assertTrue(method_exists( 'eZPendingActions', 'definition' ));
     }
 
     /**
@@ -25,13 +25,13 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
     public function testORMImplementation()
     {
         $def = eZPendingActions::definition();
-        $this->assertEquals( 'eZPendingActions', $def['class_name'] );
-        $this->assertEquals( 'ezpending_actions', $def['name'] );
+        static::assertEquals('eZPendingActions', $def['class_name']);
+        static::assertEquals('ezpending_actions', $def['name']);
 
         $fields = $def['fields'];
-        $this->assertArrayHasKey( 'action', $fields );
-        $this->assertArrayHasKey( 'created', $fields );
-        $this->assertArrayHasKey( 'param', $fields );
+        static::assertArrayHasKey('action', $fields);
+        static::assertArrayHasKey('created', $fields);
+        static::assertArrayHasKey('param', $fields);
     }
 
     /**
@@ -47,17 +47,17 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
         }
 
         $res = eZPendingActions::fetchByAction( 'test' );
-        $this->assertInternalType( PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $res );
+        static::assertInternalType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $res);
         foreach($res as $row)
         {
-            $this->assertInstanceOf( 'eZPendingActions', $row );
+            static::assertInstanceOf('eZPendingActions', $row);
         }
 
         unset($res);
 
-        $dateFilter = array( '<=', time() );
+        $dateFilter = ['<=', time()];
         $res = eZPendingActions::fetchByAction( 'test', $dateFilter );
-        $this->assertInternalType( PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $res );
+        static::assertInternalType(PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY, $res);
     }
 
     /**
@@ -68,11 +68,7 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
     {
         $time = time();
 
-        return array(
-            array( 'test', $time, 'Some params' ),
-            array( 'test', $time+10, 'Other params' ),
-            array( 'test', $time+20, '' )
-        );
+        return [['test', $time, 'Some params'], ['test', $time+10, 'Other params'], ['test', $time+20, '']];
     }
 
     /**
@@ -83,11 +79,7 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
      */
     private function insertPendingAction( $action, $created, $params )
     {
-        $row = array(
-            'action'      => $action,
-            'created'     => $created,
-            'param'       => $params
-        );
+        $row = ['action'      => $action, 'created'     => $created, 'param'       => $params];
 
         $obj = new eZPendingActions( $row );
         $obj->store();
@@ -102,7 +94,7 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
     public function testBadDateFilter( $badFilter )
     {
         $res = eZPendingActions::fetchByAction( 'test', $badFilter );
-        $this->assertNull( $res );
+        static::assertNull($res);
     }
 
     /**
@@ -111,11 +103,13 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
      */
     public function providerForTestBadDateFilter()
     {
-        return array(
-            array( array( time(), '=' ) ), // Wrong order
-            array( array( '<=', time(), 'foobar' ) ), // Wrong entries count
-            array( array( '<>', time() ) ) // Invalid token
-        );
+        return [
+            [[time(), '=']],
+            // Wrong order
+            [['<=', time(), 'foobar']],
+            // Wrong entries count
+            [['<>', time()]],
+        ];
     }
 
     /**
@@ -132,7 +126,7 @@ class eZPendingActionsTest extends ezpDatabaseTestCase
 
         eZPendingActions::removeByAction( 'test' );
         $res = eZPendingActions::fetchByAction( 'test' );
-        $this->assertTrue( empty( $res ) );
+        static::assertTrue(empty( $res ));
     }
 }
 

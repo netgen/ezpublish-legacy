@@ -16,9 +16,6 @@ class eZExpiryHandler
 {
     public function __construct()
     {
-        $this->Timestamps = array();
-        $this->IsModified = false;
-
         $cacheDirectory = eZSys::cacheDirectory();
         $this->CacheFile = eZClusterFileHandler::instance( $cacheDirectory . '/' . 'expiry.php' );
         $this->restore();
@@ -31,7 +28,7 @@ class eZExpiryHandler
      */
     function restore()
     {
-        $Timestamps = $this->CacheFile->processFile( array( $this, 'fetchData' ) );
+        $Timestamps = $this->CacheFile->processFile( $this->fetchData(...) );
         if ( $Timestamps === false )
         {
             $errMsg = 'Fatal error - could not restore expiry.php file.';
@@ -49,6 +46,7 @@ class eZExpiryHandler
      */
     static function fetchData( $path )
     {
+        $Timestamps = null;
         include( $path );
         return $Timestamps;
     }
@@ -192,13 +190,13 @@ class eZExpiryHandler
      * Holds the expiry timestamps array
      * @var array
      */
-    public $Timestamps;
+    public $Timestamps = [];
 
     /**
      * Wether data has been modified or not
      * @var bool
      */
-    public $IsModified;
+    public $IsModified = false;
 
     public $CacheFile;
     

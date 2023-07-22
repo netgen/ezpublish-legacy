@@ -39,7 +39,7 @@ class ezpDfsMySQLiClusterGateway extends ezpClusterGateway
          $cacheDir = defined( 'CLUSTER_METADATA_CACHE_PATH' ) ? CLUSTER_METADATA_CACHE_PATH : "/cache/";
          $storageDir = defined( 'CLUSTER_METADATA_STORAGE_PATH' ) ? CLUSTER_METADATA_STORAGE_PATH : "/storage/";
 
-         if ( strpos( $filePath, $cacheDir ) !== false && strpos( $filePath, $storageDir ) === false )
+         if ( str_contains( $filePath, (string) $cacheDir ) && !str_contains( $filePath, (string) $storageDir ) )
          {
              return defined( 'CLUSTER_METADATA_TABLE_CACHE' ) ? CLUSTER_METADATA_TABLE_CACHE : 'ezdfsfile_cache';
          }

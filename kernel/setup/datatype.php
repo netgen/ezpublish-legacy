@@ -12,19 +12,13 @@ $module = $Params['Module'];
 $ini = eZINI::instance();
 $tpl = eZTemplate::factory();
 
-$steps = array( 'basic' => array( 'template' => 'datatype_basic.tpl',
-                                  'function' => 'datatypeBasic' ),
-                'describe' => array( 'pre_function' => 'datatypeBasicFetchData',
-                                     'template' => 'datatype_describe.tpl',
-                                     'function' => 'datatypeDescribe' ),
-                'download' => array( 'pre_function' => 'datatypeDescribeFetchData',
-                                     'function' => 'datatypeDownload' ) );
+$steps = ['basic' => ['template' => 'datatype_basic.tpl', 'function' => 'datatypeBasic'], 'describe' => ['pre_function' => 'datatypeBasicFetchData', 'template' => 'datatype_describe.tpl', 'function' => 'datatypeDescribe'], 'download' => ['pre_function' => 'datatypeDescribeFetchData', 'function' => 'datatypeDownload']];
 
 $template = 'datatype.tpl';
 
 $http = eZHTTPTool::instance();
 
-$persistentData = array();
+$persistentData = [];
 if ( $http->hasPostVariable( 'PersistentData' ) )
     $persistentData = $http->postVariable( 'PersistentData' );
 
@@ -43,7 +37,7 @@ if ( $http->hasPostVariable( 'OperatorStep' ) and
 if ( $http->hasPostVariable( 'DatatypeRestartButton' ) )
 {
     $currentStep = false;
-    $persistentData = array();
+    $persistentData = [];
 }
 
 if ( $currentStep )
@@ -80,10 +74,9 @@ if ( $currentStep )
 
 $tpl->setVariable( 'persistent_data', $persistentData );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/$template" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'Datatype wizard' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'Datatype wizard' )]];
 
 
 function datatypeBasic( $tpl, &$persistentData, $stepData )
@@ -92,6 +85,8 @@ function datatypeBasic( $tpl, &$persistentData, $stepData )
 
 function datatypeBasicFetchData( $tpl, &$persistentData )
 {
+    $extensionName = null;
+    $descName = null;
     $http = eZHTTPTool::instance();
     $datatypeName = false;
     if ( $http->hasPostVariable( 'Name' ) )
@@ -103,16 +98,12 @@ function datatypeBasicFetchData( $tpl, &$persistentData )
     if ( $http->hasPostVariable( 'ClassInput' ) )
         $classInput = true;
 
-    $datatypeName = preg_replace( array( "#([a-z])([A-Z])#",
-                                         "#__+#",
-                                         "#(^_|_$)#" ),
-                                  array( '$1_$2',
-                                         '_',
-                                         '' ),
-                                  $datatypeName );
+    $datatypeName = preg_replace( ["#([a-z])([A-Z])#", "#__+#", "#(^_|_$)#"],
+                                  ['$1_$2', '_', ''],
+                                  (string) $datatypeName );
     $datatypeName = strtolower( $datatypeName );
 
-    if ( substr( $datatypeName, 0, 2 ) != "ez" )
+    if ( !str_starts_with($datatypeName, "ez") )
         $extensionName = "ez" . $datatypeName;
 
     $persistentData['extension-name'] = $extensionName;
@@ -123,16 +114,17 @@ function datatypeBasicFetchData( $tpl, &$persistentData )
 
 function datatypeDescribe( $tpl, &$persistentData, $stepData )
 {
+    $fullClassName = null;
     $datatypeName = $persistentData['name'];
     $classInput = $persistentData['class-input'];
     $descName = $persistentData['desc-name'];
 
-    if ( substr( $datatypeName, 0, 2 ) != "ez" )
+    if ( !str_starts_with((string) $datatypeName, "ez") )
         $fullClassName = "ez" . $datatypeName;
 
     $persistentData['datatype-name'] = $fullClassName;
 
-    if ( substr( $datatypeName, -4 ) != "type" )
+    if ( !str_ends_with((string) $datatypeName, "type") )
         $fullClassName .= "type";
 
     $constantName = "DATA_TYPE_STRING";
@@ -177,11 +169,11 @@ function datatypeDownload( $tpl, &$persistentData, $stepData )
     $description = $persistentData['description'];
     $datatypeName = $persistentData['datatype-name'];
 
-    $filename = strtolower( $className ) . '.php';
+    $filename = strtolower( (string) $className ) . '.php';
 
     $brief = '';
     $full = '';
-    $lines = explode( "\n", $description );
+    $lines = explode( "\n", (string) $description );
     if ( count( $lines ) > 0 )
     {
         $brief = $lines[0];
@@ -200,7 +192,7 @@ function datatypeDownload( $tpl, &$persistentData, $stepData )
 
     $content = $tpl->fetch( 'design:setup/datatype_code.tpl' );
 
-    $contentLength = strlen( $content );
+    $contentLength = strlen( (string) $content );
     $mimeType = 'application/octet-stream';
 
     $version = eZPublishSDK::version();

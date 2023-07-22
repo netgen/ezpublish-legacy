@@ -25,8 +25,8 @@ class eZUTF8Codec
     */
     static function convertStringToUnicode( $str )
     {
-        $unicodeValues = array();
-        $strLen = strlen( $str );
+        $unicodeValues = [];
+        $strLen = strlen( (string) $str );
         for ( $offset = 0; $offset < $strLen; )
         {
             $charLen = 1;
@@ -169,7 +169,7 @@ class eZUTF8Codec
                            (( ord( $multi_char[$offs + 2] ) & 0x3f ) << 12) +
                            (( ord( $multi_char[$offs + 3] ) & 0x3f ) << 6) +
                            (( ord( $multi_char[$offs + 4] ) & 0x3f )) );
-            if ( $char_code < 2097152 ) // Illegal multibyte, should use less than 5 chars
+            if ( $char_code < 2_097_152 ) // Illegal multibyte, should use less than 5 chars
             {
                 $char_code = false;
             }
@@ -189,7 +189,7 @@ class eZUTF8Codec
                            (( ord( $multi_char[$offs + 3] ) & 0x3f ) << 12) +
                            (( ord( $multi_char[$offs + 4] ) & 0x3f ) << 6) +
                            (( ord( $multi_char[$offs + 5] ) & 0x3f )) );
-            if ( $char_code < 67108864 ) // Illegal multibyte, should use less than 6 chars
+            if ( $char_code < 67_108_864 ) // Illegal multibyte, should use less than 6 chars
             {
                 $char_code = false;
             }
@@ -202,9 +202,7 @@ class eZUTF8Codec
         if ( empty( $GLOBALS['eZUTF8LengthTable'] ) )
         {
             $GLOBALS['eZUTF8LengthTable'] =
-                array( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                       0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 6 );
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 6];
         }
         return $GLOBALS['eZUTF8LengthTable'];
     }
@@ -219,7 +217,7 @@ class eZUTF8Codec
     static function strlen( $str )
     {
         $table = eZUTF8Codec::utf8LengthTable();
-        $len = strlen( $str );
+        $len = strlen( (string) $str );
         $strlen = 0;
         for ( $i = 0; $i < $len; )
         {

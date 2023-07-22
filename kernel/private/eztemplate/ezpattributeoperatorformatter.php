@@ -13,14 +13,13 @@ class ezpAttributeOperatorFormatter
     /**
      * Returns type for given item
      *
-     * @param mixed $item
      * @return string
      */
-    protected function getType( $item )
+    protected function getType( mixed $item )
     {
         $type = gettype( $item );
         if ( is_object( $item ) )
-            $type .= "[" . get_class( $item ) . "]";
+            $type .= "[" . $item::class . "]";
 
         return $type;
     }
@@ -28,10 +27,9 @@ class ezpAttributeOperatorFormatter
     /**
      * Returns value for given item
      *
-     * @param mixed $item
      * @return string
      */
-    protected function getValue( $item )
+    protected function getValue( mixed $item )
     {
         if ( is_bool( $item ) )
             $value = $item ? "true" : "false";

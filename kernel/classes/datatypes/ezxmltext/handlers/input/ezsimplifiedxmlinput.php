@@ -13,8 +13,6 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
     public function __construct( $xmlData, $aliasedType, $contentObjectAttribute )
     {
         parent::__construct( $xmlData, $aliasedType, $contentObjectAttribute );
-
-        $this->IsInputValid = true;
         $this->ContentObjectAttribute = $contentObjectAttribute;
 
         $contentIni = eZINI::instance( 'content.ini' );
@@ -70,7 +68,7 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
 
             $text = $data;
 
-            $text = preg_replace('/\r/', '', $text);
+            $text = preg_replace('/\r/', '', (string) $text);
             $text = preg_replace('/\t/', ' ', $text);
 
             // first empty paragraph
@@ -105,9 +103,9 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
 
             $urlIDArray = $parser->getUrlIDArray();
 
-            if ( count( $urlIDArray ) > 0 )
+            if ( (is_countable($urlIDArray) ? count( $urlIDArray ) : 0) > 0 )
             {
-                $this->updateUrlObjectLinks( $contentObjectAttribute, $urlIDArray );
+                static::updateUrlObjectLinks($contentObjectAttribute, $urlIDArray);
             }
 
             $contentObject = $contentObjectAttribute->attribute( 'object' );
@@ -149,7 +147,7 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
         return $output;
     }
 
-    public $IsInputValid;
+    public $IsInputValid = true;
 }
 
 ?>

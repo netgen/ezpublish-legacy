@@ -51,8 +51,8 @@ if ( $http->hasPostVariable( "StoreButton" ) )
 
     eZContentClassClassGroup::update( null, $GroupID, $name );
 
-    ezpEvent::getInstance()->notify( 'content/class/group/cache', array( $classgroup->attribute( 'id' ) ) );
-    $Module->redirectToView( 'classlist', array( $classgroup->attribute( 'id' ) ) );
+    ezpEvent::getInstance()->notify( 'content/class/group/cache', [$classgroup->attribute( 'id' )] );
+    $Module->redirectToView( 'classlist', [$classgroup->attribute( 'id' )] );
     return;
 }
 
@@ -62,17 +62,14 @@ $Module->setTitle( "Edit class group " . $classgroup->attribute( "name" ) );
 $tpl = eZTemplate::factory();
 
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array( "classgroup", $classgroup->attribute( "id" ) ) ) );
+$res->setKeys( [["classgroup", $classgroup->attribute( "id" )]] );
 
 $tpl->setVariable( "http", $http );
 $tpl->setVariable( "module", $Module );
 $tpl->setVariable( "classgroup", $classgroup );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:class/groupedit.tpl" );
-$Result['path'] = array( array( 'url' => '/class/grouplist/',
-                                'text' => ezpI18n::tr( 'kernel/class', 'Class groups' ) ),
-                         array( 'url' => false,
-                                'text' => $classgroup->attribute( 'name' ) ) );
+$Result['path'] = [['url' => '/class/grouplist/', 'text' => ezpI18n::tr( 'kernel/class', 'Class groups' )], ['url' => false, 'text' => $classgroup->attribute( 'name' )]];
 
 ?>

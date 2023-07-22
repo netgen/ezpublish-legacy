@@ -18,7 +18,7 @@ class eZINIAddonPackageHandler extends eZPackageHandler
 {
     public function __construct()
     {
-        parent::__construct( 'eziniaddon', array( 'extract-install-content' => true ) );
+        parent::__construct( 'eziniaddon', ['extract-install-content' => true] );
     }
 
     /*!
@@ -60,14 +60,14 @@ class eZINIAddonPackageHandler extends eZPackageHandler
                 $variableName = $blockVariable->getAttribute( 'name' );
                 $variableValues = $blockVariable->getElementsByTagName( 'value' );
 
-                if ( count( $variableValues ) == 1 )
+                if ( (is_countable($variableValues) ? count( $variableValues ) : 0) == 1 )
                 {
                     $value = eZINIAddonPackageHandler::currentID( $variableValues[0], $db );
                     $ini->setVariable( $blockname, $variableName, $value );
                 }
                 else
                 {
-                    $valueArray = array();
+                    $valueArray = [];
                     foreach( $variableValues as $variableNode )
                     {
                         $valueName = $variableNode->getAttribute( 'name' );
@@ -92,6 +92,7 @@ class eZINIAddonPackageHandler extends eZPackageHandler
     */
     static function currentID( $valueNode, $db )
     {
+        $result = [];
         $remoteIDType = $valueNode->getAttribute( 'remote-id' );
         $value = $valueNode->textContent;
 
@@ -120,7 +121,7 @@ class eZINIAddonPackageHandler extends eZPackageHandler
                 } break;
             }
 
-            if ( count( $result ) != 1 )
+            if ( (is_countable($result) ? count( $result ) : 0) != 1 )
             {
                 eZDebug::writeError( 'Invalid result fetching id from ' . $remoteIDType . ', remote_id: ' . $value, __METHOD__ );
             }
@@ -146,7 +147,7 @@ class eZINIAddonPackageHandler extends eZPackageHandler
     {
         foreach( array_keys( $iniOverrideArray ) as $siteAccess )
         {
-            $iniNode = eZINIAddonPackageHandler::iniDOMTree( $filename, $siteAccess, $iniOverrideArray[$siteAccess], $remoteIDArray );
+            $iniNode = (new eZINIAddonPackageHandler())->iniDOMTree($filename, $siteAccess, $iniOverrideArray[$siteAccess], $remoteIDArray);
             if ( !$iniNode )
             {
                 continue;
@@ -154,10 +155,10 @@ class eZINIAddonPackageHandler extends eZPackageHandler
 
             $package->appendInstall( 'eziniaddon', false, false, true,
                                      $siteAccess . '-' . $filename, 'eziniaddon',
-                                     array( 'content' => $iniNode ) );
+                                     ['content' => $iniNode] );
             $package->appendInstall( 'eziniaddon', false, false, false,
                                      $siteAccess . '-' . $filename, 'eziniaddon',
-                                     array( 'content' => false ) );
+                                     ['content' => false] );
         }
     }
 
@@ -180,8 +181,7 @@ class eZINIAddonPackageHandler extends eZPackageHandler
             return false;
         }
 
-        $iniNode = eZDOMDocument::createElementNode( 'ini-addon', array( 'site-access' => $siteAccess,
-                                                                          'filename' => $filename ) );
+        $iniNode = eZDOMDocument::createElementNode( 'ini-addon', ['site-access' => $siteAccess, 'filename' => $filename] );
 
         $blocksNode = eZDOMDocument::createElementNode( 'blocks' );
         $iniNode->appendChild( $blocksNode );
@@ -189,14 +189,14 @@ class eZINIAddonPackageHandler extends eZPackageHandler
         {
             $block =& $blockArray[$blockName];
             unset( $blockNode );
-            $blockNode = eZDOMDocument::createElementNode( 'block', array( 'name' => $blockName ) );
+            $blockNode = eZDOMDocument::createElementNode( 'block', ['name' => $blockName] );
             $blocksNode->appendChild( $blockNode );
 
             foreach( array_keys( $block ) as $blockVariable )
             {
                 $variableValue =& $block[$blockVariable];
                 unset( $variableNode );
-                $variableNode = eZDomDocument::createElementNode( 'block-variable', array( 'name' => $blockVariable ) );
+                $variableNode = eZDomDocument::createElementNode( 'block-variable', ['name' => $blockVariable] );
                 $blockNode->appendChild( $variableNode );
 
                 if ( is_array( $variableValue ) )
@@ -205,22 +205,22 @@ class eZINIAddonPackageHandler extends eZPackageHandler
                     {
                         $value = $variableValue[$valueName];
                         unset( $valueNode );
-                        $valueNode = eZDomDocument::createElementNode( 'value', array( 'name' => $valueName ) );
+                        $valueNode = eZDomDocument::createElementNode( 'value', ['name' => $valueName] );
                         $variableNode->appendChild( $valueNode );
                         $remoteID = false;
                         if ( is_int( $value ) )
                         {
-                            if ( strpos( $valueName, 'class' ) !== false )
+                            if ( str_contains( $valueName, 'class' ) )
                             {
                                 $value = $remoteIDArray['class'][(string)$value];
                                 $remoteID = 'class';
                             }
-                            else if( strpos( $valueName, 'node' ) !== false )
+                            else if( str_contains( $valueName, 'node' ) )
                             {
                                 $value = $remoteIDArray['node'][(string)$value];
                                 $remoteID = 'node';
                             }
-                            else if ( strpos( $valueName, 'object' ) !== false )
+                            else if ( str_contains( $valueName, 'object' ) )
                             {
                                 $value = $remoteIDArray['class'][(string)$value];
                                 $remoteID = 'object';
@@ -242,17 +242,17 @@ class eZINIAddonPackageHandler extends eZPackageHandler
                     $remoteID = false;
                     if ( is_int( $variableValue ) )
                     {
-                        if ( strpos( $blockVariable, 'class' ) !== false )
+                        if ( str_contains( $blockVariable, 'class' ) )
                         {
                             $variableValue = $remoteIDArray['class'][(string)$value];
                             $remoteID = 'class';
                         }
-                        else if( strpos( $blockVariable, 'node' ) !== false )
+                        else if( str_contains( $blockVariable, 'node' ) )
                         {
                             $variableValue = $remoteIDArray['node'][(string)$value];
                             $remoteID = 'node';
                         }
-                        else if ( strpos( $blockVariable, 'object' ) !== false )
+                        else if ( str_contains( $blockVariable, 'object' ) )
                         {
                             $variableValue = $remoteIDArray['class'][(string)$value];
                             $remoteID = 'object';

@@ -56,7 +56,7 @@
 
 class ezpExtensionOptions extends ezcBaseOptions
 {
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->iniFile        = '';
         $this->iniSection     = 'HandlerSettings';
@@ -98,7 +98,7 @@ class ezpExtensionOptions extends ezcBaseOptions
                 break;
 
             case 'handlerParams':
-                if( $value !== null and !is_array( $value ) and count( $value ) <= 0 )
+                if( $value !== null and !is_array( $value ) and (is_countable($value) ? count( $value ) : 0) <= 0 )
                 {
                     throw new ezcBaseValueException( $name, $value );
                 }

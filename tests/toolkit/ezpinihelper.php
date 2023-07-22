@@ -22,7 +22,7 @@ class ezpINIHelper
      *
      * @see restoreINISettings() to restore all the modified INI settings
      */
-    public static function setINISetting( $file, $block, $variable, $value )
+    public static function setINISetting( $file, $block, $variable, mixed $value )
     {
         if ( is_array( $file ) )
         {
@@ -36,7 +36,7 @@ class ezpINIHelper
 
         // backup the value
         $oldValue = $ini->hasVariable( $block, $variable ) ? $ini->variable( $block, $variable ) : null;
-        self::$modifiedINISettings[] = array( $file, $block, $variable, $oldValue );
+        self::$modifiedINISettings[] = [$file, $block, $variable, $oldValue];
 
         // change the value
         $ini->setVariable( $block, $variable, $value );
@@ -53,11 +53,11 @@ class ezpINIHelper
         // restore each changed value in reverse order to be sure history is correct
         foreach ( array_reverse( self::$modifiedINISettings ) as $key => $values )
         {
-            list( $file, $block, $variable, $value ) = $values;
+            [$file, $block, $variable, $value] = $values;
             $ini = eZINI::instance( $file );
             $ini->setVariable( $block, $variable, $value );
         }
-        self::$modifiedINISettings = array();
+        self::$modifiedINISettings = [];
     }
 
     /**
@@ -68,7 +68,7 @@ class ezpINIHelper
     {
         foreach( $settings as $iniSettings )
         {
-            list( $file, $block, $variable, $value ) = $iniSettings;
+            [$file, $block, $variable, $value] = $iniSettings;
             self::setINISetting( $file, $block, $variable, $value );
         }
     }
@@ -78,7 +78,7 @@ class ezpINIHelper
      * file, block, variable, value
      * @var array
      */
-    protected static $modifiedINISettings = array();
+    protected static $modifiedINISettings = [];
 }
 
 ?>

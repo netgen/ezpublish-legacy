@@ -77,10 +77,7 @@ class eZBenchmarkCase extends eZBenchmarkUnit
         }
         if ( !$name )
             $name = $method;
-        $this->addEntry( array( 'name' => $name,
-                                'object' => &$this,
-                                'method' => $method,
-                                'parameter' => $parameter ) );
+        $this->addEntry( ['name' => $name, 'object' => &$this, 'method' => $method, 'parameter' => $parameter] );
     }
 
     function addFunctionMark( $function, $name, $parameter = false )
@@ -91,9 +88,7 @@ class eZBenchmarkCase extends eZBenchmarkUnit
         }
         if ( !$name )
             $name = $function;
-        $this->addEntry( array( 'name' => $name,
-                                'function' => $function,
-                                'parameter' => $parameter ) );
+        $this->addEntry( ['name' => $name, 'function' => $function, 'parameter' => $parameter] );
     }
 }
 

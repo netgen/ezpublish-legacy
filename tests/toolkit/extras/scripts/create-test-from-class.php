@@ -78,7 +78,7 @@ class ezpGenerateTestCaseFromClass
     {
         foreach( $this->methods as $method )
         {
-            $methodName = "test" . ucfirst( $method ) . "()";
+            $methodName = "test" . ucfirst( (string) $method ) . "()";
 
             $generator->appendEmptyLines();
             $generator->appendCustomCode( "public function $methodName" );
@@ -114,7 +114,7 @@ $destinationFileOption->type = ezcConsoleInput::TYPE_STRING;
 // Set ouput formatting
 // ---------------------------------------------------------------------------
 $out = new ezcConsoleOutput();
-$out->formats->count->style = array( 'bold' );
+$out->formats->count->style = ['bold'];
 $out->formats->source->color = 'green';
 $out->formats->dest->color = 'yellow';
 
@@ -149,7 +149,7 @@ if ( $helpOption->value === true )
 $generator = new ezpGenerateTestCaseFromClass( $sourceFileOption->value, $destinationFileOption->value );
 $generator->generate();
 
-$testCount = count( $generator->methods );
+$testCount = is_countable($generator->methods) ? count( $generator->methods ) : 0;
 $out->outputText( "Generated " );
 $out->outputText( $testCount, 'count' );
 $out->outputText( " tests from " );

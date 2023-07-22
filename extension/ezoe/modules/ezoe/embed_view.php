@@ -44,7 +44,7 @@ if ( isset( $Params['EmbedID'] )  && $Params['EmbedID'])
     if (  is_numeric( $Params['EmbedID'] ) )
         $embedId = $Params['EmbedID'];
     else
-        list($embedType, $embedId) = explode('_', $Params['EmbedID']);
+        [$embedType, $embedId] = explode('_', (string) $Params['EmbedID']);
 
     if ( strcasecmp( $embedType  , 'eznode'  ) === 0 )
     {
@@ -136,14 +136,14 @@ else if ( $http->hasPostVariable('align') )
 
 
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array('classification', $className) ) );
+$res->setKeys( [['classification', $className]] );
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'view', $view );
 $tpl->setVariable( 'object', $embedObject );
-$tpl->setVariable( 'link_parameters', array() );
+$tpl->setVariable( 'link_parameters', [] );
 $tpl->setVariable( 'classification', $className );
-$tpl->setVariable( 'object_parameters', array( 'size' => $size, 'align' => $align, 'show_path' => true ) );
+$tpl->setVariable( 'object_parameters', ['size' => $size, 'align' => $align, 'show_path' => true] );
 if ( isset( $embedNode ) ) $tpl->setVariable( 'node', $embedNode );
 
 //if ( $style !== '' )

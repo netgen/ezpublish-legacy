@@ -34,39 +34,7 @@ class eZContentBrowseRecent extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "node_id" => array( 'name' => "NodeID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZContentObjectTreeNode',
-                                                             'foreign_attribute' => 'node_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "created" => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'node' => 'fetchNode',
-                                                      'contentobject_id' => 'contentObjectID' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZContentBrowseRecent",
-                      "name" => "ezcontentbrowserecent" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "node_id" => ['name' => "NodeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], "created" => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ['node' => 'fetchNode', 'contentobject_id' => 'contentObjectID'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZContentBrowseRecent", "name" => "ezcontentbrowserecent"];
 
     }
 
@@ -77,7 +45,7 @@ class eZContentBrowseRecent extends eZPersistentObject
     static function fetch( $recentID )
     {
         return eZPersistentObject::fetchObject( eZContentBrowseRecent::definition(),
-                                                null, array( 'id' => $recentID ), true );
+                                                null, ['id' => $recentID], true );
     }
 
     /*!
@@ -87,8 +55,8 @@ class eZContentBrowseRecent extends eZPersistentObject
     static function fetchListForUser( $userID )
     {
         return eZPersistentObject::fetchObjectList( eZContentBrowseRecent::definition(),
-                                                    null, array( 'user_id' => $userID ),
-                                                    array( 'created' => 'desc' ), null, true );
+                                                    null, ['user_id' => $userID],
+                                                    ['created' => 'desc'], null, true );
     }
 
     /*!
@@ -117,23 +85,21 @@ class eZContentBrowseRecent extends eZPersistentObject
     static function createNew( $userID, $nodeID, $nodeName )
     {
         $recentCountList = eZPersistentObject::fetchObjectList( eZContentBrowseRecent::definition(),
-                                                                array(),
-                                                                array( 'user_id' => $userID ),
+                                                                [],
+                                                                ['user_id' => $userID],
                                                                 false,
                                                                 null,
                                                                 false,
                                                                 false,
-                                                                array( array( 'operation' => 'count( * )',
-                                                                              'name' => 'count' ) ) );
+                                                                [['operation' => 'count( * )', 'name' => 'count']] );
         $matchingRecentList = eZPersistentObject::fetchObjectList( eZContentBrowseRecent::definition(),
                                                                    null,
-                                                                   array( 'user_id' => $userID,
-                                                                          'node_id' => $nodeID ),
+                                                                   ['user_id' => $userID, 'node_id' => $nodeID],
                                                                    null,
                                                                    null,
                                                                    true );
         // If we already have the node in the list just return
-        if ( count( $matchingRecentList ) > 0 )
+        if ( count( (array) $matchingRecentList ) > 0 )
         {
             $oldItem = $matchingRecentList[0];
             $oldItem->setAttribute( 'created', time() );
@@ -141,7 +107,7 @@ class eZContentBrowseRecent extends eZPersistentObject
             return $oldItem;
         }
         $recentCount = 0;
-        if ( isset( $recentCountList[0] ) and count( $recentCountList[0] ) > 0 )
+        if ( isset( $recentCountList[0] ) and (is_countable($recentCountList[0]) ? count( $recentCountList[0] ) : 0) > 0 )
             $recentCount = $recentCountList[0]['count'];
         $maximumCount = eZContentBrowseRecent::maximumRecentItems( $userID );
         // Remove oldest item
@@ -152,9 +118,9 @@ class eZContentBrowseRecent extends eZPersistentObject
         {
             $recentCountList = eZPersistentObject::fetchObjectList( eZContentBrowseRecent::definition(),
                                                                     null,
-                                                                    array( 'user_id' => $userID ),
-                                                                    array( 'created' => 'asc' ),
-                                                                    array( 'length' => ( $recentCount - $maximumCount ), 'offset' => 0 ),
+                                                                    ['user_id' => $userID],
+                                                                    ['created' => 'asc'],
+                                                                    ['length' => ( $recentCount - $maximumCount ), 'offset' => 0],
                                                                     true );
             foreach($recentCountList as $countList)
             {
@@ -164,10 +130,7 @@ class eZContentBrowseRecent extends eZPersistentObject
 
         }
 
-        $recent = new eZContentBrowseRecent( array( 'user_id' => $userID,
-                                                    'node_id' => $nodeID,
-                                                    'name' => $nodeName,
-                                                    'created' => time() ) );
+        $recent = new eZContentBrowseRecent( ['user_id' => $userID, 'node_id' => $nodeID, 'name' => $nodeName, 'created' => time()] );
         $recent->store();
         $db->commit();
         return $recent;

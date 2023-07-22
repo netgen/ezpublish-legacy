@@ -21,9 +21,9 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
      * How to sort the test files: 'mtime' sorts by modification time, any other
      * value sorts by name.
      */
-    const SORT_MODE = 'name';
+    final public const SORT_MODE = 'name';
 
-    protected $files = array();
+    protected $files = [];
     protected $currentFile;
 
     public function __construct()
@@ -33,13 +33,13 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
         {
             // Sort by modification time to get updated tests first
             usort( $this->files,
-                   array( $this, 'sortTestsByMtime' ) );
+                   $this->sortTestsByMtime(...) );
         }
         else
         {
             // Sort it, then the file a.in will be processed first. Handy for development.
             usort( $this->files,
-                   array( $this, 'sortTestsByName' ) );
+                   $this->sortTestsByName(...) );
         }
     }
 
@@ -55,7 +55,7 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
 
     protected function readDirRecursively( $dir, &$total, $onlyWithExtension = false )
     {
-        $extensionLength = strlen( $onlyWithExtension );
+        $extensionLength = strlen( (string) $onlyWithExtension );
         $path = opendir( $dir );
 
         if ( $path === false )
@@ -74,8 +74,7 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
                     if ( !$onlyWithExtension ||
                          substr( $file,  -$extensionLength - 1 ) === ".{$onlyWithExtension}" )
                     {
-                        $total[] = array( 'file' => $new,
-                                          'mtime' => filemtime( $new ) );
+                        $total[] = ['file' => $new, 'mtime' => filemtime( $new )];
                     }
                 }
                 elseif ( is_dir( $new ) )
@@ -92,17 +91,17 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
         {
             return $a['mtime'] < $b['mtime'] ? 1 : -1;
         }
-        return strnatcmp( $a['file'], $b['file'] );
+        return strnatcmp( (string) $a['file'], (string) $b['file'] );
     }
 
     protected function sortTestsByName( $a, $b )
     {
-        return strnatcmp( $a['file'], $b['file'] );
+        return strnatcmp( (string) $a['file'], (string) $b['file'] );
     }
 
     protected function outFileName( $file, $inExtension, $outExtension = '.out' )
     {
-        $baseFile = substr( $file, 0, strlen( $file ) - strlen( $inExtension ) );
+        $baseFile = substr( (string) $file, 0, strlen( (string) $file ) - strlen( (string) $inExtension ) );
         return $baseFile . $outExtension;
     }
 
@@ -110,7 +109,7 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
     {
         if ( $this->currentFile === false )
         {
-            throw new PHPUnit_Framework_ExpectationFailedException( "No currentFile set for test " . __CLASS__ );
+            throw new PHPUnit_Framework_ExpectationFailedException( "No currentFile set for test " . self::class );
         }
 
         $exception = null;
@@ -136,7 +135,7 @@ class ezpDatabaseRegressionTest extends ezpDatabaseTestCase
 
     public static function suite()
     {
-        return new ezpTestRegressionSuite( __CLASS__ );
+        return new ezpTestRegressionSuite( self::class );
     }
 }
 ?>

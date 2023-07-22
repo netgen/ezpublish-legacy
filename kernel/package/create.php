@@ -18,7 +18,7 @@ if ( $module->isCurrentAction( 'CreatePackage' ) )
     if ( $creatorID )
     {
         $creator = eZPackageCreationHandler::instance( $creatorID );
-        $persistentData = array();
+        $persistentData = [];
         $http->setSessionVariable( 'eZPackageCreatorData' . $creatorID, $persistentData );
         $initializeStep = true;
         $package = false;
@@ -36,7 +36,7 @@ else if ( $module->isCurrentAction( 'PackageStep' ) )
         if ( $http->hasSessionVariable( 'eZPackageCreatorData' . $creatorID ) )
             $persistentData = $http->sessionVariable( 'eZPackageCreatorData' . $creatorID );
         else
-            $persistentData = array();
+            $persistentData = [];
         $package = false;
         if ( isset( $persistentData['package_name'] ) )
             $package = eZPackage::fetch( $persistentData['package_name'] );
@@ -55,7 +55,7 @@ if ( $creator )
     $steps =& $creator->stepMap();
     if ( !isset( $steps['map'][$currentStepID] ) )
         $currentStepID = $steps['first']['id'];
-    $errorList = array();
+    $errorList = [];
     $hasAdvanced = false;
 
     $lastStepID = $currentStepID;
@@ -102,7 +102,7 @@ if ( $creator )
         $package->setAttribute( 'is_active', true );
         $http->removeSessionVariable( 'eZPackageCreatorData' . $creatorID );
         if ( $package )
-            return $module->redirectToView( 'view', array( 'full', $package->attribute( 'name' ) ) );
+            return $module->redirectToView( 'view', ['full', $package->attribute( 'name' )] );
         else
             return $module->redirectToView( 'list' );
     }
@@ -114,8 +114,7 @@ else
     $tpl->setVariable( 'creator_list', $creators );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( $templateName );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/package', 'Create package' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/package', 'Create package' )]];
 ?>

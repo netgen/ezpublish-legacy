@@ -21,16 +21,14 @@
 
 class eZSiteInstaller
 {
-    const ERR_OK = 0;
-    const ERR_ABORT = 1;
-    const ERR_CONTINUE = 2;
+    final public const ERR_OK = 0;
+    final public const ERR_ABORT = 1;
+    final public const ERR_CONTINUE = 2;
 
     public function __construct( $parameters = false )
     {
         $this->initSettings( $parameters );
         $this->initSteps();
-
-        $this->LastErrorCode = eZSiteInstaller::ERR_OK;
     }
 
     /**
@@ -349,11 +347,10 @@ class eZSiteInstaller
         $classAttributeIdentifier = $params['attribute_identifier'];
 
         // get attributes of 'temporary' version as well
-        $classAttributeList = eZContentClassAttribute::fetchFilteredList( array( 'contentclass_id' => $contentClassID,
-                                                                                  'identifier' => $classAttributeIdentifier ),
+        $classAttributeList = eZContentClassAttribute::fetchFilteredList( ['contentclass_id' => $contentClassID, 'identifier' => $classAttributeIdentifier],
                                                                            true );
 
-        $validation = array();
+        $validation = [];
         foreach( $classAttributeList as $classAttribute )
         {
             $dataType = $classAttribute->dataType();
@@ -374,9 +371,7 @@ class eZSiteInstaller
                 if( $removeInfo === false )
                     $removeInfo = "Unknow reason";
 
-                $validation[] = array( 'id' => $classAttribute->attribute( 'id' ),
-                                       'identifier' => $classAttribute->attribute( 'identifier' ),
-                                       'reason' => $removeInfo );
+                $validation[] = ['id' => $classAttribute->attribute( 'id' ), 'identifier' => $classAttribute->attribute( 'identifier' ), 'reason' => $removeInfo];
             }
         }
 
@@ -406,10 +401,11 @@ class eZSiteInstaller
     */
     function addClassAttributes( $params )
     {
+        $class = null;
         $classInfo = $params['class'];
         $attributesInfo = $params['attributes'];
 
-        $classID = isset( $classInfo['id'] ) ? $classInfo['id'] : false;
+        $classID = $classInfo['id'] ?? false;
         if( $classID )
         {
             $class = eZContentClass::fetch( $classID );
@@ -418,7 +414,7 @@ class eZSiteInstaller
         {
             if( isset( $classInfo['identifier'] ) )
             {
-                $class = eZSiteInstaller::classByIdentifier( $classInfo );
+                $class = (new eZSiteInstaller())->classByIdentifier($classInfo);
             }
             else
             {
@@ -441,17 +437,13 @@ class eZSiteInstaller
             $classAttributeIdentifier = $attributeInfo['identifier'];
             $classAttributeName = $attributeInfo['name'];
             $datatype = $attributeInfo['data_type_string'];
-            $defaultValue = isset( $attributeInfo['default_value'] ) ? $attributeInfo['default_value'] : false;
-            $canTranslate = isset( $attributeInfo['can_translate'] ) ? $attributeInfo['can_translate'] : 1;
-            $isRequired   = isset( $attributeInfo['is_required']   ) ? $attributeInfo['is_required'] : 0;
-            $isSearchable = isset( $attributeInfo['is_searchable'] ) ? $attributeInfo['is_searchable'] : 0;
-            $attrContent  = isset( $attributeInfo['content'] ) ? $attributeInfo['content'] : false;
+            $defaultValue = $attributeInfo['default_value'] ?? false;
+            $canTranslate = $attributeInfo['can_translate'] ?? 1;
+            $isRequired   = $attributeInfo['is_required'] ?? 0;
+            $isSearchable = $attributeInfo['is_searchable'] ?? 0;
+            $attrContent  = $attributeInfo['content'] ?? false;
 
-            $attrCreateInfo = array( 'identifier' => $classAttributeIdentifier,
-                                     'name' => $classAttributeName,
-                                     'can_translate' => $canTranslate,
-                                     'is_required' => $isRequired,
-                                     'is_searchable' => $isSearchable );
+            $attrCreateInfo = ['identifier' => $classAttributeIdentifier, 'name' => $classAttributeName, 'can_translate' => $canTranslate, 'is_required' => $isRequired, 'is_searchable' => $isSearchable];
             $newAttribute = eZContentClassAttribute::create( $classID, $datatype, $attrCreateInfo  );
 
             $dataType = $newAttribute->dataType();
@@ -533,16 +525,15 @@ class eZSiteInstaller
         $classInfo = $params['class'];
         $attributesInfo = $params['attributes'];
 
-        $contentClassID = eZSiteInstaller::classIDbyIdentifier( $classInfo );
+        $contentClassID = (new eZSiteInstaller())->classIDbyIdentifier($classInfo);
         if( $contentClassID )
         {
             foreach( $attributesInfo as $attributeInfo )
             {
                 $attributeIdentifier = $attributeInfo['identifier'];
-                $name = isset( $attributeInfo['new_name'] ) ? $attributeInfo['new_name'] : false;
+                $name = $attributeInfo['new_name'] ?? false;
 
-                $classAttributeList = eZContentClassAttribute::fetchFilteredList( array( 'contentclass_id' => $contentClassID,
-                                                                                         'identifier' => $attributeIdentifier ),
+                $classAttributeList = eZContentClassAttribute::fetchFilteredList( ['contentclass_id' => $contentClassID, 'identifier' => $attributeIdentifier],
                                                                                   true );
                 foreach( $classAttributeList as $attribute )
                 {
@@ -604,9 +595,7 @@ class eZSiteInstaller
         if( is_object( $parentNode ) )
         {
             $parentNodeID = $parentNode->attribute( 'node_id' );
-            $object = eZContentFunctions::createAndPublishObject( array( 'parent_node_id' => $parentNodeID,
-                                                                         'class_identifier' => $classIdentifier,
-                                                                         'attributes' => $attributesData ) );
+            $object = eZContentFunctions::createAndPublishObject( ['parent_node_id' => $parentNodeID, 'class_identifier' => $classIdentifier, 'attributes' => $attributesData] );
 
             if( is_object( $object ) )
             {
@@ -642,18 +631,18 @@ class eZSiteInstaller
     function contentObjectByName( $params )
     {
         $objectName = $params['name'];
-        $classID = isset( $params['class_id'] ) ? $params['class_id'] : false;
+        $classID = $params['class_id'] ?? false;
 
         //build up the conditions
-        $conditions = array( 'name' => $objectName );
+        $conditions = ['name' => $objectName];
 
         if( $classID )
-            array_merge( $conditions, array( 'contentclass_id' => $classID ) );
+            [...$conditions, 'contentclass_id' => $classID];
 
         $objectList = eZContentObject::fetchList( true, $conditions, 0, 1 );
 
         $object = false;
-        if( count( $objectList ) > 0 )
+        if( count( (array) $objectList ) > 0 )
             $object = $objectList[0];
 
         return $object;
@@ -696,8 +685,8 @@ class eZSiteInstaller
     */
     function updateObjectAttributeFromString( $params )
     {
-        $objectID = isset( $params['object_id'] ) ? $params['object_id'] : false;
-        $location = isset( $params['location'] ) ? $params['location'] : false;
+        $objectID = $params['object_id'] ?? false;
+        $location = $params['location'] ?? false;
         $classAttrIdentifier = $params['class_attribute_identifier'];
         $stringParam = $params['string'];
 
@@ -712,13 +701,13 @@ class eZSiteInstaller
         }
         else if( $location )
         {
-            $contentObject = $this->contentObjectByUrl( array( 'location' => $location ) );
+            $contentObject = $this->contentObjectByUrl( ['location' => $location] );
         }
 
         if( is_object( $contentObject ) )
         {
             $attributes = $contentObject->contentObjectAttributes();
-            if( count( $attributes ) > 0 )
+            if( (is_countable($attributes) ? count( $attributes ) : 0) > 0 )
             {
                 $objectAttribute = false;
                 foreach( $attributes as $attribute )
@@ -791,7 +780,7 @@ class eZSiteInstaller
                            '  <section>'."\n";
                     {
                         $xml .= '    <paragraph>';
-                        $numSentences = mt_rand( ( int ) $attributeParameters['min_sentences'], ( int ) $attributeParameters['max_sentences'] );
+                        $numSentences = random_int( ( int ) $attributeParameters['min_sentences'], ( int ) $attributeParameters['max_sentences'] );
                         for( $sentence = 0; $sentence < $numSentences; $sentence++ )
                         {
                             if( $sentence != 0 )
@@ -813,10 +802,10 @@ class eZSiteInstaller
 
                 case 'ezmatrix':
                 {
-                    $columnsCount = count( $attrData["MatrixDefinition"]->attribute( 'columns' ) );
+                    $columnsCount = is_countable($attrData["MatrixDefinition"]->attribute( 'columns' )) ? count( $attrData["MatrixDefinition"]->attribute( 'columns' ) ) : 0;
                     if( $columnsCount > 0 )
                     {
-                        $rowsCount = count( $attrData["MatrixCells"] ) / $columnsCount;
+                        $rowsCount = (is_countable($attrData["MatrixCells"]) ? count( $attrData["MatrixCells"] ) : 0) / $columnsCount;
 
                         $tempMatrix = new eZMatrix( $attrData["MatrixTitle"], $rowsCount, $attrData["MatrixDefinition"] );
                         $tempMatrix->Cells = $attrData["MatrixCells"];
@@ -848,7 +837,7 @@ class eZSiteInstaller
                 case 'ezfloat':
                 {
                     $power = 100;
-                    $float = mt_rand( $power * ( int ) $attrData['Min'], $power * ( int ) $attrData['Max'] );
+                    $float = random_int( $power * ( int ) $attrData['Min'], $power * ( int ) $attrData['Max'] );
                     $float = $float / $power;
                     $attribute->setAttribute( 'data_float', $float );
                 } break;
@@ -856,7 +845,7 @@ class eZSiteInstaller
                 case 'ezprice':
                 {
                     $power = 10;
-                    $price = mt_rand( $power * ( int ) $attrData['Min'], $power * ( int ) $attrData['Max'] );
+                    $price = random_int( $power * ( int ) $attrData['Min'], $power * ( int ) $attrData['Max'] );
                     $price = $price / $power;
                     $attribute->setAttribute( 'data_float', $price );
                 } break;
@@ -876,8 +865,8 @@ class eZSiteInstaller
                     }
 
                     $user->setInformation( $objectID,
-                                           md5( time() . '-' . mt_rand() ),
-                                           md5( time() . '-' . mt_rand() ) . '@ez.no',
+                                           md5( time() . '-' . random_int(0, mt_getrandmax()) ),
+                                           md5( time() . '-' . random_int(0, mt_getrandmax()) ) . '@ez.no',
                                            'publish',
                                            'publish' );
                     $user->store();
@@ -1198,7 +1187,7 @@ class eZSiteInstaller
     {
         $roleName = $params['role_name'];
         $policiesDefinition = $params['policies'];
-        $createRoleIfNotExists = isset( $params['create_role'] ) ? $params['create_role'] : true;
+        $createRoleIfNotExists = $params['create_role'] ?? true;
 
         $role = eZRole::fetchByName( $roleName );
         if( is_object( $role ) || $createRoleIfNotExists )
@@ -1210,7 +1199,7 @@ class eZSiteInstaller
             }
 
             $roleID = $role->attribute( 'id' );
-            if( count( $policiesDefinition ) > 0 )
+            if( (is_countable($policiesDefinition) ? count( $policiesDefinition ) : 0) > 0 )
             {
                 foreach( $policiesDefinition as $policyDefinition )
                 {
@@ -1245,7 +1234,7 @@ class eZSiteInstaller
     {
         $roleName = $params['role_name'];
         $policiesDefinition = $params['policies'];
-        $removeRoleIfEmpty = isset( $params['remove_role'] ) ? $params['remove_role'] : true;
+        $removeRoleIfEmpty = $params['remove_role'] ?? true;
 
         $role = eZRole::fetchByName( $roleName );
         if( is_object( $role ) )
@@ -1255,7 +1244,7 @@ class eZSiteInstaller
                 $role->removePolicy( $policyDefinition['module'], $policyDefinition['function'] );
             }
 
-            if( $removeRoleIfEmpty && count( $role->policyList() ) == 0 )
+            if( $removeRoleIfEmpty && (is_countable($role->policyList()) ? is_countable($role->policyList()) ? count( $role->policyList() ) : 0 : 0) == 0 )
             {
                 $role->removeThis();
             }
@@ -1284,7 +1273,7 @@ class eZSiteInstaller
         $sectionID = false;
         $sectionName = $params['section_name'];
 
-        $sectionList = eZSection::fetchFilteredList( array( 'name' => $sectionName ), false, false, true );
+        $sectionList = eZSection::fetchFilteredList( ['name' => $sectionName], false, false, true );
 
         if( is_array( $sectionList ) && count( $sectionList ) > 0 )
         {
@@ -1311,7 +1300,7 @@ class eZSiteInstaller
         $sectionName = $params['name'];
         $navigationPart = $params['navigation_part_identifier'];
 
-        $section = new eZSection( array() );
+        $section = new eZSection( [] );
         $section->setAttribute( 'name', $sectionName );
         $section->setAttribute( 'navigation_part_identifier', $navigationPart );
         $section->store();
@@ -1425,7 +1414,7 @@ class eZSiteInstaller
     */
     function languageNameListFromLocaleList( $localeList )
     {
-        $languageList = array();
+        $languageList = [];
         foreach( $localeList as $locale )
             $languageList[] = $this->languageNameFromLocale( $locale );
 
@@ -1438,8 +1427,8 @@ class eZSiteInstaller
     */
     function languageNameFromLocale( $locale )
     {
-         $pos = strpos( $locale , "-");
-         $languageName = substr( $locale , 0, $pos );
+         $pos = strpos( (string) $locale , "-");
+         $languageName = substr( (string) $locale , 0, $pos );
          return $languageName;
     }
 
@@ -1450,7 +1439,7 @@ class eZSiteInstaller
     {
         $hostname = false;
 
-        $parts = parse_url( $uri );
+        $parts = parse_url( (string) $uri );
 
         if ( isset( $parts['host'] ) )
             $hostname = $parts['host'];
@@ -1470,13 +1459,13 @@ class eZSiteInstaller
     */
     function createSiteaccessUrls( $params )
     {
-        $urlList = array();
+        $urlList = [];
 
         $siteaccessList = $params['siteaccess_list'];
         $accessType = $params['access_type'];
         $accessTypeValue = $params['access_type_value'];
 
-        $excludePortList = isset( $params['exclude_port_list'] ) ? $params['exclude_port_list'] : array();
+        $excludePortList = $params['exclude_port_list'] ?? [];
 
         $hostname = false;
 
@@ -1522,7 +1511,7 @@ class eZSiteInstaller
                         if ( $prependSiteAccess )
                         {
                             // replace undescores with dashes( '_' -> '-' );
-                            $hostPrefix = preg_replace( '/(_)/', '-', $siteaccess);
+                            $hostPrefix = preg_replace( '/(_)/', '-', (string) $siteaccess);
 
                             // create url and host
                             $urlList[$siteaccess]['url'] = $hostPrefix . '.' . $hostname . $indexFile;
@@ -1561,7 +1550,7 @@ class eZSiteInstaller
     {
         $srcSiteaccess = $params['src']['siteaccess'];
         $dstSiteaccess = $params['dst']['siteaccess'];
-        $dstSettings   = isset( $params['dst']['settings'] ) ? $params['dst']['settings'] : array();
+        $dstSettings   = $params['dst']['settings'] ?? [];
 
         // Create the siteaccess directory
         $srcSiteaccessDir = "settings/siteaccess/" . $srcSiteaccess;
@@ -1588,7 +1577,7 @@ class eZSiteInstaller
 
         // Create roles
         $role = eZRole::fetchByName( "Anonymous" );
-        $role->appendPolicy( "user", "login", array( "SiteAccess" => array( eZSys::ezcrc32( $dstSiteaccess ) ) ) );
+        $role->appendPolicy( "user", "login", ["SiteAccess" => [eZSys::ezcrc32( $dstSiteaccess )]] );
         $role->store();
     }
 
@@ -1613,7 +1602,7 @@ class eZSiteInstaller
     {
         $db = eZDB::instance();
 
-        $name = strtolower( $this->solutionName() );
+        $name = strtolower( (string) $this->solutionName() );
         $version = $this->solutionVersion();
 
         $result = $db->query( "INSERT INTO ezsite_data VALUES( '$name', '$version' )" );
@@ -1655,7 +1644,7 @@ class eZSiteInstaller
                 $policies = $roleData['policies'];
                 foreach( $policies as $policy )
                 {
-                    $role->appendPolicy( $policy['module'], $policy['function'], isset( $policy['limitation'] ) ? $policy['limitation'] : array() );
+                    $role->appendPolicy( $policy['module'], $policy['function'], $policy['limitation'] ?? [] );
                 }
             }
 
@@ -1704,11 +1693,11 @@ class eZSiteInstaller
     {
         $value = $defaultValue;
 
-        $pos = strpos( $name, '/' );
+        $pos = strpos( (string) $name, '/' );
         if( $pos !== false )
         {
-            $dim1 = substr( $name, 0, $pos );
-            $dim2 = substr( $name, $pos + 1 );
+            $dim1 = substr( (string) $name, 0, $pos );
+            $dim2 = substr( (string) $name, $pos + 1 );
             if( isset( $params[$dim1][$dim2] ) )
             {
                 $value = $params[$dim1][$dim2];
@@ -1745,7 +1734,7 @@ class eZSiteInstaller
     // define an order of functions to execute.
     public $Steps;
     // hold an error code of last executed step.
-    public $LastErrorCode;
+    public $LastErrorCode = eZSiteInstaller::ERR_OK;
 }
 
 ?>

@@ -10,64 +10,26 @@
 
 class eZCurrencyData extends eZPersistentObject
 {
-    const DEFAULT_AUTO_RATE_VALUE = '0.0000';
-    const DEFAULT_CUSTOM_RATE_VALUE = '0.0000';
-    const DEFAULT_RATE_FACTOR_VALUE = '1.0000';
+    final public const DEFAULT_AUTO_RATE_VALUE = '0.0000';
+    final public const DEFAULT_CUSTOM_RATE_VALUE = '0.0000';
+    final public const DEFAULT_RATE_FACTOR_VALUE = '1.0000';
 
-    const ERROR_OK = 0;
-    const ERROR_UNKNOWN = 1;
-    const ERROR_INVALID_CURRENCY_CODE = 2;
-    const ERROR_CURRENCY_EXISTS = 3;
+    final public const ERROR_OK = 0;
+    final public const ERROR_UNKNOWN = 1;
+    final public const ERROR_INVALID_CURRENCY_CODE = 2;
+    final public const ERROR_CURRENCY_EXISTS = 3;
 
-    const STATUS_ACTIVE = '1';
-    const STATUS_INACTIVE = '2';
+    final public const STATUS_ACTIVE = '1';
+    final public const STATUS_INACTIVE = '2';
 
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->RateValue = false;
     }
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'code' => array( 'name' => 'Code',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         'symbol' => array( 'name' => 'Symbol',
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => false ),
-                                         'locale' => array( 'name' => 'Locale',
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => false ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'auto_rate_value' => array( 'name' => 'AutoRateValue',
-                                                                'datatype' => 'string',
-                                                                'default' => self::DEFAULT_AUTO_RATE_VALUE,
-                                                                'required' => false ),
-                                         'custom_rate_value' => array( 'name' => 'CustomRateValue',
-                                                                  'datatype' => 'string',
-                                                                  'default' => self::DEFAULT_CUSTOM_RATE_VALUE,
-                                                                  'required' => false ),
-                                         'rate_factor' => array( 'name' => 'RateFactor',
-                                                                 'datatype' => 'string',
-                                                                 'default' => self::DEFAULT_RATE_FACTOR_VALUE,
-                                                                 'required' => false ) ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'function_attributes' => array( 'rate_value' => 'rateValue' ),
-                      'class_name' => "eZCurrencyData",
-                      'sort' => array( 'code' => 'asc' ),
-                      'name' => "ezcurrencydata" );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'code' => ['name' => 'Code', 'datatype' => 'string', 'default' => '', 'required' => true], 'symbol' => ['name' => 'Symbol', 'datatype' => 'string', 'default' => '', 'required' => false], 'locale' => ['name' => 'Locale', 'datatype' => 'string', 'default' => '', 'required' => false], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'auto_rate_value' => ['name' => 'AutoRateValue', 'datatype' => 'string', 'default' => self::DEFAULT_AUTO_RATE_VALUE, 'required' => false], 'custom_rate_value' => ['name' => 'CustomRateValue', 'datatype' => 'string', 'default' => self::DEFAULT_CUSTOM_RATE_VALUE, 'required' => false], 'rate_factor' => ['name' => 'RateFactor', 'datatype' => 'string', 'default' => self::DEFAULT_RATE_FACTOR_VALUE, 'required' => false]], 'keys' => ['id'], 'increment_key' => 'id', 'function_attributes' => ['rate_value' => 'rateValue'], 'class_name' => "eZCurrencyData", 'sort' => ['code' => 'asc'], 'name' => "ezcurrencydata"];
     }
 
     /*!
@@ -77,11 +39,11 @@ class eZCurrencyData extends eZPersistentObject
     */
     static function fetchList( $conditions = null, $asObjects = true, $offset = false, $limit = false, $asHash = true )
     {
-        $currencyList = array();
+        $currencyList = [];
         $sort = null;
         $limitation = null;
         if ( $offset !== false or $limit !== false )
-            $limitation = array( 'offset' => $offset, 'length' => $limit );
+            $limitation = ['offset' => $offset, 'length' => $limit];
 
         $rows = eZPersistentObject::fetchObjectList( eZCurrencyData::definition(),
                                                      null,
@@ -90,7 +52,7 @@ class eZCurrencyData extends eZPersistentObject
                                                      $limitation,
                                                      $asObjects );
 
-        if ( count( $rows ) > 0 )
+        if ( count( (array) $rows ) > 0 )
         {
             if ( $asHash )
             {
@@ -118,14 +80,13 @@ class eZCurrencyData extends eZPersistentObject
     static function fetchListCount( $conditions = null )
     {
         $rows = eZPersistentObject::fetchObjectList( eZCurrencyData::definition(),
-                                                     array(),
+                                                     [],
                                                      $conditions,
                                                      false,
                                                      null,
                                                      false,
                                                      false,
-                                                     array( array( 'operation' => 'count( * )',
-                                                                   'name' => 'count' ) ) );
+                                                     [['operation' => 'count( * )', 'name' => 'count']] );
         return $rows[0]['count'];
     }
 
@@ -136,7 +97,7 @@ class eZCurrencyData extends eZPersistentObject
     {
         if ( $currencyCode )
         {
-            $currency = eZCurrencyData::fetchList( array( 'code' => $currencyCode ), $asObject );
+            $currency = eZCurrencyData::fetchList( ['code' => $currencyCode], $asObject );
             if ( is_array( $currency ) && count( $currency ) > 0 )
                 return $currency[$currencyCode];
         }
@@ -192,17 +153,11 @@ class eZCurrencyData extends eZPersistentObject
     */
     static function create( $code, $symbol, $locale, $autoRateValue, $customRateValue, $rateFactor, $status = self::STATUS_ACTIVE )
     {
-        $code = strtoupper( $code );
+        $code = strtoupper( (string) $code );
         $errCode = eZCurrencyData::canCreate( $code );
         if ( $errCode === self::ERROR_OK )
         {
-            $currency = new eZCurrencyData( array( 'code' => $code,
-                                                   'symbol' => $symbol,
-                                                   'locale' => $locale,
-                                                   'status' => $status,
-                                                   'auto_rate_value' => $autoRateValue,
-                                                   'custom_rate_value' => $customRateValue,
-                                                   'rate_factor' => $rateFactor ) );
+            $currency = new eZCurrencyData( ['code' => $code, 'symbol' => $symbol, 'locale' => $locale, 'status' => $status, 'auto_rate_value' => $autoRateValue, 'custom_rate_value' => $customRateValue, 'rate_factor' => $rateFactor] );
             $currency->setHasDirtyData( true );
             return $currency;
         }
@@ -227,7 +182,7 @@ class eZCurrencyData extends eZPersistentObject
     */
     static function validateCurrencyCode( $code )
     {
-        if ( !preg_match( "/^[A-Z]{3}$/", $code ) )
+        if ( !preg_match( "/^[A-Z]{3}$/", (string) $code ) )
             return self::ERROR_INVALID_CURRENCY_CODE;
 
         return self::ERROR_OK;
@@ -251,7 +206,7 @@ class eZCurrencyData extends eZPersistentObject
             $db = eZDB::instance();
             $db->begin();
                 eZPersistentObject::removeObject( eZCurrencyData::definition(),
-                                                  array( 'code' => array( $currencyCodeList ) ) );
+                                                  ['code' => [$currencyCodeList]] );
             $db->commit();
         }
     }
@@ -291,18 +246,11 @@ class eZCurrencyData extends eZPersistentObject
     */
     static function errorMessage( $errorCode )
     {
-        switch ( $errorCode )
-        {
-            case self::ERROR_INVALID_CURRENCY_CODE:
-                return ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Invalid characters in currency code.' );
-
-            case self::ERROR_CURRENCY_EXISTS:
-                return ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Currency already exists.' );
-
-            case self::ERROR_UNKNOWN:
-            default:
-                return ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Unknown error.' );
-        }
+        return match ($errorCode) {
+            self::ERROR_INVALID_CURRENCY_CODE => ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Invalid characters in currency code.' ),
+            self::ERROR_CURRENCY_EXISTS => ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Currency already exists.' ),
+            default => ezpI18n::tr( 'kernel/shop/classes/ezcurrencydata', 'Unknown error.' ),
+        };
     }
 
     function store( $fieldFilters = null )
@@ -317,7 +265,7 @@ class eZCurrencyData extends eZPersistentObject
         return ( $this->attribute( 'status' ) == self::STATUS_ACTIVE );
     }
 
-    public $RateValue;
+    public $RateValue = false;
 }
 
 ?>

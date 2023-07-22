@@ -32,8 +32,6 @@ class ezpDatabaseHelper
 
     /**
      * Sets the global ezpDatabaseHelper instance to \a $instance.
-     *
-     * @param ezpDatabaseHelper $instance
      */
     static function setInstance( ezpDatabaseHelper $instance )
     {

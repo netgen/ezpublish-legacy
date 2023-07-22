@@ -30,7 +30,7 @@ if ( $http->hasPostVariable( "EditGroupButton" ) && $http->hasPostVariable( "Edi
 
 if ( $http->hasPostVariable( "NewGroupButton" ) )
 {
-    $params = array();
+    $params = [];
     $Module->run( "groupedit", $params );
     return;
 }
@@ -43,17 +43,14 @@ if ( $http->hasPostVariable( "NewClassButton" ) )
         $group = eZContentClassGroup::fetch( $groupID );
         $groupName = $group->attribute( 'name' );
 
-        $params = array( null, $groupID, $groupName );
+        $params = [null, $groupID, $groupName];
         return $Module->run( "edit", $params );
     }
 }
 
 if ( !isset( $TemplateData ) or !is_array( $TemplateData ) )
 {
-    $TemplateData = array( array( "name" => "groups",
-                                  "http_base" => "ContentClass",
-                                  "data" => array( "command" => "group_list",
-                                                   "type" => "class" ) ) );
+    $TemplateData = [["name" => "groups", "http_base" => "ContentClass", "data" => ["command" => "group_list", "type" => "class"]]];
 }
 
 $Module->setTitle( ezpI18n::tr( 'kernel/class', 'Class group list' ) );
@@ -64,7 +61,7 @@ foreach( $TemplateData as $tpldata )
 {
     $tplname = $tpldata["name"];
     $data = $tpldata["data"];
-    $asObject = isset( $data["as_object"] ) ? $data["as_object"] : true;
+    $asObject = $data["as_object"] ?? true;
     $base = $tpldata["http_base"];
     unset( $list );
     $list = eZContentClassGroup::fetchList( false, $asObject );
@@ -73,9 +70,8 @@ foreach( $TemplateData as $tpldata )
 
 $tpl->setVariable( "module", $Module );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:class/grouplist.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/class', 'Class groups' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/class', 'Class groups' )]];
 
 ?>

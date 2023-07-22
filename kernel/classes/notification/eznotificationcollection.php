@@ -17,49 +17,13 @@ class eZNotificationCollection extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "event_id" => array( 'name' => "EventID",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZNotificationEvent',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         "handler" => array( 'name' => "Handler",
-                                                             'datatype' => 'string',
-                                                             'default' => '',
-                                                             'required' => true ),
-                                         "transport" => array( 'name' => "Transport",
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         "data_subject" => array( 'name' => "DataText1",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "data_text" => array( 'name' => "DataText2",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'items' => 'items',
-                                                      'items_to_send' => 'itemsToSend',
-                                                      'item_count' => 'itemCount' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZNotificationCollection",
-                      "name" => "eznotificationcollection" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "event_id" => ['name' => "EventID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZNotificationEvent', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "handler" => ['name' => "Handler", 'datatype' => 'string', 'default' => '', 'required' => true], "transport" => ['name' => "Transport", 'datatype' => 'string', 'default' => '', 'required' => true], "data_subject" => ['name' => "DataText1", 'datatype' => 'text', 'default' => '', 'required' => true], "data_text" => ['name' => "DataText2", 'datatype' => 'text', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ['items' => 'items', 'items_to_send' => 'itemsToSend', 'item_count' => 'itemCount'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZNotificationCollection", "name" => "eznotificationcollection"];
     }
 
 
     static function create( $eventID, $handler, $transport )
     {
-        return new eZNotificationCollection( array( 'event_id' => $eventID,
-                                                    'handler' => $handler,
-                                                    'transport' => $transport ) );
+        return new eZNotificationCollection( ['event_id' => $eventID, 'handler' => $handler, 'transport' => $transport] );
     }
 
     function addItem( $address, $sendDate = 0 )
@@ -72,46 +36,40 @@ class eZNotificationCollection extends eZPersistentObject
     function items()
     {
         return eZPersistentObject::fetchObjectList( eZNotificationCollectionItem::definition(),
-                                                    null, array( 'collection_id' => $this->attribute( 'id' ) ), null,null,
+                                                    null, ['collection_id' => $this->attribute( 'id' )], null,null,
                                                     true );
     }
 
     function itemCount()
     {
         $result = eZPersistentObject::fetchObjectList( eZNotificationCollectionItem::definition(),
-                                                       array(),
-                                                       array( 'collection_id' => $this->attribute( 'id' ) ),
+                                                       [],
+                                                       ['collection_id' => $this->attribute( 'id' )],
                                                        false,
                                                        null,
                                                        false,
                                                        false,
-                                                       array( array( 'operation' => 'count( * )',
-                                                                     'name' => 'count' ) ) );
+                                                       [['operation' => 'count( * )', 'name' => 'count']] );
         return $result[0]['count'];
     }
 
     function itemsToSend()
     {
         return eZPersistentObject::fetchObjectList( eZNotificationCollectionItem::definition(),
-                                                    null, array( 'collection_id' => $this->attribute( 'id' ),
-                                                                 'send_date' => 0 ),
+                                                    null, ['collection_id' => $this->attribute( 'id' ), 'send_date' => 0],
                                                     null, null, true );
     }
 
     static function fetchForHandler( $handler, $eventID, $transport )
     {
         return eZPersistentObject::fetchObject( eZNotificationCollection::definition(), null,
-                                                array( 'event_id' => $eventID,
-                                                       'handler'=> $handler,
-                                                       'transport' => $transport ) );
+                                                ['event_id' => $eventID, 'handler'=> $handler, 'transport' => $transport] );
     }
 
     static function fetchListForHandler( $handler, $eventID, $transport )
     {
         return eZPersistentObject::fetchObjectList( eZNotificationCollection::definition(), null,
-                                                    array( 'event_id' => $eventID,
-                                                           'handler'=> $handler,
-                                                           'transport' => $transport ) );
+                                                    ['event_id' => $eventID, 'handler'=> $handler, 'transport' => $transport] );
     }
 
     /*!
@@ -135,7 +93,7 @@ class eZNotificationCollection extends eZPersistentObject
         $db->begin();
         foreach ( $idArray as $id )
         {
-            eZPersistentObject::removeObject( eZNotificationCollection::definition(), array( 'id' => $id['id'] ) );
+            eZPersistentObject::removeObject( eZNotificationCollection::definition(), ['id' => $id['id']] );
         }
         $db->commit();
     }

@@ -18,8 +18,8 @@
 
 class eZLog
 {
-    const MAX_LOGROTATE_FILES = 3;
-    const MAX_LOGFILE_SIZE = 204800; // 200*1024
+    final public const MAX_LOGROTATE_FILES = 3;
+    final public const MAX_LOGFILE_SIZE = 204800; // 200*1024
 
     /*!
      \static
@@ -53,7 +53,7 @@ class eZLog
             if ( !$fileExisted )
             {
                 $ini = eZINI::instance();
-                $permissions = octdec( $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
+                $permissions = octdec( (string) $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
                 @chmod( $fileName, $permissions );
             }
             @umask( $oldumask );
@@ -92,7 +92,7 @@ class eZLog
 
         if ( $dir !== false )
         {
-            $dir = preg_replace( "#/$#", "", $dir );
+            $dir = preg_replace( "#/$#", "", (string) $dir );
             $dir .= "/";
         }
         else
@@ -109,7 +109,7 @@ class eZLog
             @fclose( $logFile );
             if ( !$fileExisted )
             {
-                $permissions = octdec( $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
+                $permissions = octdec( (string) $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
                 @chmod( $fileName, $permissions );
             }
             @umask( $oldumask );

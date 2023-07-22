@@ -24,30 +24,26 @@
 class eZApproveCollaborationHandler extends eZCollaborationItemHandler
 {
     /// Approval message type
-    const MESSAGE_TYPE_APPROVE = 1;
+    final public const MESSAGE_TYPE_APPROVE = 1;
 
     /// Default status, no approval decision has been made
-    const STATUS_WAITING = 0;
+    final public const STATUS_WAITING = 0;
 
     /// The contentobject was approved and will be published.
-    const STATUS_ACCEPTED = 1;
+    final public const STATUS_ACCEPTED = 1;
 
     /// The contentobject was denied and will be archived.
-    const STATUS_DENIED = 2;
+    final public const STATUS_DENIED = 2;
 
     /// The contentobject was deferred and will be a draft again for reediting.
-    const STATUS_DEFERRED = 3;
+    final public const STATUS_DEFERRED = 3;
 
     public function __construct()
     {
         parent::__construct(
             'ezapprove',
             ezpI18n::tr( 'kernel/classes', 'Approval' ),
-            array(
-                'use-messages' => true,
-                'notification-types' => true,
-                'notification-collection-handling' => eZCollaborationItemHandler::NOTIFICATION_COLLECTION_PER_PARTICIPATION_ROLE
-            )
+            ['use-messages' => true, 'notification-types' => true, 'notification-collection-handling' => eZCollaborationItemHandler::NOTIFICATION_COLLECTION_PER_PARTICIPATION_ROLE]
         );
     }
 
@@ -58,9 +54,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
 
     function content( $collaborationItem )
     {
-        return array( "content_object_id" => $collaborationItem->attribute( "data_int1" ),
-                      "content_object_version" => $collaborationItem->attribute( "data_int2" ),
-                      "approval_status" => $collaborationItem->attribute( "data_int3" ) );
+        return ["content_object_id" => $collaborationItem->attribute( "data_int1" ), "content_object_version" => $collaborationItem->attribute( "data_int2" ), "approval_status" => $collaborationItem->attribute( "data_int3" )];
     }
 
     function notificationParticipantTemplate( $participantRole )
@@ -100,7 +94,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
     */
     function messageCount( $collaborationItem )
     {
-        return eZCollaborationItemMessageLink::fetchItemCount( array( 'item_id' => $collaborationItem->attribute( 'id' ) ) );
+        return eZCollaborationItemMessageLink::fetchItemCount( ['item_id' => $collaborationItem->attribute( 'id' )] );
     }
 
     /*!
@@ -112,8 +106,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
         $status = $collaborationItem->attribute( 'user_status' );
         if ( $status )
             $lastRead = $status->attribute( 'last_read' );
-        return eZCollaborationItemMessageLink::fetchItemCount( array( 'item_id' => $collaborationItem->attribute( 'id' ),
-                                                                      'conditions' => array( 'modified' => array( '>', $lastRead ) ) ) );
+        return eZCollaborationItemMessageLink::fetchItemCount( ['item_id' => $collaborationItem->attribute( 'id' ), 'conditions' => ['modified' => ['>', $lastRead]]] );
     }
 
     /*!
@@ -144,7 +137,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
             $timestamp = time();
             $collaborationItem->setAttribute( 'modified', $timestamp );
             $collaborationItem->store();
-            $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( array( 'item_id' => $approvalID ) );
+            $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( ['item_id' => $approvalID] );
             foreach( $participantList as $participantLink )
             {
                 $collaborationItem->setIsActive( true, $participantLink->attribute( 'participant_id' ) );
@@ -169,10 +162,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
         $collaborationItem->store();
         $collaborationID = $collaborationItem->attribute( 'id' );
 
-        $participantList = array( array( 'id' => array( $authorID ),
-                                         'role' => eZCollaborationItemParticipantLink::ROLE_AUTHOR ),
-                                  array( 'id' => $approverIDArray,
-                                         'role' => eZCollaborationItemParticipantLink::ROLE_APPROVER ) );
+        $participantList = [['id' => [$authorID], 'role' => eZCollaborationItemParticipantLink::ROLE_AUTHOR], ['id' => $approverIDArray, 'role' => eZCollaborationItemParticipantLink::ROLE_APPROVER]];
         foreach ( $participantList as $participantItem )
         {
             foreach( $participantItem['id'] as $participantID )
@@ -199,7 +189,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
     function handleCustomAction( $module, $collaborationItem )
     {
         $redirectView = 'item';
-        $redirectParameters = array( 'full', $collaborationItem->attribute( 'id' ) );
+        $redirectParameters = ['full', $collaborationItem->attribute( 'id' )];
         $addComment = false;
 
         if ( $this->isCustomAction( 'Comment' ) )
@@ -213,7 +203,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
             // check user's rights to approve
             $user = eZUser::currentUser();
             $userID = $user->attribute( 'contentobject_id' );
-            $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( array( 'item_id' => $collaborationItem->attribute( 'id' ) ) );
+            $participantList = eZCollaborationItemParticipantLink::fetchParticipantList( ['item_id' => $collaborationItem->attribute( 'id' )] );
 
             $approveAllowed = false;
             foreach( $participantList as $participant )
@@ -230,7 +220,7 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
                 return $module->redirectToView( $redirectView, $redirectParameters );
             }
 
-            $contentObjectVersion = $this->contentObjectVersion( $collaborationItem );
+            $contentObjectVersion = static::contentObjectVersion($collaborationItem);
             $status = self::STATUS_DENIED;
             if ( $this->isCustomAction( 'Accept' ) )
                 $status = self::STATUS_ACCEPTED;
@@ -247,13 +237,13 @@ class eZApproveCollaborationHandler extends eZCollaborationItemHandler
             $collaborationItem->setAttribute( 'modified', $timestamp );
             $collaborationItem->setIsActive( false );
             $redirectView = 'view';
-            $redirectParameters = array( 'summary' );
+            $redirectParameters = ['summary'];
             $addComment = true;
         }
         if ( $addComment )
         {
             $messageText = $this->customInput( 'ApproveComment' );
-            if ( trim( $messageText ) != '' )
+            if ( trim( (string) $messageText ) != '' )
             {
                 $message = eZCollaborationSimpleMessage::create( 'ezapprove_comment', $messageText );
                 $message->store();

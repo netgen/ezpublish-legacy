@@ -84,37 +84,26 @@ class ezpRestHttpRequestParser extends ezcMvcHttpRequestParser
      */
     protected function fillVariables()
     {
-        $variables = array();
-        $internalVariables = array( 'ResponseGroups' ); // Expected variables
+        $variables = [];
+        $internalVariables = ['ResponseGroups']; // Expected variables
 
         foreach( $internalVariables as $internalVariable )
         {
             if( isset( $_GET[$internalVariable] ) )
             {
-                // Extract and organize variables as expected
-                switch( $internalVariable )
-                {
-                    case 'ResponseGroups':
-                        $variables[$internalVariable] = explode( ',', $_GET[$internalVariable] );
-                        break;
-
-                    default:
-                        $variables[$internalVariable] = $_GET[$internalVariable];
-                }
+                $variables[$internalVariable] = match ($internalVariable) {
+                    'ResponseGroups' => explode( ',', (string) $_GET[$internalVariable] ),
+                    default => $_GET[$internalVariable],
+                };
 
                 unset( $_GET[$internalVariable] );
             }
             else
             {
-                switch( $internalVariable )
-                {
-                    case 'ResponseGroups':
-                        $variables[$internalVariable] = array();
-                        break;
-
-                    default:
-                        $variables[$internalVariable] = null;
-                }
+                $variables[$internalVariable] = match ($internalVariable) {
+                    'ResponseGroups' => [],
+                    default => null,
+                };
             }
         }
 
@@ -128,20 +117,16 @@ class ezpRestHttpRequestParser extends ezcMvcHttpRequestParser
      */
     protected function fillContentVariables()
     {
-        $contentVariables = array();
-        $expectedVariables = array( 'Translation', 'OutputFormat' );
+        $contentVariables = [];
+        $expectedVariables = ['Translation', 'OutputFormat'];
 
         foreach( $expectedVariables as $variable )
         {
             if( isset( $_GET[$variable] ) )
             {
-                // Extract and organize variables as expected
-                switch( $variable )
-                {
-                    case 'Translation': // @TODO => Make some control on the locale provided
-                    default:
-                        $contentVariables[$variable] = $_GET[$variable];
-                }
+                $contentVariables[$variable] = match ($variable) {
+                    default => $_GET[$variable],
+                };
 
                 unset( $_GET[$variable] );
             }
@@ -160,7 +145,7 @@ class ezpRestHttpRequestParser extends ezcMvcHttpRequestParser
     protected function processProtocol()
     {
         $req = $this->request;
-        $req->originalProtocol = $req->protocol = 'http-' . ( isset( $_SERVER['REQUEST_METHOD'] ) ? strtolower( $_SERVER['REQUEST_METHOD'] ) : "get" );
+        $req->originalProtocol = $req->protocol = 'http-' . ( isset( $_SERVER['REQUEST_METHOD'] ) ? strtolower( (string) $_SERVER['REQUEST_METHOD'] ) : "get" );
 
         // Adds support for using POST for PUT and DELETE for legacy browsers that does not support these.
         // If a post param "_method" is set to either PUT or DELETE, then ->protocol is changed to that.
@@ -168,7 +153,7 @@ class ezpRestHttpRequestParser extends ezcMvcHttpRequestParser
         // Post is used as this is only meant for forms in legacy browsers.
         if ( $req->protocol === 'http-post' && isset( $_POST['_method'] ) )
         {
-            $method = strtolower( $_POST['_method'] );
+            $method = strtolower( (string) $_POST['_method'] );
             if ( $method  === 'put' || $method === 'delete' )
                 $req->protocol = "http-{$method}";
 

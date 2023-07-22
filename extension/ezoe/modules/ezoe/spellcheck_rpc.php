@@ -20,7 +20,7 @@ function getRequestParam($name, $default_value = false, $sanitize = false)
 
     if (is_array($_REQUEST[$name]))
     {
-        $newarray = array();
+        $newarray = [];
 
         foreach ($_REQUEST[$name] as $name => $value)
             $newarray[formatParam($name, $sanitize)] = formatParam($value, $sanitize);
@@ -32,7 +32,7 @@ function getRequestParam($name, $default_value = false, $sanitize = false)
 }
 
 
-$config = array();
+$config = [];
 // see doc page: http://wiki.moxiecode.com/index.php/TinyMCE:Plugins/spellchecker
 // General settings
 $config['general.engine'] = 'GoogleSpell';
@@ -40,7 +40,7 @@ $config['general.engine'] = 'GoogleSpell';
 // Get from ezoe.ini settings if defined and if it has any values
 $ezoeIni  = eZINI::instance( 'ezoe.ini' );
 if ( $ezoeIni->hasVariable( 'SpellChecker', 'config' )
-  && count( $ezoeIni->variable( 'SpellChecker', 'config' ) ) )
+  && (is_countable($ezoeIni->variable( 'SpellChecker', 'config' )) ? count( $ezoeIni->variable( 'SpellChecker', 'config' ) ) : 0) )
 {
     $config = $ezoeIni->variable( 'SpellChecker', 'config' );
 }
@@ -111,13 +111,13 @@ if (!$raw)
 // Passthrough request to remote server
 if (isset($config['general.remote_rpc_url']))
 {
-    $url = parse_url($config['general.remote_rpc_url']);
+    $url = parse_url((string) $config['general.remote_rpc_url']);
 
     // Setup request
     $req = "POST " . $url["path"] . " HTTP/1.0\r\n";
     $req .= "Connection: close\r\n";
     $req .= "Host: " . $url['host'] . "\r\n";
-    $req .= "Content-Length: " . strlen($raw) . "\r\n";
+    $req .= "Content-Length: " . strlen((string) $raw) . "\r\n";
     $req .= "\r\n" . $raw;
 
     if (!isset($url['port']) || !$url['port'])
@@ -149,13 +149,13 @@ if (isset($config['general.remote_rpc_url']))
 // Get JSON data
 //$json = new Moxiecode_JSON();
 //$input = $json->decode( $raw );
-$input = json_decode( $raw, true );
+$input = json_decode( (string) $raw, true, 512, JSON_THROW_ON_ERROR );
 
 // Execute RPC
 if (isset($config['general.engine']) && class_exists( $config['general.engine'] ))
 {
     $spellchecker = new $config['general.engine']($config);
-    $result = call_user_func_array(array($spellchecker, $input['method']), $input['params']);
+    $result = call_user_func_array([$spellchecker, $input['method']], $input['params']);
 }
 else
 {
@@ -165,11 +165,7 @@ else
 }
 
 // Request and response id should always be the same
-$output = array(
-    "id" => $input['id'],
-    "result" => $result,
-    "error" => null
-);
+$output = ["id" => $input['id'], "result" => $result, "error" => null];
 
 echo "/*\r\n";
 eZDebug::printReport( false, false );
@@ -177,7 +173,7 @@ echo "*/\r\n";
 
 // Return JSON encoded string
 //echo $json->encode( $output );
-echo json_encode( $output );
+echo json_encode( $output, JSON_THROW_ON_ERROR );
 
 eZDB::checkTransactionCounter();
 eZExecution::cleanExit();

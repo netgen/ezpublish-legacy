@@ -17,16 +17,16 @@
 
 class eZTimeType extends eZDataType
 {
-    const DATA_TYPE_STRING = "eztime";
-    const DEFAULT_FIELD = 'data_int1';
-    const USE_SECONDS_FIELD = 'data_int2';
-    const DEFAULT_EMTPY = 0;
-    const DEFAULT_CURRENT_DATE = 1;
+    final public const DATA_TYPE_STRING = "eztime";
+    final public const DEFAULT_FIELD = 'data_int1';
+    final public const USE_SECONDS_FIELD = 'data_int2';
+    final public const DEFAULT_EMTPY = 0;
+    final public const DEFAULT_CURRENT_DATE = 1;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Time", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -190,12 +190,7 @@ class eZTimeType extends eZDataType
 
         }
         else
-            $time = array( 'timestamp' => '',
-                           'time_of_day' => '',
-                           'hour' => '',
-                           'minute' => '',
-                           'second' => '',
-                           'is_valid' => false );
+            $time = ['timestamp' => '', 'time_of_day' => '', 'hour' => '', 'minute' => '', 'second' => '', 'is_valid' => false];
         return $time;
     }
 
@@ -235,7 +230,7 @@ class eZTimeType extends eZDataType
     {
         if ( $string != '' )
         {
-            list( $hour, $minute, $second ) = explode( ':', $string );
+            [$hour, $minute, $second] = explode( ':', (string) $string );
             if ( $hour == '' || $minute == '' )
                 return false;
             if ( $second == '' )
@@ -360,7 +355,7 @@ class eZTimeType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $defaultNode = $attributeParametersNode->getElementsByTagName( 'default-value' )->item( 0 );
-        $defaultValue = strtolower( $defaultNode->getAttribute( 'type' ) );
+        $defaultValue = strtolower( (string) $defaultNode->getAttribute( 'type' ) );
         switch ( $defaultValue )
         {
             case 'empty':
@@ -436,10 +431,10 @@ class eZTimeType extends eZDataType
         {
             $time = new eZTime();
             $default = $time->timeOfDay();
-            return array( 'data_int' => $default, 'sort_key_int' => $default );
+            return ['data_int' => $default, 'sort_key_int' => $default];
         }
 
-        return array();
+        return [];
     }
 }
 

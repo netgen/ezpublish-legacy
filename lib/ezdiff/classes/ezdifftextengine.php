@@ -25,28 +25,22 @@ class eZDiffTextEngine extends eZDiffEngine
     */
     function createDifferenceObject( $fromData, $toData )
     {
-        $pattern = array( '/[ ][ ]+/',
-                          '/ \n( \n)+/',
-                          '/^ /m',
-                          '/(\n){3,}/' );
-        $replace = array( ' ',
-                          "\n",
-                          '',
-                          "\n\n" );
+        $pattern = ['/[ ][ ]+/', '/ \n( \n)+/', '/^ /m', '/(\n){3,}/'];
+        $replace = [' ', "\n", '', "\n\n"];
 
-        $old = preg_replace( $pattern, $replace, $fromData );
-        $new = preg_replace( $pattern, $replace, $toData );
+        $old = preg_replace( $pattern, $replace, (string) $fromData );
+        $new = preg_replace( $pattern, $replace, (string) $toData );
 
         $oldArray = explode( "\r\n", $old );
         $newArray = explode( "\r\n", $new );
 
-        $oldSums = array();
+        $oldSums = [];
         foreach( $oldArray as $paragraph )
         {
             $oldSums[] = crc32( $paragraph );
         }
 
-        $newSums = array();
+        $newSums = [];
         foreach( $newArray as $paragraph )
         {
             $newSums[] = crc32( $paragraph );
@@ -67,7 +61,7 @@ class eZDiffTextEngine extends eZDiffEngine
     */
     function createOutput( $arr, $oldArray, $newArray )
     {
-        $diff = array();
+        $diff = [];
 
         foreach( $arr as $item )
         {
@@ -107,16 +101,14 @@ class eZDiffTextEngine extends eZDiffEngine
                     // unchanged paragraph
                     $text = $newArray[$index];
                     $this->addNewLine( $text );
-                    $diff[] = array( 'unchanged' => $text,
-                                     'status' => 0 );
+                    $diff[] = ['unchanged' => $text, 'status' => 0];
                 }
                 else
                 {
                     // added paragraph
                     $text = $new;
                     $this->addNewLine( $text );
-                    $diff[] = array( 'added' => $text,
-                                     'status' => 2 );
+                    $diff[] = ['added' => $text, 'status' => 2];
                 }
             }
             elseif ( $new === null )
@@ -124,14 +116,13 @@ class eZDiffTextEngine extends eZDiffEngine
                 // removed paragraph
                 $text = $old;
                 $this->addNewLine( $text );
-                $diff[] = array( 'removed' => $text,
-                                 'status' => 1 );
+                $diff[] = ['removed' => $text, 'status' => 1];
             }
             else
             {
                 // changed paragraph
-                $diffText = $this->buildDiff( explode( ' ', $old ), explode( ' ', $new ) );
-                $size = count( $diffText ) - 1;
+                $diffText = $this->buildDiff( explode( ' ', (string) $old ), explode( ' ', (string) $new ) );
+                $size = (is_countable($diffText) ? count( $diffText ) : 0) - 1;
 
                 foreach( $diffText as $number => $change )
                 {
@@ -180,8 +171,8 @@ class eZDiffTextEngine extends eZDiffEngine
     {
         $substr = $this->substringMatrix( $oldArray, $newArray );
 
-        $nOldWords = count( $oldArray );
-        $nNewWords = count( $newArray );
+        $nOldWords = is_countable($oldArray) ? count( $oldArray ) : 0;
+        $nNewWords = is_countable($newArray) ? count( $newArray ) : 0;
 
         /*
         $tmp = $substr['lengthMatrix'];
@@ -193,7 +184,7 @@ class eZDiffTextEngine extends eZDiffEngine
         $strings = $this->substrings( $substr, $oldArray, $newArray );
 
         //Merge detected paragraphs
-        $mergedStrings = array();
+        $mergedStrings = [];
         foreach ( $strings as $sstring )
         {
             $mergedStrings = $mergedStrings + $sstring;
@@ -204,7 +195,7 @@ class eZDiffTextEngine extends eZDiffEngine
         $offset = 0;
         $delOffset = 0;
         $internalOffset = 0;
-        $merged = array();
+        $merged = [];
 
         $oldOffset = -1;
 
@@ -221,7 +212,7 @@ class eZDiffTextEngine extends eZDiffEngine
             $nk = $internalOffset;
             while ( $key > $offset )
             {
-                $merged[$nk] = array( $offset => 'added' );
+                $merged[$nk] = [$offset => 'added'];
                 $nk++;
                 $offset++;
             }
@@ -245,7 +236,7 @@ class eZDiffTextEngine extends eZDiffEngine
                 }
                 else
                 {
-                    $merged[$k] = array( $delOffset => 'removed' );
+                    $merged[$k] = [$delOffset => 'removed'];
                 }
                 $k++;
                 $delOffset++;
@@ -254,7 +245,7 @@ class eZDiffTextEngine extends eZDiffEngine
             $internalOffset = ($k > $nk) ? $k:$nk;
 
             //The default state - unchanged paragraph
-            $merged[$internalOffset] = array( $key => 'unchanged' );
+            $merged[$internalOffset] = [$key => 'unchanged'];
             $internalOffset++;
             $delOffset++;
             $offset++;
@@ -264,7 +255,7 @@ class eZDiffTextEngine extends eZDiffEngine
         $nk = $internalOffset;
         while ( $nNewWords > $offset )
         {
-            $merged[$nk] = array( $offset => 'added' );
+            $merged[$nk] = [$offset => 'added'];
             $nk++;
             $offset++;
         }
@@ -286,7 +277,7 @@ class eZDiffTextEngine extends eZDiffEngine
             }
             else
             {
-                $merged[$k] = array( $delOffset => 'removed' );
+                $merged[$k] = [$delOffset => 'removed'];
             }
             $k++;
             $delOffset++;
@@ -304,8 +295,8 @@ class eZDiffTextEngine extends eZDiffEngine
     {
         $substr = $this->substringMatrix( $oldArray, $newArray );
 
-        $nOldWords = count( $oldArray );
-        $nNewWords = count( $newArray );
+        $nOldWords = is_countable($oldArray) ? count( $oldArray ) : 0;
+        $nNewWords = is_countable($newArray) ? count( $newArray ) : 0;
 
         /*
         $tmp = $substr['lengthMatrix'];
@@ -315,10 +306,10 @@ class eZDiffTextEngine extends eZDiffEngine
         */
 
         $strings = $this->substrings( $substr, $oldArray, $newArray );
-        $len = count( $strings );
+        $len = is_countable($strings) ? count( $strings ) : 0;
 
         //Merge detected substrings
-        $mergedStrings = array();
+        $mergedStrings = [];
         foreach ( $strings as $sstring )
         {
             $mergedStrings = $mergedStrings + $sstring;
@@ -326,7 +317,7 @@ class eZDiffTextEngine extends eZDiffEngine
         unset( $strings );
 
         //Check for changes in lead & inner words
-        $differences = array();
+        $differences = [];
         $offset = 0;
         $delOffset = 0;
 
@@ -344,22 +335,19 @@ class eZDiffTextEngine extends eZDiffEngine
             // Added words
             while ( $key > $offset )
             {
-                $differences[] = array( 'added' => $newArray[$offset],
-                                        'status' => 2 );
+                $differences[] = ['added' => $newArray[$offset], 'status' => 2];
                 $offset++;
             }
 
             // Removed words
             while ( $oldOffset > $delOffset )
             {
-                $differences[] = array( 'removed' => $oldArray[$delOffset],
-                                        'status' => 1 );
+                $differences[] = ['removed' => $oldArray[$delOffset], 'status' => 1];
                 $delOffset++;
             }
 
             //The default state - unchanged paragraph
-            $differences[] = array( 'unchanged' => $newArray[$key],
-                                    'status' => 0 );
+            $differences[] = ['unchanged' => $newArray[$key], 'status' => 0];
             $delOffset++;
             $offset++;
         }
@@ -367,16 +355,14 @@ class eZDiffTextEngine extends eZDiffEngine
         // Appended words
         while ( $nNewWords > $offset )
         {
-            $differences[] = array( 'added' => $newArray[$offset],
-                                    'status' => 2 );
+            $differences[] = ['added' => $newArray[$offset], 'status' => 2];
             $offset++;
         }
 
         // Words, removed at the paragraph end
         while ( $nOldWords > $delOffset )
         {
-            $differences[] = array( 'removed' => $oldArray[$delOffset],
-                                    'status' => 1 );
+            $differences[] = ['removed' => $oldArray[$delOffset], 'status' => 1];
             $delOffset++;
         }
 
@@ -392,21 +378,18 @@ class eZDiffTextEngine extends eZDiffEngine
     function postProcessDiff( $diffArray )
     {
         $string = "";
-        $diff = array();
+        $diff = [];
         $item = current( $diffArray );
 
         $lastStatus = $item['status'];
 
-        $mode = array( 0 => 'unchanged',
-                       1 => 'removed',
-                       2 => 'added' );
+        $mode = [0 => 'unchanged', 1 => 'removed', 2 => 'added'];
 
         while ( $item = current( $diffArray ) )
         {
             if ( $item['status'] != $lastStatus )
             {
-                $diff[] = array( $mode[$lastStatus] => $string,
-                                 'status' => $lastStatus );
+                $diff[] = [$mode[$lastStatus] => $string, 'status' => $lastStatus];
                 $lastStatus = $item['status'];
                 $string ="";
                 continue;
@@ -417,8 +400,7 @@ class eZDiffTextEngine extends eZDiffEngine
         }
         if ( strlen( $string ) > 0 )
         {
-            $diff[] = array( $mode[$lastStatus] => $string,
-                             'status' => $lastStatus );
+            $diff[] = [$mode[$lastStatus] => $string, 'status' => $lastStatus];
         }
         return $diff;
     }
@@ -439,22 +421,22 @@ class eZDiffTextEngine extends eZDiffEngine
         if ( $val == 0 )
         {
             //No common substrings were found
-            return array();
+            return [];
         }
 
-        $rows = count( $old );
-        $cols = count( $new );
+        $rows = is_countable($old) ? count( $old ) : 0;
+        $cols = is_countable($new) ? count( $new ) : 0;
 
         $lcsOffsets = $this->findLongestSubstringOffsets( $sub );
         $lcsPlacement = $this->substringPlacement( $lcsOffsets['newStart'], $lcsOffsets['newEnd'], $cols );
 
-        $substringSet = array();
+        $substringSet = [];
 
         $substringArray = $this->traceSubstring( $row, $col, $matrix, $val, $new );
         $substring = $substringArray['substring'];
         unset( $substringArray );
         $substringSet[] = array_reverse( $substring, true );
-        $substring = array();
+        $substring = [];
 
         //Get more text
         if ( $lcsPlacement['hasTextLeft'] )
@@ -491,7 +473,7 @@ class eZDiffTextEngine extends eZDiffEngine
                     $substringArray = $this->traceSubstring( $info['remainRow'], $info['remainCol'], $matrix, $info['remainMax'], $new );
                     $substring = $substringArray['substring'];
                     array_unshift( $substringSet, array_reverse( $substring, true ) );
-                    $substring = array();
+                    $substring = [];
 
                     if ( $info['remainCol'] == 0 || $substringArray['lastCol'] == 0 )
                     {
@@ -551,7 +533,7 @@ class eZDiffTextEngine extends eZDiffEngine
                     $substringArray = $this->traceSubstring( $info['remainRow'], $info['remainCol'], $matrix, $info['remainMax'], $new );
                     $substring = $substringArray['substring'];
                     $substringSet[] = array_reverse( $substring, true );
-                    $substring = array();
+                    $substring = [];
 
                     if ( $info['remainCol'] == $cols-1 || $substringArray['lastRow'] == $cols-1 )
                     {
@@ -670,9 +652,7 @@ class eZDiffTextEngine extends eZDiffEngine
 
         if ( $remainMax > 0 )
         {
-            return array( 'remainMax' => $remainMax,
-                          'remainRow' => $remainRow,
-                          'remainCol' => $remainCol );
+            return ['remainMax' => $remainMax, 'remainRow' => $remainRow, 'remainCol' => $remainCol];
         }
         else
         {
@@ -688,13 +668,12 @@ class eZDiffTextEngine extends eZDiffEngine
     */
     function traceSubstring( $row, $col, $matrix, $val, $new )
     {
-        $substring = array();
+        $substring = [];
         while( $row >= 0 && $col >= 0 )
         {
             if ( $matrix->get( $row, $col ) == $val )
             {
-                $substring[$col] = array( 'word' => $new[$col],
-                                          'oldOffset' => $row );
+                $substring[$col] = ['word' => $new[$col], 'oldOffset' => $row];
 
                 if ( $val > 1 )
                 {
@@ -711,9 +690,7 @@ class eZDiffTextEngine extends eZDiffEngine
                     break;
             }
         }
-        return array( 'substring' => $substring,
-                      'lastRow' => $row,
-                      'lastCol' => $col );
+        return ['substring' => $substring, 'lastRow' => $row, 'lastCol' => $col];
     }
 
     /*!
@@ -733,8 +710,7 @@ class eZDiffTextEngine extends eZDiffEngine
         if ( $endOffset < $totalStringLength-1 )
             $rightText = true;
 
-        return array( 'hasTextLeft' => $leftText,
-                      'hasTextRight' => $rightText );
+        return ['hasTextLeft' => $leftText, 'hasTextRight' => $rightText];
     }
 
     /*!
@@ -792,10 +768,7 @@ class eZDiffTextEngine extends eZDiffEngine
             $maxRow--;
             $maxCol--;
         }
-        return array( 'newStart' => $newStart,
-                      'newEnd' => $newEnd,
-                      'oldStart' => $oldStart,
-                      'oldEnd' => $oldEnd );
+        return ['newStart' => $newStart, 'newEnd' => $newEnd, 'oldStart' => $oldStart, 'oldEnd' => $oldEnd];
     }
 
     /*!
@@ -814,8 +787,8 @@ class eZDiffTextEngine extends eZDiffEngine
     function substringMatrix( $old, $new )
     {
         $maxLength = 0;
-        $sizeOld = count( $old );
-        $sizeNew =  count( $new );
+        $sizeOld = is_countable($old) ? count( $old ) : 0;
+        $sizeNew =  is_countable($new) ? count( $new ) : 0;
         $matrix = new eZDiffMatrix( $sizeOld, $sizeNew );
 
         $maxC = 0;
@@ -860,10 +833,7 @@ class eZDiffTextEngine extends eZDiffEngine
                 }
             }
         }
-        return array( 'maxLength' => $maxLength,
-                      'maxRow' => $maxR,
-                      'maxCol' => $maxC,
-                      'lengthMatrix' => $matrix );
+        return ['maxLength' => $maxLength, 'maxRow' => $maxR, 'maxCol' => $maxC, 'lengthMatrix' => $matrix];
     }
 
     /*!

@@ -17,13 +17,12 @@
 
 class eZBooleanType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezboolean";
+    final public const DATA_TYPE_STRING = "ezboolean";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Checkbox", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_int' => 'value' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_int' => 'value']] );
     }
 
     /*!
@@ -233,7 +232,7 @@ class eZBooleanType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
 
-        $defaultValue = strtolower( $attributeParametersNode->getElementsByTagName( 'default-value' )->item( 0 )->getAttribute( 'is-set' ) ) == 'true';
+        $defaultValue = strtolower( (string) $attributeParametersNode->getElementsByTagName( 'default-value' )->item( 0 )->getAttribute( 'is-set' ) ) == 'true';
         $classAttribute->setAttribute( 'data_int3', $defaultValue );
     }
 
@@ -245,8 +244,7 @@ class eZBooleanType extends eZDataType
     function batchInitializeObjectAttributeData( $classAttribute )
     {
         $default = $classAttribute->attribute( "data_int3" );
-        return array( 'data_int'     => $default,
-                      'sort_key_int' => $default );
+        return ['data_int'     => $default, 'sort_key_int' => $default];
     }
 }
 

@@ -16,7 +16,7 @@
 
 class eZMutex
 {
-    const STEAL_STRING = '_eZMutex_Steal';
+    final public const STEAL_STRING = '_eZMutex_Steal';
 
     /**
      * Creates a mutex object for mutext <name>. The mutex is file based, and valid across PHP processes.
@@ -25,13 +25,10 @@ class eZMutex
     public function __construct( $name )
     {
         $this->Name = md5( $name );
-        $mutexPath = eZDir::path( array( eZSys::cacheDirectory(),
-                                         'ezmutex' ) );
+        $mutexPath = eZDir::path( [eZSys::cacheDirectory(), 'ezmutex'] );
         eZDir::mkdir( $mutexPath, false, true );
-        $this->FileName = eZDir::path( array( $mutexPath,
-                                              $this->Name ) );
-        $this->MetaFileName = eZDir::path( array( $mutexPath,
-                                                  $this->Name . '_meta' ) );
+        $this->FileName = eZDir::path( [$mutexPath, $this->Name] );
+        $this->MetaFileName = eZDir::path( [$mutexPath, $this->Name . '_meta'] );
     }
 
     /*!
@@ -98,7 +95,7 @@ class eZMutex
     */
     function setMeta( $key, $value )
     {
-        $content = array();
+        $content = [];
         if ( file_exists( $this->MetaFileName ) )
         {
             $content = unserialize( file_get_contents( $this->MetaFileName ) );
@@ -116,12 +113,12 @@ class eZMutex
     */
     function meta( $key )
     {
-        $content = array();
+        $content = [];
         if ( file_exists( $this->MetaFileName ) )
         {
             $content = unserialize( file_get_contents( $this->MetaFileName ) );
         }
-        return isset( $content[$key] ) ? $content[$key] : null;
+        return $content[$key] ?? null;
     }
 
     /*!
@@ -129,7 +126,7 @@ class eZMutex
     */
     function clearMeta()
     {
-        $content = array();
+        $content = [];
         eZFile::create( $this->MetaFileName, false, serialize( $content), true );
     }
 

@@ -20,11 +20,7 @@ foreach( $rootNodeIDList as $nodeID )
     $rootNode = eZContentObjectTreeNode::fetch( $nodeID );
 
     $articleNodeArray = $rootNode->subTree( 
-        array( 
-            'ClassFilterType' => 'include',
-            'ClassFilterArray' => $unpublishClasses,
-            'Limitation' => array()
-        ) 
+        ['ClassFilterType' => 'include', 'ClassFilterArray' => $unpublishClasses, 'Limitation' => []] 
     );
 
     foreach ( $articleNodeArray as $articleNode )

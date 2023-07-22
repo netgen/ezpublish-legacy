@@ -35,14 +35,14 @@ class ezpKernelTreeMenu implements ezpKernelHandler
      */
     protected $uri;
 
-    public function __construct( array $settings = array() )
+    public function __construct( array $settings = [] )
     {
         if ( isset( $settings['injected-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
@@ -50,22 +50,16 @@ class ezpKernelTreeMenu implements ezpKernelHandler
         }
         if ( isset( $settings['injected-merge-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-merge-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
             eZINI::injectMergeSettings( $injectedSettings );
         }
-        $this->settings = $settings + array(
-            'use-cache-headers'         => true,
-            'max-age'                   => 86400,
-            'siteaccess'                => null,
-            'use-exceptions'            => false,
-            'service-container'         => null,
-        );
+        $this->settings = $settings + ['use-cache-headers'         => true, 'max-age'                   => 86400, 'siteaccess'                => null, 'use-exceptions'            => false, 'service-container'         => null];
         unset( $settings, $injectedSettings, $file, $section, $setting, $keySetting, $injectedSetting );
 
         require_once __DIR__ . '/treemenu_functions.php';
@@ -80,7 +74,7 @@ class ezpKernelTreeMenu implements ezpKernelHandler
                 header( $_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified' );
                 header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + MAX_AGE ) . ' GMT' );
                 header( 'Cache-Control: max-age=' . MAX_AGE );
-                header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', strtotime( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) . ' GMT' );
+                header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', strtotime( (string) $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) . ' GMT' );
                 header( 'Pragma: ' );
                 exit();
             }
@@ -107,8 +101,8 @@ class ezpKernelTreeMenu implements ezpKernelHandler
         eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
 
         // Trick to get eZSys working with a script other than index.php (while index.php still used in generated URLs):
-        $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_treemenu.php', '/index.php', $_SERVER['SCRIPT_FILENAME'] );
-        $_SERVER['PHP_SELF'] = str_replace( '/index_treemenu.php', '/index.php', $_SERVER['PHP_SELF'] );
+        $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_treemenu.php', '/index.php', (string) $_SERVER['SCRIPT_FILENAME'] );
+        $_SERVER['PHP_SELF'] = str_replace( '/index_treemenu.php', '/index.php', (string) $_SERVER['PHP_SELF'] );
 
         $ini = eZINI::instance();
         $timezone = $ini->variable( 'TimeZoneSettings', 'TimeZone' );
@@ -122,7 +116,7 @@ class ezpKernelTreeMenu implements ezpKernelHandler
         if ( $this->hasServiceContainer() && $this->getServiceContainer()->has( 'request' ) )
         {
             eZSys::init(
-                basename( $this->getServiceContainer()->get( 'request' )->server->get( 'SCRIPT_FILENAME' ) ),
+                basename( (string) $this->getServiceContainer()->get( 'request' )->server->get( 'SCRIPT_FILENAME' ) ),
                 $ini->variable( 'SiteAccessSettings', 'ForceVirtualHost' ) === 'true'
             );
         }
@@ -142,14 +136,12 @@ class ezpKernelTreeMenu implements ezpKernelHandler
 
         // load siteaccess
         // Use injected siteaccess if available or match it internally.
-        $this->access = isset( $this->settings['siteaccess'] ) ?
-            $this->settings['siteaccess'] :
-            eZSiteAccess::match(
-                $this->uri,
-                eZSys::hostname(),
-                eZSys::serverPort(),
-                eZSys::indexFile()
-            );
+        $this->access = $this->settings['siteaccess'] ?? eZSiteAccess::match(
+            $this->uri,
+            eZSys::hostname(),
+            eZSys::serverPort(),
+            eZSys::indexFile()
+        );
         eZSiteAccess::change( $this->access );
 
         // Check for new extension loaded by siteaccess
@@ -274,11 +266,9 @@ class ezpKernelTreeMenu implements ezpKernelHandler
             $function_name,
             $this->uri->elements( false ),
             false,
-            array(
-                'use-cache-headers' => $this->settings['use-cache-headers']
-            )
+            ['use-cache-headers' => $this->settings['use-cache-headers']]
         );
-        $attributes = isset( $content['lastModified'] ) ? array( 'lastModified' => $content['lastModified'] ) : array();
+        $attributes = isset( $content['lastModified'] ) ? ['lastModified' => $content['lastModified']] : [];
         $this->shutdown();
         return new ezpKernelResult( $content['content'], $attributes );
     }
@@ -288,7 +278,7 @@ class ezpKernelTreeMenu implements ezpKernelHandler
      *
      * @throws \RuntimeException
      */
-    public function runCallback( \Closure $callback, $postReinitialize = true )
+    public function runCallback( \Closure $callback, $postReinitialize = true ): never
     {
         throw new \RuntimeException( 'runCallback() method is not supported by ezpKernelTreeMenu' );
     }
@@ -360,10 +350,7 @@ class ezpKernelTreeMenu implements ezpKernelHandler
 
             return new ezpKernelResult(
                 json_encode(
-                    array(
-                        'error'        => $errorMessage,
-                        'code'         => $errorCode
-                    )
+                    ['error'        => $errorMessage, 'code'         => $errorCode], JSON_THROW_ON_ERROR
                 )
             );
         }

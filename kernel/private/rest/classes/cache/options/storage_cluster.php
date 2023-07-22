@@ -31,7 +31,7 @@ class ezpCacheStorageClusterOptions extends ezcBaseOptions
      * @throws ezcBaseValueException
      *         If the value for the property is incorrect
      */
-    public function __construct( $options = array() )
+    public function __construct( $options = [] )
     {
         // @TODO : Define new options if necessary
         $this->storageOptions = new ezcCacheStorageOptions();
@@ -68,12 +68,8 @@ class ezpCacheStorageClusterOptions extends ezcBaseOptions
      */
     public function __get( $key )
     {
-        if ( isset( $this->properties[$key] ) )
-        {
-            return $this->properties[$key];
-        }
         // Delegate
-        return $this->storageOptions->$key;
+        return $this->properties[$key] ?? $this->storageOptions->$key;
     }
 
     /**

@@ -15,7 +15,7 @@
 
 class eZMD5
 {
-    const CHECK_SUM_LIST_FILE = 'share/filelist.md5';
+    final public const CHECK_SUM_LIST_FILE = 'share/filelist.md5';
 
     /**
      * Check MD5 sum file to check if files have changed. Return array of changed files.
@@ -27,7 +27,7 @@ class eZMD5
     */
     static function checkMD5Sums( $file, $subDirStr = '' )
     {
-        $result = array();
+        $result = [];
         $lines  = file( $file, FILE_IGNORE_NEW_LINES );
 
         if ( $lines !== false && isset( $lines[0] ) )

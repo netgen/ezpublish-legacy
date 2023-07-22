@@ -19,42 +19,7 @@ class eZBinaryFile extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'contentobject_attribute_id' => array( 'name' => 'ContentObjectAttributeID',
-                                                                                'datatype' => 'integer',
-                                                                                'default' => 0,
-                                                                                'required' => true,
-                                                                                'foreign_class' => 'eZContentObjectAttribute',
-                                                                                'foreign_attribute' => 'id',
-                                                                                'multiplicity' => '1..*' ),
-                                         'version' => array( 'name' => 'Version',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'filename' =>  array( 'name' => 'Filename',
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         'original_filename' =>  array( 'name' => 'OriginalFilename',
-                                                                        'datatype' => 'string',
-                                                                        'default' => '',
-                                                                        'required' => true ),
-                                         'mime_type' => array( 'name' => 'MimeType',
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         'download_count' => array( 'name' => 'DownloadCount',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true ) ),
-                      'keys' => array( 'contentobject_attribute_id', 'version' ),
-                      'relations' => array( 'contentobject_attribute_id' => array( 'class' => 'ezcontentobjectattribute',
-                                                                                   'field' => 'id' ) ),
-                      "function_attributes" => array( 'filesize' => 'fileSize',
-                                                      'filepath' => 'filePath',
-                                                      'mime_type_category' => 'mimeTypeCategory',
-                                                      'mime_type_part' => 'mimeTypePart' ),
-                      'class_name' => 'eZBinaryFile',
-                      'name' => 'ezbinaryfile' );
+        static $definition = ['fields' => ['contentobject_attribute_id' => ['name' => 'ContentObjectAttributeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'version' => ['name' => 'Version', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'filename' =>  ['name' => 'Filename', 'datatype' => 'string', 'default' => '', 'required' => true], 'original_filename' =>  ['name' => 'OriginalFilename', 'datatype' => 'string', 'default' => '', 'required' => true], 'mime_type' => ['name' => 'MimeType', 'datatype' => 'string', 'default' => '', 'required' => true], 'download_count' => ['name' => 'DownloadCount', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['contentobject_attribute_id', 'version'], 'relations' => ['contentobject_attribute_id' => ['class' => 'ezcontentobjectattribute', 'field' => 'id']], "function_attributes" => ['filesize' => 'fileSize', 'filepath' => 'filePath', 'mime_type_category' => 'mimeTypeCategory', 'mime_type_part' => 'mimeTypePart'], 'class_name' => 'eZBinaryFile', 'name' => 'ezbinaryfile'];
         return $definition;
     }
 
@@ -81,24 +46,19 @@ class eZBinaryFile extends eZPersistentObject
 
     function mimeTypeCategory()
     {
-        $types = explode( '/', $this->attribute( 'mime_type' ) );
+        $types = explode( '/', (string) $this->attribute( 'mime_type' ) );
         return $types[0];
     }
 
     function mimeTypePart()
     {
-        $types = explode( '/', $this->attribute( 'mime_type' ) );
+        $types = explode( '/', (string) $this->attribute( 'mime_type' ) );
         return $types[1];
     }
 
     static function create( $contentObjectAttributeID, $version )
     {
-        $row = array( 'contentobject_attribute_id' => $contentObjectAttributeID,
-                      'version' => $version,
-                      'filename' => '',
-                      'original_filename' => '',
-                      'mime_type' => ''
-                      );
+        $row = ['contentobject_attribute_id' => $contentObjectAttributeID, 'version' => $version, 'filename' => '', 'original_filename' => '', 'mime_type' => ''];
         return new eZBinaryFile( $row );
     }
 
@@ -108,7 +68,7 @@ class eZBinaryFile extends eZPersistentObject
         {
             return eZPersistentObject::fetchObjectList( eZBinaryFile::definition(),
                                                         null,
-                                                        array( 'contentobject_attribute_id' => $id ),
+                                                        ['contentobject_attribute_id' => $id],
                                                         null,
                                                         null,
                                                         $asObject );
@@ -117,8 +77,7 @@ class eZBinaryFile extends eZPersistentObject
         {
             return eZPersistentObject::fetchObject( eZBinaryFile::definition(),
                                                     null,
-                                                    array( 'contentobject_attribute_id' => $id,
-                                                           'version' => $version ),
+                                                    ['contentobject_attribute_id' => $id, 'version' => $version],
                                                     $asObject );
         }
     }
@@ -129,7 +88,7 @@ class eZBinaryFile extends eZPersistentObject
         {
             return eZPersistentObject::fetchObjectList( eZBinaryFile::definition(),
                                                         null,
-                                                        array( 'filename' => $filename ),
+                                                        ['filename' => $filename],
                                                         null,
                                                         null,
                                                         $asObject );
@@ -138,8 +97,7 @@ class eZBinaryFile extends eZPersistentObject
         {
             return eZPersistentObject::fetchObject( eZBinaryFile::definition(),
                                                     null,
-                                                    array( 'filename' => $filename,
-                                                           'version' => $version ),
+                                                    ['filename' => $filename, 'version' => $version],
                                                     $asObject );
         }
     }
@@ -149,13 +107,12 @@ class eZBinaryFile extends eZPersistentObject
         if ( $version == null )
         {
             eZPersistentObject::removeObject( eZBinaryFile::definition(),
-                                              array( 'contentobject_attribute_id' => $id ) );
+                                              ['contentobject_attribute_id' => $id] );
         }
         else
         {
             eZPersistentObject::removeObject( eZBinaryFile::definition(),
-                                              array( 'contentobject_attribute_id' => $id,
-                                                     'version' => $version ) );
+                                              ['contentobject_attribute_id' => $id, 'version' => $version] );
         }
     }
 
@@ -174,16 +131,7 @@ class eZBinaryFile extends eZPersistentObject
         if ( isset( $handlerSettings[$this->MimeType] ) )
         {
             // Check if plugin exists
-            if ( eZExtension::findExtensionType( array( 'ini-name' => 'binaryfile.ini',
-                                                    'repository-group' => 'HandlerSettings',
-                                                    'repository-variable' => 'Repositories',
-                                                    'extension-group' => 'HandlerSettings',
-                                                    'extension-variable' => 'ExtensionRepositories',
-                                                    'type-directory' => false,
-                                                    'type' => $handlerSettings[$this->MimeType],
-                                                    'subdir' => 'plugins',
-                                                    'extension-subdir' => 'plugins',
-                                                    'suffix-name' => 'parser.php' ),
+            if ( eZExtension::findExtensionType( ['ini-name' => 'binaryfile.ini', 'repository-group' => 'HandlerSettings', 'repository-variable' => 'Repositories', 'extension-group' => 'HandlerSettings', 'extension-variable' => 'ExtensionRepositories', 'type-directory' => false, 'type' => $handlerSettings[$this->MimeType], 'subdir' => 'plugins', 'extension-subdir' => 'plugins', 'suffix-name' => 'parser.php'],
                                              $out ) )
             {
                 $filePath = $out['found-file-path'];
@@ -220,12 +168,9 @@ class eZBinaryFile extends eZPersistentObject
         $mimeType = $this->attribute( 'mime_type' );
         $originalFileName = $this->attribute( 'original_filename' );
         $storageDir = eZSys::storageDirectory();
-        list( $group, $type ) = explode( '/', $mimeType );
+        [$group, $type] = explode( '/', (string) $mimeType );
         $filePath = $storageDir . '/original/' . $group . '/' . $fileName;
-        return array( 'filename' => $fileName,
-                      'original_filename' => $originalFileName,
-                      'filepath' => $filePath,
-                      'mime_type' => $mimeType );
+        return ['filename' => $fileName, 'original_filename' => $originalFileName, 'filepath' => $filePath, 'mime_type' => $mimeType];
     }
 
     public $ContentObjectAttributeID;

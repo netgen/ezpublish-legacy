@@ -18,40 +18,40 @@
 class eZUser extends eZPersistentObject
 {
     /// No hash, used by external handlers such as LDAP and TextFile
-    const PASSWORD_HASH_EMPTY = 0;
+    public const PASSWORD_HASH_EMPTY = 0;
     /// MD5 of password
-    const PASSWORD_HASH_MD5_PASSWORD = 1;
+    public const PASSWORD_HASH_MD5_PASSWORD = 1;
     /// MD5 of user and password
-    const PASSWORD_HASH_MD5_USER = 2;
+    public const PASSWORD_HASH_MD5_USER = 2;
     /// MD5 of site, user and password
-    const PASSWORD_HASH_MD5_SITE = 3;
+    public const PASSWORD_HASH_MD5_SITE = 3;
     /// Legacy support for mysql hashed passwords
     /// NB! Does not work as of MySQL 8.0 where this has been removed from MySQL.
-    const PASSWORD_HASH_MYSQL = 4;
+    public const PASSWORD_HASH_MYSQL = 4;
     /// Passwords in plaintext, should not be used for real sites
-    const PASSWORD_HASH_PLAINTEXT = 5;
+    public const PASSWORD_HASH_PLAINTEXT = 5;
     /// Passwords in bcrypt format
-    const PASSWORD_HASH_BCRYPT = 6;
+    public const PASSWORD_HASH_BCRYPT = 6;
     /// Passwords in PHP default format
-    const PASSWORD_HASH_PHP_DEFAULT = 7;
+    public const PASSWORD_HASH_PHP_DEFAULT = 7;
 
     /// Default password hashing algorithm, used in case of invalid configuration or usage.
     /// Update this if support for better algorithms is added.
-    const DEFAULT_PASSWORD_HASH = self::PASSWORD_HASH_PHP_DEFAULT;
+    public const DEFAULT_PASSWORD_HASH = self::PASSWORD_HASH_PHP_DEFAULT;
 
     /**
      * Max length allowed for a login or a password
      *
      * @var string
      */
-    const AUTH_STRING_MAX_LENGTH = 4096;
+    public const AUTH_STRING_MAX_LENGTH = 4096;
 
     /// Authenticate by matching the login field
-    const AUTHENTICATE_LOGIN = 1;
+    public const AUTHENTICATE_LOGIN = 1;
     /// Authenticate by matching the email field
-    const AUTHENTICATE_EMAIL = 2;
+    public const AUTHENTICATE_EMAIL = 2;
 
-    const AUTHENTICATE_ALL = 3; //EZ_USER_AUTHENTICATE_LOGIN | EZ_USER_AUTHENTICATE_EMAIL;
+    public const AUTHENTICATE_ALL = 3; //EZ_USER_AUTHENTICATE_LOGIN | EZ_USER_AUTHENTICATE_EMAIL;
 
     /**
      * Flag used to prevent session regeneration
@@ -59,72 +59,27 @@ class eZUser extends eZPersistentObject
      * @var int
      * @see eZUser::setCurrentlyLoggedInUser()
      */
-    const NO_SESSION_REGENERATE = 1;
+    public const NO_SESSION_REGENERATE = 1;
 
     protected static $anonymousId = null;
 
-    public function __construct( $row = array() )
+    public function __construct( $row = [] )
     {
         parent::__construct( $row );
-        $this->OriginalPassword = false;
-        $this->OriginalPasswordConfirm = false;
     }
 
     /**
      * @deprecated Use eZUser::__construct() instead
      * @param array $row
      */
-    function eZUser( $row = array() )
+    function eZUser( $row = [] )
     {
         self::__construct( $row );
     }
 
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'contentobject_id' => array( 'name' => 'ContentObjectID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '0..1' ),
-                                         'login' => array( 'name' => 'Login',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         'email' => array( 'name' => 'Email',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         'password_hash' => array( 'name' => 'PasswordHash',
-                                                                   'datatype' => 'string',
-                                                                   'default' => '',
-                                                                   'required' => true ),
-                                         'password_hash_type' => array( 'name' => 'PasswordHashType',
-                                                                        'datatype' => 'integer',
-                                                                        'default' => 1,
-                                                                        'required' => true ) ),
-                      'keys' => array( 'contentobject_id' ),
-                      'sort' => array( 'contentobject_id' => 'asc' ),
-                      'function_attributes' => array( 'contentobject' => 'contentObject',
-                                                      'account_key' => 'accountKey',
-                                                      'groups' => 'groups',
-                                                      'has_stored_login' => 'hasStoredLogin',
-                                                      'original_password' => 'originalPassword',
-                                                      'original_password_confirm' => 'originalPasswordConfirm',
-                                                      'roles' => 'roles',
-                                                      'role_id_list' => 'roleIDList',
-                                                      'limited_assignment_value_list' => 'limitValueList',
-                                                      'is_logged_in' => 'isRegistered',
-                                                      'is_enabled' => 'isEnabled',
-                                                      'is_locked' => 'isLocked',
-                                                      'last_visit' => 'lastVisit',
-                                                      'login_count' => 'loginCount',
-                                                      'has_manage_locations' => 'hasManageLocations' ),
-                      'relations' => array( 'contentobject_id' => array( 'class' => 'ezcontentobject',
-                                                                         'field' => 'id' ) ),
-                      'class_name' => 'eZUser',
-                      'name' => 'ezuser' );
+        static $definition = ['fields' => ['contentobject_id' => ['name' => 'ContentObjectID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '0..1'], 'login' => ['name' => 'Login', 'datatype' => 'string', 'default' => '', 'required' => true], 'email' => ['name' => 'Email', 'datatype' => 'string', 'default' => '', 'required' => true], 'password_hash' => ['name' => 'PasswordHash', 'datatype' => 'string', 'default' => '', 'required' => true], 'password_hash_type' => ['name' => 'PasswordHashType', 'datatype' => 'integer', 'default' => 1, 'required' => true]], 'keys' => ['contentobject_id'], 'sort' => ['contentobject_id' => 'asc'], 'function_attributes' => ['contentobject' => 'contentObject', 'account_key' => 'accountKey', 'groups' => 'groups', 'has_stored_login' => 'hasStoredLogin', 'original_password' => 'originalPassword', 'original_password_confirm' => 'originalPasswordConfirm', 'roles' => 'roles', 'role_id_list' => 'roleIDList', 'limited_assignment_value_list' => 'limitValueList', 'is_logged_in' => 'isRegistered', 'is_enabled' => 'isEnabled', 'is_locked' => 'isLocked', 'last_visit' => 'lastVisit', 'login_count' => 'loginCount', 'has_manage_locations' => 'hasManageLocations'], 'relations' => ['contentobject_id' => ['class' => 'ezcontentobject', 'field' => 'id']], 'class_name' => 'eZUser', 'name' => 'ezuser'];
         return $definition;
     }
 
@@ -235,13 +190,7 @@ class eZUser extends eZPersistentObject
 
     static function create( $contentObjectID )
     {
-        $row = array(
-            'contentobject_id' => $contentObjectID,
-            'login' => null,
-            'email' => null,
-            'password_hash' => null,
-            'password_hash_type' => null
-            );
+        $row = ['contentobject_id' => $contentObjectID, 'login' => null, 'email' => null, 'password_hash' => null, 'password_hash_type' => null];
         return new eZUser( $row );
     }
 
@@ -252,7 +201,7 @@ class eZUser extends eZPersistentObject
      */
     public function store( $fieldFilters = null )
     {
-        $this->Email = trim( $this->Email );
+        $this->Email = trim( (string) $this->Email );
         $userID = $this->attribute( 'contentobject_id' );
         // Clear memory cache
         unset( $GLOBALS['eZUserObject_' . $userID] );
@@ -353,7 +302,7 @@ class eZUser extends eZPersistentObject
             return null;
         return eZPersistentObject::fetchObject( eZUser::definition(),
                                                 null,
-                                                array( 'contentobject_id' => $id ),
+                                                ['contentobject_id' => $id],
                                                 $asObject );
     }
 
@@ -361,7 +310,7 @@ class eZUser extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZUser::definition(),
                                                 null,
-                                                array( 'LOWER( login )' => strtolower( $login ) ),
+                                                ['LOWER( login )' => strtolower( (string) $login )],
                                                 $asObject );
     }
 
@@ -369,7 +318,7 @@ class eZUser extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZUser::definition(),
                                                   null,
-                                                  array( 'LOWER( email )' => strtolower( $email ) ),
+                                                  ['LOWER( email )' => strtolower( (string) $email )],
                                                   $asObject );
     }
 
@@ -390,12 +339,9 @@ class eZUser extends eZPersistentObject
 
         return eZPersistentObject::fetchObjectList(
             eZUser::definition(), null, null, $sort,
-            array(
-                'limit' => $limit,
-                'offset' => $offset
-            ),
+            ['limit' => $limit, 'offset' => $offset],
             true, false, null,
-            array( $accountDef['name'], $settingsDef['name'] ),
+            [$accountDef['name'], $settingsDef['name']],
             " WHERE contentobject_id = {$accountDef['name']}.user_id"
                 . " AND {$settingsDef['name']}.user_id = contentobject_id"
                 . " AND is_enabled = 0"
@@ -414,7 +360,7 @@ class eZUser extends eZPersistentObject
         $db = eZDB::instance();
         $time = time() - eZINI::instance()->variable( 'Session', 'ActivityTimeout' );
 
-        $parameters = array();
+        $parameters = [];
         if ( $offset )
             $parameters['offset'] =(int) $offset;
         if ( $limit )
@@ -422,22 +368,22 @@ class eZUser extends eZPersistentObject
         $sortText = '';
         if ( $asObject )
         {
-            $selectArray = array( "distinct ezuser.*" );
+            $selectArray = ["distinct ezuser.*"];
         }
         else
         {
-            $selectArray = array( "ezuser.contentobject_id as user_id", "ezcontentobject.name" );
+            $selectArray = ["ezuser.contentobject_id as user_id", "ezcontentobject.name"];
         }
         if ( $sortBy !== false )
         {
-            $sortElements = array();
+            $sortElements = [];
             if ( !is_array( $sortBy ) )
             {
-                $sortBy = array( array( $sortBy, true ) );
+                $sortBy = [[$sortBy, true]];
             }
             else if ( !is_array( $sortBy[0] ) )
-                $sortBy = array( $sortBy );
-            $sortColumns = array();
+                $sortBy = [$sortBy];
+            $sortColumns = [];
             foreach ( $sortBy as $sortElements )
             {
                 $sortColumn = $sortElements[0];
@@ -488,7 +434,7 @@ WHERE ezuservisit.user_id != '" . self::anonymousId() . "' AND
       ezuser.contentobject_id = ezuservisit.user_id
 $sortText";
             $rows = $db->arrayQuery( $sql, $parameters );
-            $list = array();
+            $list = [];
             foreach ( $rows as $row )
             {
                 $list[] = new eZUser( $row );
@@ -505,7 +451,7 @@ WHERE ezuservisit.user_id != '" . self::anonymousId() . "' AND
       ezcontentobject.id = ezuser.contentobject_id
 $sortText";
             $rows = $db->arrayQuery( $sql, $parameters );
-            $list = array();
+            $list = [];
             foreach ( $rows as $row )
             {
                 $list[$row['user_id']] = $row['name'];
@@ -588,7 +534,7 @@ WHERE user_id = '" . self::anonymousId() . "' AND
 FROM ezuservisit
 WHERE user_id = '" . $userID . "' AND
       current_visit_timestamp > '$time'";
-        $rows = $db->arrayQuery( $sql, array( 'limit' => 2 ) );
+        $rows = $db->arrayQuery( $sql, ['limit' => 2] );
         $isLoggedIn = isset( $rows[0] );
         $GLOBALS['eZUserLoggedInMap'][$userID] = $isLoggedIn;
         return $isLoggedIn;
@@ -618,7 +564,7 @@ WHERE user_id = '" . $userID . "' AND
     static function removeSessionData( $userID )
     {
         eZUser::clearSessionCache();
-        eZSession::getHandlerInstance()->deleteByUserIDs( array( $userID ) );
+        eZSession::getHandlerInstance()->deleteByUserIDs( [$userID] );
     }
 
     /*!
@@ -645,7 +591,7 @@ WHERE user_id = '" . $userID . "' AND
         eZGeneralDigestUserSettings::removeByUserId( $userID );
 
         eZPersistentObject::removeObject( eZUser::definition(),
-                                          array( 'contentobject_id' => $userID ) );
+                                          ['contentobject_id' => $userID] );
         return true;
     }
 
@@ -674,7 +620,7 @@ WHERE user_id = '" . $userID . "' AND
     static function hashType()
     {
         $ini = eZINI::instance();
-        $type = strtolower( $ini->variable( 'UserSettings', 'HashType' ) );
+        $type = strtolower( (string) $ini->variable( 'UserSettings', 'HashType' ) );
 
         return self::passwordHashTypeID( $type );
     }
@@ -780,7 +726,7 @@ WHERE user_id = '" . $userID . "' AND
         $userID = $user->attribute( 'contentobject_id' );
 
         // if audit is enabled logins should be logged
-        eZAudit::writeAudit( 'user-login', array( 'User id' => $userID, 'User login' => $user->attribute( 'login' ) ) );
+        eZAudit::writeAudit( 'user-login', ['User id' => $userID, 'User login' => $user->attribute( 'login' )] );
 
         eZUser::updateLastVisit( $userID, true );
         eZUser::setCurrentlyLoggedInUser( $user, $userID );
@@ -790,18 +736,16 @@ WHERE user_id = '" . $userID . "' AND
     }
 
     /**
-     * Does some house keeping work when a log in has failed.
-     *
-     * @param mixed $userID
-     * @param string $login
-     */
-     protected static function loginFailed( $userID, $login )
+      * Does some house keeping work when a log in has failed.
+      *
+      * @param string $login
+      */
+     protected static function loginFailed( mixed $userID, $login )
     {
         $loginEscaped = eZDB::instance()->escapeString( $login );
 
         // Failed login attempts should be logged
-        eZAudit::writeAudit( 'user-failed-login', array( 'User login' => $loginEscaped,
-                                                         'Comment' => 'Failed login attempt: eZUser::loginUser()' ) );
+        eZAudit::writeAudit( 'user-failed-login', ['User login' => $loginEscaped, 'Comment' => 'Failed login attempt: eZUser::loginUser()'] );
 
         // Increase number of failed login attempts.
         if ( $userID )
@@ -823,6 +767,9 @@ WHERE user_id = '" . $userID . "' AND
      */
     protected static function _loginUser( $login, $password, $authenticationMatch = false )
     {
+        $isEnabled = null;
+        $canLogin = null;
+        $userRow = [];
         if ( $login == '' || $password == '' )
         {
             return false;
@@ -840,7 +787,7 @@ WHERE user_id = '" . $userID . "' AND
         $loginEscaped = $db->escapeString( $login );
         $passwordEscaped = $db->escapeString( $password );
 
-        $loginArray = array();
+        $loginArray = [];
         if ( $authenticationMatch & self::AUTHENTICATE_LOGIN )
             $loginArray[] = "login='$loginEscaped'";
         if ( $authenticationMatch & self::AUTHENTICATE_EMAIL )
@@ -907,7 +854,7 @@ WHERE user_id = '" . $userID . "' AND
                     $userSetting = eZUserSetting::fetch( $userID );
                     $isEnabled = $userSetting->attribute( "is_enabled" );
                     if ( $hashType != eZUser::hashType() and
-                         strtolower( $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
+                         strtolower( (string) $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
                     {
                         $hashType = eZUser::hashType();
                         $hash = eZUser::createHash( $userRow['login'], $password, eZUser::site(),
@@ -925,7 +872,7 @@ WHERE user_id = '" . $userID . "' AND
         }
         else
         {
-            return isset( $userID ) ? $userID : false;
+            return $userID ?? false;
         }
     }
 
@@ -941,7 +888,7 @@ WHERE user_id = '" . $userID . "' AND
             $result = false;
             foreach( $ipList as $itemToMatch )
             {
-                if ( preg_match("/^(([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+))(\/([0-9]+)$|$)/", $itemToMatch, $matches ) )
+                if ( preg_match("/^(([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+))(\/([0-9]+)$|$)/", (string) $itemToMatch, $matches ) )
                 {
                     if ( $matches[6] )
                     {
@@ -981,7 +928,7 @@ WHERE user_id = '" . $userID . "' AND
         $ini = eZINI::instance();
 
         // Check if current user is trusted user.
-        $trustedIPs = $ini->hasVariable( 'UserSettings', 'TrustedIPList' ) ? $ini->variable( 'UserSettings', 'TrustedIPList' ) : array();
+        $trustedIPs = $ini->hasVariable( 'UserSettings', 'TrustedIPList' ) ? $ini->variable( 'UserSettings', 'TrustedIPList' ) : [];
 
         // Check if IP address of current user is in $trustedIPs array.
         $trustedUser = eZUser::isUserIPInList( $trustedIPs );
@@ -1228,20 +1175,14 @@ WHERE user_id = '" . $userID . "' AND
                             $currentUser = $ssoUser;
                             $userId = $currentUser->attribute( 'contentobject_id' );
 
-                            $userInfo = array();
-                            $userInfo[$userId] = array(
-                                'contentobject_id' => $userId,
-                                'login' => $currentUser->attribute( 'login' ),
-                                'email' => $currentUser->attribute( 'email' ),
-                                'password_hash' => $currentUser->attribute( 'password_hash' ),
-                                'password_hash_type' => $currentUser->attribute( 'password_hash_type' )
-                            );
+                            $userInfo = [];
+                            $userInfo[$userId] = ['contentobject_id' => $userId, 'login' => $currentUser->attribute( 'login' ), 'email' => $currentUser->attribute( 'email' ), 'password_hash' => $currentUser->attribute( 'password_hash' ), 'password_hash_type' => $currentUser->attribute( 'password_hash_type' )];
                             eZSession::setUserID( $userId );
                             $http->setSessionVariable( 'eZUserLoggedInID', $userId );
 
                             eZUser::updateLastVisit( $userId );
                             eZUser::setCurrentlyLoggedInUser( $currentUser, $userId );
-                            eZHTTPTool::redirect( eZSys::wwwDir() . eZSys::indexFile( false ) . eZSys::requestURI() . eZSys::queryString(), array(), 302 );
+                            eZHTTPTool::redirect( eZSys::wwwDir() . eZSys::indexFile( false ) . eZSys::requestURI() . eZSys::queryString(), [], 302 );
                             eZExecution::cleanExit();
                         }
                     }
@@ -1278,7 +1219,7 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( !$currentUser )
         {
-            $currentUser = new eZUser( array( 'id' => -1, 'login' => 'NoUser' ) );
+            $currentUser = new eZUser( ['id' => -1, 'login' => 'NoUser'] );
             eZDebug::writeWarning( 'Anonymous user not found, returning NoUser' );
         }
 
@@ -1317,7 +1258,6 @@ WHERE user_id = '" . $userID . "' AND
      * Needs to be in excact same format as {@link eZUser::getUserCache()}!
      *
      * @since 4.4
-     * @param array $userCache
      */
     public function setUserCache( array $userCache )
     {
@@ -1378,8 +1318,8 @@ WHERE user_id = '" . $userID . "' AND
         {
             $cacheFilePath = eZUser::getCacheDir( $userId ) . "/user-data-{$userId}.cache.php";
             $cacheFile = eZClusterFileHandler::instance( $cacheFilePath );
-            $userCache = $cacheFile->processCache( array( 'eZUser', 'retrieveUserCacheFromFile' ),
-                                                   array( 'eZUser', 'generateUserCacheForFile' ),
+            $userCache = $cacheFile->processCache( ['eZUser', 'retrieveUserCacheFromFile'],
+                                                   ['eZUser', 'generateUserCacheForFile'],
                                                    null,
                                                    self::userInfoExpiry(),
                                                    $userId );
@@ -1435,12 +1375,7 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( $cacheData === null )
         {
-            $cacheData = array( 'info' => array(),
-                                'groups' => array(),
-                                'roles' => array(),
-                                'role_limitations' => array(),
-                                'access_array' => array(),
-                                'discount_rules' => array() );
+            $cacheData = ['info' => [], 'groups' => [], 'roles' => [], 'role_limitations' => [], 'access_array' => [], 'discount_rules' => []];
         }
 
         return $cacheData;
@@ -1455,6 +1390,7 @@ WHERE user_id = '" . $userID . "' AND
      */
     private static function generateUserCacheData( $userId )
     {
+        $data = [];
         $user = eZUser::fetch( $userId );
         if ( !$user instanceof eZUser )
         {
@@ -1462,12 +1398,7 @@ WHERE user_id = '" . $userID . "' AND
         }
 
         // user info (session: eZUserInfoCache)
-        $data['info'][$userId] = array( 'contentobject_id'   => $user->attribute( 'contentobject_id' ),
-                                        'login'              => $user->attribute( 'login' ),
-                                        'email'              => $user->attribute( 'email' ),
-                                        'is_enabled'         => $user->isEnabled( false ),
-                                        'password_hash'      => $user->attribute( 'password_hash' ),
-                                        'password_hash_type' => $user->attribute( 'password_hash_type' ) );
+        $data['info'][$userId] = ['contentobject_id'   => $user->attribute( 'contentobject_id' ), 'login'              => $user->attribute( 'login' ), 'email'              => $user->attribute( 'email' ), 'is_enabled'         => $user->isEnabled( false ), 'password_hash'      => $user->attribute( 'password_hash' ), 'password_hash_type' => $user->attribute( 'password_hash_type' )];
 
         // function groups relies on caching. The function generateUserCacheData relies on function groups.
         // To avoid an infinitive loop, the code is disabling caching in function generateUserCacheData.
@@ -1512,10 +1443,7 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( $cacheData !== null )
         {
-            $cacheData = array( 'content'  => $cacheData,
-                                'scope'    => 'user-info-cache',
-                                'datatype' => 'php',
-                                'store'    => true );
+            $cacheData = ['content'  => $cacheData, 'scope'    => 'user-info-cache', 'datatype' => 'php', 'store'    => true];
         }
 
         return $cacheData;
@@ -1757,7 +1685,7 @@ WHERE user_id = '" . $userID . "' AND
         {
             return $GLOBALS['eZUserPasswordCharacterTable'];
         }
-        $table = array_merge( range( 'a', 'z' ), range( 'A', 'Z' ), range( 0, 9 ) );
+        $table = [...range( 'a', 'z' ), ...range( 'A', 'Z' ), ...range( 0, 9 )];
 
         $ini = eZINI::instance();
         if ( $ini->variable( 'UserSettings', 'UseSpecialCharacters' ) == 'true' )
@@ -1766,9 +1694,9 @@ WHERE user_id = '" . $userID . "' AND
             $table = array_merge( $table, preg_split( '//', $specialCharacters, -1, PREG_SPLIT_NO_EMPTY ) );
         }
         // Remove some characters that are too similar visually
-        $table = array_diff( $table, array( 'I', 'l', 'o', 'O', '0' ) );
+        $table = array_diff( $table, ['I', 'l', 'o', 'O', '0'] );
         $tableTmp = $table;
-        $table = array();
+        $table = [];
         foreach ( $tableTmp as $item )
         {
             $table[] = $item;
@@ -1822,10 +1750,10 @@ WHERE user_id = '" . $userID . "' AND
         while ( $chars < $passwordLength )
         {
             if ( $seed == false )
-                $seed = time() . ":" . mt_rand();
-            $text = md5( $seed );
+                $seed = time() . ":" . random_int(0, mt_getrandmax());
+            $text = md5( (string) $seed );
             $characterTable = eZUser::passwordCharacterTable();
-            $tableCount = count( $characterTable );
+            $tableCount = is_countable($characterTable) ? count( $characterTable ) : 0;
             for ( $i = 0; ( $chars < $passwordLength ) and $i < 32; ++$chars, $i += 2 )
             {
                 $decimal += hexdec( substr( $text, $i, 2 ) );
@@ -1877,7 +1805,7 @@ WHERE user_id = '" . $userID . "' AND
                     $type == self::PASSWORD_HASH_PHP_DEFAULT ) &&
                   $hash )
         {
-            if ( password_verify( $password, $hash ) )
+            if ( password_verify( $password, (string) $hash ) )
             {
                 return $hash;
             }
@@ -1920,13 +1848,13 @@ WHERE user_id = '" . $userID . "' AND
      */
     private static function trimAuthString( $string )
     {
-        if ( strlen( $string ) <= self::AUTH_STRING_MAX_LENGTH )
+        if ( strlen( (string) $string ) <= self::AUTH_STRING_MAX_LENGTH )
         {
             return $string;
         }
         else
         {
-            return substr( $string, 0, self::AUTH_STRING_MAX_LENGTH );
+            return substr( (string) $string, 0, self::AUTH_STRING_MAX_LENGTH );
         }
     }
 
@@ -1947,7 +1875,7 @@ WHERE user_id = '" . $userID . "' AND
     {
         $accessArray = $this->accessArray();
 
-        $functionArray = array();
+        $functionArray = [];
         if ( isset( $accessArray['*']['*'] ) )
         {
             $functionArray = $accessArray['*']['*'];
@@ -1966,22 +1894,16 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( !$functionArray )
         {
-            return array( 'accessWord' => 'no',
-                          'accessList' => array( 'FunctionRequired' => array ( 'Module' => $module,
-                                                                               'Function' => $function,
-                                                                               'ClassID' => '',
-                                                                               'MainNodeID' => '' ),
-                                                 'PolicyList' => array() )
-                          );
+            return ['accessWord' => 'no', 'accessList' => ['FunctionRequired' => ['Module' => $module, 'Function' => $function, 'ClassID' => '', 'MainNodeID' => ''], 'PolicyList' => []]];
         }
 
         if ( isset( $functionArray['*'] ) &&
                   ( $functionArray['*'] == '*' || in_array( '*',  $functionArray['*'] ) ) )
         {
-            return array( 'accessWord' => 'yes' );
+            return ['accessWord' => 'yes'];
         }
 
-        return array( 'accessWord' => 'limited', 'policies' => $functionArray );
+        return ['accessWord' => 'limited', 'policies' => $functionArray];
     }
 
     /**
@@ -2055,7 +1977,7 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( $access['accessWord'] == 'yes' )
         {
-            return array( '*' );
+            return ['*'];
         }
         else if ( $access['accessWord'] == 'limited' )
         {
@@ -2064,7 +1986,7 @@ WHERE user_id = '" . $userID . "' AND
             $ownerID = $contentObject->attribute( 'owner_id' );
             $sectionID = $contentObject->attribute( 'section_id' );
 
-            $allowedSectionIDList = array();
+            $allowedSectionIDList = [];
             foreach ( $access['policies'] as $policy )
             {
                 if ( ( isset( $policy['Class'] ) and !in_array( $classID, $policy['Class'] ) ) or
@@ -2079,13 +2001,13 @@ WHERE user_id = '" . $userID . "' AND
                 }
                 else
                 {
-                    return array( '*' );
+                    return ['*'];
                 }
             }
             $allowedSectionIDList = array_unique( $allowedSectionIDList );
             return $allowedSectionIDList;
         }
-        return array();
+        return [];
     }
 
     /*
@@ -2120,7 +2042,7 @@ WHERE user_id = '" . $userID . "' AND
                     $subtreeLimitationResult = false;
                     foreach ( $policy['User_Subtree'] as $path )
                     {
-                        if ( strpos( $nodePath, $path ) !== false )
+                        if ( str_contains( (string) $nodePath, (string) $path ) )
                         {
                             $subtreeLimitationResult = true;
                         }
@@ -2187,11 +2109,11 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( $access['accessWord'] == 'yes' )
         {
-            return array( '*' );
+            return ['*'];
         }
         else if ( $access['accessWord'] == 'limited' )
         {
-            $allowedSectionIDList = array();
+            $allowedSectionIDList = [];
             foreach ( $access['policies'] as $policy )
             {
                 if ( isset( $policy['NewSection'] ) )
@@ -2203,13 +2125,13 @@ WHERE user_id = '" . $userID . "' AND
                 }
                 else
                 {
-                    return array( '*' );
+                    return ['*'];
                 }
             }
             $allowedSectionIDList = array_unique( $allowedSectionIDList );
             return $allowedSectionIDList;
         }
-        return array();
+        return [];
     }
 
     /*
@@ -2221,11 +2143,11 @@ WHERE user_id = '" . $userID . "' AND
 
         if ( $access['accessWord'] == 'yes' )
         {
-            return array( '*' );
+            return ['*'];
         }
         else if ( $access['accessWord'] == 'limited' )
         {
-            $allowedClassList = array();
+            $allowedClassList = [];
             foreach ( $access['policies'] as $policy )
             {
                 if ( !isset( $policy['NewSection'] ) or in_array( $checkSectionID, $policy['NewSection'] ) )
@@ -2236,7 +2158,7 @@ WHERE user_id = '" . $userID . "' AND
                     }
                     else
                     {
-                        return array( '*' );
+                        return ['*'];
                     }
                 }
             }
@@ -2249,7 +2171,7 @@ WHERE user_id = '" . $userID . "' AND
                 $classList = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, false, false, null, null, $allowedClassList );
                 if ( is_array( $classList ) && !empty( $classList ) )
                 {
-                    $classIdentifierList = array();
+                    $classIdentifierList = [];
                     foreach( $classList as $class )
                     {
                         $classIdentifierList[] = $class['identifier'];
@@ -2258,7 +2180,7 @@ WHERE user_id = '" . $userID . "' AND
                 }
             }
         }
-        return array();
+        return [];
     }
 
     /*
@@ -2345,11 +2267,11 @@ WHERE user_id = '" . $userID . "' AND
                          !empty( $availableFunctions ) )
                     {
                         $pattern = $pS . '(' . implode( '|', array_keys( $availableFunctions ) ) . ')' . $pE;
-                        $matches = array();
+                        $matches = [];
                         if ( preg_match_all( $pattern, ' ' . $funcExpression . ' ', $matches ) > 0 )
                         {
-                            $patterns = array();
-                            $replacements = array();
+                            $patterns = [];
+                            $replacements = [];
                             $matches = array_unique( $matches[1] );
                             foreach ( $matches as $match )
                             {
@@ -2379,7 +2301,7 @@ WHERE user_id = '" . $userID . "' AND
                     $funcExpressionForEval = $funcExpression;
 
                     // continue to validate expression
-                    $words = array();
+                    $words = [];
                     $words[] = $pS . 'and' . $pE;
                     $words[] = $pS . 'or' . $pE;
                     $words[] = $pS . 'true' . $pE;
@@ -2501,7 +2423,7 @@ WHERE user_id = '" . $userID . "' AND
             return $userCache['role_limitations'];
         }
 
-        $limitValueList = array();
+        $limitValueList = [];
         $limitList      = $this->limitList();
         foreach ( $limitList as $limit )
         {
@@ -2568,7 +2490,7 @@ WHERE user_id = '" . $userID . "' AND
         {
             if ( !isset( $this->GroupsAsObjects ) )
             {
-                $this->GroupsAsObjects = array();
+                $this->GroupsAsObjects = [];
 
                 foreach ( $this->groups() as $group )
                 {
@@ -2611,11 +2533,11 @@ WHERE user_id = '" . $userID . "' AND
                                         WHERE b.contentobject_id='$userID' AND
                                               b.parent_node_id = c.node_id
                                         ORDER BY c.contentobject_id  ");
-        $pathArray      = array();
-        $userGroupArray = array();
+        $pathArray      = [];
+        $userGroupArray = [];
         foreach ( $userGroups as $group )
         {
-            $pathItems = explode( '/', $group["path_string"] );
+            $pathItems = explode( '/', (string) $group["path_string"] );
             array_pop( $pathItems );
             array_pop( $pathItems );
             foreach ( $pathItems as $pathItem )
@@ -2652,8 +2574,7 @@ WHERE user_id = '" . $userID . "' AND
     function checkUser( &$siteBasics, $uri )
     {
         $http = eZHTTPTool::instance();
-        $check = array( "module" => "user",
-                        "function" => "login" );
+        $check = ["module" => "user", "function" => "login"];
         if ( eZSession::issetkey( 'eZUserLoggedInID', false ) &&
              $http->sessionVariable( "eZUserLoggedInID" ) != '' &&
              $http->sessionVariable( "eZUserLoggedInID" ) != self::anonymousId() )
@@ -2676,7 +2597,7 @@ WHERE user_id = '" . $userID . "' AND
         $anonymousAccessList = $ini->variable( "SiteAccessSettings", "AnonymousAccessList" );
         foreach ( $anonymousAccessList as $anonymousAccess )
         {
-            $elements = explode( '/', $anonymousAccess );
+            $elements = explode( '/', (string) $anonymousAccess );
             if ( !isset( $elements[1] ) )
             {
                 if ( $moduleName == $elements[0] )
@@ -2705,7 +2626,7 @@ WHERE user_id = '" . $userID . "' AND
     */
     function preCollectUserInfo()
     {
-        return array( 'module' => 'user', 'function' => 'login' );
+        return ['module' => 'user', 'function' => 'login'];
     }
 
     /*!
@@ -2804,8 +2725,8 @@ WHERE user_id = '" . $userID . "' AND
 
     static function fetchUserClassNames()
     {
-        $userClassNames = array();
-        $userClasses = eZUser::fetchUserClassList( false, array( 'identifier' ) );
+        $userClassNames = [];
+        $userClasses = eZUser::fetchUserClassList( false, ['identifier'] );
         foreach ( $userClasses as $class )
         {
             $userClassNames[] = $class[ 'identifier' ];
@@ -2816,8 +2737,8 @@ WHERE user_id = '" . $userID . "' AND
     static function fetchUserGroupClassNames()
     {
         // Get names of user classes
-        $userClassNames = array();
-        $userClasses = eZUser::fetchUserClassList( false, array( 'identifier' ) );
+        $userClassNames = [];
+        $userClasses = eZUser::fetchUserClassList( false, ['identifier'] );
         foreach ( $userClasses as $class )
         {
             $userClassNames[] = $class[ 'identifier' ];
@@ -2825,10 +2746,10 @@ WHERE user_id = '" . $userID . "' AND
 
         // Get names of all allowed content-classes for the Users subtree
         $contentIni = eZINI::instance( "content.ini" );
-        $userGroupClassNames = array();
+        $userGroupClassNames = [];
         if ( $contentIni->hasVariable( 'ClassGroupIDs', 'Users' ) and
              is_numeric( $usersClassGroupID = $contentIni->variable( 'ClassGroupIDs', 'Users' ) ) and
-             count( $usersClassList = eZContentClassClassGroup::fetchClassList( eZContentClass::VERSION_STATUS_DEFINED, $usersClassGroupID ) ) > 0 )
+             (is_countable($usersClassList = eZContentClassClassGroup::fetchClassList( eZContentClass::VERSION_STATUS_DEFINED, $usersClassGroupID )) ? count( $usersClassList = eZContentClassClassGroup::fetchClassList( eZContentClass::VERSION_STATUS_DEFINED, $usersClassGroupID ) ) : 0) > 0 )
         {
             foreach ( $usersClassList as $userClass )
             {
@@ -2852,7 +2773,7 @@ WHERE user_id = '" . $userID . "' AND
         $minPasswordLength = $ini->variable( 'UserSettings', 'MinPasswordLength' );
         if ( $password !== false and
              $password !== null and
-             strlen( $password ) >= (int) $minPasswordLength )
+             strlen( (string) $password ) >= (int) $minPasswordLength )
         {
             return true;
         }
@@ -2900,7 +2821,7 @@ WHERE user_id = '" . $userID . "' AND
         {
             $ini = eZINI::instance();
             self::$anonymousId = (int)$ini->variable( 'UserSettings', 'AnonymousUserID' );
-            $GLOBALS['eZUserBuiltins'] = array( self::$anonymousId );
+            $GLOBALS['eZUserBuiltins'] = [self::$anonymousId];
         }
         return self::$anonymousId;
     }
@@ -2910,12 +2831,12 @@ WHERE user_id = '" . $userID . "' AND
     */
     public static function contentClassIDs()
     {
-        $userContentClassIDs = array();
+        $userContentClassIDs = [];
 
         $ini = eZINI::instance( 'content.ini' );
         $userDatatypes = $ini->variable( "DataTypeSettings", "UserDataTypes" );
 
-        $userContentClassIDs = array();
+        $userContentClassIDs = [];
         foreach ( $userDatatypes as $datatypeIdentifier )
         {
             $userContentClassIDs = array_merge( $userContentClassIDs, eZContentClass::fetchIDListContainingDatatype( $datatypeIdentifier ) );
@@ -2991,8 +2912,8 @@ WHERE user_id = '" . $userID . "' AND
     public $PasswordHash;
     public $PasswordHashType;
     public $Groups;
-    public $OriginalPassword;
-    public $OriginalPasswordConfirm;
+    public $OriginalPassword = false;
+    public $OriginalPasswordConfirm = false;
     public $AccessArray;
     public $ContentObjectID;
 
@@ -3014,7 +2935,7 @@ WHERE user_id = '" . $userID . "' AND
      */
     protected static $userHasLoggedOut = false;
 
-    private $CachingEnabled = true;
+    private true $CachingEnabled = true;
 }
 
 ?>

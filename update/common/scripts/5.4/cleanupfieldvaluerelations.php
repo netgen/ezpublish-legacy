@@ -12,25 +12,16 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Removes relation data towards non-existing Content from field values.\n" .
-            "Only Relation and RelationList fieldtypes field values will be processed.\n" .
-            "For more details see https://jira.ez.no/browse/EZP-22408.",
-        'use-session' => false,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Removes relation data towards non-existing Content from field values.\n" .
+        "Only Relation and RelationList fieldtypes field values will be processed.\n" .
+        "For more details see https://jira.ez.no/browse/EZP-22408.", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[n][v][iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)',
-        'iteration-limit' => 'Batch size (default: 100)',
-        'n' => 'Do not wait 30 seconds before starting',
-    )
+    ['iteration-sleep' => 'Sleep duration between batches, in seconds (default: 1)', 'iteration-limit' => 'Batch size (default: 100)', 'n' => 'Do not wait 30 seconds before starting']
 );
 $optIterationSleep = (int)$options['iteration-sleep'] ?: 1;
 $optIterationLimit = (int)$options['iteration-limit'] ?: 100;
@@ -141,7 +132,7 @@ function processRelationListRow( array $row )
     $xpath = new DOMXPath( $document );
     $xpathExpression = "//related-objects/relation-list/relation-item";
 
-    $removedRelations = array();
+    $removedRelations = [];
     $relationItems = $xpath->query( $xpathExpression );
     /** @var \DOMElement $relationItem */
     foreach ( $relationItems as $relationItem )
@@ -180,10 +171,7 @@ function loadRelationListRows( $pass, $optIterationLimit )
 
     $relationListArray = $db->arrayQuery(
         $relationListQuery,
-        array(
-            "limit" => $optIterationLimit,
-            "offset" => $pass * $optIterationLimit
-        )
+        ["limit" => $optIterationLimit, "offset" => $pass * $optIterationLimit]
     );
     if ( !is_array( $relationListArray ) )
     {
@@ -203,17 +191,17 @@ function processRelationListRows( $optIterationLimit, $optIterationSleep, $verbo
 
     $relationListArray = loadRelationListRows( $pass, $optIterationLimit );
 
-    while( count( $relationListArray ) )
+    while( is_countable($relationListArray) ? count( $relationListArray ) : 0 )
     {
         $fromNumber = $pass * $optIterationLimit;
-        $toNumber = $fromNumber + count( $relationListArray );
+        $toNumber = $fromNumber + (is_countable($relationListArray) ? count( $relationListArray ) : 0);
         $cli->output( "Processing records #{$fromNumber}-{$toNumber}" );
 
         foreach ( $relationListArray as $row )
         {
             $removedRelationIds = processRelationListRow( $row );
 
-            if ( count( $removedRelationIds ) )
+            if ( is_countable($removedRelationIds) ? count( $removedRelationIds ) : 0 )
             {
                 $relationListUpdatedCount++;
                 if ( $verboseLevel > 0 )

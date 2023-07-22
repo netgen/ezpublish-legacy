@@ -76,16 +76,12 @@ abstract class eZDBBasedClusterFileHandlerAbstractTest extends eZClusterFileHand
      */
     public function testCleanPath( $path, $expectedPath )
     {
-        self::assertEquals( $expectedPath, call_user_func( array( $this->clusterClass, 'cleanpath' ), $path ) );
+        self::assertEquals( $expectedPath, call_user_func( [$this->clusterClass, 'cleanpath'], $path ) );
     }
 
     public static function providerForTestCleanPath()
     {
-        return array(
-            array( 'path\with\backslashes.txt',         'path/with/backslashes.txt' ),
-            array( 'path//with///multiple/slashes.txt', 'path/with/multiple/slashes.txt' ),
-            array( 'path/with/ending/slash/',           'path/with/ending/slash' )
-        );
+        return [['path\with\backslashes.txt', 'path/with/backslashes.txt'], ['path//with///multiple/slashes.txt', 'path/with/multiple/slashes.txt'], ['path/with/ending/slash/', 'path/with/ending/slash']];
     }
 
     /**
@@ -207,38 +203,21 @@ abstract class eZDBBasedClusterFileHandlerAbstractTest extends eZClusterFileHand
         if ( ezpTestRunner::dsn()->parts['phptype'] == 'postgresql' )
             self::markTestSkipped( "name_trunk isn't used by postgresql" );
 
-        $ch = self::createFile( $path, false, array( 'scope' => $scope ) );
+        $ch = self::createFile( $path, false, ['scope' => $scope] );
         self::assertEquals( $expectedNameTrunk, $ch->metaData['name_trunk'] );
         self::assertEquals( $expectedCacheType, $ch->cacheType );
     }
 
     public static function providerForTestNameTrunk()
     {
-        return array(
+        return [
             // view cache file
-            array(
-                'var/plain_site/cache/content/plain_site/2-a54e7f5dba0d9df9de22904d309754b8.cache',
-                'viewcache',
-                'var/plain_site/cache/content/plain_site/2-',
-                'viewcache'
-            ),
-
+            ['var/plain_site/cache/content/plain_site/2-a54e7f5dba0d9df9de22904d309754b8.cache', 'viewcache', 'var/plain_site/cache/content/plain_site/2-', 'viewcache'],
             // template block with subtree expiry
-            array(
-                'var/plain_site/cache/template-block/subtree/1/cache/1/1/0/110322645.cache',
-                'template-block',
-                'var/plain_site/cache/template-block/subtree/1/cache/',
-                'cacheblock'
-            ),
-
+            ['var/plain_site/cache/template-block/subtree/1/cache/1/1/0/110322645.cache', 'template-block', 'var/plain_site/cache/template-block/subtree/1/cache/', 'cacheblock'],
             // misc cache
-            array(
-                'var/plain_site/cache/classidentifiers_fc45544cdb917d072c104b67248009e1.php',
-                'classidentifiers',
-                'var/plain_site/cache/classidentifiers_fc45544cdb917d072c104b67248009e1.php',
-                'misc'
-            ),
-        );
+            ['var/plain_site/cache/classidentifiers_fc45544cdb917d072c104b67248009e1.php', 'classidentifiers', 'var/plain_site/cache/classidentifiers_fc45544cdb917d072c104b67248009e1.php', 'misc'],
+        ];
     }
 
     /**
@@ -248,7 +227,7 @@ abstract class eZDBBasedClusterFileHandlerAbstractTest extends eZClusterFileHand
     {
         $class = $this->clusterClass;
 
-        $files = array();
+        $files = [];
 
         // generate more files than the cache limit so that the
         $iMax = constant( "$class::INFOCACHE_MAX" ) + 10;

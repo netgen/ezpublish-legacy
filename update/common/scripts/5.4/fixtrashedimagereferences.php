@@ -11,30 +11,20 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Fixes invalid references to image files in trashed content. See issue EZP-25077\n",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Fixes invalid references to image files in trashed content. See issue EZP-25077\n", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[dry-run][iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'dry-run' => 'Dry run'
-    )
+    ['dry-run' => 'Dry run']
 );
 $optDryRun = (bool)$options['dry-run'];
 $optIterationSleep = (int)$options['iteration-sleep'] ?: 1;
 $optIterationLimit = (int)$options['iteration-limit'] ?: 100;
 
-$limit = array(
-    "offset" => 0,
-    "limit" => $optIterationLimit,
-);
+$limit = ["offset" => 0, "limit" => $optIterationLimit];
 
 $script->initialize();
 $db = eZDB::instance();
@@ -51,8 +41,8 @@ if ( $optDryRun ) {
  */
 function fixupTrashedImageXml( $imageAttribute, $optDryRun )
 {
-    if ( stripos( $imageAttribute['data_text'], ' dirpath="/trashed" ' ) === false ||
-        stripos( $imageAttribute['data_text'], ' is_valid="" ' ) === false )
+    if ( stripos( (string) $imageAttribute['data_text'], ' dirpath="/trashed" ' ) === false ||
+        stripos( (string) $imageAttribute['data_text'], ' is_valid="" ' ) === false )
     {
         return;
     }
@@ -63,7 +53,7 @@ function fixupTrashedImageXml( $imageAttribute, $optDryRun )
 
     eZCLI::instance()->notice( "Processing image $contentId ($version) ..." );
 
-    if ( ( $doc = simplexml_load_string( $imageAttribute['data_text'] ) ) === false )
+    if ( ( $doc = simplexml_load_string( (string) $imageAttribute['data_text'] ) ) === false )
         return;
 
     $doc['filename'] = '';

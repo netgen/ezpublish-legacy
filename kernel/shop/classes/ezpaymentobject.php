@@ -20,8 +20,8 @@
 
 class eZPaymentObject extends eZPersistentObject
 {
-    const STATUS_NOT_APPROVED = 0;
-    const STATUS_APPROVED = 1;
+    final public const STATUS_NOT_APPROVED = 0;
+    final public const STATUS_APPROVED = 1;
 
     /*!
      \static
@@ -29,9 +29,7 @@ class eZPaymentObject extends eZPersistentObject
     */
     static function createNew( $workflowprocessID, $orderID, $paymentType )
     {
-        return new eZPaymentObject( array( 'workflowprocess_id'  => $workflowprocessID,
-                                           'order_id'            => $orderID,
-                                           'payment_string'      => $paymentType ) );
+        return new eZPaymentObject( ['workflowprocess_id'  => $workflowprocessID, 'order_id'            => $orderID, 'payment_string'      => $paymentType] );
     }
 
     /*!
@@ -50,36 +48,7 @@ class eZPaymentObject extends eZPersistentObject
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default'  => 0,
-                                                        'required' => true ),
-                                         'workflowprocess_id' => array( 'name' => 'WorkflowProcessID',
-                                                                        'datatype'=> 'integer',
-                                                                        'default' => 0,
-                                                                        'required'=> true,
-                                                                        'foreign_class' => 'eZWorkflowProcess',
-                                                                        'foreign_attribute' => 'id',
-                                                                        'multiplicity' => '1..*' ),
-                                         'order_id' => array( 'name' => 'OrderID',
-                                                              'datatype'=> 'integer',
-                                                              'default' => 0,
-                                                              'required'=> false,
-                                                              'foreign_class' => 'eZOrder',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         'payment_string' => array( 'name' => 'PaymentString',
-                                                                    'datatype'=> 'string',
-                                                                    'default' => 'Payment',
-                                                                    'required'=> false ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype'=> 'integer',
-                                                            'default' => 0,
-                                                            'required'=> true ) ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZPaymentObject',
-                      'name' => 'ezpaymentobject' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default'  => 0, 'required' => true], 'workflowprocess_id' => ['name' => 'WorkflowProcessID', 'datatype'=> 'integer', 'default' => 0, 'required'=> true, 'foreign_class' => 'eZWorkflowProcess', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'order_id' => ['name' => 'OrderID', 'datatype'=> 'integer', 'default' => 0, 'required'=> false, 'foreign_class' => 'eZOrder', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'payment_string' => ['name' => 'PaymentString', 'datatype'=> 'string', 'default' => 'Payment', 'required'=> false], 'status' => ['name' => 'Status', 'datatype'=> 'integer', 'default' => 0, 'required'=> true]], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZPaymentObject', 'name' => 'ezpaymentobject'];
     }
 
     /*!
@@ -90,7 +59,7 @@ class eZPaymentObject extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZPaymentObject::definition(),
                                                 null,
-                                                array( 'id' => $transactionID ) );
+                                                ['id' => $transactionID] );
     }
 
     /*!
@@ -101,7 +70,7 @@ class eZPaymentObject extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZPaymentObject::definition(),
                                                 null,
-                                                array( 'order_id' => $orderID ) );
+                                                ['order_id' => $orderID] );
     }
 
     /*!
@@ -112,7 +81,7 @@ class eZPaymentObject extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZPaymentObject::definition(),
                                                 null,
-                                                array( 'workflowprocess_id' => $workflowprocessID ) );
+                                                ['workflowprocess_id' => $workflowprocessID] );
     }
 
     /*!
@@ -146,7 +115,7 @@ class eZPaymentObject extends eZPersistentObject
             $mementoData['memento_key'] = $theProcess->attribute( 'memento_key' );
             $bodyMemento->remove();
 
-            $operationParameters = array();
+            $operationParameters = [];
             if ( isset( $mementoData['parameters'] ) )
                 $operationParameters = $mementoData['parameters'];
 

@@ -11,7 +11,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
 {
     protected $backupGlobals = false;
 
-    public function __construct( $name = NULL, array $data = array(), $dataName = '' )
+    public function __construct( $name = NULL, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
         $this->setName( "eZContentObject Unit Tests" );
@@ -38,7 +38,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testFetchIDArray()
     {
-        $contentObjectIDArray = array();
+        $contentObjectIDArray = [];
 
         $object = new ezpObject( "article", 2 );
         $object->title = __FUNCTION__;
@@ -54,21 +54,17 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         $contentObjects = eZContentObject::fetchIDArray( $contentObjectIDArray );
 
         // we will store the objects we find in this array
-        $matchedContentObjectsIDArray = array();
+        $matchedContentObjectsIDArray = [];
         foreach( $contentObjectIDArray as $contentObjectID )
         {
-            $this->assertArrayHasKey( $contentObjectID, $contentObjects,
-                "eZContentObject #{$contentObjectID} should be a key from the return value" );
-            $this->assertInstanceOf( 'eZContentObject', $contentObjects[$contentObjectID],
-                "Key for eZContentObject #{$contentObjectID} isn't an eZContentObject" );
-            $this->assertEquals( $contentObjectID, $contentObjects[$contentObjectID]->attribute( 'id' ),
-                "eZContentObject's id for key #{$contentObjectID} doesn't match" );
+            static::assertArrayHasKey($contentObjectID, $contentObjects, "eZContentObject #{$contentObjectID} should be a key from the return value");
+            static::assertInstanceOf('eZContentObject', $contentObjects[$contentObjectID], "Key for eZContentObject #{$contentObjectID} isn't an eZContentObject");
+            static::assertEquals($contentObjectID, $contentObjects[$contentObjectID]->attribute( 'id' ), "eZContentObject's id for key #{$contentObjectID} doesn't match");
             $matchedContentObjectsIDArray[] = $contentObjectID;
         }
 
         // Check that all the objects from the original array were returned
-        $this->assertTrue( count( array_diff( $matchedContentObjectsIDArray, $contentObjectIDArray ) ) == 0,
-            "Not all objects from original ID array were returned" );
+        static::assertTrue(count( array_diff( $matchedContentObjectsIDArray, $contentObjectIDArray ) ) == 0, "Not all objects from original ID array were returned");
     }
 
     /**
@@ -83,6 +79,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testRelatedObjectCount()
     {
+        $attributes = [];
         // Create a test content class
         $class = new ezpClass( __FUNCTION__, __FUNCTION__, 'name' );
         $class->add( 'Name', 'name', 'ezstring' );
@@ -101,7 +98,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         $class->store();
 
         // create a few articles we will relate our object to
-        $relatedObjects = array();
+        $relatedObjects = [];
         for( $i = 0; $i < 10; $i++ )
         {
             $article = new ezpObject( 'article', 2 );
@@ -121,8 +118,8 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         $object->name = __FUNCTION__;
         $object->single_relation_1 = $relatedObjects[0];
         $object->single_relation_2 = $relatedObjects[1];
-        $object->multiple_relations_1 = array( $relatedObjects[0], $relatedObjects[2], $relatedObjects[3] );
-        $object->multiple_relations_2 = array( $relatedObjects[1], $relatedObjects[4], $relatedObjects[5] );
+        $object->multiple_relations_1 = [$relatedObjects[0], $relatedObjects[2], $relatedObjects[3]];
+        $object->multiple_relations_2 = [$relatedObjects[1], $relatedObjects[4], $relatedObjects[5]];
         $object->addContentObjectRelation( $relatedObjects[0] );
         $object->addContentObjectRelation( $relatedObjects[1] );
         $object->addContentObjectRelation( $relatedObjects[6] );
@@ -145,33 +142,21 @@ class eZContentObjectTest extends ezpDatabaseTestCase
 
         $contentObject = eZContentObject::fetch( $object->attribute( 'id' ) );
 
-        $paramAllRelations = array( 'AllRelations' => true );
-        $paramAttributeRelations = array( 'AllRelations' => eZContentObject::RELATION_ATTRIBUTE );
-        $paramCommonRelations = array( 'AllRelations' => eZContentObject::RELATION_COMMON );
+        $paramAllRelations = ['AllRelations' => true];
+        $paramAttributeRelations = ['AllRelations' => eZContentObject::RELATION_ATTRIBUTE];
+        $paramCommonRelations = ['AllRelations' => eZContentObject::RELATION_COMMON];
 
         // Test overall relation count
-        $this->assertEquals(
-            14, $contentObject->relatedObjectCount( false, false, false, $paramAllRelations ),
-            "Overall relation count should be 14" );
+        static::assertEquals(14, $contentObject->relatedObjectCount( false, false, false, $paramAllRelations ), "Overall relation count should be 14");
 
         // Test relation count for each attribute
-        $this->assertEquals(
-            1, $contentObject->relatedObjectCount( false, $attributes['single_relation_1'], false, $paramAttributeRelations ),
-            "Relation count on attribute single_relation_1 should be 1" );
-        $this->assertEquals(
-            1, $contentObject->relatedObjectCount( false, $attributes['single_relation_2'], false, $paramAttributeRelations ),
-            "Relation count on attribute single_relation_2 should be 1" );
-        $this->assertEquals(
-            3, $contentObject->relatedObjectCount( false, $attributes['multiple_relations_1'], false, $paramAttributeRelations ),
-            "Relation count on attribute multiple_relations_1 should be 3" );
-        $this->assertEquals(
-            3, $contentObject->relatedObjectCount( false, $attributes['multiple_relations_2'], false, $paramAttributeRelations ),
-            "Relation count on attribute multiple_relations_2 should be 3" );
+        static::assertEquals(1, $contentObject->relatedObjectCount( false, $attributes['single_relation_1'], false, $paramAttributeRelations ), "Relation count on attribute single_relation_1 should be 1");
+        static::assertEquals(1, $contentObject->relatedObjectCount( false, $attributes['single_relation_2'], false, $paramAttributeRelations ), "Relation count on attribute single_relation_2 should be 1");
+        static::assertEquals(3, $contentObject->relatedObjectCount( false, $attributes['multiple_relations_1'], false, $paramAttributeRelations ), "Relation count on attribute multiple_relations_1 should be 3");
+        static::assertEquals(3, $contentObject->relatedObjectCount( false, $attributes['multiple_relations_2'], false, $paramAttributeRelations ), "Relation count on attribute multiple_relations_2 should be 3");
 
         // Test common level relation count
-        $this->assertEquals(
-            6, $contentObject->relatedObjectCount( false, false, false, $paramCommonRelations ),
-            "Common relations count should be 6" );
+        static::assertEquals(6, $contentObject->relatedObjectCount( false, false, false, $paramCommonRelations ), "Common relations count should be 6");
 
         // Test reverse relation count on $relatedObject[9]
         // This object is related to:
@@ -179,25 +164,15 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         // - one object on single_relation_1
         // - another object on single_relation_2
         $relatedContentObject = eZContentObject::fetch( $relatedObjects[9] );
-        $this->assertEquals(
-            3, $relatedContentObject->relatedObjectCount( false, false, true, $paramAllRelations ),
-            "Overall reverse relation count should be 3" );
-        $this->assertEquals(
-            1, $relatedContentObject->relatedObjectCount( false, false, true, $paramCommonRelations ),
-            "Common reverse relation count should be 1" );
-        $this->assertEquals(
-            1, $relatedContentObject->relatedObjectCount( false, $attributes['single_relation_1'], true, $paramAttributeRelations ),
-            "Attribute reverse relation count on single_relation_1 should be 1" );
-        $this->assertEquals(
-            1, $relatedContentObject->relatedObjectCount( false, $attributes['single_relation_2'], true, $paramAttributeRelations ),
-            "Attribute reverse relation count on single_relation_2 should be 1" );
+        static::assertEquals(3, $relatedContentObject->relatedObjectCount( false, false, true, $paramAllRelations ), "Overall reverse relation count should be 3");
+        static::assertEquals(1, $relatedContentObject->relatedObjectCount( false, false, true, $paramCommonRelations ), "Common reverse relation count should be 1");
+        static::assertEquals(1, $relatedContentObject->relatedObjectCount( false, $attributes['single_relation_1'], true, $paramAttributeRelations ), "Attribute reverse relation count on single_relation_1 should be 1");
+        static::assertEquals(1, $relatedContentObject->relatedObjectCount( false, $attributes['single_relation_2'], true, $paramAttributeRelations ), "Attribute reverse relation count on single_relation_2 should be 1");
 
         // Test that trashed objects are not counted as related (issue #15142)
         $trashObject = eZContentObject::fetch( $relatedObjects[9] );
         $trashObject->removeThis();
-        $this->assertEquals(
-            13, $contentObject->relatedObjectCount( false, false, false, $paramAllRelations ),
-            "Relation count after move to trash should be 13" );
+        static::assertEquals(13, $contentObject->relatedObjectCount( false, false, false, $paramAllRelations ), "Relation count after move to trash should be 13");
 
         // Empty the trash
         foreach( eZContentObjectTrashNode::trashList() as $node )
@@ -236,13 +211,9 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         $contentObject = eZContentObject::fetch( $object->attribute( 'id' ) );
         $relatedObjects = $contentObject->relatedObjects( false, false, $attributeId );
 
-        $this->assertCount( 1, $relatedObjects );
-        $this->assertInstanceOf( "eZContentObject", $relatedObjects[0] );
-        $this->assertEquals(
-            $article->attribute( 'id' ),
-            $relatedObjects[0]->attribute( "id" ),
-            "Related object is not the expected object"
-        );
+        static::assertCount(1, $relatedObjects);
+        static::assertInstanceOf("eZContentObject", $relatedObjects[0]);
+        static::assertEquals($article->attribute( 'id' ), $relatedObjects[0]->attribute( "id" ), "Related object is not the expected object");
     }
 
     /**
@@ -252,8 +223,8 @@ class eZContentObjectTest extends ezpDatabaseTestCase
     {
         // First test with only one nodeID, as object
         $fetchedObject = eZContentObject::fetchByNodeID( 2 );
-        $this->assertInstanceOf( 'eZContentObject', $fetchedObject, 'eZContentObject::fetchByNodeID() must return an eZContentObject instance if only 1 nodeID is passed as param' );
-        $this->assertEquals( 2, $fetchedObject->attribute( 'main_node_id' ) );
+        static::assertInstanceOf('eZContentObject', $fetchedObject, 'eZContentObject::fetchByNodeID() must return an eZContentObject instance if only 1 nodeID is passed as param');
+        static::assertEquals(2, $fetchedObject->attribute( 'main_node_id' ));
     }
 
     /**
@@ -268,7 +239,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
         {
             self::assertArrayHasKey( $key, $fetchedObject, "eZContentObject::fetchByNodeID() with \$asObject=false must return an array with '$key' key" );
         }
-        $this->assertEquals( 'eZ Publish', $fetchedObject['name'] );
+        static::assertEquals('eZ Publish', $fetchedObject['name']);
     }
 
     /**
@@ -292,7 +263,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testFetchByNodeIDArrayNonExistentAsObject()
     {
-        self::assertSame( array(), eZContentObject::fetchByNodeID( array( 0 ) ), 'eZContentObject::fetchByNodeID() must return an empty array if no object can be found in Database while providing an array' );
+        self::assertSame( [], eZContentObject::fetchByNodeID( [0] ), 'eZContentObject::fetchByNodeID() must return an empty array if no object can be found in Database while providing an array' );
     }
 
     /**
@@ -300,7 +271,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testFetchByNodeIDArrayNonExistentAsRow()
     {
-        self::assertSame( array(), eZContentObject::fetchByNodeID( array( 0 ), false ), 'eZContentObject::fetchByNodeID() must return an empty array if no object can be found in Database while providing an array' );
+        self::assertSame( [], eZContentObject::fetchByNodeID( [0], false ), 'eZContentObject::fetchByNodeID() must return an empty array if no object can be found in Database while providing an array' );
     }
 
     /**
@@ -311,7 +282,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testFetchByNodeIDArrayAsObject()
     {
-        $fetchedObjects = eZContentObject::fetchByNodeID( array( 2 ) );
+        $fetchedObjects = eZContentObject::fetchByNodeID( [2] );
         self::assertInternalType(
             PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY,
             $fetchedObjects,
@@ -329,7 +300,7 @@ class eZContentObjectTest extends ezpDatabaseTestCase
      */
     public function testFetchByNodeIDArrayAsRow()
     {
-        $fetchedObjects = eZContentObject::fetchByNodeID( array( 2 ), false );
+        $fetchedObjects = eZContentObject::fetchByNodeID( [2], false );
         self::assertInternalType(
             PHPUnit_Framework_Constraint_IsType::TYPE_ARRAY,
             $fetchedObjects,

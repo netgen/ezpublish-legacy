@@ -31,9 +31,9 @@ class eZStaticCache implements ezpStaticCache
     /**
      * User-Agent string
      */
-    const USER_AGENT = 'eZ Publish static cache generator';
+    final public const USER_AGENT = 'eZ Publish static cache generator';
 
-    private static $actionList = array();
+    private static array $actionList = [];
 
     /**
      * The name of the host to fetch HTML data from.
@@ -62,14 +62,14 @@ class eZStaticCache implements ezpStaticCache
      *
      * @var array(int=>string)
      */
-    private $cachedURLArray = array();
+    private $cachedURLArray = [];
 
     /**
      * An array with siteaccesses names that will be cached.
      *
      * @var array(int=>string)
      */
-    private $cachedSiteAccesses = array();
+    private $cachedSiteAccesses = [];
 
     /**
      * An array with URLs that is to always be updated.
@@ -169,7 +169,7 @@ class eZStaticCache implements ezpStaticCache
         {
             if ( !$quiet and $cli )
                 $cli->output( "caching: $uri ", false );
-            $this->storeCache( $uri, $this->staticStorageDir, array(), false, $delay );
+            $this->storeCache( $uri, $this->staticStorageDir, [], false, $delay );
             if ( !$quiet and $cli )
                 $cli->output( "done" );
         }
@@ -238,26 +238,24 @@ class eZStaticCache implements ezpStaticCache
         // - org_url - The original url which was requested
         // - parent_id - The element ID of the parent (optional)
         // The parent_id will be used to quickly fetch the children, if not it will use the url
-        $parentList = array();
+        $parentList = [];
         // A list of urls which must generated, each entry is a string with the url
-        $generateList = array();
+        $generateList = [];
         foreach ( $staticURLArray as $url )
         {
             $currentSetting++;
-            if ( strpos( $url, '*') === false )
+            if ( !str_contains( (string) $url, '*') )
             {
                 $generateList[] = $url;
             }
             else
             {
-                $queryURL = ltrim( str_replace( '*', '', $url ), '/' );
+                $queryURL = ltrim( str_replace( '*', '', (string) $url ), '/' );
                 $dir = dirname( $queryURL );
                 if ( $dir == '.' )
                     $dir = '';
                 $glob = basename( $queryURL );
-                $parentList[] = array( 'url' => $dir,
-                                       'glob' => $glob,
-                                       'org_url' => $url );
+                $parentList[] = ['url' => $dir, 'glob' => $glob, 'org_url' => $url];
             }
         }
 
@@ -273,10 +271,10 @@ class eZStaticCache implements ezpStaticCache
                 if ( !$quiet and $cli )
                     $cli->output( "done" );
             }
-            $generateList = array();
+            $generateList = [];
 
             // Then check for more data
-            $newParentList = array();
+            $newParentList = [];
             foreach ( $parentList as $parentURL )
             {
                 if ( isset( $parentURL['parent_id'] ) )
@@ -286,7 +284,7 @@ class eZStaticCache implements ezpStaticCache
                     {
                         $path = '/' . $element->getPath();
                         $generateList[] = $path;
-                        $newParentList[] = array( 'parent_id' => $element->attribute( 'id' ) );
+                        $newParentList[] = ['parent_id' => $element->attribute( 'id' )];
                     }
                 }
                 else
@@ -298,7 +296,7 @@ class eZStaticCache implements ezpStaticCache
                     {
                         $path = '/' . $element->getPath();
                         $generateList[] = $path;
-                        $newParentList[] = array( 'parent_id' => $element->attribute( 'id' ) );
+                        $newParentList[] = ['parent_id' => $element->attribute( 'id' )];
                     }
                 }
             }
@@ -328,9 +326,9 @@ class eZStaticCache implements ezpStaticCache
                 $doCacheURL = true;
                 break;
             }
-            else if ( strpos( $cacheURL, '*') !== false )
+            else if ( str_contains( (string) $cacheURL, '*') )
             {
-                if ( strpos( $url, str_replace( '*', '', $cacheURL ) ) === 0 )
+                if ( str_starts_with($url, str_replace( '*', '', (string) $cacheURL )) )
                 {
                     $doCacheURL = true;
                     break;
@@ -343,7 +341,7 @@ class eZStaticCache implements ezpStaticCache
             return false;
         }
 
-        $this->storeCache( $url, $this->staticStorageDir, $nodeID ? array( "/content/view/full/$nodeID" ) : array(), $skipExisting, $delay );
+        $this->storeCache( $url, $this->staticStorageDir, $nodeID ? ["/content/view/full/$nodeID"] : [], $skipExisting, $delay );
 
         return true;
     }
@@ -358,9 +356,9 @@ class eZStaticCache implements ezpStaticCache
      * @param bool $skipUnlink If true it will not unlink existing cache files.
      * @param bool $delay
      */
-    private function storeCache( $url, $staticStorageDir, $alternativeStaticLocations = array(), $skipUnlink = false, $delay = true )
+    private function storeCache( $url, $staticStorageDir, $alternativeStaticLocations = [], $skipUnlink = false, $delay = true )
     {
-        $dirs = array();
+        $dirs = [];
 
         foreach ( $this->cachedSiteAccesses as $cachedSiteAccess )
         {
@@ -374,7 +372,7 @@ class eZStaticCache implements ezpStaticCache
                 $dir = $dirPart['dir'];
                 $siteURL = $dirPart['site_url'];
 
-                $cacheFiles = array();
+                $cacheFiles = [];
 
                 $cacheFiles[] = $this->buildCacheFilename( $staticStorageDir, $dir . $url );
                 foreach ( $alternativeStaticLocations as $location )
@@ -401,7 +399,7 @@ class eZStaticCache implements ezpStaticCache
 
                         if ( $delay )
                         {
-                            $this->addAction( 'store', array( $file, $fileName ) );
+                            $this->addAction( 'store', [$file, $fileName] );
                         }
                         else
                         {
@@ -449,7 +447,7 @@ class eZStaticCache implements ezpStaticCache
      */
     private function buildCacheDirPath( $siteAccess )
     {
-        $dirParts = array();
+        $dirParts = [];
 
         $ini = eZINI::instance();
 
@@ -462,7 +460,7 @@ class eZStaticCache implements ezpStaticCache
                 case 'host_uri':
                     foreach ( $ini->variable( 'SiteAccessSettings', 'HostUriMatchMapItems' ) as $hostUriMatchMapItem )
                     {
-                        $parts = explode( ';', $hostUriMatchMapItem );
+                        $parts = explode( ';', (string) $hostUriMatchMapItem );
 
                         if ( $parts[2] === $siteAccess  )
                         {
@@ -474,7 +472,7 @@ class eZStaticCache implements ezpStaticCache
                 case 'host':
                     foreach ( $ini->variable( 'SiteAccessSettings', 'HostMatchMapItems' ) as $hostMatchMapItem )
                     {
-                        $parts = explode( ';', $hostMatchMapItem );
+                        $parts = explode( ';', (string) $hostMatchMapItem );
 
                         if ( $parts[1] === $siteAccess  )
                         {
@@ -500,9 +498,7 @@ class eZStaticCache implements ezpStaticCache
      */
     private function buildCacheDirPart( $dir, $siteAccess )
     {
-        return array( 'dir' => $dir,
-                      'access_name' => $siteAccess,
-                      'site_url' => eZSiteAccess::getIni( $siteAccess, 'site.ini' )->variable( 'SiteSettings', 'SiteURL' ) );
+        return ['dir' => $dir, 'access_name' => $siteAccess, 'site_url' => eZSiteAccess::getIni( $siteAccess, 'site.ini' )->variable( 'SiteSettings', 'SiteURL' )];
     }
 
     /**
@@ -538,7 +534,7 @@ class eZStaticCache implements ezpStaticCache
             eZFile::rename( $tmpFileName, $file, false, eZFile::CLEAN_ON_FAILURE | eZFile::APPEND_DEBUG_ON_FAILURE );
 
             $perm = eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' );
-            chmod( $file, octdec( $perm ) );
+            chmod( $file, octdec( (string) $perm ) );
         }
 
         umask( $oldumask );
@@ -552,7 +548,7 @@ class eZStaticCache implements ezpStaticCache
      */
     function removeURL( $url )
     {
-        $dir = eZDir::path( array( $this->staticStorageDir, $url ) );
+        $dir = eZDir::path( [$this->staticStorageDir, $url] );
 
         @unlink( $dir . "/index.html" );
         @rmdir( $dir );
@@ -567,7 +563,7 @@ class eZStaticCache implements ezpStaticCache
      */
     private function addAction( $action, $parameters )
     {
-        self::$actionList[] = array( $action, $parameters );
+        self::$actionList[] = [$action, $parameters];
     }
 
     /**
@@ -580,8 +576,8 @@ class eZStaticCache implements ezpStaticCache
             return;
         }
 
-        $fileContentCache = array();
-        $doneDestList = array();
+        $fileContentCache = [];
+        $doneDestList = [];
 
         $ini = eZINI::instance( 'staticcache.ini');
         $clearByCronjob = ( $ini->variable( 'CacheSettings', 'CronjobCacheClear' ) == 'enabled' );
@@ -593,11 +589,11 @@ class eZStaticCache implements ezpStaticCache
 
         foreach ( self::$actionList as $action )
         {
-            list( $action, $parameters ) = $action;
+            [$action, $parameters] = $action;
 
             switch( $action ) {
                 case 'store':
-                    list( $destination, $source ) = $parameters;
+                    [$destination, $source] = $parameters;
 
                     if ( isset( $doneDestList[$destination] ) )
                         continue 2;
@@ -630,7 +626,7 @@ class eZStaticCache implements ezpStaticCache
                     break;
             }
         }
-        self::$actionList = array();
+        self::$actionList = [];
     }
 }
 

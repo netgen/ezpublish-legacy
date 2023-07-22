@@ -13,7 +13,7 @@ class eZSimplifiedXMLInputParserRegression extends ezpDatabaseTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->setName( __CLASS__ . " tests" );
+        $this->setName( self::class . " tests" );
     }
 
     /**
@@ -28,11 +28,11 @@ class eZSimplifiedXMLInputParserRegression extends ezpDatabaseTestCase
         $parser = new eZSimplifiedXMLInputParser( 0 );
         $html = 'beforeafter';
         $dom = $parser->process( $html );
-        $this->assertInstanceOf( 'DomDocument', $dom );
+        static::assertInstanceOf('DomDocument', $dom);
         $paragraphs = $dom->getElementsByTagName( 'paragraph' );
-        $this->assertEquals( 1, $paragraphs->length );
-        $this->assertEquals( 'before after', $paragraphs->item( 0 )->textContent );
-        $this->assertEquals( 1, count( $parser->getMessages() ) );
+        static::assertEquals(1, $paragraphs->length);
+        static::assertEquals('before after', $paragraphs->item( 0 )->textContent);
+        static::assertEquals(1, is_countable($parser->getMessages()) ? count( $parser->getMessages() ) : 0);
     }
 
     /**
@@ -117,11 +117,8 @@ Right Thoughts, Right Words, Right Action</header>';
     public function testParseAttributeWithAmpersand()
     {
         $parser = new eZSimplifiedXMLInputParser(0, eZXMLInputParser::ERROR_SYNTAX);
-        $this->assertNotEquals(
-            false,
-            $parser->process(
-                '<link href="http://google.com/?this=that&something=nothing">link</link>'
-            )
-        );
+        static::assertNotEquals(false, $parser->process(
+            '<link href="http://google.com/?this=that&something=nothing">link</link>'
+        ));
     }
 }

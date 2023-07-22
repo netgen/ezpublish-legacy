@@ -21,15 +21,13 @@ class eZBenchmarkrunner
      */
     public function __construct()
     {
-        $this->Results = array();
-        $this->CurrentResult = false;
         $this->IsSuccessful = false;
         $this->DefaultRepeatCount = 50;
     }
 
     function run( &$benchmark, $display = false )
     {
-        $this->Results = array();
+        $this->Results = [];
         $this->CurrentResult = false;
         if ( is_subclass_of( $benchmark, 'ezbenchmarkunit' ) )
         {
@@ -98,25 +96,21 @@ class eZBenchmarkrunner
                 {
                     if ( method_exists( $object, 'prime' ) )
                     {
-                        $entry['prime_start'] = array( 'memory' => memory_get_usage(),
-                                                       'time' => microtime() );
+                        $entry['prime_start'] = ['memory' => memory_get_usage(), 'time' => microtime()];
                         $object->prime( $this );
-                        $entry['prime_end'] = array( 'memory' => memory_get_usage(),
-                                                     'time' => microtime() );
+                        $entry['prime_end'] = ['memory' => memory_get_usage(), 'time' => microtime()];
                     }
 
                     $repeatCount = $this->DefaultRepeatCount;
                     if ( isset( $entry['repeat_count'] ) )
                         $repeatCount = $entry['repeat_count'];
 
-                    $entry['start'] = array( 'memory' => memory_get_usage(),
-                                             'time' => microtime() );
+                    $entry['start'] = ['memory' => memory_get_usage(), 'time' => microtime()];
                     for ( $i = 0; $i < $repeatCount; ++$i )
                     {
                         $object->$method( $this, $entry['parameter'] );
                     }
-                    $entry['end'] = array( 'memory' => memory_get_usage(),
-                                           'time' => microtime() );
+                    $entry['end'] = ['memory' => memory_get_usage(), 'time' => microtime()];
 
                     if ( method_exists( $object, 'cleanup' ) )
                         $object->cleanup( $this );
@@ -126,7 +120,7 @@ class eZBenchmarkrunner
                 else
                 {
                     $this->addToCurrentResult( $entry,
-                                               "Method $method does not exist for mark object(" . get_class( $object ) . ")" );
+                                               "Method $method does not exist for mark object(" . $object::class . ")" );
                 }
             } break;
 
@@ -139,14 +133,12 @@ class eZBenchmarkrunner
                     if ( isset( $entry['repeat_count'] ) )
                         $repeatCount = $entry['repeat_count'];
 
-                    $entry['start'] = array( 'memory' => memory_get_usage(),
-                                             'time' => microtime() );
+                    $entry['start'] = ['memory' => memory_get_usage(), 'time' => microtime()];
                     for ( $i = 0; $i < $repeatCount; ++$i )
                     {
                         $function( $this, $entry['parameter'] );
                     }
-                    $entry['end'] = array( 'memory' => memory_get_usage(),
-                                           'time' => microtime() );
+                    $entry['end'] = ['memory' => memory_get_usage(), 'time' => microtime()];
 
                     $this->processRecording( $benchmark, $entry, $repeatCount );
                 }
@@ -162,29 +154,27 @@ class eZBenchmarkrunner
     function processRecording( &$benchmark, &$entry, $repeatCount )
     {
         $memoryDiff = $entry['end']['memory'] - $entry['start']['memory'];
-        $startTime = explode( " ", $entry['start']['time'] );
+        $startTime = explode( " ", (string) $entry['start']['time'] );
         preg_match( "@0\.([0-9]+)@", "" . $startTime[0], $t1 );
         $startTime = $startTime[1] . "." . $t1[1];
-        $endTime = explode( " ", $entry['end']['time'] );
+        $endTime = explode( " ", (string) $entry['end']['time'] );
         preg_match( "@0\.([0-9]+)@", "" . $endTime[0], $t1 );
         $endTime = $endTime[1] . "." . $t1[1];
         $timeDiff = $endTime - $startTime;
 
-        $entry['result'] = array( 'memory' => $memoryDiff,
-                                  'time' => $timeDiff );
-        $entry['normalized'] = array( 'time' => $timeDiff / $repeatCount );
+        $entry['result'] = ['memory' => $memoryDiff, 'time' => $timeDiff];
+        $entry['normalized'] = ['time' => $timeDiff / $repeatCount];
 
         $memoryDiff = $entry['prime_end']['memory'] - $entry['prime_start']['memory'];
-        $startTime = explode( " ", $entry['prime_start']['time'] );
+        $startTime = explode( " ", (string) $entry['prime_start']['time'] );
         preg_match( "@0\.([0-9]+)@", "" . $startTime[0], $t1 );
         $startTime = $startTime[1] . "." . $t1[1];
-        $endTime = explode( " ", $entry['prime_end']['time'] );
+        $endTime = explode( " ", (string) $entry['prime_end']['time'] );
         preg_match( "@0\.([0-9]+)@", "" . $endTime[0], $t1 );
         $endTime = $endTime[1] . "." . $t1[1];
         $timeDiff = $endTime - $startTime;
 
-        $entry['prime'] = array( 'memory' => $memoryDiff,
-                                 'time' => $timeDiff );
+        $entry['prime'] = ['memory' => $memoryDiff, 'time' => $timeDiff];
 
         $this->addToCurrentResult( $entry );
     }
@@ -215,13 +205,7 @@ class eZBenchmarkrunner
         $markName = $entry['name'];
         if ( !is_array( $this->CurrentResult ) )
         {
-             $this->CurrentResult = array( 'name' => $markName,
-                                           'start' => false,
-                                           'end' => false,
-                                           'result' => false,
-                                           'normalized' => false,
-                                           'prime' => false,
-                                           'messages' => array() );
+             $this->CurrentResult = ['name' => $markName, 'start' => false, 'end' => false, 'result' => false, 'normalized' => false, 'prime' => false, 'messages' => []];
         }
         $repeatCount = $this->DefaultRepeatCount;
         if ( isset( $entry['repeat_count'] ) )
@@ -240,7 +224,7 @@ class eZBenchmarkrunner
             $this->CurrentResult['prime'] = $entry['prime'];
 
         if ( $message )
-            $this->CurrentResult['messages'][] = array( 'text' => $message );
+            $this->CurrentResult['messages'][] = ['text' => $message];
     }
 
     /*!
@@ -260,8 +244,7 @@ class eZBenchmarkrunner
     */
     function resetCurrentResult()
     {
-        $this->CurrentResult = array( 'name' => $this->currentMarkName(),
-                                      'messages' => array() );
+        $this->CurrentResult = ['name' => $this->currentMarkName(), 'messages' => []];
     }
 
     /*!
@@ -283,11 +266,11 @@ class eZBenchmarkrunner
 
     /// \privatesection
     /// An array with test results.
-    var $Results;
+    public $Results = [];
     /// The current result
-    var $CurrentResult;
+    public $CurrentResult = false;
     /// The name of the currently running mark or \c false
-    var $CurrentMarkName;
+    public $CurrentMarkName;
 }
 
 ?>

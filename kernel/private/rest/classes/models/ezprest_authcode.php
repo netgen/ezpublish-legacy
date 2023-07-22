@@ -66,13 +66,7 @@ class ezpRestAuthcode implements ezcPersistentObject
      */
      public function getState()
      {
-         return array(
-             'id' => $this->id,
-             'expirytime' => $this->expirytime,
-             'client_id' => $this->client_id,
-             'user_id' => $this->user_id,
-             'scope' => $this->scope,
-         );
+         return ['id' => $this->id, 'expirytime' => $this->expirytime, 'client_id' => $this->client_id, 'user_id' => $this->user_id, 'scope' => $this->scope];
      }
 }
 ?>

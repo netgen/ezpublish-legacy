@@ -24,27 +24,24 @@ class eZUserDiscountRuleTest extends ezpDatabaseTestCase
     public function testFetchByUserIDArray()
     {
         // Create 5 few discount rules
-        $discountRules = array();
+        $discountRules = [];
         for( $i = 0; $i < 5; $i++ )
         {
-            $row = array( 'name' => __FUNCTION__ . " #{$i}" );
+            $row = ['name' => __FUNCTION__ . " #{$i}"];
             $rule = new eZDiscountRule( $row );
             $rule->store();
             $discountRules[] = $rule;
         }
 
         // Create 5 user discount rules for 3 different user IDs
-        $usersDiscountRules = array();
-        foreach( array( 1, 3 ) as $userID )
+        $usersDiscountRules = [];
+        foreach( [1, 3] as $userID )
         {
-            $usersDiscountRules[$userID] = array();
+            $usersDiscountRules[$userID] = [];
             $userDiscountRules =& $usersDiscountRules[$userID];
             foreach( $discountRules as $discountRule )
             {
-                $row = array(
-                    'discountrule_id' => $discountRule->attribute( 'id' ),
-                    'contentobject_id' => $userID,
-                );
+                $row = ['discountrule_id' => $discountRule->attribute( 'id' ), 'contentobject_id' => $userID];
                 $userDiscountRule = new eZUserDiscountRule( $row );
                 $userDiscountRule->store();
                 $userDiscountRules[] = $userDiscountRule;
@@ -54,14 +51,12 @@ class eZUserDiscountRuleTest extends ezpDatabaseTestCase
         // fetch the discount rules for user #1 and #2. This will match 10
         // eZUserDiscountRule, and return the 5 rules, since no duplicates will
         // be returned
-        $rules = eZUserDiscountRule::fetchByUserIDArray( array( 1, 2 ) );
-        $this->assertInternalType( 'array', $rules,
-            "Return value should have been an array" );
-        $this->assertEquals( 5, count( $rules ),
-            "Return value should contain 5 items" );
+        $rules = eZUserDiscountRule::fetchByUserIDArray( [1, 2] );
+        static::assertInternalType('array', $rules, "Return value should have been an array");
+        static::assertEquals(5, count( $rules ), "Return value should contain 5 items");
         foreach( $rules as $rule )
         {
-            $this->assertInstanceOf( 'eZDiscountRule', $rule );
+            static::assertInstanceOf('eZDiscountRule', $rule);
         }
 
     }

@@ -16,17 +16,11 @@
 class ezpModuleDisabled extends Exception
 {
     /**
-     * @var string
-     */
-    public $moduleName;
-
-    /**
      * Constructor
      *
      * @param string $moduleName
      */
-    public function __construct( $moduleName )
+    public function __construct(public $moduleName)
     {
-        $this->moduleName = $moduleName;
     }
 }

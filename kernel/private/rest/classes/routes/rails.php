@@ -14,7 +14,7 @@ class ezpMvcRailsRoute extends ezcMvcRailsRoute
      *
      * @var array
      */
-    protected $protocolActionMap = array();
+    protected $protocolActionMap = [];
 
     /**
      * Constructs a new ezpMvcRailsRoute with $pattern for protocols used as
@@ -45,18 +45,18 @@ class ezpMvcRailsRoute extends ezcMvcRailsRoute
      * @param null|string $protocol (deprecated) Match specific protocol if
      *                              $protocolActionMap is a string, eg: 'http-get';
      */
-    public function __construct( $pattern, $controllerClassName, $protocolActionMap, array $defaultValues = array(), $protocol = null )
+    public function __construct( $pattern, $controllerClassName, $protocolActionMap, array $defaultValues = [], $protocol = null )
     {
         if ( is_string( $protocolActionMap ) )
         {
             if ( $protocol === null )
             {
-                $protocolActionMap = array( 'http-get' => $protocolActionMap );
+                $protocolActionMap = ['http-get' => $protocolActionMap];
             }
             else
             {
                 // compatibility with 4.6 route definition
-                $protocolActionMap = array( $protocol => $protocolActionMap );
+                $protocolActionMap = [$protocol => $protocolActionMap];
             }
         }
         if ( !isset( $protocolActionMap['http-options'] ) )

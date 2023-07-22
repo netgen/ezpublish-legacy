@@ -26,7 +26,7 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
 
 if ( $Offset )
@@ -69,7 +69,7 @@ elseif ( $viewCacheEnabled && !in_array( $ViewMode, $ini->variableArray( 'Conten
 if ( $viewCacheEnabled && $ini->hasVariable( 'ContentSettings', 'ViewCacheTweaks' ) )
 {
     $viewCacheTweaks = $ini->variable( 'ContentSettings', 'ViewCacheTweaks' );
-    if ( isset( $viewCacheTweaks[$NodeID] ) && strpos( $viewCacheTweaks[$NodeID], 'disabled' ) !== false )
+    if ( isset( $viewCacheTweaks[$NodeID] ) && str_contains( (string) $viewCacheTweaks[$NodeID], 'disabled' ) )
     {
         $viewCacheEnabled = false;
     }
@@ -79,8 +79,7 @@ $collectionAttributes = false;
 if ( isset( $Params['CollectionAttributes'] ) )
     $collectionAttributes = $Params['CollectionAttributes'];
 
-$validation = array( 'processed' => false,
-                     'attributes' => array() );
+$validation = ['processed' => false, 'attributes' => []];
 if ( isset( $Params['AttributeValidation'] ) )
     $validation = $Params['AttributeValidation'];
 
@@ -91,14 +90,7 @@ if ( isset( $keys['layout'] ) )
 else
     $layout = false;
 
-$viewParameters = array(
-    'offset' => $Offset,
-    'year' => $Year,
-    'month' => $Month,
-    'day' => $Day,
-    'namefilter' => false,
-    '_custom' => $UserParameters
-);
+$viewParameters = ['offset' => $Offset, 'year' => $Year, 'month' => $Month, 'day' => $Day, 'namefilter' => false, '_custom' => $UserParameters];
 // Keep the following array_merge for BC
 // All user parameters will be exposed as direct variables in template.
 $viewParameters = array_merge( $viewParameters, $UserParameters );
@@ -108,13 +100,11 @@ $user = eZUser::currentUser();
 eZDebugSetting::addTimingPoint( 'kernel-content-view', 'Operation start' );
 
 
-$operationResult = array();
+$operationResult = [];
 
 if ( eZOperationHandler::operationIsAvailable( 'content_read' ) )
 {
-    $operationResult = eZOperationHandler::execute( 'content', 'read', array( 'node_id' => $NodeID,
-                                                                              'user_id' => $user->id(),
-                                                                              'language_code' => $LanguageCode ), null, true );
+    $operationResult = eZOperationHandler::execute( 'content', 'read', ['node_id' => $NodeID, 'user_id' => $user->id(), 'language_code' => $LanguageCode], null, true );
 }
 
 if ( ( isset( $operationResult['status'] ) && $operationResult['status'] != eZModuleOperationInfo::STATUS_CONTINUE ) )
@@ -153,7 +143,7 @@ if ( ( isset( $operationResult['status'] ) && $operationResult['status'] != eZMo
         } break;
         case eZModuleOperationInfo::STATUS_CANCELLED:
         {
-            $Result = array();
+            $Result = [];
             $Result['content'] = "Content view cancelled<br/>";
         } break;
     }
@@ -162,9 +152,7 @@ if ( ( isset( $operationResult['status'] ) && $operationResult['status'] != eZMo
 else
 {
     $args = compact(
-        array(
-            "NodeID", "Module", "tpl", "LanguageCode", "ViewMode", "Offset", "ini", "viewParameters", "collectionAttributes", "validation"
-        )
+        ["NodeID", "Module", "tpl", "LanguageCode", "ViewMode", "Offset", "ini", "viewParameters", "collectionAttributes", "validation"]
     );
     if ( $viewCacheEnabled )
     {
@@ -181,8 +169,8 @@ else
 
         $result = eZClusterFileHandler::instance( $cacheFileArray['cache_path'] )
             ->processCache(
-                array( 'eZNodeviewfunctions', 'contentViewRetrieve' ),
-                array( 'eZNodeviewfunctions', 'contentViewGenerate' ),
+                ['eZNodeviewfunctions', 'contentViewRetrieve'],
+                ['eZNodeviewfunctions', 'contentViewGenerate'],
                 null,
                 null,
                 $args

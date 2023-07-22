@@ -6,16 +6,10 @@
  * @package kernel
  */
 
-$Module = array( "name" => "eZSearch",
-                 "variable_params" => true );
+$Module = ["name" => "eZSearch", "variable_params" => true];
 
-$ViewList = array();
+$ViewList = [];
 
-$ViewList["stats"] = array(
-    "script" => "stats.php",
-    "default_navigation_part" => 'ezsetupnavigationpart',
-    'single_post_actions' => array( 'ResetSearchStatsButton' => 'ResetSearchStats' ),
-    "params" => array( ),
-    "unordered_params" => array( "offset" => "Offset" ) );
+$ViewList["stats"] = ["script" => "stats.php", "default_navigation_part" => 'ezsetupnavigationpart', 'single_post_actions' => ['ResetSearchStatsButton' => 'ResetSearchStats'], "params" => [], "unordered_params" => ["offset" => "Offset"]];
 
 ?>

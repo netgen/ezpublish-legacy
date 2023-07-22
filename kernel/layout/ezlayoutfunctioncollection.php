@@ -18,6 +18,7 @@ class eZLayoutFunctionCollection
 {
     function fetchSitedesignList()
     {
+        $sitedesignList = null;
         $contentINI = eZINI::instance( 'content.ini' );
         if ( $contentINI->hasVariable( 'VersionView', 'AvailableSiteDesigns' ) )
         {
@@ -28,9 +29,8 @@ class eZLayoutFunctionCollection
             $sitedesignList = $contentINI->variable( 'VersionView', 'AvailableSiteDesignList' );
         }
         if ( !$sitedesignList )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $sitedesignList );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $sitedesignList];
     }
 
 }

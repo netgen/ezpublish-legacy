@@ -24,16 +24,16 @@
 class eZXMLInputParser
 {
     /// \deprecated (back-compatibility)
-    const SHOW_NO_ERRORS = 0;
-    const SHOW_SCHEMA_ERRORS = 1;
-    const SHOW_ALL_ERRORS = 2;
+    public const SHOW_NO_ERRORS = 0;
+    public const SHOW_SCHEMA_ERRORS = 1;
+    public const SHOW_ALL_ERRORS = 2;
 
     /// Use these constants for error types
-    const ERROR_NONE = 0;
-    const ERROR_SYNTAX = 4;
-    const ERROR_SCHEMA = 8;
-    const ERROR_DATA = 16;
-    const ERROR_ALL = 28; // 4+8+16
+    public const ERROR_NONE = 0;
+    public const ERROR_SYNTAX = 4;
+    public const ERROR_SCHEMA = 8;
+    public const ERROR_DATA = 16;
+    public const ERROR_ALL = 28; // 4+8+16
 
     /* $InputTags array contains properties of elements that come from the input.
 
@@ -63,7 +63,7 @@ class eZXMLInputParser
          );
     */
 
-    public $InputTags = array();
+    public $InputTags = [];
 
     /*
     $OutputTags array contains properties of elements that are produced in the output.
@@ -99,12 +99,9 @@ class eZXMLInputParser
 
     */
 
-    public $OutputTags = array();
+    public $OutputTags = [];
 
-    public $Namespaces = array( 'image' => 'http://ez.no/namespaces/ezpublish3/image/',
-                             'xhtml' => 'http://ez.no/namespaces/ezpublish3/xhtml/',
-                             'custom' => 'http://ez.no/namespaces/ezpublish3/custom/',
-                             'tmp' => 'http://ez.no/namespaces/ezpublish3/temporary/' );
+    public $Namespaces = ['image' => 'http://ez.no/namespaces/ezpublish3/image/', 'xhtml' => 'http://ez.no/namespaces/ezpublish3/xhtml/', 'custom' => 'http://ez.no/namespaces/ezpublish3/custom/', 'tmp' => 'http://ez.no/namespaces/ezpublish3/temporary/'];
 
     /*!
 
@@ -117,8 +114,9 @@ class eZXMLInputParser
     \param $detectErrorLevel Determines types of errors that will be detected and added to error log ($Messages).
     */
 
-    public function __construct( $validateErrorLevel = self::ERROR_NONE, $detectErrorLevel = self::ERROR_NONE, $parseLineBreaks = false,
-                               $removeDefaultAttrs = false )
+    public function __construct( $validateErrorLevel = self::ERROR_NONE, $detectErrorLevel = self::ERROR_NONE, // options that depend on parameters passed
+    public $ParseLineBreaks = false,
+                               public $RemoveDefaultAttrs = false )
     {
         // Back-compatibility fixes:
         if ( $detectErrorLevel === self::SHOW_SCHEMA_ERRORS )
@@ -141,9 +139,6 @@ class eZXMLInputParser
 
         $this->ValidateErrorLevel = $validateErrorLevel;
         $this->DetectErrorLevel = $detectErrorLevel;
-
-        $this->RemoveDefaultAttrs = $removeDefaultAttrs;
-        $this->ParseLineBreaks = $parseLineBreaks;
 
         $this->XMLSchema = eZXMLSchema::instance();
 
@@ -202,7 +197,7 @@ class eZXMLInputParser
         // Creating root section with namespaces definitions
         $mainSection = $this->Document->createElement( 'section' );
         $this->Document->appendChild( $mainSection );
-        foreach( array( 'image', 'xhtml', 'custom' ) as $prefix )
+        foreach( ['image', 'xhtml', 'custom'] as $prefix )
         {
             $mainSection->setAttributeNS( 'http://www.w3.org/2000/xmlns/', 'xmlns:' . $prefix, $this->Namespaces[$prefix] );
         }
@@ -215,7 +210,7 @@ class eZXMLInputParser
     */
     function process( $text, $createRootNode = true )
     {
-        $text = str_replace( "\r", '', $text);
+        $text = str_replace( "\r", '', (string) $text);
         $text = str_replace( "\t", ' ', $text);
         // replace unicode chars that will break the XML validity
         // see http://www.w3.org/TR/REC-xml/#charsets
@@ -226,7 +221,7 @@ class eZXMLInputParser
                 'kernel/classes/datatypes/ezxmltext',
                 "%count invalid character(s) have been found and replaced by a space",
                 false,
-                array( '%count' => $count )
+                ['%count' => $count]
             );
         }
         if ( !$this->ParseLineBreaks )
@@ -296,7 +291,7 @@ class eZXMLInputParser
                 }
 
             }
-            while( $pos < strlen( $data ) );
+            while( $pos < strlen( (string) $data ) );
         }
         else
         {
@@ -314,19 +309,21 @@ class eZXMLInputParser
 
     function parseTag( &$data, &$pos, &$parent )
     {
+        $thisInputTag = [];
+        $textContent = null;
         // Find tag, determine it's type, name and attributes.
         $initialPos = $pos;
 
-        if ( $pos >= strlen( $data ) )
+        if ( $pos >= strlen( (string) $data ) )
         {
             return true;
         }
-        $tagBeginPos = strpos( $data, '<', $pos );
+        $tagBeginPos = strpos( (string) $data, '<', $pos );
 
         if ( $this->ParseLineBreaks )
         {
             // Regard line break as a start tag position
-            $lineBreakPos = strpos( $data, "\n", $pos );
+            $lineBreakPos = strpos( (string) $data, "\n", $pos );
             if ( $lineBreakPos !== false )
             {
                 $tagBeginPos = $tagBeginPos === false ? $lineBreakPos : min( $tagBeginPos, $lineBreakPos );
@@ -344,10 +341,10 @@ class eZXMLInputParser
 
             if ( !$tagBeginPos )
             {
-                $tagBeginPos = strlen( $data );
+                $tagBeginPos = strlen( (string) $data );
             }
 
-            $textContent = substr( $data, $pos, $tagBeginPos - $pos );
+            $textContent = substr( (string) $data, $pos, $tagBeginPos - $pos );
 
             $textContent = $this->washText( $textContent );
 
@@ -358,10 +355,10 @@ class eZXMLInputParser
             }
         }
         // Process closing tag.
-        elseif ( $data[$tagBeginPos] == '<' && $tagBeginPos + 1 < strlen( $data ) &&
+        elseif ( $data[$tagBeginPos] == '<' && $tagBeginPos + 1 < strlen( (string) $data ) &&
                  $data[$tagBeginPos + 1] == '/' )
         {
-            $tagEndPos = strpos( $data, '>', $tagBeginPos + 1 );
+            $tagEndPos = strpos( (string) $data, '>', $tagBeginPos + 1 );
             if ( $tagEndPos === false )
             {
                 $pos = $tagBeginPos + 1;
@@ -371,7 +368,7 @@ class eZXMLInputParser
             }
 
             $pos = $tagEndPos + 1;
-            $closedTagName = strtolower( trim( substr( $data, $tagBeginPos + 2, $tagEndPos - $tagBeginPos - 2 ) ) );
+            $closedTagName = strtolower( trim( substr( (string) $data, $tagBeginPos + 2, $tagEndPos - $tagBeginPos - 2 ) ) );
 
             // Find matching tag in ParentStack array
             $firstLoop = true;
@@ -399,7 +396,7 @@ class eZXMLInputParser
                 $firstLoop = false;
             }
 
-            $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Wrong closing tag : &lt;/%1&gt;.', false, array( $closedTagName ) ) );
+            $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Wrong closing tag : &lt;/%1&gt;.', false, [$closedTagName] ) );
 
             return false;
         }
@@ -423,9 +420,9 @@ class eZXMLInputParser
             }
 
             $pos = $tagEndPos + 1;
-            $tagString = substr( $data, $tagBeginPos + 1, $tagEndPos - $tagBeginPos - 1 );
+            $tagString = substr( (string) $data, $tagBeginPos + 1, $tagEndPos - $tagBeginPos - 1 );
             // Check for final backslash
-            $noChildren = substr( $tagString, -1, 1 ) == '/' ? true : false;
+            $noChildren = str_ends_with($tagString, '/') ? true : false;
             // Remove final backslash and spaces
             $tagString = preg_replace( "/\s*\/$/", "", $tagString );
 
@@ -469,7 +466,7 @@ class eZXMLInputParser
                 }
                 else
                 {
-                    $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Unknown tag: &lt;%1&gt;.', false, array( $tagName ) ) );
+                    $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', 'Unknown tag: &lt;%1&gt;.', false, [$tagName] ) );
                     return false;
                 }
             }
@@ -480,7 +477,7 @@ class eZXMLInputParser
                 $noChildren = true;
             }
 
-            $thisOutputTag = isset( $this->OutputTags[$newTagName] ) ? $this->OutputTags[$newTagName] : null;
+            $thisOutputTag = $this->OutputTags[$newTagName] ?? null;
 
             // Implementation of 'autoCloseOn' rule ( Handling of unclosed tags, ex.: <p>, <li> )
             if ( isset( $thisOutputTag['autoCloseOn'] ) &&
@@ -497,14 +494,14 @@ class eZXMLInputParser
             // Append to parent stack
             if ( !$noChildren && $newTagName !== false )
             {
-                $this->ParentStack[] = array( $tagName, $newTagName, $attributeString );
+                $this->ParentStack[] = [$tagName, $newTagName, $attributeString];
             }
 
             if ( !$newTagName )
             {
                 // If $newTagName is an empty string then it's not a error
                 if ( $newTagName === false )
-                    $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Can't convert tag's name: &lt;%1&gt;.", false, array( $tagName ) ) );
+                    $this->handleError( self::ERROR_SYNTAX, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Can't convert tag's name: &lt;%1&gt;.", false, [$tagName] ) );
 
                 return false;
             }
@@ -541,7 +538,7 @@ class eZXMLInputParser
             $this->Document->appendChild( $element );
         }
 
-        $params = array();
+        $params = [];
         $params[] =& $data;
         $params[] =& $pos;
         $params[] =& $tagBeginPos;
@@ -603,7 +600,7 @@ class eZXMLInputParser
             return false;
         }
         $tagCode = substr( $data, $tagBeginPos, $endPos - $tagBeginPos );
-        if ( strpos( $tagCode, '=' ) === false )
+        if ( !str_contains( $tagCode, '=' ) )
         {
             // this tag has no attribute, so the next '>' is the right one.
             return $endPos;
@@ -630,8 +627,8 @@ class eZXMLInputParser
         }
         $code .= '>';
         $code = '<' . str_replace(
-            array( '<', '&' ),
-            array( '&lt;', '&amp;' ),
+            ['<', '&'],
+            ['&lt;', '&amp;'],
             substr( $code, 1 )
         );
         $errorHanding = libxml_use_internal_errors( true );
@@ -642,7 +639,7 @@ class eZXMLInputParser
 
     function parseAttributes( $attributeString )
     {
-        $attributes = array();
+        $attributes = [];
         // Valid characters for XML attributes
         // @see http://www.w3.org/TR/xml/#NT-Name
         $nameStartChar = ':A-Z_a-z\\xC0-\\xD6\\xD8-\\xF6\\xF8-\\x{2FF}\\x{370}-\\x{37D}\\x{37F}-\\x{1FFF}\\x{200C}-\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFD}\\x{10000}-\\x{EFFFF}';
@@ -694,7 +691,7 @@ class eZXMLInputParser
                 {
                     $this->handleError( self::ERROR_DATA,
                                         ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Class '%1' is not allowed for element &lt;%2&gt; (check content.ini).",
-                                        false, array( $value, $element->nodeName ) ) );
+                                        false, [$value, $element->nodeName] ) );
                     continue;
                 }
             }
@@ -702,13 +699,13 @@ class eZXMLInputParser
             // Create attribute nodes
             if ( $qualifiedName )
             {
-                if ( strpos( $qualifiedName, ':' ) )
+                if ( strpos( (string) $qualifiedName, ':' ) )
                 {
-                    list( $prefix, $name ) = explode( ':', $qualifiedName );
+                    [$prefix, $name] = explode( ':', (string) $qualifiedName );
                     if ( isset( $this->Namespaces[$prefix] ) )
                     {
                         $URI = $this->Namespaces[$prefix];
-                        $element->setAttributeNS( $URI, $qualifiedName, htmlspecialchars_decode( $value ) );
+                        $element->setAttributeNS( $URI, $qualifiedName, htmlspecialchars_decode( (string) $value ) );
                     }
                     else
                     {
@@ -717,7 +714,7 @@ class eZXMLInputParser
                 }
                 else
                 {
-                    $element->setAttribute( $qualifiedName,  htmlspecialchars_decode( $value ) );
+                    $element->setAttribute( $qualifiedName,  htmlspecialchars_decode( (string) $value ) );
                 }
             }
         }
@@ -740,7 +737,7 @@ class eZXMLInputParser
                 {
                     $this->handleError( self::ERROR_SCHEMA,
                                         ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Required attribute '%1' is not presented in tag &lt;%2&gt;.",
-                                        false, array( $reqAttrName, $element->nodeName ) ) );
+                                        false, [$reqAttrName, $element->nodeName] ) );
                 }
             }
         }
@@ -757,7 +754,7 @@ class eZXMLInputParser
 
         if ( !$this->AllowMultipleSpaces )
         {
-            $textContent = preg_replace( "/ {2,}/", " ", $textContent );
+            $textContent = preg_replace( "/ {2,}/", " ", (string) $textContent );
         }
 
         return $textContent;
@@ -765,7 +762,7 @@ class eZXMLInputParser
 
     function entitiesDecode( $text )
     {
-        $text = str_replace( '&#039;', "'", $text );
+        $text = str_replace( '&#039;', "'", (string) $text );
 
         $text = str_replace( '&gt;', '>', $text );
         $text = str_replace( '&lt;', '<', $text );
@@ -777,13 +774,13 @@ class eZXMLInputParser
 
     function convertNumericEntities( $text )
     {
-        if ( strlen( $text ) < 4 )
+        if ( strlen( (string) $text ) < 4 )
         {
             return $text;
         }
         // Convert other HTML entities to the current charset characters.
-        $convmap = array( 0x0, 0x2FFFF, 0, 0xFFFF );
-        return mb_decode_numericentity( $text, $convmap, 'UTF-8' );
+        $convmap = [0x0, 0x2FFFF, 0, 0xFFFF];
+        return mb_decode_numericentity( (string) $text, $convmap, 'UTF-8' );
     }
 
     /*!
@@ -800,7 +797,7 @@ class eZXMLInputParser
                 foreach ( array_keys( $matchArray ) as $key )
                 {
                     $matchString = $matchArray[$key];
-                    if (  preg_match( "/$matchString/i", $attributeString ) )
+                    if (  preg_match( "/$matchString/i", (string) $attributeString ) )
                     {
                         $attributes['class'] = $key;
                         unset( $attributes['style'] );
@@ -844,14 +841,14 @@ class eZXMLInputParser
             $childrenCount = $childNodes->length;
 
             // we can not loop directly over the childNodes property, because this will change while we are working on it's parent's children
-            $children = array();
+            $children = [];
             foreach ( $childNodes as $childNode )
             {
                 $children[] = $childNode;
             }
 
             $lastResult = null;
-            $newElements = array();
+            $newElements = [];
             foreach ( $children as $child )
             {
                 if ( $debug )
@@ -969,7 +966,7 @@ class eZXMLInputParser
         {
             if ( !$this->XMLSchema->hasAttributes( $element ) )
             {
-                eZXMLInputParser::removeAllAttributes( $element );
+                (new eZXMLInputParser())->removeAllAttributes($element);
             }
             else
             {
@@ -1007,7 +1004,7 @@ class eZXMLInputParser
                 {
                     $this->handleError( self::ERROR_SCHEMA,
                                         ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Custom tag '%1' is not allowed.",
-                                        false, array( $element->getAttribute( 'name' ) ) ) );
+                                        false, [$element->getAttribute( 'name' )] ) );
                 }
                 $element = $parent->removeChild( $element );
                 return false;
@@ -1023,7 +1020,7 @@ class eZXMLInputParser
                 if ( !$element->getAttributeNS( 'http://ez.no/namespaces/ezpublish3/temporary/', 'new-element' ) )
                 {
                     $this->handleError( self::ERROR_SCHEMA, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "&lt;%1&gt; tag can't be empty.",
-                                        false, array( $element->nodeName ) ) );
+                                        false, [$element->nodeName] ) );
                     return false;
                 }
             }
@@ -1050,7 +1047,7 @@ class eZXMLInputParser
                 if ( $schemaCheckResult === false )
                 {
                     // Remove indenting spaces
-                    if ( $element->nodeType == XML_TEXT_NODE && !trim( $element->textContent ) )
+                    if ( $element->nodeType == XML_TEXT_NODE && !trim( (string) $element->textContent ) )
                     {
                         $element = $parent->removeChild( $element );
                         return false;
@@ -1058,7 +1055,7 @@ class eZXMLInputParser
 
                     $elementName = $element->nodeType == XML_ELEMENT_NODE ? '&lt;' . $element->nodeName . '&gt;' : $element->nodeName;
                     $this->handleError( self::ERROR_SCHEMA, ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "%1 is not allowed to be a child of &lt;%2&gt;.",
-                                        false, array( $elementName, $parent->nodeName ) ) );
+                                        false, [$elementName, $parent->nodeName] ) );
                 }
                 $this->fixSubtree( $element, $element );
                 return false;
@@ -1140,7 +1137,7 @@ class eZXMLInputParser
                 $removeAttr = true;
                 $this->handleError( self::ERROR_SCHEMA,
                                     ezpI18n::tr( 'kernel/classes/datatypes/ezxmltext', "Attribute '%1' is not allowed in &lt;%2&gt; element.",
-                                    false, array( $fullName, $element->nodeName ) ) );
+                                    false, [$fullName, $element->nodeName] ) );
             }
             elseif ( $this->RemoveDefaultAttrs )
             {
@@ -1165,10 +1162,10 @@ class eZXMLInputParser
         $thisInputTag = $this->InputTags[$tagName];
         if ( isset( $thisInputTag[$handlerName] ) )
         {
-            if ( is_callable( array( $this, $thisInputTag[$handlerName] ) ) )
+            if ( is_callable( [$this, $thisInputTag[$handlerName]] ) )
             {
-                $result = call_user_func_array( array( $this, $thisInputTag[$handlerName] ),
-                                                array( $tagName, &$attributes ) );
+                $result = call_user_func_array( [$this, $thisInputTag[$handlerName]],
+                                                [$tagName, &$attributes] );
             }
             else
             {
@@ -1184,10 +1181,10 @@ class eZXMLInputParser
         $thisOutputTag = $this->OutputTags[$element->nodeName];
         if ( isset( $thisOutputTag[$handlerName] ) )
         {
-            if ( is_callable( array( $this, $thisOutputTag[$handlerName] ) ) )
+            if ( is_callable( [$this, $thisOutputTag[$handlerName]] ) )
             {
-                $result = call_user_func_array( array( $this, $thisOutputTag[$handlerName] ),
-                                                array( $element, &$params ) );
+                $result = call_user_func_array( [$this, $thisOutputTag[$handlerName]],
+                                                [$element, &$params] );
             }
             else
             {
@@ -1208,7 +1205,7 @@ class eZXMLInputParser
 
         if ( !isset( $ret['new_elements'] ) )
         {
-            $ret['new_elements'] = array();
+            $ret['new_elements'] = [];
         }
 
         $ret['new_elements'][] = $element;
@@ -1284,7 +1281,7 @@ class eZXMLInputParser
             {
                 if ( !$this->XMLSchema->hasAttributes( $element ) )
                 {
-                    eZXMLInputParser::removeAllAttributes( $element );
+                    (new eZXMLInputParser())->removeAllAttributes($element);
                 }
                 else
                 {
@@ -1328,10 +1325,10 @@ class eZXMLInputParser
 
     public $XMLSchema;
     public $Document = null;
-    public $Messages = array();
+    public $Messages = [];
     public $eZPublishVersion;
 
-    public $ParentStack = array();
+    public $ParentStack = [];
 
     public $ValidateErrorLevel;
     public $DetectErrorLevel;
@@ -1344,9 +1341,5 @@ class eZXMLInputParser
     public $AllowMultipleSpaces = false;
     public $AllowNumericEntities = false;
     public $StrictHeaders = false;
-
-    // options that depend on parameters passed
-    public $ParseLineBreaks = false;
-    public $RemoveDefaultAttrs = false;
 }
 ?>

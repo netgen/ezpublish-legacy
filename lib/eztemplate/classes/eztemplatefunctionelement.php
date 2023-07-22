@@ -27,15 +27,15 @@ class eZTemplateFunctionElement
     /**
      * Initializes the function with a name and parameter array.
      *
-     * @param string $name
+     * @param string $Name
      * @param array $params
-     * @param array $children
+     * @param array $Children
      */
-    public function __construct( $name, $params, $children = array() )
+    public function __construct( /// The name of the function
+    public $Name, $params, /// The child elements
+    public $Children = [] )
     {
-        $this->Name = $name;
         $this->Params =& $params;
-        $this->Children = $children;
     }
 
     function setResourceRelation( $resource )
@@ -68,11 +68,7 @@ class eZTemplateFunctionElement
 
     function serializeData()
     {
-        return array( 'class_name' => 'eZTemplateFunctionElement',
-                      'parameters' => array( 'name', 'parameters', 'children' ),
-                      'variables' => array( 'name' => 'Name',
-                                            'parameters' => 'Params',
-                                            'children' => 'Children' ) );
+        return ['class_name' => 'eZTemplateFunctionElement', 'parameters' => ['name', 'parameters', 'children'], 'variables' => ['name' => 'Name', 'parameters' => 'Params', 'children' => 'Children']];
     }
 
     /*!
@@ -110,13 +106,8 @@ class eZTemplateFunctionElement
     {
         $this->Children[] =& $node;
     }
-
-    /// The name of the function
-    public $Name;
     /// The parameter list
     public $Params;
-    /// The child elements
-    public $Children = array();
 
     public $Resource;
     public $TemplateName;

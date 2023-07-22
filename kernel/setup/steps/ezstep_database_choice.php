@@ -45,7 +45,7 @@ class eZStepDatabaseChoice extends eZStepInstaller
         {
             $data = $this->kickstartData();
             $extension = $data['Type'];
-            $map = array( 'postgresql' => 'pgsql' );
+            $map = ['postgresql' => 'pgsql'];
             if ( isset( $map[$extension] ) )
                 $extension = $map[$extension];
 
@@ -91,8 +91,8 @@ class eZStepDatabaseChoice extends eZStepInstaller
     function display()
     {
         $databaseMap = eZSetupDatabaseMap();
-        $availableDatabases = array();
-        $databaseList = array();
+        $availableDatabases = [];
+        $databaseList = [];
         if ( isset( $this->PersistenceList['database_extensions']['found'] ) )
         {
             $databaseExtensions = $this->PersistenceList['database_extensions']['found'];
@@ -120,12 +120,11 @@ class eZStepDatabaseChoice extends eZStepInstaller
         $this->Tpl->setVariable( 'database_info', $databaseInfo );
         $this->Tpl->setVariable( 'available_databases', $availableDatabases );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( "design:setup/init/database_choice.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Database choice' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Database choice' ), 'url' => false]];
         return $result;
     }
 

@@ -29,14 +29,14 @@ class eZOption
 {
     /**
      * Constructor
-     * 
-     * @param string $name
+     *
+     * @param string $Name
      */
-    public function __construct( $name )
+    public function __construct(
+        /// Contains the Option name
+        public $Name
+    )
     {
-        $this->Name = $name;
-        $this->Options = array();
-        $this->OptionCount = 0;
     }
 
     /*!
@@ -61,22 +61,16 @@ class eZOption
     */
     function addOption( $valueArray )
     {
-        $value = isset( $valueArray['value'] ) ? $valueArray['value'] : '';
-        $additional_price = isset( $valueArray['additional_price'] ) ? $valueArray['additional_price'] : '';
-        $this->Options[] = array( "id" => $this->OptionCount,
-                                  "value" => $value,
-                                  'additional_price' => $additional_price,
-                                  "is_default" => false );
+        $value = $valueArray['value'] ?? '';
+        $additional_price = $valueArray['additional_price'] ?? '';
+        $this->Options[] = ["id" => $this->OptionCount, "value" => $value, 'additional_price' => $additional_price, "is_default" => false];
 
         $this->OptionCount += 1;
     }
 
     function insertOption( $valueArray, $beforeID )
     {
-        array_splice( $this->Options, $beforeID, 0 ,  array( array( "id" => $this->OptionCount,
-                                                                    "value" => $valueArray['value'],
-                                                                    'additional_price' => $valueArray['additional_price'],
-                                                                    "is_default" => false ) ) );
+        array_splice( $this->Options, $beforeID, 0 ,  [["id" => $this->OptionCount, "value" => $valueArray['value'], 'additional_price' => $valueArray['additional_price'], "is_default" => false]] );
         $this->OptionCount += 1;
     }
 
@@ -93,8 +87,7 @@ class eZOption
 
     function attributes()
     {
-        return array( 'name',
-                      'option_list' );
+        return ['name', 'option_list'];
     }
 
     function hasAttribute( $name )
@@ -141,8 +134,7 @@ class eZOption
 
             foreach ( $optionNodes as $optionNode )
             {
-                $this->addOption( array( 'value' => $optionNode->textContent,
-                                         'additional_price' => $optionNode->getAttribute( 'additional_price' ) ) );
+                $this->addOption( ['value' => $optionNode->textContent, 'additional_price' => $optionNode->getAttribute( 'additional_price' )] );
             }
         }
         else
@@ -183,14 +175,11 @@ class eZOption
         return $xml;
     }
 
-    /// Contains the Option name
-    public $Name;
-
     /// Contains the Options
-    public $Options;
+    public $Options = [];
 
     /// Contains the option counter value
-    public $OptionCount;
+    public $OptionCount = 0;
 }
 
 ?>

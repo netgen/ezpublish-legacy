@@ -42,7 +42,7 @@ class eZStepSitePackages extends eZStepInstaller
             }
             else
             {
-                $this->PersistenceList['additional_packages'] = array();
+                $this->PersistenceList['additional_packages'] = [];
             }
         }
         else
@@ -65,21 +65,21 @@ class eZStepSitePackages extends eZStepInstaller
 
             $typeFunctionality = eZSetupFunctionality( $siteType );
             $requiredPackageList = $typeFunctionality['required'];
-            $requiredPackages = array();
+            $requiredPackages = [];
             foreach ( $requiredPackageList as $requiredPackage )
             {
-                $requiredPackages[] = strtolower( $requiredPackage );
+                $requiredPackages[] = strtolower( (string) $requiredPackage );
             }
             $this->PersistenceList['site_packages'] = $requiredPackages;
 
             $additionalPackages = $data['Packages'];
             foreach ( $additionalPackages as $key => $additionalPackage )
             {
-                $additionalPackages[$key] = strtolower( $additionalPackage );
+                $additionalPackages[$key] = strtolower( (string) $additionalPackage );
             }
             $this->PersistenceList['additional_packages'] = $additionalPackages;
 
-            if ( ( count( $requiredPackages ) + count( $additionalPackages ) ) > 0 )
+            if ( ( count( $requiredPackages ) + (is_countable($additionalPackages) ? count( $additionalPackages ) : 0) ) > 0 )
             {
                 return $this->kickstartContinueNextStep();
             }
@@ -96,33 +96,29 @@ class eZStepSitePackages extends eZStepInstaller
 
         $typeFunctionality = eZSetupFunctionality( $siteType );
         $requiredPackageList = $typeFunctionality['required'];
-        $requiredPackages = array();
+        $requiredPackages = [];
         foreach ( $requiredPackageList as $requiredPackage )
         {
-            $requiredPackages[] = strtolower( $requiredPackage );
+            $requiredPackages[] = strtolower( (string) $requiredPackage );
         }
 
-        $packageArray = eZPackage::fetchPackages( array( 'repository_id' => 'addons' ) );
+        $packageArray = eZPackage::fetchPackages( ['repository_id' => 'addons'] );
 
-        $requiredPackageInfoArray = array();
-        $packageInfoArray = array();
+        $requiredPackageInfoArray = [];
+        $packageInfoArray = [];
         foreach ( $packageArray as $package )
         {
-            if ( in_array( strtolower( $package->attribute( 'name' ) ), $requiredPackages ) )
+            if ( in_array( strtolower( (string) $package->attribute( 'name' ) ), $requiredPackages ) )
             {
-                $requiredPackageInfoArray[] = array( 'identifier' => $package->attribute( 'name' ),
-                                                     'name' => $package->attribute( 'summary' ),
-                                                     'description' => $package->attribute( 'description' ) );
+                $requiredPackageInfoArray[] = ['identifier' => $package->attribute( 'name' ), 'name' => $package->attribute( 'summary' ), 'description' => $package->attribute( 'description' )];
             }
             else
             {
-                $packageInfoArray[] = array( 'identifier' => $package->attribute( 'name' ),
-                                             'name' => $package->attribute( 'summary' ),
-                                             'description' => $package->attribute( 'description' ) );
+                $packageInfoArray[] = ['identifier' => $package->attribute( 'name' ), 'name' => $package->attribute( 'summary' ), 'description' => $package->attribute( 'description' )];
             }
         }
 
-        $recommended = array();
+        $recommended = [];
         if ( isset( $typeFunctionality['recommended'] ) )
             $recommended = $typeFunctionality['recommended'];
 
@@ -137,12 +133,11 @@ class eZStepSitePackages extends eZStepInstaller
         $this->Tpl->setVariable( 'package_array', $packageInfoArray );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/site_packages.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Site functionality' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Site functionality' ), 'url' => false]];
         return $result;
 
     }

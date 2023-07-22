@@ -40,7 +40,7 @@ class ezjscAccessTemplateFunctions
 {
     function operatorList()
     {
-        return array( 'has_access_to_limitation' );
+        return ['has_access_to_limitation'];
     }
 
     function namedParameterPerOperator()
@@ -50,19 +50,7 @@ class ezjscAccessTemplateFunctions
 
     function namedParameterList()
     {
-        return array( 'has_access_to_limitation' => array( 'module' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                                              'function' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                                              'limitations' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => array() ),
-                                              'debug' => array( 'type' => 'bool',
-                                                'required' => false,
-                                                'default' => false )),
-        );
+        return ['has_access_to_limitation' => ['module' => ['type' => 'string', 'required' => true, 'default' => ''], 'function' => ['type' => 'string', 'required' => true, 'default' => ''], 'limitations' => ['type' => 'array', 'required' => true, 'default' => []], 'debug' => ['type' => 'bool', 'required' => false, 'default' => false]]];
 
     }
 
@@ -107,8 +95,8 @@ class ezjscAccessTemplateFunctions
         }
 
         // Merge limitations before we check access
-        $mergedLimitations = array();
-        $missingLimitations = array();
+        $mergedLimitations = [];
+        $missingLimitations = [];
         foreach ( $result['policies'] as $userLimitationArray  )
         {
             foreach ( $userLimitationArray as $userLimitationKey => $userLimitationValues  )
@@ -136,7 +124,7 @@ class ezjscAccessTemplateFunctions
                 $pathMatch = false;
                 foreach ( $userLimitationValues as $subtreeString )
                 {
-                    if ( strstr( $limitations[$userLimitationKey], $subtreeString ) )
+                    if ( strstr( (string) $limitations[$userLimitationKey], (string) $subtreeString ) )
                     {
                         $pathMatch = true;
                         break;

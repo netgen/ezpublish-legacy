@@ -16,30 +16,21 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "\n" .
+$script = eZScript::instance( ['description' => ( "\n" .
                                                          "This script will make a copy of a content object subtree and place it in a specified\n" .
-                                                         "location.\n" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true,
-                                      'user' => true ) );
+                                                         "location.\n" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true, 'user' => true] );
 $script->startup();
 
 $scriptOptions = $script->getOptions( "[src-node-id:][dst-node-id:][all-versions][keep-creator][keep-time]",
                                       "",
-                                      array( 'src-node-id' => "Source subtree parent node ID.",
-                                             'dst-node-id' => "Destination node ID.",
-                                             'all-versions' => "Copy all versions for each contentobject being copied.",
-                                             'keep-creator'=> "Do not change the creator (user) for the copied content objects.",
-                                             'keep-time'   => "Do not change the creation and modification time of the copied content objects."
-                                             ),
+                                      ['src-node-id' => "Source subtree parent node ID.", 'dst-node-id' => "Destination node ID.", 'all-versions' => "Copy all versions for each contentobject being copied.", 'keep-creator'=> "Do not change the creator (user) for the copied content objects.", 'keep-time'   => "Do not change the creation and modification time of the copied content objects."],
                                       false,
-                                      array( 'user' => true )
+                                      ['user' => true]
                                      );
 $script->initialize();
 
-$srcNodeID   = $scriptOptions[ 'src-node-id' ] ? $scriptOptions[ 'src-node-id' ] : false;
-$dstNodeID   = $scriptOptions[ 'dst-node-id' ] ? $scriptOptions[ 'dst-node-id' ] : false;
+$srcNodeID   = $scriptOptions[ 'src-node-id' ] ?: false;
+$dstNodeID   = $scriptOptions[ 'dst-node-id' ] ?: false;
 $allVersions = $scriptOptions[ 'all-versions' ];
 $keepCreator = $scriptOptions[ 'keep-creator' ];
 $keepTime    = $scriptOptions[ 'keep-time' ];
@@ -50,6 +41,7 @@ function copyPublishContentObject( $sourceObject,
                                    &$syncObjectIDListSrc, &$syncObjectIDListNew,
                                    $allVersions = false, $keepCreator = false, $keepTime = false )
 {
+    $newParentNode = null;
     $cli = eZCLI::instance();
 
     $sourceObjectID = $sourceObject->attribute( 'id' );
@@ -106,7 +98,7 @@ function copyPublishContentObject( $sourceObject,
     $newObjAssignments = $curVersionObject->attribute( 'node_assignments' );
 
     // copy nodeassigments:
-    $assignmentsForRemoving = array();
+    $assignmentsForRemoving = [];
     $foundMainAssignment = false;
     foreach ( $newObjAssignments as $assignment )
     {
@@ -152,15 +144,14 @@ function copyPublishContentObject( $sourceObject,
     }
 
     // publish the newly created object
-    $result = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newObject->attribute( 'id' ),
-                                                                        'version'   => $curVersion ) );
+    $result = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion] );
     // JB start
     // Refetch the object data since it might change in the database.
     $newObjectID = $newObject->attribute( 'id' );
     $newObject = eZContentObject::fetch( $newObjectID );
     // JB end
     $newNodeList = $newObject->attribute( 'assigned_nodes' );
-    if ( count($newNodeList) == 0 )
+    if ( (is_countable($newNodeList) ? count($newNodeList) : 0) == 0 )
     {
         $newObject->purge();
         $cli->error( "Subtree Copy Error!\nCannot publish contentobject." );
@@ -305,9 +296,9 @@ if ( !$destinationNode )
     $script->shutdown( 1 );
 }
 
-$sourceNodeList    = array();
-$syncNodeIDListSrc = array();
-$syncNodeIDListNew = array();
+$sourceNodeList    = [];
+$syncNodeIDListSrc = [];
+$syncNodeIDListNew = [];
 
 $sourceSubTreeMainNodeID = $sourceSubTreeMainNode->attribute( 'node_id' );
 $sourceNodeList[] = $sourceSubTreeMainNode;
@@ -315,15 +306,15 @@ $sourceNodeList[] = $sourceSubTreeMainNode;
 $syncNodeIDListSrc[] = $sourceSubTreeMainNode->attribute( 'parent_node_id' );
 $syncNodeIDListNew[] = (int) $dstNodeID;
 
-$syncObjectIDListSrc = array();
-$syncObjectIDListNew = array();
+$syncObjectIDListSrc = [];
+$syncObjectIDListNew = [];
 
 $sourceNodeList = array_merge( $sourceNodeList, eZContentObjectTreeNode::subTreeByNodeID( false, $sourceSubTreeMainNodeID ) );
 $countNodeList = count( $sourceNodeList );
 
 // Prepare list of source node IDs. We will need it in the future
 // for checking node is inside or outside of the subtree being copied.
-$sourceNodeIDList = array();
+$sourceNodeIDList = [];
 foreach ( $sourceNodeList as $sourceNode )
     $sourceNodeIDList[] = $sourceNode->attribute( 'node_id' );
 
@@ -370,7 +361,7 @@ array_shift( $syncNodeIDListSrc );
 array_shift( $syncNodeIDListNew );
 
 $cli->output( "\nNumber of copied nodes: " . count( $syncNodeIDListNew ) );
-$cli->output( "Number of copied contentobjects: " . count( $syncObjectIDListNew ) );
+$cli->output( "Number of copied contentobjects: " . (is_countable($syncObjectIDListNew) ? count( $syncObjectIDListNew ) : 0) );
 
 // 2. fetch all new subtree
 
@@ -418,21 +409,24 @@ foreach ( $relatedRecordsList as $relatedEntry )
 
 // 5. loop on new nodes and REPLACE node_ids and object_ids
 
-$conditions = array( 'contentobject_id' => '', // 5
-                     'data_type_string' => 'ezxmltext' );
+$conditions = [
+    'contentobject_id' => '',
+    // 5
+    'data_type_string' => 'ezxmltext',
+];
 
 foreach ( $syncObjectIDListNew as $contentObjectID )
 {
     $conditions[ 'contentobject_id' ] = $contentObjectID;
     $attributeList = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(), null, $conditions );
-    if ( count( $attributeList ) == 0 )
+    if ( count( (array) $attributeList ) == 0 )
     {
         continue;
     }
     foreach ( $attributeList as $xmlAttribute )
     {
         $xmlText = $xmlAttribute->attribute( 'data_text' );
-        $xmlTextLen = strlen ( $xmlText );
+        $xmlTextLen = strlen ( (string) $xmlText );
         $isTextModified = false;
         $curPos = 0;
 
@@ -440,16 +434,16 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
         {
             // JK: find out what is the first tag
             // This is not the optimal solution, there is better way how to do. This is just a quick fix.
-            $tmpArray = array();
-            if ( $literalTagBeginPos = strpos( $xmlText, "<literal", $curPos ) )
+            $tmpArray = [];
+            if ( $literalTagBeginPos = strpos( (string) $xmlText, "<literal", $curPos ) )
                 $tmpArray[] = $literalTagBeginPos;
-            if ( $linkTagBeginPos = strpos( $xmlText, "<link", $curPos ) )
+            if ( $linkTagBeginPos = strpos( (string) $xmlText, "<link", $curPos ) )
                 $tmpArray[] = $linkTagBeginPos;
-            if ( $aTagBeginPos = strpos( $xmlText, "<a", $curPos ) )
+            if ( $aTagBeginPos = strpos( (string) $xmlText, "<a", $curPos ) )
                 $tmpArray[] = $aTagBeginPos;
-            if ( $embedTagBeginPos = strpos( $xmlText, "<embed", $curPos ) )
+            if ( $embedTagBeginPos = strpos( (string) $xmlText, "<embed", $curPos ) )
                 $tmpArray[] = $embedTagBeginPos;
-            if ( $objectTagBeginPos = strpos( $xmlText, "<object", $curPos ) )
+            if ( $objectTagBeginPos = strpos( (string) $xmlText, "<object", $curPos ) )
                 $tmpArray[] = $objectTagBeginPos;
 
             if ( !$tmpArray )
@@ -461,7 +455,7 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
 
             if ( $tagBeginPos == $literalTagBeginPos )
             {
-                $literalTagEndPos = strpos( $xmlText, "</literal>", $literalTagBeginPos );
+                $literalTagEndPos = strpos( (string) $xmlText, "</literal>", $literalTagBeginPos );
                 if ( $literalTagEndPos === false )
                     break;
                 $curPos = $literalTagEndPos + 9;
@@ -469,11 +463,11 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
 
             if ( $tagBeginPos == $linkTagBeginPos || $tagBeginPos == $aTagBeginPos || $tagBeginPos == $embedTagBeginPos )
             {
-                $tagEndPos = strpos( $xmlText, ">", $tagBeginPos + 1 );
+                $tagEndPos = strpos( (string) $xmlText, ">", $tagBeginPos + 1 );
                 if ( $tagEndPos === false )
                     break;
 
-                $tagText = substr( $xmlText, $tagBeginPos, $tagEndPos - $tagBeginPos );
+                $tagText = substr( (string) $xmlText, $tagBeginPos, $tagEndPos - $tagBeginPos );
 
                 if ( ($nodeIDAttributePos = strpos( $tagText, " node_id=\"" )) !== false )
                 {
@@ -488,7 +482,7 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
                         if ( $key !== false )
                         {
                             $tagText = substr_replace( $tagText, (string) $syncNodeIDListNew[ $key ], $idNumberPos, $quoteEndPos - $idNumberPos );
-                            $xmlText = substr_replace( $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
+                            $xmlText = substr_replace( (string) $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
                             $isTextModified = true;
                         }
                     }
@@ -505,7 +499,7 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
                         if ( $key !== false )
                         {
                             $tagText = substr_replace( $tagText, (string) $syncObjectIDListNew[ $key ], $idNumberPos, $quoteEndPos - $idNumberPos );
-                            $xmlText = substr_replace( $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
+                            $xmlText = substr_replace( (string) $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
                             $isTextModified = true;
                         }
                     }
@@ -514,11 +508,11 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
             }
             else if ( $tagBeginPos == $objectTagBeginPos )
             {
-                $tagEndPos = strpos( $xmlText, ">", $tagBeginPos + 1 );
+                $tagEndPos = strpos( (string) $xmlText, ">", $tagBeginPos + 1 );
                 if ( !$tagEndPos )
                     break;
 
-                $tagText = substr( $xmlText, $tagBeginPos, $tagEndPos - $tagBeginPos );
+                $tagText = substr( (string) $xmlText, $tagBeginPos, $tagEndPos - $tagBeginPos );
 
                 if ( ($idAttributePos = strpos( $tagText, " id=\"" )) !== false )
                 {
@@ -532,7 +526,7 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
                         if ( $key !== false )
                         {
                             $tagText = substr_replace( $tagText, (string) $syncObjectIDListNew[ $key ], $idNumberPos, $quoteEndPos - $idNumberPos );
-                            $xmlText = substr_replace( $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
+                            $xmlText = substr_replace( (string) $xmlText, $tagText, $tagBeginPos, $tagEndPos - $tagBeginPos );
                             $isTextModified = true;
                         }
                     }
@@ -551,13 +545,12 @@ foreach ( $syncObjectIDListNew as $contentObjectID )
 }
 
 // 6. fixing datatype ezobjectrelationlist
-$conditions = array( 'contentobject_id' => '',
-                     'data_type_string' => 'ezobjectrelationlist' );
+$conditions = ['contentobject_id' => '', 'data_type_string' => 'ezobjectrelationlist'];
 foreach ( $syncObjectIDListNew as $contentObjectID )
 {
     $conditions[ 'contentobject_id' ] = $contentObjectID;
     $attributeList = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(), null, $conditions );
-    if ( count( $attributeList ) == 0 )
+    if ( count( (array) $attributeList ) == 0 )
     {
         continue;
     }

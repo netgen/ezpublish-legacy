@@ -13,7 +13,7 @@ require_once 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Adds default states to content objects';
 $scriptSettings['use-session'] = true;
 $scriptSettings['use-modules'] = false;

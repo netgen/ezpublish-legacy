@@ -42,7 +42,7 @@ if ( $order instanceof eZOrder )
 
             $http->setSessionVariable( "UserOrderID", $order->attribute( 'id' ) );
 
-            $operationResult = eZOperationHandler::execute( 'shop', 'checkout', array( 'order_id' => $order->attribute( 'id' ) ) );
+            $operationResult = eZOperationHandler::execute( 'shop', 'checkout', ['order_id' => $order->attribute( 'id' )] );
             switch( $operationResult['status'] )
             {
                 case eZModuleOperationInfo::STATUS_HALTED:
@@ -76,14 +76,13 @@ if ( $order instanceof eZOrder )
                 }break;
                 case eZModuleOperationInfo::STATUS_CANCELLED:
                 {
-                    $Result = array();
+                    $Result = [];
 
                     $tpl = eZTemplate::factory();
                     $tpl->setVariable( 'operation_result', $operationResult );
 
                     $Result['content'] = $tpl->fetch( "design:shop/cancelcheckout.tpl" ) ;
-                    $Result['path'] = array( array( 'url' => false,
-                                                    'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' ) ) );
+                    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' )]];
 
                     return;
                 }
@@ -112,14 +111,13 @@ if ( $order instanceof eZOrder )
 
                 if ( $attempt < 4)
                 {
-                    $Result = array();
+                    $Result = [];
 
                     $tpl = eZTemplate::factory();
                     $tpl->setVariable( 'attempt', $attempt );
                     $tpl->setVariable( 'orderID', $orderID );
                     $Result['content'] = $tpl->fetch( "design:shop/checkoutagain.tpl" ) ;
-                    $Result['path'] = array( array( 'url' => false,
-                                                    'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' ) ) );
+                    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' )]];
                     return;
                 }
                 else
@@ -127,15 +125,14 @@ if ( $order instanceof eZOrder )
                     // Got no receipt or callback from the payment server.
                     $http->removeSessionVariable( "CheckoutAttempt" );
 
-                    $Result = array();
+                    $Result = [];
 
                     $tpl = eZTemplate::factory();
                     $tpl->setVariable ("ErrorCode", "NO_CALLBACK");
                     $tpl->setVariable ("OrderID", $orderID);
 
                     $Result['content'] = $tpl->fetch( "design:shop/cancelcheckout.tpl" ) ;
-                    $Result['path'] = array( array( 'url' => false,
-                                                    'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' ) ) );
+                    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Checkout' )]];
                     return;
                 }
             }

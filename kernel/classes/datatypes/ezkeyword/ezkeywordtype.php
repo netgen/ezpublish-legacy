@@ -19,12 +19,12 @@
 
 class eZKeywordType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezkeyword';
+    final public const DATA_TYPE_STRING = 'ezkeyword';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Keywords', 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -179,7 +179,7 @@ class eZKeywordType extends eZDataType
              * is nothing more to do */
             return;
         }
-        $keywordIDs = array();
+        $keywordIDs = [];
         foreach ( $res as $record )
             $keywordIDs[] = $record['keyword_id'];
         $keywordIDString = implode( ', ', $keywordIDs );
@@ -191,7 +191,7 @@ class eZKeywordType extends eZDataType
                                      AND ezkeyword.id IN ($keywordIDString)
                                  GROUP BY keyword_id
                                  HAVING COUNT(*) = 1" );
-        $unusedKeywordIDs = array();
+        $unusedKeywordIDs = [];
         foreach ( $res as $record )
             $unusedKeywordIDs[] = $record['keyword_id'];
         $unusedKeywordIDString = implode( ', ', $unusedKeywordIDs );
@@ -224,7 +224,7 @@ class eZKeywordType extends eZDataType
         $keyword->fetch( $contentObjectAttribute );
         $array = $keyword->keywordArray();
 
-        return count( $array ) > 0;
+        return (is_countable($array) ? count( $array ) : 0) > 0;
     }
 
     function isIndexable()

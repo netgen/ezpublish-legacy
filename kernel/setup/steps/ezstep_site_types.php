@@ -27,11 +27,11 @@ class eZStepSiteTypes extends eZStepInstaller
     public function __construct( $tpl, $http, $ini, &$persistenceList )
     {
         $ini = eZINI::instance( 'package.ini' );
-        $indexURL = trim( $ini->variable( 'RepositorySettings', 'RemotePackagesIndexURL' ) );
+        $indexURL = trim( (string) $ini->variable( 'RepositorySettings', 'RemotePackagesIndexURL' ) );
         if ( $indexURL === '' )
         {
-            $indexURL = trim( $ini->variable( 'RepositorySettings', 'RemotePackagesIndexURLBase' ) );
-            if ( substr( $indexURL, -1, 1 ) !== '/' )
+            $indexURL = trim( (string) $ini->variable( 'RepositorySettings', 'RemotePackagesIndexURLBase' ) );
+            if ( !str_ends_with($indexURL, '/') )
             {
                 $indexURL .= '/';
             }
@@ -39,7 +39,7 @@ class eZStepSiteTypes extends eZStepInstaller
         }
         $this->IndexURL = $indexURL;
 
-        if ( substr( $this->IndexURL, -1, 1 ) == '/' )
+        if ( str_ends_with($this->IndexURL, '/') )
             $this->XMLIndexURL = $this->IndexURL . 'index.xml';
         else
             $this->XMLIndexURL = $this->IndexURL . '/index.xml';
@@ -60,7 +60,7 @@ class eZStepSiteTypes extends eZStepInstaller
      */
     function downloadFile( $url, $outDir, $forcedFileName = false )
     {
-        $fileName = $outDir . "/" . ( $forcedFileName ? $forcedFileName : basename( $url ) );
+        $fileName = $outDir . "/" . ( $forcedFileName ?: basename( (string) $url ) );
 
         eZDebug::writeNotice( "Downloading file '$fileName' from $url" );
 
@@ -110,7 +110,7 @@ class eZStepSiteTypes extends eZStepInstaller
         }
         else
         {
-            $parsedUrl = parse_url( $url );
+            $parsedUrl = parse_url( (string) $url );
             $checkIP = isset( $parsedUrl[ 'host' ] ) ? ip2long( gethostbyname( $parsedUrl[ 'host' ] ) ) : false;
             if ( $checkIP === false )
             {
@@ -132,8 +132,7 @@ class eZStepSiteTypes extends eZStepInstaller
                 else
                 {
                     $this->ErrorMsg = ezpI18n::tr( 'design/standard/setup/init', 'Failed to copy %url to local file %filename', null,
-                                              array( "%url" => $url,
-                                                     "%filename" => $fileName ) );
+                                              ["%url" => $url, "%filename" => $fileName] );
                     return false;
                 }
             }
@@ -174,7 +173,7 @@ class eZStepSiteTypes extends eZStepInstaller
             eZDebug::writeWarning( "Download of package '$packageName' from '$packageUrl' failed: $this->ErrorMsg" );
             $this->ErrorMsg = ezpI18n::tr( 'design/standard/setup/init',
                                       'Download of package \'%pkg\' failed. You may upload the package manually.',
-                                      false, array( '%pkg' => $packageName ) );
+                                      false, ['%pkg' => $packageName] );
 
             return false;
         }
@@ -265,7 +264,7 @@ class eZStepSiteTypes extends eZStepInstaller
                     eZDebug::writeWarning( "Download of package '$requiredPackageName' failed: the URL is unknown." );
                     $this->ErrorMsg = ezpI18n::tr( 'design/standard/setup/init',
                                               'Download of package \'%pkg\' failed. You may upload the package manually.',
-                                              false, array( '%pkg' => $requiredPackageName ) );
+                                              false, ['%pkg' => $requiredPackageName] );
                     $this->ShowURL = true;
 
                     return false;
@@ -308,14 +307,10 @@ class eZStepSiteTypes extends eZStepInstaller
 
         $packageFilename = $file->attribute( 'filename' );
         $packageName = $file->attribute( 'original_filename' );
-        if ( preg_match( "#^(.+)-[0-9](\.[0-9]+)-[0-9].ezpkg$#", $packageName, $matches ) )
+        if ( preg_match( "#^(.+)-[0-9](\.[0-9]+)-[0-9].ezpkg$#", (string) $packageName, $matches ) )
             $packageName = $matches[1];
-        $packageName = preg_replace( array( "#[^a-zA-Z0-9]+#",
-                                            "#_+#",
-                                            "#(^_)|(_$)#" ),
-                                     array( '_',
-                                            '_',
-                                            '' ), $packageName );
+        $packageName = preg_replace( ["#[^a-zA-Z0-9]+#", "#_+#", "#(^_)|(_$)#"],
+                                     ['_', '_', ''], (string) $packageName );
         $package = eZPackage::import( $packageFilename, $packageName, false );
 
         if ( is_object( $package ) )
@@ -356,7 +351,7 @@ class eZStepSiteTypes extends eZStepInstaller
 
         $sitePackageInfo = $this->Http->postVariable( 'eZSetup_site_type' );
         $downloaded = false; // true - if $sitePackageName package has been downloaded.
-        if ( preg_match( '/^(\w+)\|(.+)$/', $sitePackageInfo, $matches ) )
+        if ( preg_match( '/^(\w+)\|(.+)$/', (string) $sitePackageInfo, $matches ) )
         {
             // remote site package chosen: download it.
             $sitePackageName = $matches[1];
@@ -368,7 +363,7 @@ class eZStepSiteTypes extends eZStepInstaller
             if ( is_object( $package ) )
             {
                 $downloaded = true;
-                $this->Message = ezpI18n::tr( 'design/standard/setup/init', 'Package \'%packageName\' and it\'s dependencies have been downloaded successfully. Press \'Next\' to continue.', false, array( '%packageName' => $sitePackageName ) );
+                $this->Message = ezpI18n::tr( 'design/standard/setup/init', 'Package \'%packageName\' and it\'s dependencies have been downloaded successfully. Press \'Next\' to continue.', false, ['%packageName' => $sitePackageName] );
             }
         }
         else
@@ -396,7 +391,7 @@ class eZStepSiteTypes extends eZStepInstaller
             $data = $this->kickstartData();
             $remoteSitePackages = $this->retrieveRemoteSitePackagesList();
             $importedSitePackages = $this->fetchAvailableSitePackages();
-            $dependenciesStatus = array();
+            $dependenciesStatus = [];
 
             // check site package dependencies to show their status in the template
             foreach ( $importedSitePackages as $sitePackage )
@@ -419,8 +414,7 @@ class eZStepSiteTypes extends eZStepInstaller
                             $packageOK = true;
                     }
 
-                    $dependenciesStatus[$sitePackageName][$requiredPackageName] = array( 'version' => $requiredPackageVersion,
-                                                                                     'status'  => $packageOK );
+                    $dependenciesStatus[$sitePackageName][$requiredPackageName] = ['version' => $requiredPackageVersion, 'status'  => $packageOK];
                 }
             }
 
@@ -486,7 +480,7 @@ class eZStepSiteTypes extends eZStepInstaller
      */
     function createSitePackagesList( $remoteSitePackages, $importedSitePackages, $dependenciesStatus )
     {
-        $sitePackages = array();
+        $sitePackages = [];
 
         if ( is_array( $remoteSitePackages ) )
         {
@@ -523,15 +517,8 @@ class eZStepSiteTypes extends eZStepInstaller
             $dependencies = $package->attribute( 'dependencies' );
             $requirements = $dependencies['requires'];
 
-            $requiresPackageInfo = isset( $dependenciesStatus[$packageName] ) ? $dependenciesStatus[$packageName] : null;
-            $packageInfo = array(
-                'name' => $packageName,
-                'version' => $package->getVersion(),
-                'type' => $package->attribute( 'type' ),
-                'summary' => $package->attribute( 'summary' ),
-                'description' => $package->attribute( 'description' ),
-                'requires' => $requiresPackageInfo,
-                );
+            $requiresPackageInfo = $dependenciesStatus[$packageName] ?? null;
+            $packageInfo = ['name' => $packageName, 'version' => $package->getVersion(), 'type' => $package->attribute( 'type' ), 'summary' => $package->attribute( 'summary' ), 'description' => $package->attribute( 'description' ), 'requires' => $requiresPackageInfo];
 
             if ( $thumbnailPath )
                 $packageInfo['thumbnail_path'] = $thumbnailPath;
@@ -550,7 +537,7 @@ class eZStepSiteTypes extends eZStepInstaller
     {
         $remoteSitePackages = $this->retrieveRemoteSitePackagesList();
         $importedSitePackages = $this->fetchAvailableSitePackages();
-        $dependenciesStatus = array();
+        $dependenciesStatus = [];
 
         // check site package dependencies to show their status in the template
         foreach ( $importedSitePackages as $sitePackage )
@@ -573,8 +560,7 @@ class eZStepSiteTypes extends eZStepInstaller
                         $packageOK = true;
                 }
 
-                $dependenciesStatus[$sitePackageName][$requiredPackageName] = array( 'version' => $requiredPackageVersion,
-                                                                                     'status'  => $packageOK );
+                $dependenciesStatus[$sitePackageName][$requiredPackageName] = ['version' => $requiredPackageVersion, 'status'  => $packageOK];
             }
         }
 
@@ -590,12 +576,11 @@ class eZStepSiteTypes extends eZStepInstaller
         $this->Tpl->setVariable( 'message', $this->Message );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/site_types.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Site selection' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Site selection' ), 'url' => false]];
         return $result;
     }
 
@@ -606,7 +591,7 @@ class eZStepSiteTypes extends eZStepInstaller
      */
     function fetchAvailableSitePackages()
     {
-        $packageList = eZPackage::fetchPackages( array( 'db_available' => false ), array( 'type' => 'site' ) );
+        $packageList = eZPackage::fetchPackages( ['db_available' => false], ['type' => 'site'] );
 
         return $packageList;
     }
@@ -618,11 +603,11 @@ class eZStepSiteTypes extends eZStepInstaller
      */
     function fetchAvailablePackages( $type = false )
     {
-        $typeArray  = array();
+        $typeArray  = [];
         if ( $type )
             $typeArray['type'] = $type;
 
-        $packageList = eZPackage::fetchPackages( array( 'db_available' => false ), $typeArray );
+        $packageList = eZPackage::fetchPackages( ['db_available' => false], $typeArray );
 
         return $packageList;
     }
@@ -695,14 +680,14 @@ class eZStepSiteTypes extends eZStepInstaller
             return false;
         }
 
-        $packageList = array();
+        $packageList = [];
         foreach ( $root->childNodes as $packageNode )
         {
             if ( $packageNode->localName != 'package' ) // skip unwanted chilren
                 continue;
             if ( $onlySitePackages && $packageNode->getAttribute( 'type' ) != 'site' )  // skip non-site packages
                 continue;
-            $packageAttributes = array();
+            $packageAttributes = [];
             foreach ( $packageNode->attributes as $attributeNode )
             {
                 $packageAttributes[$attributeNode->localName] = $attributeNode->value;
@@ -745,8 +730,7 @@ class eZStepSiteTypes extends eZStepInstaller
      */
     function tempDir()
     {
-        return eZDir::path( array( eZSys::cacheDirectory(),
-                                    'packages' ) );
+        return eZDir::path( [eZSys::cacheDirectory(), 'packages'] );
     }
 
     // current repository URL

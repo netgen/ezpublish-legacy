@@ -18,12 +18,12 @@
 
 class eZURLType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezurl';
+    final public const DATA_TYPE_STRING = 'ezurl';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'URL', 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
         $this->MaxLenValidator = new eZIntegerValidator();
     }
 
@@ -86,7 +86,7 @@ class eZURLType extends eZDataType
     function deleteStoredObjectAttribute( $contentObjectAttribute, $version = null )
     {
         $contentObjectAttributeID = $contentObjectAttribute->attribute( 'id' );
-        $urls = array();
+        $urls = [];
         if ( $version == null )
         {
             $urls = eZURLObjectLink::fetchLinkList( $contentObjectAttributeID, false, false );
@@ -140,7 +140,7 @@ class eZURLType extends eZDataType
     {
         // Update url-object link
         $urlValue = $objectAttribute->content();
-        if ( trim( $urlValue ) != '' )
+        if ( trim( (string) $urlValue ) != '' )
         {
             $urlID = eZURL::registerURL( $urlValue );
             $objectAttributeID = $objectAttribute->attribute( 'id' );
@@ -171,7 +171,7 @@ class eZURLType extends eZDataType
     function storeObjectAttribute( $attribute )
     {
         $urlValue = $attribute->content();
-        if ( trim( $urlValue ) != '' )
+        if ( trim( (string) $urlValue ) != '' )
         {
             $oldURLID = $attribute->attribute( 'data_int' );
             $urlID = eZURL::registerURL( $urlValue );
@@ -223,7 +223,7 @@ class eZURLType extends eZDataType
 
         $url = eZURL::fetch( $contentObjectAttribute->attribute( 'data_int' ) );
         if ( is_object( $url ) and
-             trim( $url->attribute( 'url' ) ) != '' and
+             trim( (string) $url->attribute( 'url' ) ) != '' and
              $url->attribute( 'is_valid' ) )
             return true;
         return false;
@@ -273,7 +273,7 @@ class eZURLType extends eZDataType
         if ( $string == '' )
             return true;
 
-        $separatorPos = strpos( $string, '|' );
+        $separatorPos = strpos( (string) $string, '|' );
         // Check if supplied data has a separator which separates url from url text
         if( $separatorPos === false )
         {
@@ -283,8 +283,8 @@ class eZURLType extends eZDataType
         }
         else
         {
-            $url = substr( $string, 0, $separatorPos );
-            $text = substr( $string, $separatorPos + 1 );
+            $url = substr( (string) $string, 0, $separatorPos );
+            $text = substr( (string) $string, $separatorPos + 1 );
             if( $url )
             {
                 $urlID = eZURL::registerURL( $url );
@@ -313,10 +313,10 @@ class eZURLType extends eZDataType
 
         $url = eZURL::fetch( $objectAttribute->attribute( 'data_int' ) );
         if ( is_object( $url ) and
-             trim( $url->attribute( 'url' ) ) != '' )
+             trim( (string) $url->attribute( 'url' ) ) != '' )
         {
             $urlNode = $dom->createElement( 'url' );
-            $urlNode->appendChild( $dom->createTextNode( urlencode( $url->attribute( 'url' ) ) ) );
+            $urlNode->appendChild( $dom->createTextNode( urlencode( (string) $url->attribute( 'url' ) ) ) );
             $urlNode->setAttribute( 'original-url-md5', $url->attribute( 'original_url_md5' ) );
             $urlNode->setAttribute( 'is-valid', $url->attribute( 'is_valid' ) );
             $urlNode->setAttribute( 'last-checked', $url->attribute( 'last_checked' ) );
@@ -347,7 +347,7 @@ class eZURLType extends eZDataType
         if ( is_object( $urlNode ) )
         {
             unset( $url );
-            $url = urldecode( $urlNode->textContent );
+            $url = urldecode( (string) $urlNode->textContent );
 
             $urlID = eZURL::registerURL( $url );
             if ( $urlID )

@@ -36,7 +36,6 @@ class eZOrderStatusHistory extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Modifier = null;
         $this->StatusName = null;
         if ( isset( $row['status_name'] ) )
             $this->StatusName = $row['status_name'];
@@ -47,42 +46,7 @@ class eZOrderStatusHistory extends eZPersistentObject
     */
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "order_id" => array( 'name' => 'OrderID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZOrder',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         "status_id" => array( 'name' => 'StatusID',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true,
-                                                               'foreign_class' => 'eZOrderStatus',
-                                                               'foreign_attribute' => 'id',
-                                                               'multiplicity' => '1..*' ),
-                                         "modifier_id" => array( 'name' => "ModifierID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "modified" => array( 'name' => "Modified",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'function_attributes' => array( 'modifier' => 'modifier',
-                                                      'status_name' => 'fetchOrderStatusName',
-                                                      'status' => 'fetchOrderStatus' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZOrderStatusHistory",
-                      "name" => "ezorder_status_history" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "order_id" => ['name' => 'OrderID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZOrder', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "status_id" => ['name' => 'StatusID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZOrderStatus', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "modifier_id" => ['name' => "ModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "modified" => ['name' => "Modified", 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'function_attributes' => ['modifier' => 'modifier', 'status_name' => 'fetchOrderStatusName', 'status' => 'fetchOrderStatus'], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZOrderStatusHistory", "name" => "ezorder_status_history"];
     }
 
     /*!
@@ -106,11 +70,7 @@ class eZOrderStatusHistory extends eZPersistentObject
     function fetchOrderStatus()
     {
         $statusList = eZOrderStatus::fetchMap( true, true );
-        if ( isset( $statusList[$this->StatusID] ) )
-        {
-            return $statusList[$this->StatusID];
-        }
-        return false;
+        return $statusList[$this->StatusID] ?? false;
     }
 
     /*!
@@ -135,7 +95,7 @@ class eZOrderStatusHistory extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZOrderStatusHistory::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -186,11 +146,7 @@ class eZOrderStatusHistory extends eZPersistentObject
         {
             $userID = eZUser::currentUserID();
         }
-        $row = array( 'id' => null,
-                      'order_id' => $orderID,
-                      'status_id' => $statusID,
-                      'modifier_id' => $userID,
-                      'modified' => $timestamp );
+        $row = ['id' => null, 'order_id' => $orderID, 'status_id' => $statusID, 'modifier_id' => $userID, 'modified' => $timestamp];
         return new eZOrderStatusHistory( $row );
     }
 
@@ -198,7 +154,7 @@ class eZOrderStatusHistory extends eZPersistentObject
     /// \privatesection
     /// This is used for caching the current modifier,
     /// it will either contain \c null (uncached) or a content object (cached).
-    public $Modifier;
+    public $Modifier = null;
 }
 
 ?>

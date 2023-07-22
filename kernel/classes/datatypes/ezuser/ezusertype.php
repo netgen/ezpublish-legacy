@@ -17,13 +17,12 @@
 
 class eZUserType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezuser";
+    final public const DATA_TYPE_STRING = "ezuser";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "User account", 'Datatype name' ),
-                           array( 'translation_allowed' => false,
-                                  'serialize_supported' => true ) );
+                           ['translation_allowed' => false, 'serialize_supported' => true] );
     }
 
     /*!
@@ -57,13 +56,13 @@ class eZUserType extends eZDataType
              $http->hasPostVariable( $base . "_data_user_password_confirm_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $classAttribute = $contentObjectAttribute->contentClassAttribute();
-            $loginName = strip_tags( $http->postVariable( $base . "_data_user_login_" . $contentObjectAttribute->attribute( "id" ) ) );
+            $loginName = strip_tags( (string) $http->postVariable( $base . "_data_user_login_" . $contentObjectAttribute->attribute( "id" ) ) );
             $email = $http->postVariable( $base . "_data_user_email_" . $contentObjectAttribute->attribute( "id" ) );
             $password = $http->postVariable( $base . "_data_user_password_" . $contentObjectAttribute->attribute( "id" ) );
             $passwordConfirm = $http->postVariable( $base . "_data_user_password_confirm_" . $contentObjectAttribute->attribute( "id" ) );
             if ( trim( $loginName ) == '' )
             {
-                if ( $contentObjectAttribute->validateIsRequired() || trim( $email ) != '' )
+                if ( $contentObjectAttribute->validateIsRequired() || trim( (string) $email ) != '' )
                 {
                     $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                          'The username must be specified.' ) );
@@ -140,10 +139,10 @@ class eZUserType extends eZDataType
                     {
                         $minPasswordLength = $ini->variable( 'UserSettings', 'MinPasswordLength' );
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
-                                                                             'The password must be at least %1 characters long.', null, array( $minPasswordLength ) ) );
+                                                                             'The password must be at least %1 characters long.', null, [$minPasswordLength] ) );
                         return eZInputValidator::STATE_INVALID;
                     }
-                    if ( strtolower( $password ) == 'password' )
+                    if ( strtolower( (string) $password ) == 'password' )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'The password must not be "password".' ) );
@@ -180,7 +179,7 @@ class eZUserType extends eZDataType
     {
         if ( $http->hasPostVariable( $base . "_data_user_login_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
-            $login = strip_tags( $http->postVariable( $base . "_data_user_login_" . $contentObjectAttribute->attribute( "id" ) ) );
+            $login = strip_tags( (string) $http->postVariable( $base . "_data_user_login_" . $contentObjectAttribute->attribute( "id" ) ) );
             $email = $http->hasPostVariable( $base . "_data_user_email_" . $contentObjectAttribute->attribute( "id" ) ) ? $http->postVariable( $base . "_data_user_email_" . $contentObjectAttribute->attribute( "id" ) ) : '';
             $password = $http->hasPostVariable( $base . "_data_user_password_" . $contentObjectAttribute->attribute( "id" ) ) ? $http->postVariable( $base . "_data_user_password_" . $contentObjectAttribute->attribute( "id" ) ) : '';
             $passwordConfirm = $http->hasPostVariable( $base . "_data_user_password_confirm_" . $contentObjectAttribute->attribute( "id" ) ) ? $http->postVariable( $base . "_data_user_password_confirm_" . $contentObjectAttribute->attribute( "id" ) ) : '';
@@ -264,7 +263,7 @@ class eZUserType extends eZDataType
                 $contentObjectAttribute->attribute( 'object_version' )->attribute( 'status' ) == eZContentObjectVersion::STATUS_DRAFT
             )
             {
-                $contentObjectAttribute->setAttribute( 'data_text', $this->serializeDraft( $user ) );
+                $contentObjectAttribute->setAttribute( 'data_text', static::serializeDraft($user) );
             }
         }
     }
@@ -298,18 +297,12 @@ class eZUserType extends eZDataType
     /**
      * Generates a serialized draft of the ezuser content
      *
-     * @param eZUser $user
      * @return string
      */
     public static function serializeDraft( eZUser $user )
     {
         return json_encode(
-            array(
-                 'login' => $user->attribute( 'login' ),
-                 'password_hash' => $user->attribute( 'password_hash' ),
-                 'email' => $user->attribute( 'email' ),
-                 'password_hash_type' => $user->attribute( 'password_hash_type' )
-            )
+            ['login' => $user->attribute( 'login' ), 'password_hash' => $user->attribute( 'password_hash' ), 'email' => $user->attribute( 'email' ), 'password_hash_type' => $user->attribute( 'password_hash_type' )], JSON_THROW_ON_ERROR
         );
     }
 
@@ -321,13 +314,12 @@ class eZUserType extends eZDataType
      */
     private function unserializeDraft( $serializedDraft )
     {
-        return json_decode( $serializedDraft );
+        return json_decode( (string) $serializedDraft, null, 512, JSON_THROW_ON_ERROR );
     }
 
     /**
      * Updates ezuser with data generated with getSerializedDraft()
      *
-     * @param eZUser $user
      * @param $serializedDraft
      * @return eZUser updated user
      */
@@ -404,9 +396,8 @@ class eZUserType extends eZDataType
     */
     function classAttributeRemovableInformation( $contentClassAttribute, $includeAll = true )
     {
-        $result  = array( 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                            "Cannot remove the account:" ),
-                          'list' => array() );
+        $result  = ['text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                            "Cannot remove the account:" ), 'list' => []];
         $currentUser = eZUser::currentUser();
         $userObject  = $currentUser->attribute( 'contentobject' );
         $ini         = eZINI::instance();
@@ -416,8 +407,8 @@ class eZUserType extends eZDataType
 
         if ( $classID == $userObject->attribute( 'contentclass_id' ) )
         {
-            $result['list'][] = array( 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                                         "The account owner is currently logged in." ) );
+            $result['list'][] = ['text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                                         "The account owner is currently logged in." )];
             if ( !$includeAll )
                 return $result;
         }
@@ -426,8 +417,8 @@ class eZUserType extends eZDataType
         $rows = $db->arrayQuery( $sql );
         if ( count( $rows ) > 0 )
         {
-            $result['list'][] = array( 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                                         "The account is currently used by the anonymous user." ) );
+            $result['list'][] = ['text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                                         "The account is currently used by the anonymous user." )];
             if ( !$includeAll )
                 return $result;
         }
@@ -439,8 +430,8 @@ class eZUserType extends eZDataType
         $rows = $db->arrayQuery( $sql );
         if ( count( $rows ) > 0 )
         {
-            $result['list'][] = array( 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                                         "The account is currently used the administrator user." ) );
+            $result['list'][] = ['text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                                         "The account is currently used the administrator user." )];
             if ( !$includeAll )
                 return $result;
         }
@@ -452,8 +443,8 @@ class eZUserType extends eZDataType
         $rows = $db->arrayQuery( $sql );
         if ( $rows[0]['count'] == 0 )
         {
-            $result['list'][] = array( 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                                         "You cannot remove the last class holding user accounts." ) );
+            $result['list'][] = ['text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                                         "You cannot remove the last class holding user accounts." )];
             if ( !$includeAll )
                 return $result;
         }
@@ -517,13 +508,7 @@ class eZUserType extends eZDataType
         }
         $user = $GLOBALS['eZUserObject_' . $userID];
 
-        $userInfo = array(
-            $user->attribute( 'login' ),
-            $user->attribute( 'email' ),
-            $user->attribute( 'password_hash' ),
-            eZUser::passwordHashTypeName( $user->attribute( 'password_hash_type' ) ),
-            (int)$user->isEnabled()
-        );
+        $userInfo = [$user->attribute( 'login' ), $user->attribute( 'email' ), $user->attribute( 'password_hash' ), eZUser::passwordHashTypeName( $user->attribute( 'password_hash_type' ) ), (int)$user->isEnabled()];
 
         return implode( '|', $userInfo );
     }

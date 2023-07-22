@@ -12,23 +12,15 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Deletes cache records from the DFS storage table.\n" .
-            "Can be used on a live site to cleanup cache leftovers in ezdfsfile.",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Deletes cache records from the DFS storage table.\n" .
+        "Can be used on a live site to cleanup cache leftovers in ezdfsfile.", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'iteration-sleep' => 'Sleep duration between batches, in milliseconds (default: 100)',
-        'iteration-limit' => 'Batch size (default: 1000)'
-    )
+    ['iteration-sleep' => 'Sleep duration between batches, in milliseconds (default: 100)', 'iteration-limit' => 'Batch size (default: 1000)']
 );
 $optIterationSleep = (int)$options['iteration-sleep'] ?: 100;
 $optIterationLimit = (int)$options['iteration-limit'] ?: 1000;
@@ -56,7 +48,7 @@ try
         usleep( $optIterationSleep * 1000 );
     }
 }
-catch ( InvalidArgumentException $e )
+catch ( InvalidArgumentException )
 {
     $script->shutdown( 0, "The cache and storage tables are identical, nothing to do" );
 }

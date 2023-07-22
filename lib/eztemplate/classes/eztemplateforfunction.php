@@ -37,14 +37,14 @@
 
 class eZTemplateForFunction
 {
-    const FUNCTION_NAME = 'for';
+    final public const FUNCTION_NAME = 'for';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions.
      */
     function functionList()
     {
-        $functionList = array( eZTemplateForFunction::FUNCTION_NAME );
+        $functionList = [eZTemplateForFunction::FUNCTION_NAME];
         return $functionList;
     }
 
@@ -55,10 +55,7 @@ class eZTemplateForFunction
      */
     function attributeList()
     {
-        return array( 'delimiter' => true,
-                      'break'     => false,
-                      'continue'  => false,
-                      'skip'      => false );
+        return ['delimiter' => true, 'break'     => false, 'continue'  => false, 'skip'      => false];
     }
 
 
@@ -67,10 +64,7 @@ class eZTemplateForFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateForFunction::FUNCTION_NAME => array( 'parameters' => true,
-                                                              'static' => false,
-                                                              'transform-parameters' => true,
-                                                              'tree-transformation' => true ) );
+        return [eZTemplateForFunction::FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -81,24 +75,24 @@ class eZTemplateForFunction
     {
         // {for <first_val> to <last_val> as $<loop_var> [sequence <sequence_array> as $<sequence_var>]}
 
-        $newNodes = array();
+        $newNodes = [];
         $tpl->ForCounter++;
         $nodePlacement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-        $uniqid        =  md5( $nodePlacement[2] ) . "_" . $tpl->ForCounter;
+        $uniqid        =  md5( (string) $nodePlacement[2] ) . "_" . $tpl->ForCounter;
 
         $loop = new eZTemplateCompiledLoop( eZTemplateForFunction::FUNCTION_NAME,
                                             $newNodes, $parameters, $nodePlacement, $uniqid,
                                             $node, $tpl, $privateData );
 
         $variableStack   = "for_variable_stack_$uniqid";
-        $namesArray = array( "for_firstval_$uniqid", "for_lastval_$uniqid", "for_i_$uniqid" );
+        $namesArray = ["for_firstval_$uniqid", "for_lastval_$uniqid", "for_i_$uniqid"];
 
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "// for begins" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( !isset( \$$variableStack ) ) \$$variableStack = [];" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$" . $variableStack ."[] = @compact( '" . implode( "', '", $namesArray ) . "' );" );
 
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['first_val'], $nodePlacement, array( 'treat-value-as-non-object' => true ), "for_firstval_$uniqid" );
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['last_val'],  $nodePlacement, array( 'treat-value-as-non-object' => true ), "for_lastval_$uniqid"  );
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['first_val'], $nodePlacement, ['treat-value-as-non-object' => true], "for_firstval_$uniqid" );
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['last_val'],  $nodePlacement, ['treat-value-as-non-object' => true], "for_lastval_$uniqid"  );
 
         $loop->initVars();
 
@@ -107,9 +101,9 @@ class eZTemplateForFunction
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "for ( \$for_i_$uniqid = \$for_firstval_$uniqid ; ; $modifyLoopCounterCode )\n{" );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
         // Check for index
-        $indexArray = isset( $parameters['loop_var'][0][1] ) ? $parameters['loop_var'][0][1] : array( "", 2, "default_index_$uniqid" );
+        $indexArray = $parameters['loop_var'][0][1] ?? ["", 2, "default_index_$uniqid"];
         $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "for_i_$uniqid", $nodePlacement,
-                                                              array( 'text-result' => true ), $indexArray, false, true, true );
+                                                              ['text-result' => true], $indexArray, false, true, true );
 
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( !( \$for_firstval_$uniqid < \$for_lastval_$uniqid ? " .
                                                                "\$for_i_$uniqid <= \$for_lastval_$uniqid : " .

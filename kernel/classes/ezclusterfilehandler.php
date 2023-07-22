@@ -22,16 +22,13 @@ class eZClusterFileHandler
     {
         if ( self::$isShutdownFunctionRegistered !== true )
         {
-            eZExecution::addCleanupHandler( array( __CLASS__, 'cleanupGeneratingFiles' ) );
+            eZExecution::addCleanupHandler( self::cleanupGeneratingFiles(...) );
             self::$isShutdownFunctionRegistered = true;
         }
 
         if( $filename !== false )
         {
-            $optionArray = array( 'iniFile'      => 'file.ini',
-                                  'iniSection'   => 'ClusteringSettings',
-                                  'iniVariable'  => 'FileHandler',
-                                  'handlerParams'=> array( $filename ) );
+            $optionArray = ['iniFile'      => 'file.ini', 'iniSection'   => 'ClusteringSettings', 'iniVariable'  => 'FileHandler', 'handlerParams'=> [$filename]];
 
             $options = new ezpExtensionOptions( $optionArray );
 
@@ -44,9 +41,7 @@ class eZClusterFileHandler
             // return Filehandler from GLOBALS based on ini setting.
             if ( self::$globalHandler === null )
             {
-                $optionArray = array( 'iniFile'      => 'file.ini',
-                                      'iniSection'   => 'ClusteringSettings',
-                                      'iniVariable'  => 'FileHandler' );
+                $optionArray = ['iniFile'      => 'file.ini', 'iniSection'   => 'ClusteringSettings', 'iniVariable'  => 'FileHandler'];
 
                 $options = new ezpExtensionOptions( $optionArray );
 
@@ -166,13 +161,12 @@ class eZClusterFileHandler
      * Global list of currently generating files. Used by handlers that support stalecache.
      * @var array(filename => eZClusterFileHandlerInterface)
      */
-    private static $generatingFiles = array();
+    private static array $generatingFiles = [];
 
     /**
      * Shutdown registration check variable
-     * @var bool
      */
-    private static $isShutdownFunctionRegistered = false;
+    private static bool $isShutdownFunctionRegistered = false;
 
     /**
      * Global, generic (e.g. not linked to a file) cluster handler, used for caching

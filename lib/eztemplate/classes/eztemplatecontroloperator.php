@@ -34,7 +34,7 @@ class eZTemplateControlOperator
         $condName = 'cond',
         $firstSetName = 'first_set' )
     {
-        $this->Operators = array( $condName, $firstSetName );
+        $this->Operators = [$condName, $firstSetName];
         $this->CondName = $condName;
         $this->FirstSetName = $firstSetName;
     }
@@ -49,20 +49,7 @@ class eZTemplateControlOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->CondName => array( 'input' => false,
-                                                'output' => true,
-                                                'parameters' => true,
-                                                'element-transformation' => true,
-                                                'transform-parameters' => true,
-                                                'input-as-parameter' => false,
-                                                'element-transformation-func' => 'condTransform' ),
-                      $this->FirstSetName => array( 'input' => false,
-                                                    'output' => true,
-                                                    'parameters' => true,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => false,
-                                                    'element-transformation-func' => 'condTransform' ) );
+        return [$this->CondName => ['input' => false, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => false, 'element-transformation-func' => 'condTransform'], $this->FirstSetName => ['input' => false, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => false, 'element-transformation-func' => 'condTransform']];
     }
 
     function condTransform( $operatorName, &$node, $tpl, &$resourceData,
@@ -72,7 +59,7 @@ class eZTemplateControlOperator
         {
             case $this->CondName:
             {
-                $paramCount = count( $parameters );
+                $paramCount = is_countable($parameters) ? count( $parameters ) : 0;
                 $clauseCount = floor( $paramCount / 2 );
                 $hasDefaultClause = ( $paramCount % 2 ) != 0;
 
@@ -81,7 +68,7 @@ class eZTemplateControlOperator
                     return $parameters[0];
                 }
 
-                $values = array();
+                $values = [];
                 $code = '';
                 $spacing = 0;
                 $spacingCode = '';
@@ -132,17 +119,17 @@ class eZTemplateControlOperator
                     $code .= $spacingCode . "}\n";
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->FirstSetName:
             {
-                $values = array();
+                $values = [];
                 $code = '';
                 $spacing = 0;
                 $spacingCode = '';
                 $nestCount = 0;
-                for( $i = 0; $i < count( $parameters ); ++$i )
+                for( $i = 0; $i < (is_countable($parameters) ? count( $parameters ) : 0); ++$i )
                 {
                     if ( $i != 0 )
                     {
@@ -171,7 +158,7 @@ class eZTemplateControlOperator
                     $code .= $spacingCode . "}\n";
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
         }
     }
@@ -189,7 +176,7 @@ class eZTemplateControlOperator
     */
     function namedParameterList()
     {
-        return array();
+        return [];
     }
 
     /*!
@@ -202,7 +189,7 @@ class eZTemplateControlOperator
         {
             case $this->CondName:
             {
-                $parameterCount = count( $operatorParameters );
+                $parameterCount = is_countable($operatorParameters) ? count( $operatorParameters ) : 0;
                 $clauseCount = floor( $parameterCount / 2 );
                 $clauseMod = $parameterCount % 2;
                 $conditionSuccess = false;
@@ -220,7 +207,7 @@ class eZTemplateControlOperator
                 if ( !$conditionSuccess and
                      $clauseMod > 0 )
                 {
-                    $condition = $tpl->elementValue( $operatorParameters[count($operatorParameters) - 1], $rootNamespace, $currentNamespace, $placement );
+                    $condition = $tpl->elementValue( $operatorParameters[(is_countable($operatorParameters) ? count($operatorParameters) : 0) - 1], $rootNamespace, $currentNamespace, $placement );
                     if ( $condition )
                     {
                         $conditionSuccess = true;
@@ -230,9 +217,9 @@ class eZTemplateControlOperator
             } break;
             case $this->FirstSetName:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
-                    for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+                    for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                     {
                         $operand = $tpl->elementValue( $operatorParameters[$i], $rootNamespace, $currentNamespace, $placement, true );
                         if ( $operand !== null )

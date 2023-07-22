@@ -24,7 +24,7 @@ function validate( $fields, $type, $spacesAllowed = true )
 
         if ( $spacesAllowed == false )
         {
-            if ( strstr( $fieldValue, " " ) )
+            if ( strstr( (string) $fieldValue, " " ) )
             {
                 $validationErrorType = 'contain_spaces';
                 $validationMessage = 'spaces is not allowed, but field contains spaces';
@@ -39,7 +39,7 @@ function validate( $fields, $type, $spacesAllowed = true )
                 case 'array':
                     break;
                 case 'name':
-                    if ( !preg_match( "/^[A-Za-z0-9]*$/", $fieldValue ) )
+                    if ( !preg_match( "/^[A-Za-z0-9]*$/", (string) $fieldValue ) )
                     {
                         $validationErrorType = 'not_valid_name';
                         $validationMessage = 'Name contains illegal characters';
@@ -73,10 +73,7 @@ function validate( $fields, $type, $spacesAllowed = true )
         }
         ++$fieldNumber;
     }
-    return array( 'hasValidationError' => $hasValidationError,
-                  'fieldContainingError' => $fieldContainingError,
-                  'type' => $validationErrorType,
-                  'message' => $validationMessage );
+    return ['hasValidationError' => $hasValidationError, 'fieldContainingError' => $fieldContainingError, 'type' => $validationErrorType, 'message' => $validationMessage];
 }
 
 ?>

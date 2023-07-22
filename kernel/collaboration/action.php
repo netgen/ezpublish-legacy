@@ -19,9 +19,8 @@ if ( $Module->isCurrentAction( 'Custom' ) )
     return $handler->handleCustomAction( $Module, $collaborationItem );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = false;
-$Result['path'] = array( array( 'url' => false,
-                                ezpI18n::tr( 'kernel/collaboration', 'Collaboration custom action' ) ) );
+$Result['path'] = [['url' => false, ezpI18n::tr( 'kernel/collaboration', 'Collaboration custom action' )]];
 
 ?>

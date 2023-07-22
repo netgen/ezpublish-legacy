@@ -16,16 +16,16 @@
 
 class eZEnumType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezenum';
-    const IS_MULTIPLE_FIELD = 'data_int1';
-    const IS_MULTIPLE_VARIABLE = '_ezenum_ismultiple_value_';
-    const IS_OPTION_FIELD = 'data_int2';
-    const IS_OPTION_VARIABLE = '_ezenum_isoption_value_';
+    final public const DATA_TYPE_STRING = 'ezenum';
+    final public const IS_MULTIPLE_FIELD = 'data_int1';
+    final public const IS_MULTIPLE_VARIABLE = '_ezenum_ismultiple_value_';
+    final public const IS_OPTION_FIELD = 'data_int2';
+    final public const IS_OPTION_VARIABLE = '_ezenum_isoption_value_';
 
     public function __construct()
     {
          parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Enum', 'Datatype name' ),
-                            array( 'serialize_supported' => true ) );
+                            ['serialize_supported' => true] );
     }
 
     /*!
@@ -48,7 +48,7 @@ class eZEnumType extends eZDataType
 
             $newVersionEnumObject = eZEnumObjectValue::fetchAllElements( $originalContentObjectAttributeID, $currentVersion );
 
-            for ( $i = 0; $i < count( $newVersionEnumObject ); ++$i )
+            for ( $i = 0; $i < (is_countable($newVersionEnumObject) ? count( $newVersionEnumObject ) : 0); ++$i )
             {
                 $enumobjectvalue =  $newVersionEnumObject[$i];
                 $enumobjectvalue->setAttribute( 'contentobject_attribute_id', $contentObjectAttribute->attribute( 'id' ) );
@@ -87,7 +87,7 @@ class eZEnumType extends eZDataType
         $contentClassAttributeID = $classAttribute->attribute( 'id' );
         $enums = eZEnumValue::fetchAllElements( $contentClassAttributeID, 1 );
 
-        if ( count ( $enums ) == 0 )
+        if ( (is_countable($enums) ? count ( $enums ) : 0) == 0 )
         {
             $enums = eZEnumValue::fetchAllElements( $contentClassAttributeID, 0 );
             $db = eZDB::instance();
@@ -315,7 +315,7 @@ class eZEnumType extends eZDataType
                 $enum = $contentClassAttribute->content( );
                 $version = $contentClassAttribute->attribute( 'version' );
                 $postvarname = 'ContentClass' . '_data_enumremove_' . $contentClassAttribute->attribute( 'id' );
-                $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : array();
+                $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : [];
                 foreach( $array_remove as $enumid )
                 {
                     $enum->removeEnumeration( $id, $enumid, $version );
@@ -385,8 +385,7 @@ class eZEnumType extends eZDataType
         $isOption = $classAttribute->attribute( 'data_int2' );
 
         $editGrouped = ( $isOption == false );
-        $info = array( 'edit' => array( 'grouped_input' => $editGrouped ),
-                       'collection' => array( 'grouped_input' => $editGrouped ) );
+        $info = ['edit' => ['grouped_input' => $editGrouped], 'collection' => ['grouped_input' => $editGrouped]];
         return eZDataType::objectDisplayInformation( $objectAttribute, $info );
     }
 
@@ -485,8 +484,8 @@ class eZEnumType extends eZDataType
 
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
-        $isOption = strtolower( $attributeParametersNode->getAttribute( 'is-option' ) ) == 'true';
-        $isMultiple = strtolower( $attributeParametersNode->getAttribute( 'is-multiple' ) ) == 'true';
+        $isOption = strtolower( (string) $attributeParametersNode->getAttribute( 'is-option' ) ) == 'true';
+        $isMultiple = strtolower( (string) $attributeParametersNode->getAttribute( 'is-multiple' ) ) == 'true';
         $classAttribute->setAttribute( self::IS_OPTION_FIELD, $isOption );
         $classAttribute->setAttribute( self::IS_MULTIPLE_FIELD, $isMultiple );
 

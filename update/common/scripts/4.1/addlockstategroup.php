@@ -5,7 +5,7 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$scriptSettings = array();
+$scriptSettings = [];
 $scriptSettings['description'] = 'Add the ez_lock system state group';
 $scriptSettings['use-session'] = true;
 $scriptSettings['use-modules'] = true;
@@ -40,7 +40,7 @@ $localeToUse = false;
 $localeIDToUse = false;
 
 // this script inserts English names, so preferably use an English locale
-$preferredLocales = array( 'eng-GB', 'eng-US' );
+$preferredLocales = ['eng-GB', 'eng-US'];
 
 foreach( $preferredLocales as $preferredLocale )
 {
@@ -58,12 +58,12 @@ if ( $localeToUse === false )
     $localeToUse = $prioritizedLanguage->attribute( 'locale' );
 }
 
-$lockGroup = new eZContentObjectStateGroup( array( 'identifier' => 'ez_lock' ) );
+$lockGroup = new eZContentObjectStateGroup( ['identifier' => 'ez_lock'] );
 
 $trans = $lockGroup->translationByLocale( $localeToUse );
 $trans->setAttribute( 'name', 'Lock' );
 $trans->setAttribute( 'description', 'Lock group' );
-$messages = array();
+$messages = [];
 if ( $lockGroup->isValid( $messages ) )
 {
     $cli->output( 'storing state group ez_lock' );
@@ -80,7 +80,7 @@ $notLockedState = $lockGroup->newState( 'not_locked' );
 $trans = $notLockedState->translationByLocale( $localeToUse );
 $trans->setAttribute( 'name', 'Not locked' );
 $trans->setAttribute( 'description', 'Not locked state' );
-$messages = array();
+$messages = [];
 if ( $notLockedState->isValid( $messages ) )
 {
     $cli->output( 'storing state ez_lock/not_locked' );
@@ -97,7 +97,7 @@ $lockedState = $lockGroup->newState( 'locked' );
 $trans = $lockedState->translationByLocale( $localeToUse );
 $trans->setAttribute( 'name', 'Locked' );
 $trans->setAttribute( 'description', 'Locked state' );
-$messages = array();
+$messages = [];
 if ( $lockedState->isValid( $messages ) )
 {
     $cli->output( 'storing state ez_lock/locked' );

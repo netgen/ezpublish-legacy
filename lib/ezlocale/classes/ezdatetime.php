@@ -93,14 +93,7 @@ class eZDateTime
 
     function attributes()
     {
-        return array( 'timestamp',
-                      'hour',
-                      'minute',
-                      'second',
-                      'year',
-                      'month',
-                      'day',
-                      'is_valid' );
+        return ['timestamp', 'hour', 'minute', 'second', 'year', 'month', 'day', 'is_valid'];
     }
 
     function hasAttribute( $name )

@@ -23,18 +23,16 @@ interface ezpAttributeOperatorFormatterInterface
      * Formats single line for the 'attribute' template operator output
      *
      * @param string $key
-     * @param mixed $item
      * @param bool $showValues
      * @param int $level
      * @return string
      */
-    public function line( $key, $item, $showValues, $level );
+    public function line( $key, mixed $item, $showValues, $level );
 
     /**
      * Formats a scalar value like a string or an integer.
      *
-     * @param mixed $value
      * @param return mixed
      */
-    public function exportScalar( $value );
+    public function exportScalar( mixed $value );
 }

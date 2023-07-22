@@ -12,24 +12,20 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish CSV export script\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish CSV export script\n" .
                                                         "\n" .
-                                                        "ezcsvexport.php --storage-dir=export 2" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true,
-                                     'user' => true ) );
+                                                        "ezcsvexport.php --storage-dir=export 2" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true, 'user' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[storage-dir:]",
                                 "[node]",
-                                array( 'storage-dir' => 'directory to place exported files in' ),
+                                ['storage-dir' => 'directory to place exported files in'],
                                 false,
-                                array( 'user' => true ) );
+                                ['user' => true] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( 'Specify a node to export' );
     $script->shutdown( 1 );
@@ -68,7 +64,7 @@ $script->setIterationData( '.', '~' );
 $script->resetIteration( $subTreeCount );
 
 $subTree = $node->subTree();
-$openedFPs = array();
+$openedFPs = [];
 
 foreach ( $subTree as $key => $childNode )
 {
@@ -102,7 +98,7 @@ foreach ( $subTree as $key => $childNode )
 
     $fp = $openedFPs[$classIdentifier];
 
-    $objectData = array();
+    $objectData = [];
     foreach ( $object->attribute( 'contentobject_attributes' ) as $attribute )
     {
         $attributeStringContent = $attribute->toString();
@@ -113,7 +109,7 @@ foreach ( $subTree as $key => $childNode )
             {
                 case 'ezimage':
                 {
-                    $imagePathParts = explode( '/', $attributeStringContent );
+                    $imagePathParts = explode( '/', (string) $attributeStringContent );
                     $imageFile = array_pop( $imagePathParts );
                     // here it would be nice to add a check if such file allready exists
                     $success = eZFileHandler::copy( $attributeStringContent, $storageDir . '/' . $imageFile );
@@ -127,7 +123,7 @@ foreach ( $subTree as $key => $childNode )
                 case 'ezbinaryfile':
                 case 'ezmedia':
                 {
-                    $binaryData = explode( '|', $attributeStringContent );
+                    $binaryData = explode( '|', (string) $attributeStringContent );
                     $success = eZFileHandler::copy( $binaryData[0], $storageDir . '/' . $binaryData[1] );
                     if ( !$success )
                     {

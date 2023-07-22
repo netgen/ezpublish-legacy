@@ -20,7 +20,7 @@ if ( eZOperationHandler::operationIsAvailable( 'content_hide' ) )
 {
     $operationResult = eZOperationHandler::execute( 'content',
                                                     'hide',
-                                                     array( 'node_id' => $NodeID ),
+                                                     ['node_id' => $NodeID],
                                                      null, true );
 }
 else
@@ -37,7 +37,7 @@ if ( !$hasRedirect )
         $redirectNodeID = $NodeID;
     else
         $redirectNodeID = $parentNodeID;
-    return $Module->redirectToView( 'view', array( 'full', $redirectNodeID ) );
+    return $Module->redirectToView( 'view', ['full', $redirectNodeID] );
 }
 
 ?>

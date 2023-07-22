@@ -17,15 +17,14 @@
 
 class eZTextType extends eZDataType
 {
-    const DATA_TYPE_STRING = "eztext";
-    const COLS_FIELD = 'data_int1';
-    const COLS_VARIABLE = '_eztext_cols_';
+    final public const DATA_TYPE_STRING = "eztext";
+    final public const COLS_FIELD = 'data_int1';
+    final public const COLS_VARIABLE = '_eztext_cols_';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Text block", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_text' => 'text' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_text' => 'text']] );
     }
 
     /*!
@@ -159,8 +158,7 @@ class eZTextType extends eZDataType
                                  $objectAttribute, $string,
                                  &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => true );
+        $result = ['errors' => [], 'require_storage' => true];
         $objectAttribute->setContent( $string );
         $objectAttribute->setAttribute( 'data_text', $string );
         return true;
@@ -210,7 +208,7 @@ class eZTextType extends eZDataType
 
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return trim( $contentObjectAttribute->attribute( 'data_text' ) ) != '';
+        return trim( (string) $contentObjectAttribute->attribute( 'data_text' ) ) != '';
     }
 
     /*!

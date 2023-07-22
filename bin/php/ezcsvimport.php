@@ -12,30 +12,23 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish CSV import script\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish CSV import script\n\n" .
                                                         "\n" .
                                                         "\n" .
                                                         "\n" .
                                                         "\n" .
-                                                        "" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[class:][creator:][storage-dir:]",
                                 "[node][file]",
-                                array( 'node' => 'parent node_id to upload object under',
-                                       'file' => 'file to read CSV data from',
-                                       'class' => 'class identifier to create objects',
-                                       'creator' => 'user id of imported objects creator',
-                                       'storage-dir' => 'path to directory which will be added to the path of CSV elements' ),
+                                ['node' => 'parent node_id to upload object under', 'file' => 'file to read CSV data from', 'class' => 'class identifier to create objects', 'creator' => 'user id of imported objects creator', 'storage-dir' => 'path to directory which will be added to the path of CSV elements'],
                                 false,
-                                array( 'user' => true ));
+                                ['user' => true]);
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 2 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 2 )
 {
     $cli->error( "Need a parent node to place object under and file to read data from" );
     $script->shutdown( 1 );
@@ -87,12 +80,7 @@ while ( $objectData = fgetcsv( $fp, $csvLineLength , ';', '"' ) )
     $contentObject = $class->instantiate( $creator );
     $contentObject->store();
 
-    $nodeAssignment = eZNodeAssignment::create( array(
-                                                     'contentobject_id' => $contentObject->attribute( 'id' ),
-                                                     'contentobject_version' => $contentObject->attribute( 'current_version' ),
-                                                     'parent_node' => $nodeID,
-                                                     'is_main' => 1
-                                                     )
+    $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $contentObject->attribute( 'id' ), 'contentobject_version' => $contentObject->attribute( 'current_version' ), 'parent_node' => $nodeID, 'is_main' => 1]
                                                  );
     $nodeAssignment->store();
 
@@ -114,8 +102,8 @@ while ( $objectData = fgetcsv( $fp, $csvLineLength , ';', '"' ) )
             case 'ezbinaryfile':
             case 'ezmedia':
             {
-                $dataString = trim( $dataString );
-                $dataString = !empty( $dataString ) ? eZDir::path( array( $storageDir, $dataString ) ) : '';
+                $dataString = trim( (string) $dataString );
+                $dataString = !empty( $dataString ) ? eZDir::path( [$storageDir, $dataString] ) : '';
                 break;
             }
             default:
@@ -124,8 +112,7 @@ while ( $objectData = fgetcsv( $fp, $csvLineLength , ';', '"' ) )
         $attribute->store();
     }
 
-    $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                 'version' => 1 ) );
+    $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => 1] );
 }
 
 fclose( $fp );

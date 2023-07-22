@@ -18,32 +18,7 @@ class eZUserDiscountRule extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "discountrule_id" => array( 'name' => "DiscountRuleID",
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZDiscountRule',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         "contentobject_id" => array( 'name' => "ContentobjectID",
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "relations" => array( "discountrule_id" => array( "class" => "eZDiscountRule",
-                                                                         "field" => "id" ),
-                                            "contentobject_id" => array( "class" => "eZContentObject",
-                                                                         "field" => "id" ) ),
-                      "class_name" => "eZUserDiscountRule",
-                      "name" => "ezuser_discountrule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "discountrule_id" => ['name' => "DiscountRuleID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZDiscountRule', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "contentobject_id" => ['name' => "ContentobjectID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*']], "keys" => ["id"], "increment_key" => "id", "relations" => ["discountrule_id" => ["class" => "eZDiscountRule", "field" => "id"], "contentobject_id" => ["class" => "eZContentObject", "field" => "id"]], "class_name" => "eZUserDiscountRule", "name" => "ezuser_discountrule"];
     }
 
     function store( $fieldFilters = null )
@@ -65,8 +40,7 @@ class eZUserDiscountRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZUserDiscountRule::definition(),
                                                 null,
-                                                array( "id" => $id
-                                                      ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -74,7 +48,7 @@ class eZUserDiscountRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZUserDiscountRule::definition(),
                                                     null,
-                                                    array( "contentobject_id" => $userID ),
+                                                    ["contentobject_id" => $userID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -116,7 +90,7 @@ class eZUserDiscountRule extends eZPersistentObject
             }
         }
 
-        $rules = array();
+        $rules = [];
         foreach ( $ruleArray as $ruleRow )
         {
             $rules[] = $ruleRow['id'];
@@ -161,7 +135,7 @@ class eZUserDiscountRule extends eZPersistentObject
                         ezuser_discountrule.discountrule_id = ezdiscountrule.id";
         $ruleArray = $db->arrayQuery( $query );
 
-        $rules = array();
+        $rules = [];
         foreach ( $ruleArray as $ruleRow )
         {
             $rules[] = new eZDiscountRule( $ruleRow );
@@ -173,11 +147,11 @@ class eZUserDiscountRule extends eZPersistentObject
     {
          $userList = eZPersistentObject::fetchObjectList( eZUserDiscountRule::definition(),
                                               null,
-                                              array( "discountrule_id" => $discountRuleID ),
+                                              ["discountrule_id" => $discountRuleID],
                                               null,
                                               null,
                                               false );
-        $idArray = array();
+        $idArray = [];
         foreach ( $userList as $user )
         {
 
@@ -190,7 +164,7 @@ class eZUserDiscountRule extends eZPersistentObject
     {
         $objectList = eZPersistentObject::fetchObjectList( eZUserDiscountRule::definition(),
                                                             null,
-                                                            array( "discountrule_id" => $discountRuleID ),
+                                                            ["discountrule_id" => $discountRuleID],
                                                             null,
                                                             null,
                                                             $asObject );
@@ -199,22 +173,19 @@ class eZUserDiscountRule extends eZPersistentObject
 
     static function create( $discountRuleID, $contentobjectID )
     {
-        $row = array(
-            "id" => null,
-            "discountrule_id" => $discountRuleID,
-            "contentobject_id" => $contentobjectID  );
+        $row = ["id" => null, "discountrule_id" => $discountRuleID, "contentobject_id" => $contentobjectID];
         return new eZUserDiscountRule( $row );
     }
 
     static function removeUser( $userID )
     {
         eZPersistentObject::removeObject( eZUserDiscountRule::definition(),
-                                          array( "contentobject_id" => $userID ) );
+                                          ["contentobject_id" => $userID] );
     }
     function removeByID( $id )
     {
         eZPersistentObject::removeObject( eZUserDiscountRule::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
     }
 }
 ?>

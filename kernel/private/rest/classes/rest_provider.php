@@ -17,7 +17,7 @@ class ezpRestProvider
 
     protected static $providerName = null;
 
-    const DEFAULT_PROVIDER = 'ezp';
+    final public const DEFAULT_PROVIDER = 'ezp';
 
     /**
      * @param string $provider

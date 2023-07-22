@@ -17,18 +17,18 @@
 
 class eZUserLoginHandler
 {
-    const AVAILABLE_ARRAY = 'eZLoginHandlerAvailbleArray'; // stores untested login handlers for login
-    const STEP = 'eZLoginHandlerStep';
-    const USER_INFO = 'eZLoginHandlerUserInfo';
-    const LAST_CHECK_REDIRECT = 'eZLoginHandlerLastCheckRedirect';
-    const FORCE_LOGIN = 'eZLoginHandlerForceLogin';
-    const LAST_HANDLER_NAME = 'eZLoginHandlerLastHandlerName';
+    final public const AVAILABLE_ARRAY = 'eZLoginHandlerAvailbleArray'; // stores untested login handlers for login
+    final public const STEP = 'eZLoginHandlerStep';
+    final public const USER_INFO = 'eZLoginHandlerUserInfo';
+    final public const LAST_CHECK_REDIRECT = 'eZLoginHandlerLastCheckRedirect';
+    final public const FORCE_LOGIN = 'eZLoginHandlerForceLogin';
+    final public const LAST_HANDLER_NAME = 'eZLoginHandlerLastHandlerName';
 
-    const STEP_PRE_CHECK_USER_INFO = 0;
-    const STEP_PRE_COLLECT_USER_INFO = 1;
-    const STEP_POST_COLLECT_USER_INFO = 2;
-    const STEP_CHECK_USER = 3;
-    const STEP_LOGIN_USER = 4;
+    final public const STEP_PRE_CHECK_USER_INFO = 0;
+    final public const STEP_PRE_COLLECT_USER_INFO = 1;
+    final public const STEP_POST_COLLECT_USER_INFO = 2;
+    final public const STEP_CHECK_USER = 3;
+    final public const STEP_LOGIN_USER = 4;
 
     /*!
      \static
@@ -38,11 +38,7 @@ class eZUserLoginHandler
     {
         $http = eZHTTPTool::instance();
 
-        $valueList = array( self::AVAILABLE_ARRAY,
-                            self::STEP,
-                            self::USER_INFO,
-                            self::LAST_CHECK_REDIRECT,
-                            self::FORCE_LOGIN );
+        $valueList = [self::AVAILABLE_ARRAY, self::STEP, self::USER_INFO, self::LAST_CHECK_REDIRECT, self::FORCE_LOGIN];
 
         foreach ( $valueList as $value )
         {
@@ -53,7 +49,7 @@ class eZUserLoginHandler
         }
 
         $ini = eZINI::instance();
-        $handlerList = array( 'standard' );
+        $handlerList = ['standard'];
         if ( $ini->hasVariable( 'UserSettings', 'LoginHandler' ) )
         {
             $handlerList = $ini->variable( 'UserSettings', 'LoginHandler' );
@@ -79,7 +75,7 @@ class eZUserLoginHandler
      */
     static function instance( $protocol = "standard" )
     {
-        $triedFiles = array();
+        $triedFiles = [];
         if ( $protocol == "standard" )
         {
             $impl = new eZUser( 0 );
@@ -127,8 +123,6 @@ class eZUserLoginHandler
      * Check if user login is required. If so, use login handler to redirect user.
      *
      * @since 4.4
-     * @param array $siteBasics
-     * @param eZURI $uri
      * @return array|true|false|null An associative array on redirect with 'module' and 'function' keys, true on successful
      *                               and false/null on #fail.
      */
@@ -188,7 +182,7 @@ class eZUserLoginHandler
             case self::STEP_PRE_CHECK_USER_INFO:
             {
                 $ini = eZINI::instance();
-                $handlerList = array( 'standard' );
+                $handlerList = ['standard'];
                 if ( $ini->hasVariable( 'UserSettings', 'LoginHandler' ) )
                 {
                     $handlerList = $ini->variable( 'UserSettings', 'LoginHandler' );
@@ -238,7 +232,7 @@ class eZUserLoginHandler
                     $redirect =& $http->sessionVariable( self::LAST_CHECK_REDIRECT );
                     if ( !$redirect )
                     {
-                        $redirect = array( 'module' => 'user', 'function' => 'login' );
+                        $redirect = ['module' => 'user', 'function' => 'login'];
                     }
                     return $redirect;
                 }
@@ -271,7 +265,7 @@ class eZUserLoginHandler
             case self::STEP_LOGIN_USER:
             {
                 $ini = eZINI::instance();
-                $handlerList = array( 'standard' );
+                $handlerList = ['standard'];
                 if ( $ini->hasVariable( 'UserSettings', 'LoginHandler' ) )
                 {
                     $handlerList = $ini->variable( 'UserSettings', 'LoginHandler' );

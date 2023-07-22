@@ -16,9 +16,9 @@ $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
 
 if ( $http->hasPostVariable( 'NewGroupButton' ) )
-    return $Module->run( 'groupedit', array() );
+    return $Module->run( 'groupedit', [] );
 if ( $http->hasPostVariable( 'NewWorkflowButton' ) )
-    return $Module->run( 'edit', array() );
+    return $Module->run( 'edit', [] );
 
 if ( $http->hasPostVariable( 'DeleteButton' ) and
      $http->hasPostVariable( 'Workflow_id_checked' ) )
@@ -28,7 +28,7 @@ if ( $http->hasPostVariable( 'DeleteButton' ) and
 
 $groupList = eZWorkflowGroup::fetchList();
 $workflows = eZWorkflow::fetchList();
-$workflowList = array();
+$workflowList = [];
 foreach( $workflows as $workflow )
 {
     $workflowList[$workflow->attribute( 'id' )] = $workflow;
@@ -43,9 +43,8 @@ $tpl->setVariable( 'workflow_list', $workflowList );
 $tpl->setVariable( 'group_list', $groupList );
 $tpl->setVariable( 'module', $Module );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:workflow/list.tpl' );
-$Result['path'] = array( array( 'url' => '/workflow/list/',
-                                'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow list' ) ) );
+$Result['path'] = [['url' => '/workflow/list/', 'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow list' )]];
 
 ?>

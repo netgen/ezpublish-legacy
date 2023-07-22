@@ -20,12 +20,12 @@ class eZDFSFileHandlerDFSBackend implements eZDFSFileHandlerDFSBackendInterface
         if ( !is_writeable( $mountPointPath ) )
             throw new eZDFSFileHandlerNFSMountPointNotWriteableException( $mountPointPath );
 
-        if ( substr( $mountPointPath, -1 ) != '/' )
+        if ( !str_ends_with($mountPointPath, '/') )
             $mountPointPath = "$mountPointPath/";
 
         $this->mountPointPath = $mountPointPath;
 
-        $this->filePermissionMask = octdec( eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) );
+        $this->filePermissionMask = octdec( (string) eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) );
     }
 
     /**
@@ -359,7 +359,7 @@ class eZDFSFileHandlerDFSBackend implements eZDFSFileHandlerDFSBackendInterface
         if ( $contents === false )
             return false;
 
-        $createResult = eZFile::create( basename( $filePath ), dirname( $filePath ), $contents, $atomic );
+        $createResult = eZFile::create( basename( (string) $filePath ), dirname( (string) $filePath ), $contents, $atomic );
 
         if ( $createResult )
             $this->fixPermissions( $filePath );
@@ -415,8 +415,7 @@ class eZDFSFileHandlerDFSBackend implements eZDFSFileHandlerDFSBackendInterface
 
     /**
      * Permission mask that must be applied to created files
-     * @var int
      */
-    private $filePermissionMask;
+    private readonly float|int $filePermissionMask;
 }
 ?>

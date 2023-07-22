@@ -13,7 +13,7 @@
  */
 class ezpRestApplicationCacheTest extends ezpRestTestCase
 {
-    public function __construct( $name = NULL, array $data = array(), $dataName = '' )
+    public function __construct( $name = NULL, array $data = [], $dataName = '' )
     {
         parent::__construct( $name, $data, $dataName );
     }
@@ -23,41 +23,13 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function cacheEnabledIniSettingsProvider()
     {
-        $iniVariables1 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'enabled',
-            )
-        );
+        $iniVariables1 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'enabled']];
 
-        $iniVariables2 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'disabled',
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'ApplicationCache'              => 'enabled',
-            )
-        );
+        $iniVariables2 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'disabled'], 'ezpRestTestController_CacheSettings'   => ['ApplicationCache'              => 'enabled']];
 
-        $iniVariables3 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'disabled',
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'ApplicationCache'              => 'disabled',
-            ),
-            'ezpRestTestController_test_CacheSettings'   => array(
-                'ApplicationCache'              => 'enabled',
-            )
-        );
+        $iniVariables3 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'disabled'], 'ezpRestTestController_CacheSettings'   => ['ApplicationCache'              => 'disabled'], 'ezpRestTestController_test_CacheSettings'   => ['ApplicationCache'              => 'enabled']];
 
-        return array(
-            array( $iniVariables1 ),
-            array( $iniVariables2 ),
-            array( $iniVariables3 )
-        );
+        return [[$iniVariables1], [$iniVariables2], [$iniVariables3]];
     }
 
     /**
@@ -65,55 +37,21 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function cacheDisabledIniSettingsProvider()
     {
-        $iniVariables1 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'disabled',
-            )
-        );
+        $iniVariables1 = ['CacheSettings'     => ['ApplicationCache'              => 'disabled']];
 
-        $iniVariables2 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'disabled',
-            )
-        );
+        $iniVariables2 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'disabled']];
 
-        $iniVariables3 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'enabled',
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'ApplicationCache'              => 'disabled',
-            )
-        );
+        $iniVariables3 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'enabled'], 'ezpRestTestController_CacheSettings'   => ['ApplicationCache'              => 'disabled']];
 
-        $iniVariables4 = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'enabled',
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'ApplicationCache'              => 'enabled',
-            ),
-            'ezpRestTestController_test_CacheSettings'   => array(
-                'ApplicationCache'              => 'disabled',
-            )
-        );
+        $iniVariables4 = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'enabled'], 'ezpRestTestController_CacheSettings'   => ['ApplicationCache'              => 'enabled'], 'ezpRestTestController_test_CacheSettings'   => ['ApplicationCache'              => 'disabled']];
 
-        return array(
-            array( $iniVariables1 ),
-            array( $iniVariables2 ),
-            array( $iniVariables3 ),
-            array( $iniVariables4 ),
-        );
+        return [[$iniVariables1], [$iniVariables2], [$iniVariables3], [$iniVariables4]];
     }
 
     /**
      * @group restApplicationCache
      * @group restCache
      * @dataProvider cacheEnabledIniSettingsProvider
-     * @param array $iniVariables
      */
     public function testIsCacheEnabled( array $iniVariables )
     {
@@ -136,7 +74,6 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      * @group restApplicationCache
      * @group restCache
      * @dataProvider cacheDisabledIniSettingsProvider
-     * @param array $iniVariables
      */
     public function testIsCacheDisabled( array $iniVariables )
     {
@@ -160,45 +97,19 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function cacheTTLProvider()
     {
-        $iniVariables1 = array(
-            'CacheSettings'     => array(
-                'DefaultCacheTTL'               => '30'
-            )
-        );
+        $iniVariables1 = ['CacheSettings'     => ['DefaultCacheTTL'               => '30']];
 
-        $iniVariables2 = array(
-            'CacheSettings'     => array(
-                'DefaultCacheTTL'               => '30'
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'CacheTTL'              => '300',
-            )
-        );
+        $iniVariables2 = ['CacheSettings'     => ['DefaultCacheTTL'               => '30'], 'ezpRestTestController_CacheSettings'   => ['CacheTTL'              => '300']];
 
-        $iniVariables3 = array(
-            'CacheSettings'     => array(
-                'DefaultCacheTTL'               => '30'
-            ),
-            'ezpRestTestController_CacheSettings'   => array(
-                'CacheTTL'              => '300',
-            ),
-            'ezpRestTestController_test_CacheSettings'   => array(
-                'CacheTTL'              => '3600',
-            )
-        );
+        $iniVariables3 = ['CacheSettings'     => ['DefaultCacheTTL'               => '30'], 'ezpRestTestController_CacheSettings'   => ['CacheTTL'              => '300'], 'ezpRestTestController_test_CacheSettings'   => ['CacheTTL'              => '3600']];
 
-        return array(
-            array( $iniVariables1 ),
-            array( $iniVariables2 ),
-            array( $iniVariables3 )
-        );
+        return [[$iniVariables1], [$iniVariables2], [$iniVariables3]];
     }
 
     /**
      * @group restApplicationCache
      * @group restCache
      * @dataProvider cacheTTLProvider
-     * @param array $iniVariables
      */
     public function testGetActionTTL( array $iniVariables )
     {
@@ -260,45 +171,28 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function cacheIdVariableProvider()
     {
-        $internalVariables1 = array( 'dummyVar' => 'bar' );
-        $contentVariables1 = array();
+        $internalVariables1 = ['dummyVar' => 'bar'];
+        $contentVariables1 = [];
 
-        $internalVariables2 = array(
-            'dummyVar'          => 'bar',
-            'ResponseGroups'    => array( 'OneResponseGroup', 'AnotherOne' )
-        );
-        $contentVariables2 = array();
+        $internalVariables2 = ['dummyVar'          => 'bar', 'ResponseGroups'    => ['OneResponseGroup', 'AnotherOne']];
+        $contentVariables2 = [];
 
-        $internalVariables3 = array(
-            'dummyVar'          => 'bar',
-            'ResponseGroups'    => array( 'OneResponseGroup', 'AnotherOne' )
-        );
-        $contentVariables3 = array( 'Translation' => 'eng-GB' );
+        $internalVariables3 = ['dummyVar'          => 'bar', 'ResponseGroups'    => ['OneResponseGroup', 'AnotherOne']];
+        $contentVariables3 = ['Translation' => 'eng-GB'];
 
-        $internalVariables4 = array();
-        $contentVariables4 = array();
+        $internalVariables4 = [];
+        $contentVariables4 = [];
 
-        $internalVariables5 = array();
-        $contentVariables5 = array(
-            'Translation'       => 'fre-FR',
-            'Foo'               => 'Bar'
-        );
+        $internalVariables5 = [];
+        $contentVariables5 = ['Translation'       => 'fre-FR', 'Foo'               => 'Bar'];
 
-        return array(
-            array( $internalVariables1, $contentVariables1 ),
-            array( $internalVariables2, $contentVariables2 ),
-            array( $internalVariables3, $contentVariables3 ),
-            array( $internalVariables4, $contentVariables4 ),
-            array( $internalVariables5, $contentVariables5 ),
-        );
+        return [[$internalVariables1, $contentVariables1], [$internalVariables2, $contentVariables2], [$internalVariables3, $contentVariables3], [$internalVariables4, $contentVariables4], [$internalVariables5, $contentVariables5]];
     }
 
     /**
      * @group restApplicationCache
      * @group restCache
      * @dataProvider cacheIdVariableProvider
-     * @param array $internalVariables
-     * @param array $contentVariables
      */
     public function testGenerateCacheId( array $internalVariables, array $contentVariables )
     {
@@ -322,12 +216,7 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
         /*
          * Reproduce the hash algorythm
          */
-        $aCacheId = array(
-            ezpRestPrefixFilterInterface::getApiProviderName(),
-            ezpRestPrefixFilterInterface::getApiVersion(),
-            $routingInfos->controllerClass,
-            $routingInfos->action
-        );
+        $aCacheId = [ezpRestPrefixFilterInterface::getApiProviderName(), ezpRestPrefixFilterInterface::getApiVersion(), $routingInfos->controllerClass, $routingInfos->action];
         foreach ( $contentVariables + $internalVariables as $name => $val )
         {
             if ( is_array( $val ) )
@@ -357,27 +246,18 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function testClusterCache()
     {
-        $this->markTestSkipped( "Cluster cache seems broken, more info in EZPNEXT-217" );
+        static::markTestSkipped("Cluster cache seems broken, more info in EZPNEXT-217");
         $uri = $this->restINI->variable( 'System', 'ApiPrefix' ).'/test/rest/foo';
         $request = new ezpRestRequest();
         $request->uri = $uri;
-        $request->variables = array( 'ResponseGroups' => array() );
-        $request->contentVariables = array();
+        $request->variables = ['ResponseGroups' => []];
+        $request->contentVariables = [];
         $request->protocol = 'http-get';
         $controller = $this->getTestControllerFromRequest( $request );
 
         // Be sure the cache has been activated
         $ttl = 1; // TTL will be 1 second
-        $iniVariables = array(
-            'CacheSettings'     => array(
-                'ApplicationCache'              => 'enabled',
-                'ApplicationCacheDefault'       => 'enabled',
-            ),
-            'ezpRestTestController_test_CacheSettings'   => array(
-                'ApplicationCache'              => 'enabled',
-                'CacheTTL'                      => (string)$ttl,
-            )
-        );
+        $iniVariables = ['CacheSettings'     => ['ApplicationCache'              => 'enabled', 'ApplicationCacheDefault'       => 'enabled'], 'ezpRestTestController_test_CacheSettings'   => ['ApplicationCache'              => 'enabled', 'CacheTTL'                      => (string)$ttl]];
         $this->restINI->setVariables( $iniVariables );
         $controller->setRestINI( $this->restINI );
 
@@ -412,15 +292,11 @@ class ezpRestApplicationCacheTest extends ezpRestTestCase
      */
     public function testManageCache()
     {
-        $cacheOptions = array( 'ttl' => 2 );
+        $cacheOptions = ['ttl' => 2];
         $cacheID = 'test_id';
         $cacheKey = 'myUniqueCacheKey';
         $cacheLocation = 'myLocation';
-        $data = array(
-            'foo'       => 'bar',
-            'baz'       => 123,
-            'boolean'   => true
-        );
+        $data = ['foo'       => 'bar', 'baz'       => 123, 'boolean'   => true];
 
         ezcCacheManager::createCache( $cacheID, $cacheLocation, 'ezpRestCacheStorageClusterObject', $cacheOptions );
         $cache = ezcCacheManager::getCache( $cacheID );

@@ -11,24 +11,13 @@
  */
 function pageLimit( $searchPageLimit )
 {
-    switch ( $searchPageLimit )
-    {
-        case 1:
-            return 5;
-
-        case 2:
-        default:
-            return 10;
-
-        case 3:
-            return 20;
-
-        case 4:
-            return 30;
-
-        case 5:
-            return 50;
-    }
+    return match ($searchPageLimit) {
+        1 => 5,
+        3 => 20,
+        4 => 30,
+        5 => 50,
+        default => 10,
+    };
 }
 
 $http = eZHTTPTool::instance();
@@ -65,7 +54,7 @@ $maximumSearchLimit = $ini->variable( 'SearchSettings', 'MaximumSearchLimit' );
 if ( $pageLimit > $maximumSearchLimit )
     $pageLimit = $maximumSearchLimit;
 
-if ( $http->hasVariable( 'PhraseSearchText' ) and trim( $http->variable( 'PhraseSearchText' ) ) != '' )
+if ( $http->hasVariable( 'PhraseSearchText' ) and trim( (string) $http->variable( 'PhraseSearchText' ) ) != '' )
 {
     $searchText = '"' . $http->variable( 'PhraseSearchText' ) . '"';
     $phraseSearchText = $http->variable( 'PhraseSearchText' );
@@ -83,7 +72,7 @@ if ( $http->hasVariable( 'SearchText' ) )
 
 $searchContentClassID = -1;
 $searchContentClassAttributes = 0;
-$searchContentClassAttributeArray = array();
+$searchContentClassAttributeArray = [];
 if ( $http->hasVariable( 'SearchContentClassID' ) and
      $http->variable( 'SearchContentClassID' ) != -1 )
 {
@@ -124,7 +113,7 @@ if ( $http->hasVariable( 'SearchSectionID' ) and
     $searchSectionID = $http->variable( 'SearchSectionID' );
 }
 
-$subTreeArray = array();
+$subTreeArray = [];
 if ( $http->hasVariable( 'SubTreeArray' ) )
 {
     if ( is_array( $http->variable( 'SubTreeArray' ) ) )
@@ -133,7 +122,7 @@ if ( $http->hasVariable( 'SubTreeArray' ) )
     }
     else
     {
-        $subTreeList = array( $http->variable( 'SubTreeArray' ) );
+        $subTreeList = [$http->variable( 'SubTreeArray' )];
     }
     foreach ( $subTreeList as $subTreeItem )
     {
@@ -147,7 +136,7 @@ if ( $http->hasVariable( 'SubTreeArray' ) )
 
 $Module->setTitle( "Search for: $searchText" );
 
-$classArray = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, array( 'name' => 'asc' ) );
+$classArray = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, ['name' => 'asc'] );
 
 $sectionArray = eZSection::fetchList();
 
@@ -155,22 +144,15 @@ $searchArray = eZSearch::buildSearchArray();
 
 if ( $useSearchCode )
 {
-    $searchResult = eZSearch::search( $searchText, array( 'SearchSectionID' => $searchSectionID,
-                                                          'SearchContentClassID' => $searchContentClassID,
-                                                          'SearchContentClassAttributeID' => $searchContentClassAttributeID,
-                                                          'SearchSubTreeArray' => $subTreeArray,
-                                                          'SearchDate' => $searchDate,
-                                                          'SearchTimestamp' => $searchTimestamp,
-                                                          'SearchLimit' => $pageLimit,
-                                                          'SearchOffset' => $Offset ),
+    $searchResult = eZSearch::search( $searchText, ['SearchSectionID' => $searchSectionID, 'SearchContentClassID' => $searchContentClassID, 'SearchContentClassAttributeID' => $searchContentClassAttributeID, 'SearchSubTreeArray' => $subTreeArray, 'SearchDate' => $searchDate, 'SearchTimestamp' => $searchTimestamp, 'SearchLimit' => $pageLimit, 'SearchOffset' => $Offset],
                                        $searchArray );
-    if ( strlen(trim($searchText)) == 0 && count( $searchArray ) > 0  )
+    if ( strlen(trim($searchText)) == 0 && (is_countable($searchArray) ? count( $searchArray ) : 0) > 0  )
     {
         $searchText = 'search by additional parameter';
     }
 }
 
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $searchData = false;
 $tpl->setVariable( "search_data", $searchData );
@@ -193,8 +175,8 @@ if ( $useSearchCode )
 {
     $tpl->setVariable( 'offset', $Offset );
     $tpl->setVariable( 'page_limit', $pageLimit );
-    $tpl->setVariable( 'search_text_enc', urlencode( $originalSearchText ) );
-    $tpl->setVariable( 'phrase_search_text_enc', urlencode( $phraseSearchText ) );
+    $tpl->setVariable( 'search_text_enc', urlencode( (string) $originalSearchText ) );
+    $tpl->setVariable( 'phrase_search_text_enc', urlencode( (string) $phraseSearchText ) );
     $tpl->setVariable( 'search_result', $searchResult['SearchResult'] );
     $tpl->setVariable( 'search_count', $searchResult['SearchCount'] );
     $tpl->setVariable( 'stop_word_array', $searchResult['StopWordArray'] );
@@ -220,11 +202,11 @@ $tpl->setVariable( 'section_array', $sectionArray );
 $tpl->setVariable( 'search_content_class_attribute_array', $searchContentClassAttributeArray );
 
 // Set template variable containing search terms for attribute-based search.
-$searchTermsArray = array();
+$searchTermsArray = [];
 // BEGIN old code for backwards compatibility
 // Set template variable for attribute-based search.
 // Make it a hash with classattribute_id as key. If it has an identifier, add that to the key.
-$searchArrayByClassAttributeID = array();
+$searchArrayByClassAttributeID = [];
 // END old code for backwards compatibility
 foreach ( $searchArray as $searchItem )
 {
@@ -256,14 +238,13 @@ if ( $searchSectionID != -1 )
 {
     $section = eZSection::fetch( $searchSectionID );
     $res = eZTemplateDesignResource::instance();
-    $keyArray = array( array( 'section', $searchSectionID ),
-                       array( 'section_identifier', $section->attribute( 'identifier' ) ) );
+    $keyArray = [['section', $searchSectionID], ['section_identifier', $section->attribute( 'identifier' )]];
     $res->setKeys( $keyArray );
 }
 
-$Result = array();
+$Result = [];
 
-if ( trim( $ViewMode ) != '' )
+if ( trim( (string) $ViewMode ) != '' )
 {
     // Fetch override template for viewmode if wanted
     $Result['content'] = $tpl->fetch( "design:content/advancedsearch/$ViewMode.tpl" );
@@ -272,10 +253,7 @@ else
 {
     $Result['content'] = $tpl->fetch( 'design:content/advancedsearch.tpl' );
 }
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Search' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/content', 'Advanced' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Search' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/content', 'Advanced' ), 'url' => false]];
 
 $searchData = false;
 if ( !$useSearchCode )

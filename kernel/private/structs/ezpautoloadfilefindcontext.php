@@ -16,38 +16,26 @@
 class ezpAutoloadFileFindContext extends ezcBaseStruct
 {
     /**
-     * The list of files
-     *
-     * @var array(string)
-     */
-    public $elements;
-
-    /**
-     * The number of files
-     *
-     * @var int
-     */
-    public $count;
-
-    /**
-     * The autoload generator
-     *
-     * @var eZAutoloadGenerator
-     */
-    public $generator;
-
-    /**
      * Constructs a new ezpAutoloadFileFindContext with initial values.
      *
      * @param array(string) $elements
      * @param int $count
      * @param int $size
      */
-    public function __construct( $elements = array(), $count = 0, $gen = null )
+    public function __construct(
+        /**
+         * The list of files
+         *
+         * @var array(string)
+         */
+        public $elements = [],
+        public $count = 0,
+        /**
+         * The autoload generator
+         */
+        public $generator = null
+    )
     {
-        $this->elements = $elements;
-        $this->count = $count;
-        $this->generator = $gen;
     }
 
     /**

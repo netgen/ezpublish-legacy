@@ -10,7 +10,7 @@
 
 class eZFSFileHandler implements eZClusterFileHandlerInterface
 {
-    const EXPIRY_TIMESTAMP = 233366400;
+    final public const EXPIRY_TIMESTAMP = 233_366_400;
 
     /**
      * Constructor.
@@ -20,9 +20,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
     public function __construct( $filePath = false )
     {
         eZDebugSetting::writeDebug( 'kernel-clustering', "fs::instance( '$filePath' )", __METHOD__ );
-        $this->Mutex = null;
-        $this->filePath = $filePath;
-        $this->lifetime = 60; // Lifetime of lock
+        $this->filePath = $filePath; // Lifetime of lock
         $this->loadMetaData();
     }
 
@@ -186,7 +184,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
         eZFile::create( basename( $filePath ), dirname( $filePath ), $contents, true );
 
         $perm = eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' );
-        chmod( $filePath, octdec( $perm ) );
+        chmod( $filePath, octdec( (string) $perm ) );
 
         eZDebug::accumulatorStop( 'dbfile' );
     }
@@ -209,9 +207,9 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
 
         eZDebug::accumulatorStart( 'dbfile', false, 'dbfile' );
 
-        eZFile::create( basename( $filePath ), dirname( $filePath ), $contents, true );
+        eZFile::create( basename( (string) $filePath ), dirname( (string) $filePath ), $contents, true );
         $perm = eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' );
-        chmod( $filePath, octdec( $perm ) );
+        chmod( $filePath, octdec( (string) $perm ) );
 
         eZDebug::accumulatorStop( 'dbfile' );
     }
@@ -298,7 +296,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
     function processCache( $retrieveCallback, $generateCallback = null, $ttl = null, $expiry = null, $extraData = null )
     {
         $fname = $this->filePath;
-        $args = array( $fname );
+        $args = [$fname];
         if ( $extraData !== null )
             $args[] = $extraData;
         $curtime   = time();
@@ -317,7 +315,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
             $mtime = file_exists( $fname ) ? filemtime( $fname ) : false;
             if ( $retrieveCallback !== null && !$this->isExpired( $expiry, $curtime, $ttl ) )
             {
-                $args = array( $fname, $mtime );
+                $args = [$fname, $mtime];
                 if ( $extraData !== null )
                     $args[] = $extraData;
                 $retval = call_user_func_array( $retrieveCallback, $args );
@@ -354,7 +352,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
                     return null;
                 }
                 $message = $retval->message();
-                if ( strlen( $message ) > 0 )
+                if ( strlen( (string) $message ) > 0 )
                 {
                     eZDebugSetting::writeDebug( 'kernel-clustering', $retval->message(), __METHOD__ );
                 }
@@ -392,7 +390,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
             // File in DB is outdated or non-existing, call write-callback to generate content
             if ( $generateCallback )
             {
-                $args = array( $fname );
+                $args = [$fname];
                 if ( $noCache )
                     $extraData['noCache'] = true;
                 if ( $extraData !== null )
@@ -565,7 +563,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
      */
     function size()
     {
-        $size = isset( $this->metaData['size'] ) ? $this->metaData['size'] : null;
+        $size = $this->metaData['size'] ?? null;
         eZDebugSetting::writeDebug( 'kernel-clustering', $size, "fs::size( {$this->filePath} )" );
         return $size;
     }
@@ -589,7 +587,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
      */
     function mtime()
     {
-        $mtime = isset( $this->metaData['mtime'] ) ? $this->metaData['mtime'] : null;
+        $mtime = $this->metaData['mtime'] ?? null;
         eZDebugSetting::writeDebug( 'kernel-clustering', $mtime, "fs::mtime( {$this->filePath} )" );
         return $mtime;
     }
@@ -660,7 +658,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
 
         eZDebug::accumulatorStart( 'dbfile', false, 'dbfile' );
 
-        $list = array();
+        $list = [];
         if ( $fnamePart !== false )
         {
             $globResult = glob( $path . "/" . $fnamePart . "*" );
@@ -671,7 +669,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
         }
         else
         {
-            $list = array( $path );
+            $list = [$path];
         }
 
         foreach ( $list as $path )
@@ -765,10 +763,10 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
         if ( $max === false )
             $max = 100;
         $count = 0;
-        $list = array();
+        $list = [];
         if ( is_file( $file ) )
         {
-            $list = array( $file );
+            $list = [$file];
         }
         else
         {
@@ -803,13 +801,13 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
                 $globResult = glob( $file . "/*" );
                 if ( is_array( $globResult ) )
                 {
-                    $list = array_merge( $globResult, $list );
+                    $list = [...$globResult, ...$list];
                 }
             }
 
             if ( $printCallback )
                 call_user_func_array( $printCallback,
-                                      array( $file, 1 ) );
+                                      [$file, 1] );
         } while ( count( $list ) > 0 );
     }
 
@@ -1021,8 +1019,8 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
 
     public $metaData = null;
     public $filePath;
-    public $Mutex;
-    public $lifetime;
+    public $Mutex = null;
+    public $lifetime = 60;
 }
 
 ?>

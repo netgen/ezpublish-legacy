@@ -45,7 +45,7 @@ class ezpLanguageSwitcher implements ezpLanguageSwitcherCapable
             $this->userParamString .= "/($key)/$value";
         }
 
-        $this->queryString = isset( $params['QueryString'] ) ? $params['QueryString'] : '';
+        $this->queryString = $params['QueryString'] ?? '';
     }
 
     /**
@@ -141,9 +141,9 @@ class ezpLanguageSwitcher implements ezpLanguageSwitcherCapable
             $pathPrefix = $saIni->variable( 'SiteAccessSettings', 'PathPrefix' );
             if ( !empty( $pathPrefix ) )
             {
-                if ( ( strpos( $url, $pathPrefix . '/' ) === 0 ) || ( $pathPrefix === $url ) )
+                if ( ( str_starts_with($url, $pathPrefix . '/') ) || ( $pathPrefix === $url ) )
                 {
-                    $url = substr( $url, strlen( $pathPrefix ) + 1 );
+                    $url = substr( $url, strlen( (string) $pathPrefix ) + 1 );
                 }
                 else
                 {
@@ -224,7 +224,7 @@ class ezpLanguageSwitcher implements ezpLanguageSwitcherCapable
             $urlAlias .= $this->userParamString;
         }
 
-        $this->baseDestinationUrl = rtrim( $this->baseDestinationUrl, '/' );
+        $this->baseDestinationUrl = rtrim( (string) $this->baseDestinationUrl, '/' );
 
         $ini = eZINI::instance();
 
@@ -303,10 +303,10 @@ class ezpLanguageSwitcher implements ezpLanguageSwitcherCapable
         $ini = eZINI::instance();
         if ( !$ini->hasVariable( 'RegionalSettings', 'TranslationSA' ) )
         {
-            return array();
+            return [];
         }
 
-        $ret = array();
+        $ret = [];
         $translationSiteAccesses = $ini->variable( 'RegionalSettings', 'TranslationSA' );
         foreach ( $translationSiteAccesses as $siteAccessName => $translationName )
         {
@@ -315,11 +315,7 @@ class ezpLanguageSwitcher implements ezpLanguageSwitcherCapable
             {
                 $switchLanguageLink .= $url;
             }
-            $ret[$siteAccessName] = array(
-                'url' => $switchLanguageLink,
-                'text' => $translationName,
-                'locale' => eZSiteAccess::getIni( $siteAccessName )->variable( 'RegionalSettings', 'ContentObjectLocale' )
-             );
+            $ret[$siteAccessName] = ['url' => $switchLanguageLink, 'text' => $translationName, 'locale' => eZSiteAccess::getIni( $siteAccessName )->variable( 'RegionalSettings', 'ContentObjectLocale' )];
         }
         return $ret;
     }

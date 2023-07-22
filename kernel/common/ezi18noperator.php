@@ -25,7 +25,7 @@ class eZi18nOperator
      */
     public function __construct( $name = 'i18n', $extensionName = 'x18n', $dynamicName = 'd18n' )
     {
-        $this->Operators = array( $name, $extensionName, $dynamicName );
+        $this->Operators = [$name, $extensionName, $dynamicName];
         $this->Name = $name;
         $this->ExtensionName = $extensionName;
         // d18n is a i18n alias for use with dynamic variables as input
@@ -54,40 +54,14 @@ class eZi18nOperator
     */
     function namedParameterList()
     {
-        $def = array( $this->Name => array( 'context' => array( 'type' => 'string',
-                                                                'required' => false,
-                                                                'default' => false ),
-                                            'comment' => array( 'type' => 'string',
-                                                                'required' => false,
-                                                                'default' => '' ),
-                                            'arguments' => array( 'type' => 'hash',
-                                                                  'required' => false,
-                                                                  'default' => false ) ),
-                      $this->ExtensionName => array( 'extension' => array( 'type' => 'string',
-                                                                           'required' => true,
-                                                                           'default' => false ),
-                                                     'context' => array( 'type' => 'string',
-                                                                         'required' => false,
-                                                                         'default' => false ),
-                                                     'comment' => array( 'type' => 'string',
-                                                                         'required' => false,
-                                                                         'default' => '' ),
-                                                     'arguments' => array( 'type' => 'hash',
-                                                                           'required' => false,
-                                                                           'default' => false ) ) );
+        $def = [$this->Name => ['context' => ['type' => 'string', 'required' => false, 'default' => false], 'comment' => ['type' => 'string', 'required' => false, 'default' => ''], 'arguments' => ['type' => 'hash', 'required' => false, 'default' => false]], $this->ExtensionName => ['extension' => ['type' => 'string', 'required' => true, 'default' => false], 'context' => ['type' => 'string', 'required' => false, 'default' => false], 'comment' => ['type' => 'string', 'required' => false, 'default' => ''], 'arguments' => ['type' => 'hash', 'required' => false, 'default' => false]]];
         $def[ $this->DynamicName ] = $def[ $this->Name ];
         return $def;
     }
 
     function operatorTemplateHints()
     {
-        $def = array( $this->Name => array( 'input' => true,
-                                            'output' => true,
-                                            'parameters' => true,
-                                            'element-transformation' => true,
-                                            'transform-parameters' => true,
-                                            'input-as-parameter' => 'always',
-                                            'element-transformation-func' => 'i18nTrans') );
+        $def = [$this->Name => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'i18nTrans']];
         $def[ $this->DynamicName ] = $def[ $this->Name ];
         return $def;
     }
@@ -108,16 +82,16 @@ class eZi18nOperator
 
         $value = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-        $numParameters = count ( $parameters );
+        $numParameters = is_countable($parameters) ? count ( $parameters ) : 0;
         $context = ( $numParameters > 1 ) ? eZTemplateNodeTool::elementConstantValue( $parameters[1] ) : null;
         $comment = ( $numParameters > 2 ) ? eZTemplateNodeTool::elementConstantValue( $parameters[2] ) : null;
 
         if ( $numParameters < 4 )
         {
-            return array ( eZTemplateNodeTool::createStringElement( ezpI18n::tr( $context, $value, $comment, null ) ) );
+            return [eZTemplateNodeTool::createStringElement( ezpI18n::tr( $context, $value, $comment, null ) )];
         }
 
-        $values = array();
+        $values = [];
 
         $ini = eZINI::instance();
         if ( $ini->variable( 'RegionalSettings', 'TextTranslation' ) != 'disabled' )
@@ -139,7 +113,7 @@ class eZi18nOperator
             }
         }
 
-        $values[] = array( eZTemplateNodeTool::createStringElement( $value ) );
+        $values[] = [eZTemplateNodeTool::createStringElement( $value )];
         $values[] = $parameters[3];
 
         $code = '%tmp1% = array();' . "\n" .
@@ -152,7 +126,7 @@ class eZi18nOperator
              '}' . "\n" .
              '%output% = strtr( %1%, %tmp1% );' . "\n";
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 3 )];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$value, $namedParameters, $placement )

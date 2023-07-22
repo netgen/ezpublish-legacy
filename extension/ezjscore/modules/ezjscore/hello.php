@@ -36,7 +36,7 @@ $withPageLayout = $Params['with_pagelayout'];
 
 if ( $withPageLayout )
 {
-    $Result = array();
+    $Result = [];
     $Result['content'] = 'Hello World!';
 }
 else

@@ -19,7 +19,6 @@ class ezpTestDatabaseHelper
     /**
      * Creates a new test database
      *
-     * @param ezpDsn $dsn
      * @param array $sqlFiles array( array( string => string ) )
      * @param bool $removeExisting
      * @return mixed
@@ -67,7 +66,6 @@ class ezpTestDatabaseHelper
     /**
      * Removes everything inside a database
      *
-     * @param eZDBInterface $db
      * @return void
      */
     public static function clean( eZDBInterface $db )
@@ -86,7 +84,6 @@ class ezpTestDatabaseHelper
     /**
      * Checks if a database exists or not
      *
-     * @param eZDBInterface $db
      * @param string $database
      */
     public static function exists( eZDBInterface $db, $database )
@@ -98,7 +95,6 @@ class ezpTestDatabaseHelper
     /**
      * Inserts one or more sql files into the test database
      *
-     * @param eZDBInterface $db
      * @param array $sqlFiles array( array( string => string ) )
      * @return bool
      */
@@ -115,7 +111,7 @@ class ezpTestDatabaseHelper
             }
             else
             {
-                $success = $db->insertFile( dirname( $sqlFile ), basename( $sqlFile ), false );
+                $success = $db->insertFile( dirname( (string) $sqlFile ), basename( (string) $sqlFile ), false );
             }
 
             if ( !$success )
@@ -130,7 +126,6 @@ class ezpTestDatabaseHelper
     /**
      * Inserts the default eZ Publish schema and clean data
      *
-     * @param eZDBInterface $db
      * @return bool
      */
     public static function insertDefaultData( eZDBInterface $db )
@@ -141,7 +136,6 @@ class ezpTestDatabaseHelper
     /**
      * Inserts the eZ Publish schema and optional clean data
      *
-     * @param eZDBInterface $db
      * @param string $schemaFile Path to schema file (share/db_schema.dba)
      * @param string|null $dataFile Optional path to data file (share/db_data.dba)
      * @return bool
@@ -149,17 +143,17 @@ class ezpTestDatabaseHelper
     public static function insertData( eZDBInterface $db, $schemaFile, $dataFile = null )
     {
         $schemaArray = eZDbSchema::read( $schemaFile, true );
-        $dataArray = $dataFile !== null ? eZDbSchema::read( $dataFile, true ) : array();
+        $dataArray = $dataFile !== null ? eZDbSchema::read( $dataFile, true ) : [];
         $schemaArray = array_merge( $schemaArray, $dataArray );
 
         $dbSchema = eZDbSchema::instance( $schemaArray );
         if ( $db instanceof eZMySQLiDB )
         {
-            $success = $dbSchema->insertSchema( array( 'schema' => true, 'data' => true, 'table_type' => 'innodb' ) );
+            $success = $dbSchema->insertSchema( ['schema' => true, 'data' => true, 'table_type' => 'innodb'] );
         }
         else
         {
-            $success = $dbSchema->insertSchema( array( 'schema' => true, 'data' => true ) );
+            $success = $dbSchema->insertSchema( ['schema' => true, 'data' => true] );
         }
 
         return $success;

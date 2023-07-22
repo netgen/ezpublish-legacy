@@ -57,18 +57,18 @@
 class eZURLAliasML extends eZPersistentObject
 {
     // Return values from storePath()
-    const LINK_ID_NOT_FOUND = 1;
-    const LINK_ID_WRONG_ACTION = 2;
-    const LINK_ALREADY_TAKEN = 3;
-    const ACTION_INVALID = 51;
-    const DB_ERROR = 101;
+    final public const LINK_ID_NOT_FOUND = 1;
+    final public const LINK_ID_WRONG_ACTION = 2;
+    final public const LINK_ALREADY_TAKEN = 3;
+    final public const ACTION_INVALID = 51;
+    final public const DB_ERROR = 101;
 
     /**
      * Optionally computed path string for this element, used for caching purposes.
      *
      * @var string
      */
-    public $Path;
+    public $Path = null;
 
     /**
      * @var int
@@ -133,7 +133,6 @@ class eZURLAliasML extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Path = null;
         if ( isset( $row['path'] ) )
         {
             $this->Path = $row['path'];
@@ -142,55 +141,7 @@ class eZURLAliasML extends eZPersistentObject
 
     static public function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "parent" => array( 'name' => 'Parent',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         "lang_mask" => array( 'name' => 'LangMask',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "text" => array( 'name' => 'Text',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "text_md5" => array( 'name' => 'TextMD5',
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ),
-                                         "action" => array( 'name' => 'Action',
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => true ),
-                                         "action_type" => array( 'name' => 'ActionType',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         "link" => array( 'name' => 'Link',
-                                                          'datatype' => 'integer',
-                                                          'default' => 0,
-                                                          'required' => true ),
-                                         "is_alias" => array( 'name' => 'IsAlias',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "is_original" => array( 'name' => 'IsOriginal',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "alias_redirects" => array( 'name' => 'AliasRedirects',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 1,
-                                                                     'required' => true ) ),
-                      "keys" => array( "parent", "text_md5" ),
-                      "function_attributes" => array( "children" => "getChildren",
-                                                      "path" => "getPath" ),
-                      "class_name" => "eZURLAliasML",
-                      "name" => "ezurlalias_ml" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "parent" => ['name' => 'Parent', 'datatype' => 'integer', 'default' => 0, 'required' => true], "lang_mask" => ['name' => 'LangMask', 'datatype' => 'integer', 'default' => 0, 'required' => true], "text" => ['name' => 'Text', 'datatype' => 'string', 'default' => '', 'required' => true], "text_md5" => ['name' => 'TextMD5', 'datatype' => 'string', 'default' => '', 'required' => true], "action" => ['name' => 'Action', 'datatype' => 'string', 'default' => '', 'required' => true], "action_type" => ['name' => 'ActionType', 'datatype' => 'string', 'default' => '', 'required' => true], "link" => ['name' => 'Link', 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_alias" => ['name' => 'IsAlias', 'datatype' => 'integer', 'default' => 0, 'required' => true], "is_original" => ['name' => 'IsOriginal', 'datatype' => 'integer', 'default' => 0, 'required' => true], "alias_redirects" => ['name' => 'AliasRedirects', 'datatype' => 'integer', 'default' => 1, 'required' => true]], "keys" => ["parent", "text_md5"], "function_attributes" => ["children" => "getChildren", "path" => "getPath"], "class_name" => "eZURLAliasML", "name" => "ezurlalias_ml"];
         return $definition;
     }
 
@@ -208,7 +159,7 @@ class eZURLAliasML extends eZPersistentObject
         //First try to use mbstring
         if ( extension_loaded( 'mbstring' ) )
         {
-            return mb_strtolower( $text, self::$charset );
+            return mb_strtolower( (string) $text, self::$charset );
         }
         else
         {
@@ -238,11 +189,7 @@ class eZURLAliasML extends eZPersistentObject
      */
     static function create( $element, $action, $parentID, $language )
     {
-        $row = array( 'text'      => $element,
-                      'text_md5'  => md5( eZURLAliasML::strtolower( $element ) ),
-                      'parent'    => $parentID,
-                      'lang_mask' => $language,
-                      'action'    => $action );
+        $row = ['text'      => $element, 'text_md5'  => md5( (string) eZURLAliasML::strtolower( $element ) ), 'parent'    => $parentID, 'lang_mask' => $language, 'action'    => $action];
         return new eZURLAliasML( $row );
     }
 
@@ -254,7 +201,7 @@ class eZURLAliasML extends eZPersistentObject
         parent::setAttribute( $name, $value );
         if ( $name == 'text' )
         {
-            $this->TextMD5 = md5( eZURLAliasML::strtolower( $value ) );
+            $this->TextMD5 = md5( (string) eZURLAliasML::strtolower( $value ) );
         }
         else if ( $name == 'action' )
         {
@@ -279,7 +226,7 @@ class eZURLAliasML extends eZPersistentObject
         }
         if ( $this->TextMD5 === null )
         {
-            $this->TextMD5 = md5( eZURLAliasML::strtolower( $this->Text ) );
+            $this->TextMD5 = md5( (string) eZURLAliasML::strtolower( $this->Text ) );
         }
         $this->IsOriginal = ($this->ID == $this->Link) ? 1 : 0;
         if ( $this->IsAlias )
@@ -386,7 +333,7 @@ class eZURLAliasML extends eZPersistentObject
             return $this->Path;
 
         // Fetch path 'text' elements of correct parent path
-        $path = array( $this->Text );
+        $path = [$this->Text];
         $id = (int)$this->Parent;
         $db = eZDB::instance();
         while ( $id != 0 )
@@ -402,7 +349,7 @@ class eZURLAliasML extends eZPersistentObject
                     eZContentLanguage::setPrioritizedLanguages( $incomingLanguageList );
                 }
 
-                $langMask = trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
+                $langMask = trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
                 $query .= " AND ({$langMask})";
             }
             $rows = $db->arrayQuery( $query );
@@ -476,7 +423,7 @@ class eZURLAliasML extends eZPersistentObject
             $languageMask |= 1;
 
         $path = eZURLAliasML::cleanURL( $path );
-        $elements = explode( '/', $path );
+        $elements = explode( '/', (string) $path );
 
         $db = eZDB::instance();
         $parentID = 0;
@@ -490,7 +437,7 @@ class eZURLAliasML extends eZPersistentObject
         // Top element is handled separately.
         $topElement = array_pop( $elements );
         // Find correct parent, and create missing ones if necessary
-        $createdPath = array();
+        $createdPath = [];
         foreach ( $elements as $element )
         {
             $actionStr = $db->escapeString( $action );
@@ -523,21 +470,17 @@ class eZURLAliasML extends eZPersistentObject
             {
                 // A special case. If the special entry with empty text is used as parent
                 // the parent must be adjust to 0 (ie. real top level).
-                if ( strlen( $rows[0]['text'] ) == 0 && $rows[0]['parent'] == 0 )
+                if ( strlen( (string) $rows[0]['text'] ) == 0 && $rows[0]['parent'] == 0 )
                 {
-                    $createdPath = array();
+                    $createdPath = [];
                     $parentID = 0;
                 }
             }
         }
 
-        if ( !preg_match( "#^(.+):(.+)$#", $action, $matches ) )
+        if ( !preg_match( "#^(.+):(.+)$#", (string) $action, $matches ) )
         {
-            return array( 'status' => self::ACTION_INVALID,
-                          'error_message' => "The action value " . var_export( $action, true ) . " is invalid",
-                          'error_number' => self::ACTION_INVALID,
-                          'path'    => null,
-                          'element' => null );
+            return ['status' => self::ACTION_INVALID, 'error_message' => "The action value " . var_export( $action, true ) . " is invalid", 'error_number' => self::ACTION_INVALID, 'path'    => null, 'element' => null];
         }
         $actionName  = $matches[1];
         $actionValue = $matches[2];
@@ -593,9 +536,7 @@ class eZURLAliasML extends eZPersistentObject
                 {
                     if ( $reportErrors )
                         eZDebug::writeError( "Tried to store path '{$path}' but the path already exists (ID: {$curID}) but with action '{$curAction}', the new action was '{$action}'" );
-                    return array( 'status' => self::LINK_ALREADY_TAKEN,
-                                  'path'    => $path,
-                                  'element' => null );
+                    return ['status' => self::LINK_ALREADY_TAKEN, 'path'    => $path, 'element' => null];
                 }
                 // Need to adjust name, re-iterate
                 ++$uniqueCounter;
@@ -647,12 +588,7 @@ class eZURLAliasML extends eZPersistentObject
             }
             else
             {
-                $element = new eZURLAliasML( array( 'id'=> $newElementID,
-                                                    'link' => null,
-                                                    'parent' => $parentID,
-                                                    'text' => $newText,
-                                                    'lang_mask' => $languageID | $alwaysMask,
-                                                    'action' => $action ) );
+                $element = new eZURLAliasML( ['id'=> $newElementID, 'link' => null, 'parent' => $parentID, 'text' => $newText, 'lang_mask' => $languageID | $alwaysMask, 'action' => $action] );
                 $element->store();
                 $newElementID = (int)$element->attribute( 'id' );
                 $createdElement = $element;
@@ -777,13 +713,13 @@ class eZURLAliasML extends eZPersistentObject
                 {
                     if ( $reportErrors )
                         eZDebug::writeError( "The link ID $linkID does not exist, cannot create the link", __METHOD__ );
-                    return array( 'status' => eZURLAliasML::LINK_ID_NOT_FOUND );
+                    return ['status' => eZURLAliasML::LINK_ID_NOT_FOUND];
                 }
                 if ( $rows[0]['action'] != $action )
                 {
                     if ( $reportErrors )
                         eZDebug::writeError( "The link ID $linkID uses a different action ({$rows[0]['action']}) than the requested action ({$action}) for the link, cannot create the link", __METHOD__ );
-                    return array( 'status' => eZURLAliasML::LINK_ID_WRONG_ACTION );
+                    return ['status' => eZURLAliasML::LINK_ID_WRONG_ACTION];
                 }
                 // If the element which is pointed to is a link, then grab the link id from that instead
                 if ( $rows[0]['link'] != $rows[0]['id'] )
@@ -859,9 +795,7 @@ class eZURLAliasML extends eZPersistentObject
                 {
                     if ( $reportErrors )
                         eZDebug::writeError( "Tried to store path '{$path}' but the path already exists (ID: {$curID}) but with action '{$curAction}', the new action was '{$action}'" );
-                    return array( 'status' => self::LINK_ALREADY_TAKEN,
-                                  'path'    => $path,
-                                  'element' => null );
+                    return ['status' => self::LINK_ALREADY_TAKEN, 'path'    => $path, 'element' => null];
                 }
                 // Need to adjust name, re-iterate
                 ++$uniqueCounter;
@@ -883,22 +817,14 @@ class eZURLAliasML extends eZPersistentObject
             }
             else
             {
-                $element = new eZURLAliasML( array( 'id'=> null,
-                                                    'link' => null,
-                                                    'parent' => $parentID,
-                                                    'text' => $newText,
-                                                    'lang_mask' => $languageID | $alwaysMask,
-                                                    'action' => $action,
-                                                    'is_alias' => 1 ) );
+                $element = new eZURLAliasML( ['id'=> null, 'link' => null, 'parent' => $parentID, 'text' => $newText, 'lang_mask' => $languageID | $alwaysMask, 'action' => $action, 'is_alias' => 1] );
             }
             $element->AliasRedirects = $aliasRedirects ? 1 : 0;
             $element->store();
             $createdPath[]  = $topElement;
             $createdElement = $element;
         }
-        return array( 'status' => true,
-                      'path'    => join( "/", $createdPath ),
-                      'element' => $createdElement );
+        return ['status' => true, 'path'    => join( "/", $createdPath ), 'element' => $createdElement];
     }
 
     /*!
@@ -910,11 +836,7 @@ class eZURLAliasML extends eZPersistentObject
      */
     static private function dbError( $db )
     {
-        return array( 'status' => self::DB_ERROR,
-                      'error_message' => $db->errorMessage(),
-                      'error_number'  => $db->errorNumber(),
-                      'path' => null,
-                      'element' => null );
+        return ['status' => self::DB_ERROR, 'error_message' => $db->errorMessage(), 'error_number'  => $db->errorNumber(), 'path' => null, 'element' => null];
     }
 
     /*!
@@ -972,7 +894,7 @@ class eZURLAliasML extends eZPersistentObject
         $langMask = '';
         if ( $maskLanguages === true )
         {
-            $langMask = "(" . trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) ) . ") AND ";
+            $langMask = "(" . trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) ) . ") AND ";
         }
         else if ( is_string( $maskLanguages ) || is_array( $maskLanguages ) )
         {
@@ -989,7 +911,7 @@ class eZURLAliasML extends eZPersistentObject
 
         $rows = $db->arrayQuery( $query );
         if ( count( $rows ) == 0 )
-            return array();
+            return [];
         $rows = eZURLAliasML::filterRows( $rows, $onlyPrioritized );
         $objectList = eZPersistentObject::handleRows( $rows, 'eZURLAliasML', true );
         return $objectList;
@@ -1050,7 +972,7 @@ class eZURLAliasML extends eZPersistentObject
     {
         $db = eZDB::instance();
         $id = (int)$id;
-        $langMask = trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
+        $langMask = trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
         $redirSQL = '';
         if ( !$includeRedirections )
         {
@@ -1059,7 +981,7 @@ class eZURLAliasML extends eZPersistentObject
         $langMask = '';
         if ( $maskLanguages )
         {
-            $langMask = "(" . trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) ) . ") AND ";
+            $langMask = "(" . trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) ) . ") AND ";
         }
         $query = "SELECT * FROM ezurlalias_ml WHERE $langMask parent = {$id} $redirSQL";
         $rows = $db->arrayQuery( $query );
@@ -1108,22 +1030,22 @@ class eZURLAliasML extends eZPersistentObject
             return null;
         }
         $db = eZDB::instance();
-        $actionList = array();
+        $actionList = [];
         foreach ( $actionValues as $i => $value )
         {
             $actionList[] = "'" . $db->escapeString( $actionName . ":" . $value ) . "'";
         }
         $actionStr = join( ", ", $actionList );
-        $filterSQL = trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
+        $filterSQL = trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
         $query = "SELECT id, parent, lang_mask, text, action FROM ezurlalias_ml WHERE ( {$filterSQL} ) AND action in ( {$actionStr} ) AND is_original = 1 AND is_alias=0";
         $rows = $db->arrayQuery( $query );
         $objects = eZContentObject::fetchByNodeID( $actionValues );
-        $actionMap = array();
+        $actionMap = [];
         foreach ( $rows as $row )
         {
             $action = $row['action'];
             if ( !isset( $actionMap[$action] ) )
-                $actionMap[$action] = array();
+                $actionMap[$action] = [];
             $actionMap[$action][] = $row;
         }
 
@@ -1140,7 +1062,7 @@ class eZURLAliasML extends eZPersistentObject
             $prioritizedLanguages = eZContentLanguage::prioritizedLanguages();
         }
 
-        $path = array();
+        $path = [];
         $lastID = false;
         foreach ( $actionValues as $actionValue )
         {
@@ -1179,7 +1101,7 @@ class eZURLAliasML extends eZPersistentObject
                 if ( $paren == 0 )
                 {
                     $lastID = false;
-                    $path = array();
+                    $path = [];
                 }
 
                 $path[] = $defaultRow['text'];
@@ -1256,19 +1178,19 @@ class eZURLAliasML extends eZPersistentObject
 
         $db = eZDB::instance();
         if ( $uriString == '' && $glob !== false )
-            $elements = array();
+            $elements = [];
         else
-            $elements = explode( '/', $uriString );
+            $elements = explode( '/', (string) $uriString );
         $len      = count( $elements );
         $i = 0;
-        $selects = array();
-        $tables  = array();
-        $conds   = array();
+        $selects = [];
+        $tables  = [];
+        $conds   = [];
         $prevTable = false;
         foreach ( $elements as $element )
         {
             $table     = "e" . $i;
-            $langMask  = trim( eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
+            $langMask  = trim( (string) eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
 
             if ( $glob === false && ($i == $len - 1) )
                 $selects[] = eZURLAliasML::generateFullSelect( $table );
@@ -1283,7 +1205,7 @@ class eZURLAliasML extends eZPersistentObject
         {
             ++$len;
             $table     = "e" . $i;
-            $langMask  = trim( eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
+            $langMask  = trim( (string) eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
 
             $selects[] = eZURLAliasML::generateFullSelect( $table );
             $tables[]  = "ezurlalias_ml " . $table;
@@ -1295,20 +1217,15 @@ class eZURLAliasML extends eZPersistentObject
         $query = "SELECT DISTINCT " . join( ", ", $selects ) . " FROM " . join( ", ", $tables ) . " WHERE " . join( " AND ", $conds );
 
         $pathRows = $db->arrayQuery( $query );
-        $elements = array();
+        $elements = [];
         if ( count( $pathRows ) > 0 )
         {
             foreach ( $pathRows as $pathRow )
             {
                 $redirectLink = false;
                 $table = "e" . $elementOffset;
-                $element = array( 'id'        => $pathRow[$table . "_id"],
-                                  'parent'    => $pathRow[$table . "_parent"],
-                                  'lang_mask' => $pathRow[$table . "_lang_mask"],
-                                  'text'      => $pathRow[$table . "_text"],
-                                  'action'    => $pathRow[$table . "_action"],
-                                  'link'      => $pathRow[$table . "_link"] );
-                $path = array();
+                $element = ['id'        => $pathRow[$table . "_id"], 'parent'    => $pathRow[$table . "_parent"], 'lang_mask' => $pathRow[$table . "_lang_mask"], 'text'      => $pathRow[$table . "_text"], 'action'    => $pathRow[$table . "_action"], 'link'      => $pathRow[$table . "_link"]];
+                $path = [];
                 $lastID = false;
                 for ( $i = 0; $i < $len; ++$i )
                 {
@@ -1342,7 +1259,7 @@ class eZURLAliasML extends eZPersistentObject
                             $newLinkID = (int)$rows[0]['link'];
                     }
                     $id = (int)$newLinkID;
-                    $path = array();
+                    $path = [];
 
                     // Fetch path 'text' elements of correct parent path
                     while ( $id != 0 )
@@ -1372,8 +1289,8 @@ class eZURLAliasML extends eZPersistentObject
                 $elements[] = $element;
             }
         }
-        $rows = array();
-        $ids = array();
+        $rows = [];
+        $ids = [];
         // Discard duplicates
         foreach ( $elements as $element )
         {
@@ -1490,6 +1407,7 @@ class eZURLAliasML extends eZPersistentObject
     */
     static public function translate( &$uri, $reverse = false )
     {
+        $pathData = null;
         if ( $uri instanceof eZURI )
         {
             $uriString = $uri->elements();
@@ -1514,9 +1432,9 @@ class eZURLAliasML extends eZPersistentObject
 
         if ( $prefix )
         {
-            $escapedPrefix = preg_quote( $prefix, '#' );
+            $escapedPrefix = preg_quote( (string) $prefix, '#' );
             // Only prepend the path prefix if it's not already the first element of the url.
-            if ( !preg_match( "#^$escapedPrefix(/.*)?$#i", $uriString )  )
+            if ( !preg_match( "#^$escapedPrefix(/.*)?$#i", (string) $uriString )  )
             {
                 $exclude = $ini->hasVariable( 'SiteAccessSettings', 'PathPrefixExclude' )
                            ? $ini->variable( 'SiteAccessSettings', 'PathPrefixExclude' )
@@ -1524,8 +1442,8 @@ class eZURLAliasML extends eZPersistentObject
                 $breakInternalURI = false;
                 foreach ( $exclude as $item )
                 {
-                    $escapedItem = preg_quote( $item, '#' );
-                    if ( preg_match( "#^$escapedItem(/.*)?$#i", $uriString )  )
+                    $escapedItem = preg_quote( (string) $item, '#' );
+                    if ( preg_match( "#^$escapedItem(/.*)?$#i", (string) $uriString )  )
                     {
                         $breakInternalURI = true;
                         break;
@@ -1541,13 +1459,13 @@ class eZURLAliasML extends eZPersistentObject
         }
 
         $db = eZDB::instance();
-        $elements = explode( '/', $internalURIString );
+        $elements = explode( '/', (string) $internalURIString );
         $len      = count( $elements );
 
         $i = 0;
-        $selects = array();
-        $tables  = array();
-        $conds   = array();
+        $selects = [];
+        $tables  = [];
+        $conds   = [];
         foreach ( $elements as $element )
         {
             $table = "e" . $i;
@@ -1565,7 +1483,7 @@ class eZURLAliasML extends eZPersistentObject
             $selects[] = $selectString;
 
             $tables[]  = "ezurlalias_ml " . $table;
-            $langMask = trim( eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
+            $langMask = trim( (string) eZContentLanguage::languagesSQLFilter( $table, 'lang_mask' ) );
             if ( $i == 0 )
             {
                 $conds[]   = "{$table}.parent = 0 AND ({$langMask}) AND {$table}.text_md5 = " . eZURLAliasML::md5( $db, $element );
@@ -1580,16 +1498,16 @@ class eZURLAliasML extends eZPersistentObject
 
         $query = "SELECT " . join( ", ", $selects ) . " FROM " . join( ", ", $tables ) . " WHERE " . join( " AND ", $conds );
         $return = false;
-        $urlAliasArray = $db->arrayQuery( $query, array( 'limit' => 1 ) );
+        $urlAliasArray = $db->arrayQuery( $query, ['limit' => 1] );
         if ( count( $urlAliasArray ) > 0 )
         {
             $pathRow = $urlAliasArray[0];
-            $l   = count( $pathRow );
+            $l   = is_countable($pathRow) ? count( $pathRow ) : 0;
             $redirectLink = false;
             $redirectAction = false;
             $lastID = false;
             $action = false;
-            $verifiedPath = array();
+            $verifiedPath = [];
             $doRedirect = false;
 
             for ( $i = 0; $i < $len; ++$i )
@@ -1628,18 +1546,18 @@ class eZURLAliasML extends eZPersistentObject
                 // Check for case difference
                 if ( $prefixAdded )
                 {
-                    if ( strcmp( $originalURIString, substr( $verifiedPathString, strlen( $prefix ) + 1 ) ) != 0 )
+                    if ( strcmp( (string) $originalURIString, substr( $verifiedPathString, strlen( (string) $prefix ) + 1 ) ) != 0 )
                     {
                         $doRedirect = true;
                     }
                 }
-                else if ( strcmp( $verifiedPathString, $internalURIString ) != 0 )
+                else if ( strcmp( $verifiedPathString, (string) $internalURIString ) != 0 )
                 {
                     $doRedirect = true;
                 }
             }
 
-            if ( preg_match( "#^module:(.+)$#", $action, $matches ) and $doRedirect )
+            if ( preg_match( "#^module:(.+)$#", (string) $action, $matches ) and $doRedirect )
             {
                 $uriString = 'error/301';
                 $return = $matches[1];
@@ -1668,7 +1586,7 @@ class eZURLAliasML extends eZPersistentObject
 
                 if ( $id !== false )
                 {
-                    $pathData = array();
+                    $pathData = [];
                     // Figure out the correct path by iterating down the parents until we have all
                     // elements figured out.
 
@@ -1695,9 +1613,9 @@ class eZURLAliasML extends eZPersistentObject
                 // Remove prefix of redirect uri if needed
                 if ( $prefix && is_string( $return ) )
                 {
-                    if ( strncasecmp( $return, $prefix . '/', strlen( $prefix ) + 1 ) == 0 )
+                    if ( strncasecmp( $return, $prefix . '/', strlen( (string) $prefix ) + 1 ) == 0 )
                     {
-                        $return = substr( $return, strlen( $prefix ) + 1 );
+                        $return = substr( $return, strlen( (string) $prefix ) + 1 );
                     }
                 }
             }
@@ -1707,7 +1625,7 @@ class eZURLAliasML extends eZPersistentObject
                 // If $uriString matches a nop action, we need to check if we also match a wildcard
                 // since we might want to translate it.
                 // Default action for nop actions is to display the root node "/" (see eZURLAliasML::actionToURL())
-                if ( strpos( $action, 'nop') !== false && eZURLWildcard::wildcardExists( $uriString ) )
+                if ( str_contains( (string) $action, 'nop') && eZURLWildcard::wildcardExists( $uriString ) )
                 {
                     $return = false;
                 }
@@ -1744,11 +1662,11 @@ class eZURLAliasML extends eZPersistentObject
         $action = eZURLAliasML::urlToAction( $internalURIString );
         if ( $action !== false )
         {
-            $langMask = trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
+            $langMask = trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
             $actionStr = $db->escapeString( $action );
             $query = "SELECT id, parent, lang_mask, text, action FROM ezurlalias_ml WHERE ($langMask) AND action='{$actionStr}' AND is_original = 1 AND is_alias = 0";
             $rows = $db->arrayQuery( $query );
-            $path = array();
+            $path = [];
             $count = count( $rows );
             if ( $count != 0 )
             {
@@ -1836,16 +1754,16 @@ class eZURLAliasML extends eZPersistentObject
             : false;
         foreach ( $exclude as $item )
         {
-            $escapedItem = preg_quote( $item, '#' );
-            if ( preg_match( "#^$escapedItem(/.*)?$#i", $uriString ) )
+            $escapedItem = preg_quote( (string) $item, '#' );
+            if ( preg_match( "#^$escapedItem(/.*)?$#i", (string) $uriString ) )
             {
                 return $uriString;
             }
         }
 
-        $escapedPrefix = preg_quote( $prefix, '#' );
-        $modifiedUriString = preg_replace( "#^$escapedPrefix/?#i", '', $uriString );
-        return $modifiedUriString === null ? $uriString : $modifiedUriString;
+        $escapedPrefix = preg_quote( (string) $prefix, '#' );
+        $modifiedUriString = preg_replace( "#^$escapedPrefix/?#i", '', (string) $uriString );
+        return $modifiedUriString ?? $uriString;
     }
 
     /*!
@@ -1896,7 +1814,7 @@ class eZURLAliasML extends eZPersistentObject
             $reserved = $moduleINI->variable( 'ModuleSettings', 'ModuleList' );
             foreach ( $reserved as $res )
             {
-                if ( strcasecmp( $text, $res ) == 0 )
+                if ( strcasecmp( (string) $text, (string) $res ) == 0 )
                 {
                     // The name is a reserved word so it needs to be changed
                     ++$uniqueNumber;
@@ -1909,7 +1827,7 @@ class eZURLAliasML extends eZPersistentObject
             $suffix = $uniqueNumber + 1;
 
         $actionSQL = '';
-        if ( strlen( $action ) > 0 )
+        if ( strlen( (string) $action ) > 0 )
         {
             $actionEsc = $db->escapeString( $action );
             $actionSQL = "AND action != '$actionEsc'";
@@ -1958,7 +1876,7 @@ class eZURLAliasML extends eZPersistentObject
         $db = eZDB::instance();
         if ( is_array( $actionName ) )
         {
-            $actions = array();
+            $actions = [];
             foreach ( $actionName as $actionItem )
             {
                 $action = $actionItem[0] . ":" . $actionItem[1];
@@ -2047,17 +1965,17 @@ class eZURLAliasML extends eZPersistentObject
         {
             return $rows;
         }
-        $idMap = array();
+        $idMap = [];
         foreach ( $rows as $row )
         {
             if ( !isset( $idMap[$row['id']] ) )
             {
-                $idMap[$row['id']] = array();
+                $idMap[$row['id']] = [];
             }
             $idMap[$row['id']][] = $row;
         }
 
-        $rows = array();
+        $rows = [];
         foreach ( $idMap as $id => $langRows )
         {
             $rows[] = eZURLAliasML::choosePrioritizedRow( $langRows );
@@ -2076,7 +1994,7 @@ class eZURLAliasML extends eZPersistentObject
     static private function languageScore( $mask )
     {
         $prioritizedLanguages = eZContentLanguage::prioritizedLanguages();
-        $scores = array();
+        $scores = [];
         $score = 1;
         $mask   = (int)$mask;
         krsort( $prioritizedLanguages );
@@ -2110,7 +2028,7 @@ class eZURLAliasML extends eZPersistentObject
      */
     static public function actionToUrl( $action )
     {
-        if ( !preg_match( "#^([a-zA-Z0-9_]+):(.+)?$#", $action, $matches ) )
+        if ( !preg_match( "#^([a-zA-Z0-9_]+):(.+)?$#", (string) $action, $matches ) )
         {
             eZDebug::writeError( "Action is not of valid syntax '{$action}'" );
             return false;
@@ -2160,11 +2078,11 @@ class eZURLAliasML extends eZPersistentObject
      */
     static public function urlToAction( $url )
     {
-        if ( preg_match( "#^content/view/full/([0-9]+)$#", $url, $matches ) )
+        if ( preg_match( "#^content/view/full/([0-9]+)$#", (string) $url, $matches ) )
         {
             return "eznode:" . $matches[1];
         }
-        if ( preg_match( "#^([a-zA-Z0-9]+)/#", $url, $matches ) )
+        if ( preg_match( "#^([a-zA-Z0-9]+)/#", (string) $url, $matches ) )
         {
             $name = $matches[1];
             $module = eZModule::exists( $name );
@@ -2181,7 +2099,7 @@ class eZURLAliasML extends eZPersistentObject
     */
     static public function cleanURL( $url )
     {
-        return trim( $url, '/ ' );
+        return trim( (string) $url, '/ ' );
     }
 
     /*!
@@ -2198,7 +2116,7 @@ class eZURLAliasML extends eZPersistentObject
     */
     static public function sanitizeURL( $url )
     {
-        $url = preg_replace( "#//+#", "/", trim( $url, '/' ) );
+        $url = preg_replace( "#//+#", "/", trim( (string) $url, '/' ) );
         return $url;
     }
 
@@ -2297,7 +2215,7 @@ class eZURLAliasML extends eZPersistentObject
         $group = $ini->variable( 'URLTranslator', 'TransformationGroup' );
 
         $urlElement = $trans->transformByGroup( $urlElement, $group );
-        if ( strlen( $urlElement ) == 0 )
+        if ( strlen( (string) $urlElement ) == 0 )
         {
             if ( $defaultValue === false )
                 $urlElement = '_1';
@@ -2334,7 +2252,7 @@ class eZURLAliasML extends eZPersistentObject
         $trans = eZCharTransform::instance();
 
         $urlElement = $trans->transformByGroup( $urlElement, "urlalias_compat" );
-        if ( strlen( $urlElement ) == 0 )
+        if ( strlen( (string) $urlElement ) == 0 )
         {
             if ( $defaultValue === false )
                 $urlElement = '_1';
@@ -2356,9 +2274,9 @@ class eZURLAliasML extends eZPersistentObject
     */
     static public function convertPathToAlias( $pathURL )
     {
-        $result = array();
+        $result = [];
 
-        $elements = explode( '/', $pathURL );
+        $elements = explode( '/', (string) $pathURL );
 
         foreach ( $elements as $element )
         {
@@ -2377,9 +2295,9 @@ class eZURLAliasML extends eZPersistentObject
     static public function nodeIDFromAction( $action )
     {
         $nodeID = false;
-        $pos = strpos( $action, 'eznode:' );
+        $pos = strpos( (string) $action, 'eznode:' );
         if ( $pos === 0 ) // make sure $action starts from 'eznode:'
-            $nodeID = substr( $action, strlen( 'eznode:' ) );
+            $nodeID = substr( (string) $action, strlen( 'eznode:' ) );
 
         return $nodeID;
     }
@@ -2395,8 +2313,8 @@ class eZURLAliasML extends eZPersistentObject
     static private function md5( $db, $text, $escape = true )
     {
         // Special case for Oracle since it cannot calculate MD5 for empty strings
-        if ( strlen( $text ) == 0 && $db->databaseName() == 'oracle' )
-            return "'" . $db->escapeString( md5( $text ) ) . "'";
+        if ( strlen( (string) $text ) == 0 && $db->databaseName() == 'oracle' )
+            return "'" . $db->escapeString( md5( (string) $text ) ) . "'";
 
         if ( $escape )
             $text = $db->escapeString( eZURLAliasML::strtolower( $text ) );

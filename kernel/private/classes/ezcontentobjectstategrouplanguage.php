@@ -21,33 +21,7 @@ class eZContentObjectStateGroupLanguage extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( "fields" => array( "contentobject_state_group_id" => array( "name" => "ContentObjectStateGroupID",
-                                                                                                "datatype" => "integer",
-                                                                                                "required" => false,
-                                                                                                "foreign_class" => "eZContentObjectStateGroup",
-                                                                                                "foreign_attribute" => "id",
-                                                                                                "multiplicity" => "1..*" ),
-                                         "name" => array( "name" => "Name",
-                                                          "datatype" => "string",
-                                                          "required" => false ),
-                                         "description" => array( "name" => "Description",
-                                                                 "datatype" => "text",
-                                                                 "required" => false ),
-                                         "real_language_id" => array( "name" => "RealLanguageID",
-                                                                      "datatype" => "integer",
-                                                                      "required" => true ),
-                                         "language_id" => array( "name" => "LanguageID",
-                                                                 "datatype" => "integer",
-                                                                 "required" => false ) ),
-                      "keys" => array( "contentobject_state_group_id",
-                                       "real_language_id" ),
-                      "function_attributes" => array( "language" => "language",
-                                                      "is_valid" => "isValid"
-                                                    ),
-                      "increment_key" => false,
-                      "class_name" => "eZContentObjectStateGroupLanguage",
-                      "sort" => array(),
-                      "name" => "ezcobj_state_group_language" );
+        static $definition = ["fields" => ["contentobject_state_group_id" => ["name" => "ContentObjectStateGroupID", "datatype" => "integer", "required" => false, "foreign_class" => "eZContentObjectStateGroup", "foreign_attribute" => "id", "multiplicity" => "1..*"], "name" => ["name" => "Name", "datatype" => "string", "required" => false], "description" => ["name" => "Description", "datatype" => "text", "required" => false], "real_language_id" => ["name" => "RealLanguageID", "datatype" => "integer", "required" => true], "language_id" => ["name" => "LanguageID", "datatype" => "integer", "required" => false]], "keys" => ["contentobject_state_group_id", "real_language_id"], "function_attributes" => ["language" => "language", "is_valid" => "isValid"], "increment_key" => false, "class_name" => "eZContentObjectStateGroupLanguage", "sort" => [], "name" => "ezcobj_state_group_language"];
         return $definition;
     }
 
@@ -59,7 +33,7 @@ class eZContentObjectStateGroupLanguage extends eZPersistentObject
      */
     public static function fetchByGroup( $id )
     {
-        return eZPersistentObject::fetchObjectList( eZContentObjectStateGroupLanguage::definition(), null, array( 'contentobject_state_group_id' => $id ) );
+        return eZPersistentObject::fetchObjectList( eZContentObjectStateGroupLanguage::definition(), null, ['contentobject_state_group_id' => $id] );
     }
 
     /**
@@ -68,18 +42,18 @@ class eZContentObjectStateGroupLanguage extends eZPersistentObject
      * @param array $messages
      * @return boolean
      */
-    public function isValid( &$messages = array() )
+    public function isValid( &$messages = [] )
     {
         $isValid = true;
-        if ( isset( $this->Name ) && strlen( $this->Name ) > 45 )
+        if ( isset( $this->Name ) && strlen( (string) $this->Name ) > 45 )
         {
-            $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Name in %language_name is too long. Maximum 45 characters allowed.', null, array( '%language_name' => $this->language()->attribute( 'locale_object' )->attribute( 'intl_language_name' ) ) );
+            $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Name in %language_name is too long. Maximum 45 characters allowed.', null, ['%language_name' => $this->language()->attribute( 'locale_object' )->attribute( 'intl_language_name' )] );
             $isValid = false;
         }
 
         if ( ( !isset( $this->Name ) || $this->Name == '' ) && $this->Description != '' )
         {
-            $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Name in %language_name: input required', null, array( '%language_name' => $this->language()->attribute( 'locale_object' )->attribute( 'intl_language_name' ) ) );
+            $messages[] = ezpI18n::tr( 'kernel/state/edit', 'Name in %language_name: input required', null, ['%language_name' => $this->language()->attribute( 'locale_object' )->attribute( 'intl_language_name' )] );
             $isValid = false;
         }
 
@@ -103,7 +77,7 @@ class eZContentObjectStateGroupLanguage extends eZPersistentObject
      */
     public function hasData()
     {
-        return ( isset( $this->Name) && trim( $this->Name ) != '' ) || ( isset( $this->Description ) && trim( $this->Description ) != '' );
+        return ( isset( $this->Name) && trim( (string) $this->Name ) != '' ) || ( isset( $this->Description ) && trim( (string) $this->Description ) != '' );
     }
 
     /**

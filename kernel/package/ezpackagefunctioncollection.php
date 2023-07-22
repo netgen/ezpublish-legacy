@@ -18,7 +18,7 @@ class eZPackageFunctionCollection
 {
     function fetchList( $filterArray, $offset, $limit, $repositoryID )
     {
-        $filterParams = array();
+        $filterParams = [];
         $filterList = false;
         if ( isset( $filterArray ) and
              is_array( $filterArray ) and
@@ -28,7 +28,7 @@ class eZPackageFunctionCollection
             if ( count( $filterArray ) > 1 and
                  !is_array( $filterArray[0] ) )
             {
-                $filterList = array( $filterArray );
+                $filterList = [$filterArray];
             }
         }
         if ( $filterList !== false )
@@ -43,26 +43,26 @@ class eZPackageFunctionCollection
                         case 'type':
                         {
                             $typeValue = $filter[1];
-                            $typeParam = array( 'type' => $typeValue );
-                            $filterParams = array_merge( $filterParams, $typeParam );
+                            $typeParam = ['type' => $typeValue];
+                            $filterParams = [...$filterParams, ...$typeParam];
                         } break;
                         case 'priority':
                         {
                             $priorityValue = $filter[1];
-                            $priorityParam = array( 'priority' => $priorityValue );
-                            $filterParams = array_merge( $filterParams, $priorityParam );
+                            $priorityParam = ['priority' => $priorityValue];
+                            $filterParams = [...$filterParams, ...$priorityParam];
                         } break;
                         case 'vendor':
                         {
                             $vendorValue = $filter[1];
-                            $vendorParam = array( 'vendor' => $vendorValue );
-                            $filterParams = array_merge( $filterParams, $vendorParam );
+                            $vendorParam = ['vendor' => $vendorValue];
+                            $filterParams = [...$filterParams, ...$vendorParam];
                         } break;
                         case 'extension':
                         {
                             $extensionValue = $filter[1];
-                            $extensionParam = array( 'extension' => $extensionValue );
-                            $filterParams = array_merge( $filterParams, $extensionParam );
+                            $extensionParam = ['extension' => $extensionValue];
+                            $filterParams = [...$filterParams, ...$extensionParam];
                         } break;
                         default:
                         {
@@ -72,17 +72,15 @@ class eZPackageFunctionCollection
                 }
             }
         }
-        $params = array( 'offset' => $offset,
-                         'limit' => $limit );
+        $params = ['offset' => $offset, 'limit' => $limit];
         if ( $repositoryID )
             $params['repository_id'] = $repositoryID;
 
         $packageList = eZPackage::fetchPackages( $params,
                                                  $filterParams );
         if ( $packageList === null )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $packageList );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $packageList];
     }
 
     function fetchPackage( $packageName, $repositoryID )
@@ -90,19 +88,18 @@ class eZPackageFunctionCollection
         $package = eZPackage::fetch( $packageName, false, $repositoryID );
         if ( $package === false )
         {
-            $retValue = array( 'error' => array( 'error_type' => 'kernel',
-                                                 'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            $retValue = ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
         }
         else
         {
-            $retValue = array( 'result' => $package );
+            $retValue = ['result' => $package];
         }
         return $retValue;
     }
 
     function fetchDependentPackageList( $packageName, $filterArray, $repositoryID )
     {
-        $filterParams = array();
+        $filterParams = [];
         $filterList = false;
         if ( isset( $filterArray ) and
              is_array( $filterArray ) and
@@ -112,7 +109,7 @@ class eZPackageFunctionCollection
             if ( count( $filterArray ) > 1 and
                  !is_array( $filterArray[0] ) )
             {
-                $filterList = array( $filterArray );
+                $filterList = [$filterArray];
             }
         }
         if ( $filterList !== false )
@@ -127,32 +124,32 @@ class eZPackageFunctionCollection
                         case 'type':
                         {
                             $typeValue = $filter[1];
-                            $typeParam = array( 'type' => $typeValue );
-                            $filterParams = array_merge( $filterParams, $typeParam );
+                            $typeParam = ['type' => $typeValue];
+                            $filterParams = [...$filterParams, ...$typeParam];
                         } break;
                         case 'name':
                         {
                             $nameValue = $filter[1];
-                            $nameParam = array( 'name' => $nameValue );
-                            $filterParams = array_merge( $filterParams, $nameParam );
+                            $nameParam = ['name' => $nameValue];
+                            $filterParams = [...$filterParams, ...$nameParam];
                         } break;
                         case 'priority':
                         {
                             $priorityValue = $filter[1];
-                            $priorityParam = array( 'priority' => $priorityValue );
-                            $filterParams = array_merge( $filterParams, $priorityParam );
+                            $priorityParam = ['priority' => $priorityValue];
+                            $filterParams = [...$filterParams, ...$priorityParam];
                         } break;
                         case 'vendor':
                         {
                             $vendorValue = $filter[1];
-                            $vendorParam = array( 'vendor' => $vendorValue );
-                            $filterParams = array_merge( $filterParams, $vendorParam );
+                            $vendorParam = ['vendor' => $vendorValue];
+                            $filterParams = [...$filterParams, ...$vendorParam];
                         } break;
                         case 'extension':
                         {
                             $extensionValue = $filter[1];
-                            $extensionParam = array( 'extension' => $extensionValue );
-                            $filterParams = array_merge( $filterParams, $extensionParam );
+                            $extensionParam = ['extension' => $extensionValue];
+                            $filterParams = [...$filterParams, ...$extensionParam];
                         } break;
                         default:
                         {
@@ -166,12 +163,11 @@ class eZPackageFunctionCollection
         $packageList = $package->fetchDependentPackages( $filterParams );
         if ( $packageList === false )
         {
-            $retValue = array( 'error' => array( 'error_type' => 'kernel',
-                                                 'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            $retValue = ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
         }
         else
         {
-            $retValue = array( 'result' => $packageList );
+            $retValue = ['result' => $packageList];
         }
         return $retValue;
     }
@@ -180,58 +176,56 @@ class eZPackageFunctionCollection
     {
         $list = eZPackage::fetchMaintainerRoleList( $packageType, $checkRoles );
         if ( $list === false )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $list );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $list];
     }
 
     function fetchRepositoryList()
     {
         $list = eZPackage::packageRepositories();
         if ( $list === false )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $list );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $list];
     }
 
     function canCreate()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'create' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'create' )];
     }
 
     function canEdit()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'edit' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'edit' )];
     }
 
     function canImport()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'import' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'import' )];
     }
 
     function canInstall()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'install' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'install' )];
     }
 
     function canExport()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'export' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'export' )];
     }
 
     function canRead()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'read' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'read' )];
     }
 
     function canList()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'list' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'list' )];
     }
 
     function canRemove()
     {
-        return array( 'result' => eZPackage::canUsePolicyFunction( 'remove' ) );
+        return ['result' => eZPackage::canUsePolicyFunction( 'remove' )];
     }
 }
 

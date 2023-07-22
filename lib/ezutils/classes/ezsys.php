@@ -152,14 +152,9 @@ class eZSys
      *
      * @param array $serverParams For unit testing use, see first few lines for content
      */
-    public function __construct( array $serverParams = array() )
+    public function __construct( array $serverParams = [] )
     {
-        $this->Params = $serverParams + array(
-            'PHP_OS' => PHP_OS,
-            'DIRECTORY_SEPARATOR' => DIRECTORY_SEPARATOR,
-            'PATH_SEPARATOR' => PATH_SEPARATOR,
-            '_SERVER' => $_SERVER,
-        );
+        $this->Params = $serverParams + ['PHP_OS' => PHP_OS, 'DIRECTORY_SEPARATOR' => DIRECTORY_SEPARATOR, 'PATH_SEPARATOR' => PATH_SEPARATOR, '_SERVER' => $_SERVER];
 
         if ( isset( $this->Params['_SERVER']['REQUEST_TIME'] ) )
         {
@@ -168,7 +163,7 @@ class eZSys
             $this->Params['_SERVER']['REQUEST_TIME'] = (int)$this->Params['_SERVER']['REQUEST_TIME'];
         }
 
-        $this->Attributes = array( 'hostname' => true );
+        $this->Attributes = ['hostname' => true];
         $this->FileSeparator = $this->Params['DIRECTORY_SEPARATOR'];
         $this->EnvSeparator  = $this->Params['PATH_SEPARATOR'];
 
@@ -207,8 +202,7 @@ class eZSys
             $this->BackupFilename = '~';
         }
 
-        $this->AccessPath = array( 'siteaccess' => array( 'name' => '', 'url' => array() ),
-                                   'path'       => array( 'name' => '', 'url' => array() ) );
+        $this->AccessPath = ['siteaccess' => ['name' => '', 'url' => []], 'path'       => ['name' => '', 'url' => []]];
     }
 
     /**
@@ -271,7 +265,7 @@ class eZSys
 
         // For CGI we have to check, if the script has been executed over shell.
         // Currently it looks like the HTTP_HOST variable is the most reasonable to check.
-        if ( substr( $sapiType, 0, 3 ) == 'cgi' )
+        if ( str_starts_with($sapiType, 'cgi') )
         {
             if ( !self::serverVariable( 'HTTP_HOST', true ) )
                 return true;
@@ -306,14 +300,13 @@ class eZSys
      * properly escape the argument
      *
      * @param string $argumentText
-     * @param array $replaceList
      * @return string
      */
     public static function createShellArgument( $argumentText, array $replaceList )
     {
         $instance = self::instance();
         $elements = $instance->splitArgumentIntoElements( $argumentText );
-        $replacedElements = array();
+        $replacedElements = [];
         foreach ( $elements as $element )
         {
             if ( is_string( $element ) )
@@ -348,7 +341,7 @@ class eZSys
      */
     public static function splitArgumentIntoElements( $argumentText )
     {
-        $argumentElements = array();
+        $argumentElements = [];
         $pos = 0;
 
         while ( $pos < strlen( $argumentText ) )
@@ -442,7 +435,6 @@ class eZSys
      * Merges an argument list created by eZSys::splitArgumentIntoElements()
      * back into a text string
      *
-     * @param array $argumentElements
      * @return string
      */
     public static function mergeArgumentElements( array $argumentElements )
@@ -503,7 +495,7 @@ class eZSys
     public static function varDirectory()
     {
         $ini = eZINI::instance();
-        return eZDir::path( array( $ini->variable( 'FileSettings', 'VarDir' ) ) );
+        return eZDir::path( [$ini->variable( 'FileSettings', 'VarDir' )] );
     }
 
     /**
@@ -516,7 +508,7 @@ class eZSys
         $ini = eZINI::instance();
         $varDir = self::varDirectory();
         $storageDir = $ini->variable( 'FileSettings', 'StorageDir' );
-        return eZDir::path( array( $varDir, $storageDir ) );
+        return eZDir::path( [$varDir, $storageDir] );
     }
 
     /**
@@ -531,11 +523,11 @@ class eZSys
 
         if ( $cacheDir[0] == "/" )
         {
-            return eZDir::path( array( $cacheDir ) );
+            return eZDir::path( [$cacheDir] );
         }
         else
         {
-            return eZDir::path( array( self::varDirectory(), $cacheDir ) );
+            return eZDir::path( [self::varDirectory(), $cacheDir] );
         }
     }
 
@@ -679,7 +671,7 @@ class eZSys
         $forwardedHostsString = self::serverVariable( 'HTTP_X_FORWARDED_HOST', true );
         if ( $forwardedHostsString )
         {
-            $forwardedHosts = explode( ',', $forwardedHostsString );
+            $forwardedHosts = explode( ',', (string) $forwardedHostsString );
             $hostName = trim( $forwardedHosts[0] );
         }
 
@@ -717,7 +709,7 @@ class eZSys
         if( $customHTTPHeader && $customHTTPHeader != 'false' )
         {
             // Transforms for instance, X-Forwarded-For into X_FORWARDED_FOR
-            $phpHeader = 'HTTP_' . str_replace( '-', '_', strtoupper( $customHTTPHeader ) );
+            $phpHeader = 'HTTP_' . str_replace( '-', '_', strtoupper( (string) $customHTTPHeader ) );
             $forwardedClientsString = eZSys::serverVariable( $phpHeader, true );
 
             if ( $forwardedClientsString )
@@ -725,7 +717,7 @@ class eZSys
                 // $forwardedClientsString (usually) contains a comma+space separated list of IPs
                 // where the left-most being the farthest downstream client. All the others are proxy servers.
                 // As X-Forwarded-For is not a standard header yet, we prefer to use a simple comma as the explode delimiter
-                $forwardedClients = explode( ',', $forwardedClientsString );
+                $forwardedClients = explode( ',', (string) $forwardedClientsString );
                 if( !empty( $forwardedClients ) )
                 {
                     return trim( $forwardedClients[0] );
@@ -875,7 +867,7 @@ class eZSys
      * @param mixed $variableValue
      * @return void
      */
-    public static function setServerVariable( $variableName, $variableValue )
+    public static function setServerVariable( $variableName, mixed $variableValue )
     {
         $_SERVER[$variableName] = $variableValue;
     }
@@ -928,10 +920,9 @@ class eZSys
      * Sets an environment variable for the current process/page view
      *
      * @param string $variableName
-     * @param mixed $variableValue
      * @return void
      */
-    public static function setEnvironmentVariable( $variableName, $variableValue )
+    public static function setEnvironmentVariable( $variableName, mixed $variableValue )
     {
         putenv( "$variableName=$variableValue" );
     }
@@ -943,12 +934,7 @@ class eZSys
      */
     function attributes()
     {
-        return array_merge( array( 'wwwdir',
-                                   'sitedir',
-                                   'indexfile',
-                                   'indexdir',
-                                   'querystring' ),
-                            array_keys( $this->Attributes ) );
+        return ['wwwdir', 'sitedir', 'indexfile', 'indexdir', 'querystring', ...array_keys( $this->Attributes )];
 
     }
 
@@ -977,23 +963,23 @@ class eZSys
         }
         else if ( $attr == 'wwwdir' )
         {
-            return $this->wwwDir();
+            return static::wwwDir();
         }
         else if ( $attr == 'sitedir' )
         {
-            return $this->siteDir();
+            return static::siteDir();
         }
         else if ( $attr == 'indexfile' )
         {
-            return $this->indexFile();
+            return static::indexFile();
         }
         else if ( $attr == 'indexdir' )
         {
-            return $this->indexDir();
+            return static::indexDir();
         }
         else if ( $attr = 'querystring' )
         {
-            return $this->queryString();
+            return static::queryString();
         }
 
         eZDebug::writeError( "Attribute '$attr' does not exist", __METHOD__ );
@@ -1014,7 +1000,7 @@ class eZSys
     {
         $instance = self::instance();
         if ( !is_array( $path ) )
-            $path = array( $path );
+            $path = [$path];
 
         if ( $siteaccess )
         {
@@ -1037,17 +1023,16 @@ class eZSys
     /**
      * Set access path (parts of url that identifies siteaccess), used by {@link eZSys::indexFile()}
      *
-     * @param array $path
      * @param string $name An identifer of the name of the path provided {@link $AccessPath}
      * @param bool $siteaccess Hints if path is siteaccess related or not, needed in case subsequesnt code suddenly
      *                         changes siteaccess and needs to clear siteaccess scope
      */
-    static function setAccessPath( array $path = array(), $name = 'undefined', $siteaccess = true  )
+    static function setAccessPath( array $path = [], $name = 'undefined', $siteaccess = true  )
     {
         if ( $siteaccess )
-            self::instance()->AccessPath['siteaccess'] = array( 'name' => $name, 'url' => $path );
+            self::instance()->AccessPath['siteaccess'] = ['name' => $name, 'url' => $path];
         else
-            self::instance()->AccessPath['path'] = array( 'name' => $name, 'url' => $path );
+            self::instance()->AccessPath['path'] = ['name' => $name, 'url' => $path];
     }
 
     /**
@@ -1059,9 +1044,9 @@ class eZSys
     static function clearAccessPath( $siteaccess = true )
     {
         if ( $siteaccess )
-            self::instance()->AccessPath['siteaccess'] = array( 'name' => '', 'url' => array() );
+            self::instance()->AccessPath['siteaccess'] = ['name' => '', 'url' => []];
         else
-            self::instance()->AccessPath['path'] = array( 'name' => '', 'url' => array() );
+            self::instance()->AccessPath['path'] = ['name' => '', 'url' => []];
     }
 
     /**
@@ -1105,9 +1090,9 @@ class eZSys
         $instance       = self::instance();
         $server         = $instance->Params['_SERVER'];
         $phpSelf        = $server['PHP_SELF'];
-        $requestUri     = isset( $server['REQUEST_URI'] ) ? $server['REQUEST_URI'] : '';
+        $requestUri     = $server['REQUEST_URI'] ?? '';
         $scriptFileName = $server['SCRIPT_FILENAME'];
-        $siteDir        = rtrim( str_replace( $index, '', $scriptFileName ), '\/' ) . '/';
+        $siteDir        = rtrim( str_replace( $index, '', (string) $scriptFileName ), '\/' ) . '/';
         $wwwDir         = '';
         $IndexFile      = '';
         $queryString    = '';
@@ -1124,10 +1109,10 @@ class eZSys
                 if ( $tempwwwDir )
                 {
                     $wwwDir = '/' . $tempwwwDir;
-                    $wwwDirPos = strpos( $requestUri, $wwwDir );
+                    $wwwDirPos = strpos( (string) $requestUri, $wwwDir );
                     if ( $wwwDirPos !== false )
                     {
-                        $requestUri = substr( $requestUri, $wwwDirPos + strlen($wwwDir) );
+                        $requestUri = substr( (string) $requestUri, $wwwDirPos + strlen($wwwDir) );
                     }
                 }
             }
@@ -1142,17 +1127,17 @@ class eZSys
                 $IndexFile = '/' . $index;
 
                 // remove sub path from requestUri
-                $indexDirPos = strpos( $requestUri, $indexDir );
+                $indexDirPos = strpos( (string) $requestUri, $indexDir );
                 if ( $indexDirPos !== false )
                 {
-                    $requestUri = substr( $requestUri, $indexDirPos + strlen($indexDir) );
+                    $requestUri = substr( (string) $requestUri, $indexDirPos + strlen($indexDir) );
                 }
                 elseif ( $wwwDir )
                 {
-                    $wwwDirPos = strpos( $requestUri, $wwwDir );
+                    $wwwDirPos = strpos( (string) $requestUri, $wwwDir );
                     if ( $wwwDirPos !== false )
                     {
-                        $requestUri = substr( $requestUri, $wwwDirPos + strlen($wwwDir) );
+                        $requestUri = substr( (string) $requestUri, $wwwDirPos + strlen($wwwDir) );
                     }
                 }
             }
@@ -1161,21 +1146,21 @@ class eZSys
         // remove url and hash parameters
         if ( isset( $requestUri[1] ) && $requestUri !== '/'  )
         {
-            $uriGetPos = strpos( $requestUri, '?' );
+            $uriGetPos = strpos( (string) $requestUri, '?' );
             if ( $uriGetPos !== false )
             {
-                $queryString = substr( $requestUri, $uriGetPos );
+                $queryString = substr( (string) $requestUri, $uriGetPos );
                 if ( $uriGetPos === 0 )
                     $requestUri = '';
                 else
-                    $requestUri = substr( $requestUri, 0, $uriGetPos );
+                    $requestUri = substr( (string) $requestUri, 0, $uriGetPos );
             }
 
-            $uriHashPos = strpos( $requestUri, '#' );
+            $uriHashPos = strpos( (string) $requestUri, '#' );
             if ( $uriHashPos === 0 )
                 $requestUri = '';
             elseif ( $uriHashPos !== false )
-                $requestUri = substr( $requestUri, 0, $uriHashPos );
+                $requestUri = substr( (string) $requestUri, 0, $uriHashPos );
         }
 
         // normalize slash use and url decode url if needed
@@ -1185,11 +1170,10 @@ class eZSys
         }
         else
         {
-            $requestUri = '/' . urldecode( trim( $requestUri, '/ ' ) );
+            $requestUri = '/' . urldecode( trim( (string) $requestUri, '/ ' ) );
         }
 
-        $instance->AccessPath = array( 'siteaccess' => array( 'name' => '', 'url' => array() ),
-                                       'path'       => array( 'name' => '', 'url' => array() ) );
+        $instance->AccessPath = ['siteaccess' => ['name' => '', 'url' => []], 'path'       => ['name' => '', 'url' => []]];
 
         $instance->SiteDir    = $siteDir;
         $instance->WWWDir     = $wwwDir;
@@ -1210,11 +1194,11 @@ class eZSys
      */
     protected static function getValidwwwDir( $phpSelf, $scriptFileName, $index )
     {
-        if ( !isset( $phpSelf[1] ) || empty($index) || strpos( $phpSelf, $index ) === false )
+        if ( !isset( $phpSelf[1] ) || empty($index) || !str_contains( $phpSelf, $index ) )
             return false;
 
         // validate $index straight away
-        if ( strpos( $scriptFileName, $index ) === false )
+        if ( !str_contains( $scriptFileName, $index ) )
             return null;
 
         // optimize '/index.php' pattern
@@ -1241,11 +1225,11 @@ class eZSys
         if ( !empty( $validateDir ) )
         {
             // validate directly with phpself part
-            if ( strpos( $scriptFileName, $validateDir ) !== false )
+            if ( str_contains( $scriptFileName, $validateDir ) )
                 return trim( $phpSelfParts[0], '/' );
 
             // validate with windows path
-            if ( strpos( $scriptFileName, str_replace( '/', '\\', $validateDir ) ) !== false )
+            if ( str_contains( $scriptFileName, str_replace( '/', '\\', $validateDir ) ) )
                 return trim( $phpSelfParts[0], '/' );
         }
 
@@ -1280,8 +1264,6 @@ class eZSys
 
     /**
      * Sets eZSys instance or clears it if left undefined.
-     *
-     * @param eZSys $instance
      */
     public static function setInstance( eZSys $instance = null )
     {
@@ -1299,9 +1281,9 @@ class eZSys
         $ini = eZINI::instance();
 
         if ( $ini->variable( 'SiteSettings', '64bitCompatibilityMode' ) === 'enabled' )
-            $checksum = sprintf( '%u', crc32( $string ) );
+            $checksum = sprintf( '%u', crc32( (string) $string ) );
         else
-            $checksum = crc32( $string );
+            $checksum = crc32( (string) $string );
 
         return $checksum;
     }
@@ -1314,7 +1296,7 @@ class eZSys
     public static function protocolSchema()
     {
         $schema = '';
-        if( preg_match( "#^([a-zA-Z]+)/.*$#", self::serverVariable( 'SERVER_PROTOCOL' ), $schemaMatches ) )
+        if( preg_match( "#^([a-zA-Z]+)/.*$#", (string) self::serverVariable( 'SERVER_PROTOCOL' ), $schemaMatches ) )
         {
             $schema = strtolower( $schemaMatches[1] ) . '://';
         }
@@ -1339,14 +1321,14 @@ class eZSys
         }
         else
         {
-            $result = array();
-            $files = self::simulateGlobBrace( array( $pattern ) );
+            $result = [];
+            $files = self::simulateGlobBrace( [$pattern] );
             foreach( $files as $file )
             {
                 $globList = glob( $file, $flags );
                 if ( is_array( $globList ) )
                 {
-                    $result = array_merge( $result, $globList );
+                    $result = [...$result, ...$globList];
                 }
             }
             return $result;
@@ -1364,21 +1346,21 @@ class eZSys
      */
     protected static function simulateGlobBrace( $filenames )
     {
-       $result = array();
+       $result = [];
 
        foreach ( $filenames as $filename )
        {
-           if ( strpos( $filename, '{' ) === false )
+           if ( !str_contains( (string) $filename, '{' ) )
            {
                $result[] = $filename;
                continue;
            }
 
-           if ( preg_match( '/^(.*)\{(.*?)(?<!\\\\)\}(.*)$/', $filename, $match ) )
+           if ( preg_match( '/^(.*)\{(.*?)(?<!\\\\)\}(.*)$/', (string) $filename, $match ) )
            {
                $variants = preg_split( '/(?<!\\\\),/', $match[2] );
 
-               $newFilenames = array();
+               $newFilenames = [];
                foreach ( $variants as $variant )
                {
                    $newFilenames[] = $match[1] . $variant . $match[3];

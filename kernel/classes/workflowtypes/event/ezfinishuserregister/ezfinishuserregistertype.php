@@ -15,12 +15,12 @@
 
 class eZFinishUserRegisterType extends eZWorkflowEventType {
 
-    const WORKFLOW_TYPE_STRING = "ezfinishuserregister";
+    final public const WORKFLOW_TYPE_STRING = "ezfinishuserregister";
 
     public function  __construct()
     {
         parent::__construct( eZFinishUserRegisterType::WORKFLOW_TYPE_STRING, ezpI18n::tr( 'kernel/workflow/event', "Finish User Registration" ) );
-        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'after' ) ) ) );
+        $this->setTriggerTypes( ['content' => ['publish' => ['after']]] );
     }
 
     function execute($process, $event)
@@ -32,19 +32,14 @@ class eZFinishUserRegisterType extends eZWorkflowEventType {
         // @todo: improve the possible performance.
         if( $object->attribute( 'class_identifier' ) == 'user' )
         {
-            $result = eZOperationHandler::execute( 'user', 'register', array( 'user_id' => $objectID ) );
+            $result = eZOperationHandler::execute( 'user', 'register', ['user_id' => $objectID] );
             return $result['status'];
         }
     }
 
     function typeFunctionalAttributes( )
     {
-        return array( 'selected_sections',
-                      'approve_users',
-                      'approve_groups',
-                      'selected_usergroups',
-                      'language_list',
-                      'version_option' );
+        return ['selected_sections', 'approve_users', 'approve_groups', 'selected_usergroups', 'language_list', 'version_option'];
     }
 
     function attributeDecoder( $event, $attr )
@@ -54,10 +49,7 @@ class eZFinishUserRegisterType extends eZWorkflowEventType {
 
     function attributes()
     {
-        return array_merge( array( 'sections',
-                                   'languages',
-                                   'users',
-                                   'usergroups' ),
+        return array_merge( ['sections', 'languages', 'users', 'usergroups'],
                             eZWorkflowEventType::attributes() );
 
     }

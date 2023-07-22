@@ -39,7 +39,7 @@ class eZStepSiteTemplates extends eZStepInstaller
         if ( $this->Http->hasPostVariable( 'eZSetup_site_templates' ) )
         {
             $siteTemplates = $this->Http->postVariable( 'eZSetup_site_templates' );
-            $this->PersistenceList['site_templates']['count'] = count( $siteTemplates );
+            $this->PersistenceList['site_templates']['count'] = is_countable($siteTemplates) ? count( $siteTemplates ) : 0;
 
             $siteTemplatesCount = 0;
             foreach ( $siteTemplates as $key => $template )
@@ -81,15 +81,15 @@ class eZStepSiteTemplates extends eZStepInstaller
         $thumbnailBase = $config->variable( 'SiteTemplates', 'ThumbnailBase' );
         $thumbnailExtension = $config->variable( 'SiteTemplates', 'ThumbnailExtension' );
 
-        $site_templates = array();
+        $site_templates = [];
 
-        $packages = eZPackage::fetchPackages( array( 'path' => 'kernel/setup/packages' ) );
+        $packages = eZPackage::fetchPackages( ['path' => 'kernel/setup/packages'] );
         foreach( $packages as $key => $package )
         {
             $site_templates[$key]['name'] = $package->attribute( 'summary' );
             $site_templates[$key]['identifier'] = $package->attribute( 'name' );
             $thumbnails = $package->thumbnailList( 'default' );
-            if ( count( $thumbnails ) > 0 )
+            if ( (is_countable($thumbnails) ? count( $thumbnails ) : 0) > 0 )
                 $site_templates[$key]['image_file_name'] = $package->fileItemPath( $thumbnails[0], 'default', 'kernel/setup/packages' );
             else
                 $site_templates[$key]['image_file_name'] = false;
@@ -99,12 +99,11 @@ class eZStepSiteTemplates extends eZStepInstaller
         $this->Tpl->setVariable( 'error', $this->Error );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/site_templates.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Site template selection' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Site template selection' ), 'url' => false]];
         return $result;
 
     }

@@ -16,10 +16,10 @@
 
 class eZURLOperator
 {
-    const HTTP_OPERATOR_TYPE_POST = 1;
-    const HTTP_OPERATOR_TYPE_GET = 2;
-    const HTTP_OPERATOR_TYPE_SESSION = 3;
-    const HTTP_OPERATOR_TYPE_COOKIE = 4;
+    final public const HTTP_OPERATOR_TYPE_POST = 1;
+    final public const HTTP_OPERATOR_TYPE_GET = 2;
+    final public const HTTP_OPERATOR_TYPE_SESSION = 3;
+    final public const HTTP_OPERATOR_TYPE_COOKIE = 4;
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ class eZURLOperator
                             $iniNameHasVariable = 'ezini_hasvariable',
                             $httpNameHasVariable = 'ezhttp_hasvariable' )
     {
-        $this->Operators = array( $url_name, $urlroot_name, $ezsys_name, $design_name, $image_name, $ext_name, $httpName, $iniName, $iniNameHasVariable, $httpNameHasVariable );
+        $this->Operators = [$url_name, $urlroot_name, $ezsys_name, $design_name, $image_name, $ext_name, $httpName, $iniName, $iniNameHasVariable, $httpNameHasVariable];
         $this->URLName = $url_name;
         $this->URLRootName = $urlroot_name;
         $this->SysName = $ezsys_name;
@@ -62,63 +62,7 @@ class eZURLOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->URLName => array( 'input' => true,
-                                               'output' => true,
-                                               'parameters' => true,
-                                               'element-transformation' => true,
-                                               'transform-parameters' => true,
-                                               'input-as-parameter' => 'always',
-                                               'element-transformation-func' => 'urlTransformation'),
-                      $this->URLRootName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'urlTransformation'),
-                      $this->SysName => array( 'input' => true,
-                                               'output' => true,
-                                               'parameters' => true,
-                                               'element-transformation' => true,
-                                               'transform-parameters' => true,
-                                               'input-as-parameter' => 'always',
-                                               'element-transformation-func' => 'urlTransformation'),
-                      $this->DesignName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'urlTransformation'),
-                      $this->ImageName => array( 'input' => true,
-                                                 'output' => true,
-                                                 'parameters' => true,
-                                                 'element-transformation' => true,
-                                                 'transform-parameters' => true,
-                                                 'input-as-parameter' => 'always',
-                                                 'element-transformation-func' => 'urlTransformation'),
-                      $this->ExtName => array( 'input' => true,
-                                               'output' => true,
-                                               'parameters' => true,
-                                               'element-transformation' => true,
-                                               'transform-parameters' => true,
-                                               'input-as-parameter' => 'always',
-                                               'element-transformation-func' => 'urlTransformation'),
-                      $this->ININame => array( 'input' => true,
-                                               'output' => true,
-                                               'parameters' => true,
-                                               'element-transformation' => true,
-                                               'transform-parameters' => true,
-                                               'input-as-parameter' => true,
-                                               'element-transformation-func' => 'iniTrans'),
-                      $this->ININameHasVariable => array( 'input' => true,
-                                                          'output' => true,
-                                                          'parameters' => true,
-                                                          'element-transformation' => true,
-                                                          'transform-parameters' => true,
-                                                          'input-as-parameter' => true,
-                                                          'element-transformation-func' => 'iniTrans' )
-                      );
+        return [$this->URLName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->URLRootName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->SysName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->DesignName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->ImageName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->ExtName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'urlTransformation'], $this->ININame => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'iniTrans'], $this->ININameHasVariable => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'iniTrans']];
     }
 
     function iniTrans( $operatorName, &$node, $tpl, &$resourceData,
@@ -166,7 +110,7 @@ class eZURLOperator
             // Check if we should put implementation of parsing ini variable to compiled php file
             if ( $dynamic === true )
             {
-                $values = array();
+                $values = [];
                 $values[] = $parameters[0];
                 $values[] = $parameters[1];
 
@@ -192,7 +136,7 @@ class eZURLOperator
                     "    %output% = $checkExist ? false : '';\n";
 
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 1 ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 1 )];
             }
 
             if ( $iniPath !== false )
@@ -221,7 +165,7 @@ class eZURLOperator
                     $tpl->error( $operatorName, "No such variable '$iniVariable' in group '$iniGroup' for $iniName" );
                 }
             }
-            return array( eZTemplateNodeTool::createStringElement( $value ) );
+            return [eZTemplateNodeTool::createStringElement( $value )];
         }
         else
             return false;
@@ -230,6 +174,7 @@ class eZURLOperator
     function urlTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                 $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
+        $code = null;
         $ini = eZINI::instance();
         $shareTemplates = $ini->hasVariable( 'TemplateSettings', 'ShareCompiledTemplates' ) ?
                             $ini->variable( 'TemplateSettings', 'ShareCompiledTemplates' ) == 'enabled' :
@@ -237,8 +182,8 @@ class eZURLOperator
 
         $useTmp = false;
 
-        $newElements = array();
-        $values = array();
+        $newElements = [];
+        $values = [];
         $paramCount = 0;
         $tmpCount = 0;
         switch( $operatorName )
@@ -254,13 +199,13 @@ class eZURLOperator
                     eZURI::transformURI( $url, false, $serverURL );
 
                     $url = $this->applyQuotes( $url, $parameters[1] );
-                    return array( eZTemplateNodeTool::createStringElement( $url ) );
+                    return [eZTemplateNodeTool::createStringElement( $url )];
                 }
                 else if ( $shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
                     $url = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $url ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $url )];
 
                     if ( isset( $parameters[2] ) )
                     {
@@ -314,10 +259,10 @@ CODEPIECE;
                 {
                     $url = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    if ( preg_match( "#^[a-zA-Z0-9]+:#", $url ) or
-                         substr( $url, 0, 2 ) == '//' )
+                    if ( preg_match( "#^[a-zA-Z0-9]+:#", (string) $url ) or
+                         str_starts_with((string) $url, '//') )
                         $url = '/';
-                    else if ( strlen( $url ) > 0 and
+                    else if ( strlen( (string) $url ) > 0 and
                               $url[0] != '/' )
                         $url = '/' . $url;
 
@@ -327,13 +272,13 @@ CODEPIECE;
                     eZURI::transformURI( $url, true, $serverURL );
 
                     $url = $this->applyQuotes( $url, $parameters[1] );
-                    return array( eZTemplateNodeTool::createStringElement( $url ) );
+                    return [eZTemplateNodeTool::createStringElement( $url )];
                 }
                 else if ( $shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
                     $url = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $url ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $url )];
 
                     if ( isset( $parameters[2] ) )
                     {
@@ -394,15 +339,10 @@ CODEPIECE;
                 {
                     $sysAttribute = eZTemplateNodeTool::elementConstantValue( $parameters[1] );
 
-                    switch ( $sysAttribute )
-                    {
-                        // Query string must be evaluated at runtime. See https://jira.ez.no/browse/EZP-20874
-                        case 'querystring':
-                        case 'hostname':
-                            return false;
-                        default:
-                            return array( eZTemplateNodeTool::createStringElement( $this->Sys->attribute( $sysAttribute ) ) );
-                    }
+                    return match ($sysAttribute) {
+                        'querystring', 'hostname' => false,
+                        default => [eZTemplateNodeTool::createStringElement( $this->Sys->attribute( $sysAttribute ) )],
+                    };
                 }
                 return false;
             } break;
@@ -413,16 +353,16 @@ CODEPIECE;
                 {
                     $path = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $path = $this->eZDesign( $tpl, $path, $operatorName );
+                    $path = static::eZDesign($tpl, $path, $operatorName);
                     $path = $this->applyQuotes( $path, $parameters[1] );
 
-                    return array( eZTemplateNodeTool::createStringElement( $path ) );
+                    return [eZTemplateNodeTool::createStringElement( $path )];
                 }
                 else if ( $shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
                     $path = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $path ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $path )];
                     $code = ( '%tmp1% = %1%;' . "\n" . '%tmp1% = eZURLOperator::eZDesign( $tpl, %tmp1%, "' . $operatorName . '" );' . "\n" );
 
                     $useTmp = true;
@@ -439,7 +379,7 @@ CODEPIECE;
 
             case $this->ImageName:
             {
-                $skipSlash = count( $parameters ) > 2 ? eZTemplateNodeTool::elementConstantValue( $parameters[2] ) == true : false;
+                $skipSlash = (is_countable($parameters) ? count( $parameters ) : 0) > 2 ? eZTemplateNodeTool::elementConstantValue( $parameters[2] ) == true : false;
 
                 if ( !$shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
@@ -448,14 +388,14 @@ CODEPIECE;
                     $path = eZURLOperator::eZImage( $tpl, $path, $operatorName, $skipSlash );
                     $path = $this->applyQuotes( $path, $parameters[1] );
 
-                    return array( eZTemplateNodeTool::createStringElement( $path ) );
+                    return [eZTemplateNodeTool::createStringElement( $path )];
                 }
                 else if ( $shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
                     $path = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $path ) );
-                    $values[] = array( eZTemplateNodeTool::createBooleanElement( $skipSlash ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $path )];
+                    $values[] = [eZTemplateNodeTool::createBooleanElement( $skipSlash )];
 
                     $code = ( '%tmp1% = %1%;' . "\n" . '%tmp1% = eZURLOperator::eZImage( $tpl, %tmp1%, "' . $operatorName . '", %2% );' . "\n" );
 
@@ -465,7 +405,7 @@ CODEPIECE;
                 else
                 {
                     $values[] = $parameters[0];
-                    $values[] = array( eZTemplateNodeTool::createBooleanElement( $skipSlash ) );
+                    $values[] = [eZTemplateNodeTool::createBooleanElement( $skipSlash )];
 
                     $code = ( '%1% = eZURLOperator::eZImage( $tpl, %1%, "' . $operatorName . '", %2% );' . "\n" );
                 }
@@ -479,7 +419,7 @@ CODEPIECE;
                 {
                     $origUrl = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $url = eZURL::urlByMD5( md5( $origUrl ) );
+                    $url = eZURL::urlByMD5( md5( (string) $origUrl ) );
                     if ( $url == false )
                         eZURL::registerURL( $origUrl );
                     else
@@ -487,13 +427,13 @@ CODEPIECE;
 
                     $origUrl = $this->applyQuotes( $origUrl, $parameters[1] );
 
-                    return array( eZTemplateNodeTool::createStringElement( $origUrl ) );
+                    return [eZTemplateNodeTool::createStringElement( $origUrl )];
                 }
                 else if ( $shareTemplates && eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
                     $origUrl = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
 
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $origUrl ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $origUrl )];
 
                     $code .= '%tmp1% = %1%; ' . "\n" .
                          '%tmp2% = eZURL::urlByMD5( md5( %tmp1% ) );' . "\n" .
@@ -535,7 +475,7 @@ CODEPIECE;
                  '}' . "\n";
         }
 
-        if ( count( $parameters ) > $paramCount )
+        if ( (is_countable($parameters) ? count( $parameters ) : 0) > $paramCount )
         {
             if ( eZTemplateNodeTool::isConstantElement( $parameters[$paramCount] ) )
             {
@@ -549,7 +489,7 @@ CODEPIECE;
                     $quote = false;
                 if ( $quote !== false )
                 {
-                    $values[] = array( eZTemplateNodeTool::createStringElement( $quote ) );
+                    $values[] = [eZTemplateNodeTool::createStringElement( $quote )];
                     if ( $useTmp )
                     {
                         $code .= '%tmp1% = %' . count( $values ) . '% . %tmp1% . %' . count( $values ) . '%;' . "\n";
@@ -594,7 +534,7 @@ CODEPIECE;
         else
         {
             $quote = '"';
-            $values[] = array( eZTemplateNodeTool::createStringElement( $quote ) );
+            $values[] = [eZTemplateNodeTool::createStringElement( $quote )];
             if ( $useTmp )
             {
                 $code .= '%tmp1% = %' . count( $values ) . '% . %tmp1% . %' . count( $values ) . '%;' . "\n";
@@ -648,9 +588,9 @@ CODEPIECE;
         $http = eZHTTPTool::instance();
 
         if ( isset( $http->UseFullUrl ) and $http->UseFullUrl
-                                        and strncasecmp( $text, '/' , 1 ) === 0 ) // do not prepend the site path if it's not a http url
+                                        and strncasecmp( (string) $text, '/' , 1 ) === 0 ) // do not prepend the site path if it's not a http url
         {
-            $text = $http->createRedirectUrl( $text, array( 'pre_url' => false ) );
+            $text = $http->createRedirectUrl( $text, ['pre_url' => false] );
         }
         if ( $quote !== false )
             return $quote . $text . $quote;
@@ -668,12 +608,7 @@ CODEPIECE;
 
     function namedParameterList()
     {
-        return array( 'quote_val' => array( 'type' => 'string',
-                                            'required' => false,
-                                            'default' => 'double' ),
-                      'server_url' => array( 'type' => 'string',
-                                             'required' => false,
-                                             'default' => 'relative' ) );
+        return ['quote_val' => ['type' => 'string', 'required' => false, 'default' => 'double'], 'server_url' => ['type' => 'string', 'required' => false, 'default' => 'relative']];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
@@ -683,10 +618,10 @@ CODEPIECE;
             case $this->ININameHasVariable:
             case $this->ININame:
             {
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
                     $iniGroup = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace );
-                    if ( count( $operatorParameters ) == 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) == 1 )
                     {
                         $tpl->error( $operatorName, "Missing variable name parameter" );
                         return;
@@ -751,20 +686,15 @@ CODEPIECE;
             case $this->HTTPName:
             {
                 $http = eZHTTPTool::instance();
-                if ( count( $operatorParameters ) > 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 0 )
                 {
                     $httpType = eZURLOperator::HTTP_OPERATOR_TYPE_POST;
                     $httpName = $tpl->elementValue( $operatorParameters[0], $rootNamespace, $currentNamespace );
-                    if ( count( $operatorParameters ) > 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) > 1 )
                     {
-                        $httpTypeName = strtolower( $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace ) );
+                        $httpTypeName = strtolower( (string) $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace ) );
 
-                        $availableTypeList = array(
-                            'post'    => eZURLOperator::HTTP_OPERATOR_TYPE_POST,
-                            'get'     => eZURLOperator::HTTP_OPERATOR_TYPE_GET,
-                            'session' => eZURLOperator::HTTP_OPERATOR_TYPE_SESSION,
-                            'cookie'  => eZURLOperator::HTTP_OPERATOR_TYPE_COOKIE,
-                        );
+                        $availableTypeList = ['post'    => eZURLOperator::HTTP_OPERATOR_TYPE_POST, 'get'     => eZURLOperator::HTTP_OPERATOR_TYPE_GET, 'session' => eZURLOperator::HTTP_OPERATOR_TYPE_SESSION, 'cookie'  => eZURLOperator::HTTP_OPERATOR_TYPE_COOKIE];
 
                         if( !isset( $availableTypeList[$httpTypeName] ) )
                         {
@@ -876,10 +806,10 @@ CODEPIECE;
 
             case $this->URLRootName:
             {
-                if ( preg_match( "#^[a-zA-Z0-9]+:#", $operatorValue ) or
-                     substr( $operatorValue, 0, 2 ) == '//' )
+                if ( preg_match( "#^[a-zA-Z0-9]+:#", (string) $operatorValue ) or
+                     str_starts_with((string) $operatorValue, '//') )
                      break;
-                if ( strlen( $operatorValue ) > 0 and
+                if ( strlen( (string) $operatorValue ) > 0 and
                      $operatorValue[0] != '/' )
                     $operatorValue = '/' . $operatorValue;
 
@@ -890,7 +820,7 @@ CODEPIECE;
 
             case $this->SysName:
             {
-                if ( count( $operatorParameters ) == 0 )
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) == 0 )
                     $tpl->warning( 'eZURLOperator' . $operatorName, 'Requires attributename' );
                 else
                 {
@@ -905,9 +835,9 @@ CODEPIECE;
 
             case $this->ImageName:
             {
-                if ( count( $operatorParameters ) == 2 &&
+                if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) == 2 &&
                      $tpl->elementValue( $operatorParameters[1], $rootNamespace, $currentNamespace ) == true &&
-                     strlen( $this->Sys->wwwDir() ) == 0 )
+                     strlen( (string) $this->Sys->wwwDir() ) == 0 )
                 {
                     $skipSlash = true;
                 }
@@ -916,12 +846,12 @@ CODEPIECE;
                     $skipSlash = false;
                 }
 
-                $operatorValue = $this->eZImage( $tpl, $operatorValue, $operatorName, $skipSlash );
+                $operatorValue = static::eZImage($tpl, $operatorValue, $operatorName, $skipSlash);
             } break;
 
             case $this->ExtName:
             {
-                $urlMD5 = md5( $operatorValue );
+                $urlMD5 = md5( (string) $operatorValue );
                 $url = eZURL::urlByMD5( $urlMD5 );
                 if ( $url === false )
                     eZURL::registerURL( $operatorValue );
@@ -931,7 +861,7 @@ CODEPIECE;
 
             case $this->DesignName:
             {
-                $operatorValue = $this->eZDesign( $tpl, $operatorValue, $operatorName );
+                $operatorValue = static::eZDesign($tpl, $operatorValue, $operatorName);
             } break;
         }
         $quote = "\"";
@@ -944,9 +874,9 @@ CODEPIECE;
         $http = eZHTTPTool::instance();
 
         if ( isset( $http->UseFullUrl ) and $http->UseFullUrl
-                                        and strncasecmp( $operatorValue, '/' , 1 ) === 0 ) // do not prepend the site path if it's not a http url
+                                        and strncasecmp( (string) $operatorValue, '/' , 1 ) === 0 ) // do not prepend the site path if it's not a http url
         {
-            $operatorValue = $http->createRedirectUrl( $operatorValue, array( 'pre_url' => false ) );
+            $operatorValue = $http->createRedirectUrl( $operatorValue, ['pre_url' => false] );
         }
         if ( $quote !== false )
             $operatorValue = $quote . $operatorValue . $quote;
@@ -960,7 +890,7 @@ CODEPIECE;
         $sys = eZSys::instance();
 
         $bases = eZTemplateDesignResource::allDesignBases();
-        $triedFiles = array();
+        $triedFiles = [];
         $fileInfo = eZTemplateDesignResource::fileMatch( $bases, false, $operatorValue, $triedFiles);
 
         if ( !$fileInfo )
@@ -993,7 +923,7 @@ CODEPIECE;
         }
 
         $bases = eZTemplateDesignResource::allDesignBases();
-        $triedFiles = array();
+        $triedFiles = [];
         $fileInfo = eZTemplateDesignResource::fileMatch( $bases, 'images', $operatorValue, $triedFiles );
 
         if ( !$fileInfo )
@@ -1009,7 +939,7 @@ CODEPIECE;
         }
 
         $operatorValue = $skipSlash ? $imgPath : $sys->wwwDir() . '/' . $imgPath;
-        $operatorValue = htmlspecialchars( $operatorValue );
+        $operatorValue = htmlspecialchars( (string) $operatorValue );
 
         return $operatorValue;
     }

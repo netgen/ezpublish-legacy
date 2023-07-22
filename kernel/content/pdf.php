@@ -20,7 +20,7 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
 
 if ( $Offset )
@@ -47,8 +47,7 @@ $collectionAttributes = false;
 if ( isset( $Params['CollectionAttributes'] ) )
     $collectionAttributes = $Params['CollectionAttributes'];
 
-$validation = array( 'processed' => false,
-                     'attributes' => array() );
+$validation = ['processed' => false, 'attributes' => []];
 if ( isset( $Params['AttributeValidation'] ) )
     $validation = $Params['AttributeValidation'];
 
@@ -62,10 +61,7 @@ if ( isset( $keys['layout'] ) )
 else
     $layout = false;
 
-$viewParameters = array( 'offset' => $Offset,
-                         'year' => $Year,
-                         'month' => $Month,
-                         'day' => $Day );
+$viewParameters = ['offset' => $Offset, 'year' => $Year, 'month' => $Month, 'day' => $Day];
 
 $viewParameters = array_merge( $viewParameters, $UserParameters );
 
@@ -79,10 +75,10 @@ if ( $viewCacheEnabled && ( $useTriggers == false ) )
     $discountList = $cacheInfo['discount_list'];
     $designSetting = eZTemplateDesignResource::designSetting( 'site' );
     if ( eZContentCache::exists( $designSetting, $NodeID, 'pdf', $language, $Offset, $roleList, $discountList, $layout,
-                                 array( 'view_parameters' => $viewParameters ) ) )
+                                 ['view_parameters' => $viewParameters] ) )
     {
         $cachePathInfo = eZContentCache::cachePathInfo( $designSetting, $NodeID, 'pdf', $language, $Offset, $roleList, $discountList, $layout, false,
-                                                        array( 'view_parameters' => $viewParameters ) );
+                                                        ['view_parameters' => $viewParameters] );
 
         contentPDFPassthrough( $cachePathInfo['path'] );
     }
@@ -92,9 +88,7 @@ $user = eZUser::currentUser();
 
 eZDebugSetting::addTimingPoint( 'kernel-content-pdf', 'Operation start' );
 
-$operationResult = eZOperationHandler::execute( 'content', 'read', array( 'node_id' => $NodeID,
-                                                                          'user_id' => $user->id(),
-                                                                          'language_code' => $LanguageCode ), null, $useTriggers );
+$operationResult = eZOperationHandler::execute( 'content', 'read', ['node_id' => $NodeID, 'user_id' => $user->id(), 'language_code' => $LanguageCode], null, $useTriggers );
 eZDebugSetting::writeDebug( 'kernel-content-pdf', $operationResult, 'operationResult' );
 eZDebugSetting::addTimingPoint( 'kernel-content-pdf', 'Operation end' );
 
@@ -117,10 +111,10 @@ switch( $operationResult['status'] )
                 $discountList = $cacheInfo['discount_list'];
                 $designSetting = eZTemplateDesignResource::designSetting( 'site' );
                 if ( eZContentCache::exists( $designSetting, $NodeID, 'pdf', $language, $Offset, $roleList, $discountList, $layout,
-                                             array( 'view_parameters' => $viewParameters ) ) )
+                                             ['view_parameters' => $viewParameters] ) )
                 {
                     $cachePathInfo = eZContentCache::cachePathInfo( $designSetting, $NodeID, 'pdf', $language, $Offset, $roleList, $discountList, $layout, false,
-                                                                    array( 'view_parameters' => $viewParameters ) );
+                                                                    ['view_parameters' => $viewParameters] );
                     contentPDFPassthrough( $cachePathInfo['path'] );
                 }
             }
@@ -156,7 +150,7 @@ switch( $operationResult['status'] )
 
 
             $cachePathInfo = eZContentCache::cachePathInfo( $designSetting, $NodeID, 'pdf', $language, $Offset, $roleList, $discountList, $layout, false,
-                                                            array( 'view_parameters' => $viewParameters ) );
+                                                            ['view_parameters' => $viewParameters] );
             $node = eZContentObjectTreeNode::fetch( $NodeID );
 
             contentPDFGenerate( $cachePathInfo['path'] , $node, false, $viewCacheEnabled, $LanguageCode, $viewParameters );
@@ -194,7 +188,7 @@ switch( $operationResult['status'] )
     }break;
     case eZModuleOperationInfo::STATUS_CANCELLED:
     {
-        $Result = array();
+        $Result = [];
         $Result['content'] = 'Content PDF view cancelled<br/>';
     }
 }
@@ -245,7 +239,7 @@ function contentPDFGenerate( $cacheFile,
                              $object = false,
                              $viewCacheEnabled = true,
                              $languageCode = false,
-                             $viewParameters = array() )
+                             $viewParameters = [] )
 {
     if ( $languageCode )
     {
@@ -258,17 +252,7 @@ function contentPDFGenerate( $cacheFile,
     }
 
     $res = eZTemplateDesignResource::instance();
-    $res->setKeys( array( array( 'object', $node->attribute( 'contentobject_id' ) ),
-                          array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                          array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                          array( 'section', $object->attribute( 'section_id' ) ),
-                          array( 'node', $node->attribute( 'node_id' ) ),
-                          array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                          array( 'class', $object->attribute( 'contentclass_id' ) ),
-                          array( 'depth', $node->attribute( 'depth' ) ),
-                          array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                          array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) ),
-                          array( 'class_identifier', $object->attribute( 'class_identifier' ) ) ) );
+    $res->setKeys( [['object', $node->attribute( 'contentobject_id' )], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['section', $object->attribute( 'section_id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $object->attribute( 'contentclass_id' )], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['class_identifier', $object->attribute( 'class_identifier' )]] );
 
     $tpl = eZTemplate::factory();
 
@@ -292,16 +276,13 @@ function contentPDFGenerate( $cacheFile,
         $tpl->setVariable( 'generate_stream', 1 );
     }
 
-    $textElements = array();
+    $textElements = [];
     $uri = 'design:node/view/pdf.tpl';
     $tpl->setVariable( 'pdf_root_template', 1 );
     eZTemplateIncludeFunction::handleInclude( $textElements, $uri, $tpl, '', '' );
     $pdf_definition = implode( '', $textElements );
 
-    $pdf_definition = str_replace( array( ' ',
-                                          "\r\n",
-                                          "\t",
-                                          "\n" ),
+    $pdf_definition = str_replace( [' ', "\r\n", "\t", "\n"],
                                    '',
                                    $pdf_definition );
     $tpl->setVariable( 'pdf_definition', $pdf_definition );

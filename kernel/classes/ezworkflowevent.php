@@ -19,7 +19,6 @@ class eZWorkflowEvent extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Content = null;
     }
 
     /**
@@ -33,82 +32,7 @@ class eZWorkflowEvent extends eZPersistentObject
 
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "version" => array( 'name' => "Version",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "workflow_id" => array( 'name' => "WorkflowID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZWorkflow',
-                                                                 'foreign_attribute' => 'id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "workflow_type_string" => array( 'name' => "TypeString",
-                                                                          'datatype' => 'string',
-                                                                          'default' => '',
-                                                                          'required' => true,
-                                                                          'max_length' => 50 ),
-                                         "description" => array( 'name' => "Description",
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true,
-                                                                 'max_length' => 50 ),
-                                         "data_int1" => array( 'name' => "DataInt1",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int2" => array( 'name' => "DataInt2",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int3" => array( 'name' => "DataInt3",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_int4" => array( 'name' => "DataInt4",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "data_text1" => array( 'name' => "DataText1",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         "data_text2" => array( 'name' => "DataText2",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         "data_text3" => array( 'name' => "DataText3",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         "data_text4" => array( 'name' => "DataText4",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true,
-                                                                'max_length' => 50 ),
-                                         "data_text5" => array( 'name' => "DataText5",
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "placement" => array( 'name' => "Placement",
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ) ),
-                      "keys" => array( "id", "version" ),
-                      "function_attributes" => array( 'content' => 'content',
-                                                      'workflow_type' => 'eventType' ),
-                      "increment_key" => "id",
-                      "sort" => array( "placement" => "asc" ),
-                      "class_name" => "eZWorkflowEvent",
-                      "name" => "ezworkflow_event" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "version" => ['name' => "Version", 'datatype' => 'integer', 'default' => 0, 'required' => true], "workflow_id" => ['name' => "WorkflowID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZWorkflow', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "workflow_type_string" => ['name' => "TypeString", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 50], "description" => ['name' => "Description", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 50], "data_int1" => ['name' => "DataInt1", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int2" => ['name' => "DataInt2", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int3" => ['name' => "DataInt3", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_int4" => ['name' => "DataInt4", 'datatype' => 'integer', 'default' => 0, 'required' => true], "data_text1" => ['name' => "DataText1", 'datatype' => 'text', 'default' => '', 'required' => true, 'max_length' => 50], "data_text2" => ['name' => "DataText2", 'datatype' => 'text', 'default' => '', 'required' => true, 'max_length' => 50], "data_text3" => ['name' => "DataText3", 'datatype' => 'text', 'default' => '', 'required' => true, 'max_length' => 50], "data_text4" => ['name' => "DataText4", 'datatype' => 'text', 'default' => '', 'required' => true, 'max_length' => 50], "data_text5" => ['name' => "DataText5", 'datatype' => 'text', 'default' => '', 'required' => true], "placement" => ['name' => "Placement", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["id", "version"], "function_attributes" => ['content' => 'content', 'workflow_type' => 'eventType'], "increment_key" => "id", "sort" => ["placement" => "asc"], "class_name" => "eZWorkflowEvent", "name" => "ezworkflow_event"];
     }
 
     /**
@@ -121,16 +45,9 @@ class eZWorkflowEvent extends eZPersistentObject
      */
     static function create( $workflowID, $typeString )
     {
-        $row = array(
-            "id" => null,
-            "version" => 1,
-            "workflow_id" => $workflowID,
-            "workflow_type_string" => $typeString,
-            "description" => "",
-            "placement" => eZPersistentObject::newObjectOrder( eZWorkflowEvent::definition(),
-                                                               "placement",
-                                                               array( "version" => 1,
-                                                                      "workflow_id" => $workflowID ) ) );
+        $row = ["id" => null, "version" => 1, "workflow_id" => $workflowID, "workflow_type_string" => $typeString, "description" => "", "placement" => eZPersistentObject::newObjectOrder( eZWorkflowEvent::definition(),
+                                                           "placement",
+                                                           ["version" => 1, "workflow_id" => $workflowID] )];
         return new eZWorkflowEvent( $row );
     }
 
@@ -138,8 +55,7 @@ class eZWorkflowEvent extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZWorkflowEvent::definition(),
                                                 $field_filters,
-                                                array( "id" => $id,
-                                                       "version" => $version ),
+                                                ["id" => $id, "version" => $version],
                                                 $asObject );
     }
 
@@ -176,9 +92,8 @@ class eZWorkflowEvent extends eZPersistentObject
             $version = $this->Version;
         }
         eZPersistentObject::reorderObject( eZWorkflowEvent::definition(),
-                                           array( "placement" => $pos ),
-                                           array( "workflow_id" => $wid,
-                                                  "version" => $version ),
+                                           ["placement" => $pos],
+                                           ["workflow_id" => $wid, "version" => $version],
                                            $down );
     }
 
@@ -310,7 +225,7 @@ class eZWorkflowEvent extends eZPersistentObject
     public $DataText2;
     public $DataText3;
     public $DataText4;
-    public $Content;
+    public $Content = null;
 }
 
 ?>

@@ -22,19 +22,19 @@
 
 class eZApproveType extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = "ezapprove";
+    final public const WORKFLOW_TYPE_STRING = "ezapprove";
 
-    const COLLABORATION_NOT_CREATED = 0;
-    const COLLABORATION_CREATED = 1;
+    final public const COLLABORATION_NOT_CREATED = 0;
+    final public const COLLABORATION_CREATED = 1;
 
-    const VERSION_OPTION_FIRST_ONLY = 1;
-    const VERSION_OPTION_EXCEPT_FIRST = 2;
-    const VERSION_OPTION_ALL = 3;
+    final public const VERSION_OPTION_FIRST_ONLY = 1;
+    final public const VERSION_OPTION_EXCEPT_FIRST = 2;
+    final public const VERSION_OPTION_ALL = 3;
 
     public function __construct()
     {
         parent::__construct( eZApproveType::WORKFLOW_TYPE_STRING, ezpI18n::tr( 'kernel/workflow/event', "Approve" ) );
-        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before' ) ) ) );
+        $this->setTriggerTypes( ['content' => ['publish' => ['before']]] );
     }
 
     function attributeDecoder( $event, $attr )
@@ -43,31 +43,31 @@ class eZApproveType extends eZWorkflowEventType
         {
             case 'selected_sections':
             {
-                $attributeValue = trim( $event->attribute( 'data_text1' ) );
-                $returnValue = empty( $attributeValue ) ? array( -1 ) : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text1' ) );
+                $returnValue = empty( $attributeValue ) ? [-1] : explode( ',', $attributeValue );
             }break;
 
             case 'approve_users':
             {
-                $attributeValue = trim( $event->attribute( 'data_text3' ) );
-                $returnValue = empty( $attributeValue ) ? array() : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text3' ) );
+                $returnValue = empty( $attributeValue ) ? [] : explode( ',', $attributeValue );
             }break;
 
             case 'approve_groups':
             {
-                $attributeValue = trim( $event->attribute( 'data_text4' ) );
-                $returnValue = empty( $attributeValue ) ? array() : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text4' ) );
+                $returnValue = empty( $attributeValue ) ? [] : explode( ',', $attributeValue );
             }break;
 
             case 'selected_usergroups':
             {
-                $attributeValue = trim( $event->attribute( 'data_text2' ) );
-                $returnValue = empty( $attributeValue ) ? array() : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text2' ) );
+                $returnValue = empty( $attributeValue ) ? [] : explode( ',', $attributeValue );
             }break;
 
             case 'language_list':
             {
-                $returnValue = array();
+                $returnValue = [];
                 $attributeValue = $event->attribute( 'data_int2' );
                 if ( $attributeValue != 0 )
                 {
@@ -92,20 +92,12 @@ class eZApproveType extends eZWorkflowEventType
 
     function typeFunctionalAttributes( )
     {
-        return array( 'selected_sections',
-                      'approve_users',
-                      'approve_groups',
-                      'selected_usergroups',
-                      'language_list',
-                      'version_option' );
+        return ['selected_sections', 'approve_users', 'approve_groups', 'selected_usergroups', 'language_list', 'version_option'];
     }
 
     function attributes()
     {
-        return array_merge( array( 'sections',
-                                   'languages',
-                                   'users',
-                                   'usergroups' ),
+        return array_merge( ['sections', 'languages', 'users', 'usergroups'],
                             eZWorkflowEventType::attributes() );
 
     }
@@ -201,11 +193,11 @@ class eZApproveType extends eZWorkflowEventType
             $user = eZUser::instance( $process->attribute( 'user_id' ) );
         }
 
-        $userGroups = array_merge( $user->attribute( 'groups' ), array( $user->attribute( 'contentobject_id' ) ) );
-        $workflowSections = explode( ',', $event->attribute( 'data_text1' ) );
-        $workflowGroups =   $event->attribute( 'data_text2' ) == '' ? array() : explode( ',', $event->attribute( 'data_text2' ) );
-        $editors =          $event->attribute( 'data_text3' ) == '' ? array() : explode( ',', $event->attribute( 'data_text3' ) );
-        $approveGroups =    $event->attribute( 'data_text4' ) == '' ? array() : explode( ',', $event->attribute( 'data_text4' ) );
+        $userGroups = array_merge( $user->attribute( 'groups' ), [$user->attribute( 'contentobject_id' )] );
+        $workflowSections = explode( ',', (string) $event->attribute( 'data_text1' ) );
+        $workflowGroups =   $event->attribute( 'data_text2' ) == '' ? [] : explode( ',', (string) $event->attribute( 'data_text2' ) );
+        $editors =          $event->attribute( 'data_text3' ) == '' ? [] : explode( ',', (string) $event->attribute( 'data_text3' ) );
+        $approveGroups =    $event->attribute( 'data_text4' ) == '' ? [] : explode( ',', (string) $event->attribute( 'data_text4' ) );
         $languageMask = $event->attribute( 'data_int2' );
 
         eZDebugSetting::writeDebug( 'kernel-workflow-approve', $user, 'eZApproveType::execute::user' );
@@ -266,7 +258,7 @@ class eZApproveType extends eZWorkflowEventType
 
             /* Get user IDs from approve user groups */
             $userClassIDArray = eZUser::contentClassIDs();
-            $approveUserIDArray = array();
+            $approveUserIDArray = [];
             foreach ( $approveGroups as $approveUserGroupID )
             {
                 if (  $approveUserGroupID != false )
@@ -276,9 +268,7 @@ class eZApproveType extends eZWorkflowEventType
                     {
                         foreach ( $approveUserGroup->attribute( 'assigned_nodes' ) as $assignedNode )
                         {
-                            $userNodeArray = $assignedNode->subTree( array( 'ClassFilterType' => 'include',
-                                                                            'ClassFilterArray' => $userClassIDArray,
-                                                                            'Limitation' => array() ) );
+                            $userNodeArray = $assignedNode->subTree( ['ClassFilterType' => 'include', 'ClassFilterArray' => $userClassIDArray, 'Limitation' => []] );
                             foreach ( $userNodeArray as $userNode )
                             {
                                 $approveUserIDArray[] = $userNode->attribute( 'contentobject_id' );
@@ -287,7 +277,7 @@ class eZApproveType extends eZWorkflowEventType
                     }
                 }
             }
-            $approveUserIDArray = array_merge( $approveUserIDArray, $editors );
+            $approveUserIDArray = [...$approveUserIDArray, ...$editors];
             $approveUserIDArray = array_unique( $approveUserIDArray );
 
             $collaborationID = false;
@@ -356,7 +346,7 @@ class eZApproveType extends eZWorkflowEventType
     {
         $returnState = eZInputValidator::STATE_ACCEPTED;
         $groupClassNames = eZUser::fetchUserGroupClassNames();
-        if ( count( $groupClassNames ) > 0 )
+        if ( (is_countable($groupClassNames) ? count( $groupClassNames ) : 0) > 0 )
         {
             foreach( $userGroupIDList as $userGroupID )
             {
@@ -389,7 +379,7 @@ class eZApproveType extends eZWorkflowEventType
     function validateHTTPInput( $http, $base, $workflowEvent, &$validation )
     {
         $returnState = eZInputValidator::STATE_ACCEPTED;
-        $reason = array();
+        $reason = [];
 
         if ( !$http->hasSessionVariable( 'BrowseParameters' ) )
         {
@@ -407,7 +397,7 @@ class eZApproveType extends eZWorkflowEventType
             if ( is_array( $approversIDs ) and
                  count( $approversIDs ) > 0 )
             {
-                $returnState = eZApproveType::validateUserIDList( $approversIDs, $reason );
+                $returnState = (new eZApproveType())->validateUserIDList($approversIDs, $reason);
             }
             else
                 $returnState = false;
@@ -419,7 +409,7 @@ class eZApproveType extends eZWorkflowEventType
                 if ( is_array( $userGroupIDList ) and
                      count( $userGroupIDList ) > 0 )
                 {
-                    $returnState = eZApproveType::validateGroupIDList( $userGroupIDList, $reason );
+                    $returnState = (new eZApproveType())->validateGroupIDList($userGroupIDList, $reason);
                 }
                 else if ( $returnState === false )
                 {
@@ -444,7 +434,7 @@ class eZApproveType extends eZWorkflowEventType
                     if ( is_array( $userGroupIDList ) and
                          count( $userGroupIDList ) > 0 )
                     {
-                        $returnState = eZApproveType::validateGroupIDList( $userGroupIDList, $reason );
+                        $returnState = (new eZApproveType())->validateGroupIDList($userGroupIDList, $reason);
                     }
                 }
             }
@@ -469,12 +459,12 @@ class eZApproveType extends eZWorkflowEventType
                             {
                             case "AddApproveUsers":
                                 {
-                                    $returnState = eZApproveType::validateUserIDList( $objectIDArray, $reason );
+                                    $returnState = (new eZApproveType())->validateUserIDList($objectIDArray, $reason);
                                 } break;
                             case 'AddApproveGroups':
                             case 'AddExcludeUser':
                                 {
-                                    $returnState = eZApproveType::validateGroupIDList( $objectIDArray, $reason );
+                                    $returnState = (new eZApproveType())->validateGroupIDList($objectIDArray, $reason);
                                 } break;
                             case 'AddExcludedGroups':
                                 {
@@ -491,10 +481,7 @@ class eZApproveType extends eZWorkflowEventType
         if ( $returnState == eZInputValidator::STATE_INVALID )
         {
             $validation[ 'processed' ] = true;
-            $validation[ 'events' ][] = array( 'id' => $workflowEvent->attribute( 'id' ),
-                                               'placement' => $workflowEvent->attribute( 'placement' ),
-                                               'workflow_type' => &$this,
-                                               'reason' => $reason );
+            $validation[ 'events' ][] = ['id' => $workflowEvent->attribute( 'id' ), 'placement' => $workflowEvent->attribute( 'placement' ), 'workflow_type' => &$this, 'reason' => $reason];
         }
         return $returnState;
     }
@@ -508,7 +495,7 @@ class eZApproveType extends eZWorkflowEventType
             $sectionsArray = $http->postVariable( $sectionsVar );
             if ( in_array( '-1', $sectionsArray ) )
             {
-                $sectionsArray = array( -1 );
+                $sectionsArray = [-1];
             }
             $sectionsString = implode( ',', $sectionsArray );
             $event->setAttribute( "data_text1", $sectionsString );
@@ -520,7 +507,7 @@ class eZApproveType extends eZWorkflowEventType
             $languageArray = $http->postVariable( $languageVar );
             if ( in_array( '-1', $languageArray ) )
             {
-                $languageArray = array();
+                $languageArray = [];
             }
             $languageMask = 0;
             foreach ( $languageArray as $languageID )
@@ -631,14 +618,10 @@ class eZApproveType extends eZWorkflowEventType
             case 'AddApproveUsers' :
             {
                 $userClassNames = eZUser::fetchUserClassNames();
-                if ( count( $userClassNames ) > 0 )
+                if ( (is_countable($userClassNames) ? count( $userClassNames ) : 0) > 0 )
                 {
-                    eZContentBrowse::browse( array( 'action_name' => 'SelectMultipleUsers',
-                                                    'from_page' => '/workflow/edit/' . $workflowEvent->attribute( 'workflow_id' ),
-                                                    'custom_action_data' => array( 'event_id' => $eventID,
-                                                                                   'browse_action' => $action ),
-                                                    'class_array' => $userClassNames ),
-                                             $module );
+                    eZContentBrowse::browse( $module,
+                                             ['action_name' => 'SelectMultipleUsers', 'from_page' => '/workflow/edit/' . $workflowEvent->attribute( 'workflow_id' ), 'custom_action_data' => ['event_id' => $eventID, 'browse_action' => $action], 'class_array' => $userClassNames] );
                 }
             } break;
 
@@ -655,14 +638,10 @@ class eZApproveType extends eZWorkflowEventType
             case 'AddExcludeUser' :
             {
                 $groupClassNames = eZUser::fetchUserGroupClassNames();
-                if ( count( $groupClassNames ) > 0 )
+                if ( (is_countable($groupClassNames) ? count( $groupClassNames ) : 0) > 0 )
                 {
-                    eZContentBrowse::browse( array( 'action_name' => 'SelectMultipleUsers',
-                                                    'from_page' => '/workflow/edit/' . $workflowEvent->attribute( 'workflow_id' ),
-                                                    'custom_action_data' => array( 'event_id' => $eventID,
-                                                                                   'browse_action' => $action ),
-                                                    'class_array' => $groupClassNames ),
-                                             $module );
+                    eZContentBrowse::browse( $module,
+                                             ['action_name' => 'SelectMultipleUsers', 'from_page' => '/workflow/edit/' . $workflowEvent->attribute( 'workflow_id' ), 'custom_action_data' => ['event_id' => $eventID, 'browse_action' => $action], 'class_array' => $groupClassNames] );
                 }
             } break;
 
@@ -700,7 +679,7 @@ class eZApproveType extends eZWorkflowEventType
 
     /*
     */
-    function cleanupAfterRemoving( $attr = array() )
+    function cleanupAfterRemoving( $attr = [] )
     {
         foreach ( array_keys( $attr ) as $attrKey )
         {
@@ -726,11 +705,9 @@ class eZApproveType extends eZWorkflowEventType
                          foreach ( $excludedGroupsID as $groupID )
                          {
                              // $IDArray will contain IDs of "Excluded user groups"
-                             $IDArray = explode( ',', $groupID[ 'data_text2' ] );
+                             $IDArray = explode( ',', (string) $groupID[ 'data_text2' ] );
                              // $newIDArray will contain  array without $contentObjectID
-                             $newIDArray = array_filter( $IDArray, function ( $v ) use ( $contentObjectID ) {
-                                 return $v != $contentObjectID;
-                             });
+                             $newIDArray = array_filter( $IDArray, fn($v) => $v != $contentObjectID);
                              $newValues = $db->escapeString( implode( ',', $newIDArray ) );
                              $db->query( "UPDATE ezworkflow_event
                                           SET    data_text2 = '$newValues'

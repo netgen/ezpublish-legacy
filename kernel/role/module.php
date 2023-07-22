@@ -6,38 +6,14 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZRole' );
+$Module = ['name' => 'eZRole'];
 
-$ViewList = array();
-$ViewList['list'] = array(
-    'script' => 'list.php',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'post_actions' => array( 'BrowseActionName' ),
-    'unordered_params' => array( 'offset' => 'Offset' ),
-    'params' => array(  ) );
-$ViewList['edit'] = array(
-    'script' => 'edit.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'params' => array( 'RoleID' ) );
-$ViewList['copy'] = array(
-    'script' => 'copy.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'params' => array( 'RoleID' ) );
-$ViewList['policyedit'] = array(
-    'script' => 'policyedit.php',
-    'ui_context' => 'edit',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'params' => array( 'PolicyID' ) );
-$ViewList['view'] = array(
-    'script' => 'view.php',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'post_actions' => array( 'BrowseActionName' ),
-    'params' => array( 'RoleID' ) );
-$ViewList['assign'] = array(
-    'script' => 'assign.php',
-    'default_navigation_part' => 'ezusernavigationpart',
-    'params' => array( 'RoleID', 'LimitIdent', 'LimitValue' ) );
+$ViewList = [];
+$ViewList['list'] = ['script' => 'list.php', 'default_navigation_part' => 'ezusernavigationpart', 'post_actions' => ['BrowseActionName'], 'unordered_params' => ['offset' => 'Offset'], 'params' => []];
+$ViewList['edit'] = ['script' => 'edit.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezusernavigationpart', 'params' => ['RoleID']];
+$ViewList['copy'] = ['script' => 'copy.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezusernavigationpart', 'params' => ['RoleID']];
+$ViewList['policyedit'] = ['script' => 'policyedit.php', 'ui_context' => 'edit', 'default_navigation_part' => 'ezusernavigationpart', 'params' => ['PolicyID']];
+$ViewList['view'] = ['script' => 'view.php', 'default_navigation_part' => 'ezusernavigationpart', 'post_actions' => ['BrowseActionName'], 'params' => ['RoleID']];
+$ViewList['assign'] = ['script' => 'assign.php', 'default_navigation_part' => 'ezusernavigationpart', 'params' => ['RoleID', 'LimitIdent', 'LimitValue']];
 
 ?>

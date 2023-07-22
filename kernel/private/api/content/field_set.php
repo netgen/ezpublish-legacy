@@ -27,7 +27,6 @@ class ezpContentFieldSet implements ArrayAccess, Iterator
 
     /**
      * Initializes a level one ezpContentFieldSet from an eZContentObject
-     * @param eZContentObject $contentObject
      * @return ezpContentFieldSet
      */
     public static function fromContentObject( eZContentObject $contentObject )

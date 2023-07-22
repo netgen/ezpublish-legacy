@@ -20,7 +20,7 @@ class eZEXIFImageAnalyzer
     /*!
      Checks the file for EXIF data and returns the information.
     */
-    function process( $mimeData, $parameters = array() )
+    function process( $mimeData, $parameters = [] )
     {
         $printInfo = false;
         if ( isset( $parameters['print_info'] ) )
@@ -34,12 +34,12 @@ class eZEXIFImageAnalyzer
                 $exifData = @exif_read_data( $filename, "COMPUTED,IFD0,COMMENT,EXIF", true );
                 if ( $exifData )
                 {
-                    $info = array();
+                    $info = [];
                     if ( isset( $exifData['COMPUTED'] ) )
                     {
                         foreach ( $exifData['COMPUTED'] as $key => $item )
                         {
-                            if ( strtolower( $key ) == 'html' )
+                            if ( strtolower( (string) $key ) == 'html' )
                                 continue;
                             $info[$key] = $exifData['COMPUTED'][$key];
                         }

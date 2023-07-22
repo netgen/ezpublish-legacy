@@ -14,25 +14,18 @@ require 'autoload.php';
 set_time_limit( 0 );
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "Fix older occurrences of link items in XML-blocks, where they might not be\n" .
+$script = eZScript::instance( ['description' => ( "Fix older occurrences of link items in XML-blocks, where they might not be\n" .
                                                         "linked correctly for all versions/translations. This script will update\n" .
                                                         "these references for existing entries. Note that URLs which have been lost\n" .
                                                         "already will not be restored in this process, these need to be re-entered.\n" .
                                                         "\n" .
-                                                        "fixezurlobjectlink.php" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true,
-                                    ) );
+                                                        "fixezurlobjectlink.php" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 
 $config = "[fix][fetch-limit:]";
 $argConfig = "";
-$optionHelp = array(
-                    "fix" => "Fix missing ezurl-object-link references. This will make sure that URLs\n" .
-                    "created with older versions, will not be lost, when older\nversions/translations are removed.",
-                    "fetch-limit" => "The number of attributes to fetch in one chunk. Default value is 200,\nthe limit must be higher than 1."
-                    );
+$optionHelp = ["fix" => "Fix missing ezurl-object-link references. This will make sure that URLs\n" .
+"created with older versions, will not be lost, when older\nversions/translations are removed.", "fetch-limit" => "The number of attributes to fetch in one chunk. Default value is 200,\nthe limit must be higher than 1."];
 $arguments = false;
 $useStandardOptions = true;
 
@@ -71,17 +64,14 @@ class ezpUrlObjectLinkUpdate
     public $xmlClassAttributeIdArray = null;
     public $xmlAttrCount = null;
 
-    public $offset;
-    public $fetchLimit;
-    public $processedCount;
+    public $offset = 0;
+    public $fetchLimit = 200;
+    public $processedCount = 0;
 
     public $outputEntryNumber;
-    public $finalOutputMessageArray = array();
+    public $finalOutputMessageArray = [];
 
-    public $cli;
-    public $script;
-
-    public $doFix;
+    public $doFix = false;
 
     /**
      * Create a new instance of the ezpUrlObjectLink object.
@@ -90,20 +80,11 @@ class ezpUrlObjectLinkUpdate
      * @param eZScript $script
      * @param array $options
      */
-    public function __construct( $cli, $script, $options )
+    public function __construct( public $cli, public $script, $options )
     {
-        $this->cli = $cli;
-        $this->script = $script;
-
-        $this->offset = 0;
-        $this->fetchLimit = 200;
-        $this->processedCount = 0;
-
         $this->verboseLevel = $this->script->verboseOutputLevel();
 
         $this->script->resetIteration( $this->xmlTextContentObjectAttributeCount() );
-
-        $this->doFix = false;
         if ( $options['fix'] !== null and $options['fix'] )
         {
             $this->doFix = true;
@@ -126,9 +107,8 @@ class ezpUrlObjectLinkUpdate
         {
             // First we want to find all class attributes which are defined. We won't be touching
             // attributes which are in a transient state.
-            $xmlTextAttributes = eZContentClassAttribute::fetchList( true, array( 'data_type' => 'ezxmltext',
-                                                                                  'version' => 0 ) );
-            $this->xmlClassAttributeIdArray = array();
+            $xmlTextAttributes = eZContentClassAttribute::fetchList( true, ['data_type' => 'ezxmltext', 'version' => 0] );
+            $this->xmlClassAttributeIdArray = [];
 
             foreach ( $xmlTextAttributes as $classAttr )
             {
@@ -170,8 +150,7 @@ class ezpUrlObjectLinkUpdate
         else
         {
             $this->outputEntryNumber++;
-            $this->finalOutputMessageArray[$this->outputEntryNumber] = array( "messages" => array( $message ),
-                                                                              "label" => $label );
+            $this->finalOutputMessageArray[$this->outputEntryNumber] = ["messages" => [$message], "label" => $label];
         }
     }
 
@@ -185,8 +164,7 @@ class ezpUrlObjectLinkUpdate
     {
         while ( $this->processedCount < $this->xmlTextContentObjectAttributeCount() )
         {
-            $limit = array( 'offset' => $this->offset,
-                            'length' => $this->fetchLimit );
+            $limit = ['offset' => $this->offset, 'length' => $this->fetchLimit];
 
             $xmlAttributeChunk = eZContentObjectAttribute::fetchListByClassID( $this->xmlClassAttributeIds(), false, $limit, true, false );
 
@@ -230,7 +208,7 @@ class ezpUrlObjectLinkUpdate
                 }
 
                 $linkNodes = $dom->getElementsByTagName( 'link' );
-                $urlIdArray = array();
+                $urlIdArray = [];
 
                 foreach ( $linkNodes as $link )
                 {
@@ -283,7 +261,7 @@ class ezpUrlObjectLinkUpdate
                 $label = null;
             }
 
-            $this->processedCount += count( $xmlAttributeChunk );
+            $this->processedCount += is_countable($xmlAttributeChunk) ? count( $xmlAttributeChunk ) : 0;
             $this->offset += $this->fetchLimit;
             unset( $xmlAttributeChunk );
         }

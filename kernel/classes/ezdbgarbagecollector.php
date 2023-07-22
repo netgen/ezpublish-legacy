@@ -34,7 +34,7 @@ class eZDBGarbageCollector
     /*!
      Controls the default value for how many items are cleaned in one batch operation.
     */
-    const ITEM_LIMIT = 3000;
+    final public const ITEM_LIMIT = 3000;
 
     /*!
      \static
@@ -102,12 +102,12 @@ WHERE ezsession.session_key IS NULL";
 
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
             if ( count( $rows ) == 0 )
                 break;
 
-            $productCollectionIDList = array();
-            $idList = array();
+            $productCollectionIDList = [];
+            $idList = [];
             foreach ( $rows as $row )
             {
                 $idList[] = (int)$row['id'];
@@ -152,6 +152,7 @@ WHERE ezsession.session_key IS NULL";
     */
     function collectProductCollections( $maxTime = false, $sleepTime = false, $limit = false )
     {
+        $sql = null;
         $db = eZDB::instance();
 
         // Create a temporary table for filling in collection ids
@@ -216,11 +217,11 @@ WHERE ezproductcollection_used.id IS NULL";
 
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
             if ( count( $rows ) == 0 )
                 break;
 
-            $idList = array();
+            $idList = [];
             foreach ( $rows as $row )
             {
                 $idList[] = (int)$row['id'];
@@ -307,11 +308,11 @@ WHERE ezproductcollection.id IS NULL";
 
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
             if ( count( $rows ) == 0 )
                 break;
 
-            $idList = array();
+            $idList = [];
             foreach ( $rows as $row )
             {
                 $idList[] = (int)$row['productcollection_id'];
@@ -390,11 +391,11 @@ WHERE ezproductcollection_item.id IS NULL";
 
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
             if ( count( $rows ) == 0 )
                 break;
 
-            $idList = array();
+            $idList = [];
             foreach ( $rows as $row )
             {
                 $idList[] = (int)$row['item_id'];
