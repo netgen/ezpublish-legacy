@@ -26,17 +26,17 @@
 
 class eZTemplateSectionIterator
 {
+    public $InternalAttributes = array( 'item' => false,
+                                       'key' => false,
+                                       'index' => false,
+                                       'number' => false,
+                                       'sequence' => false,
+                                       'last' => false );
     /**
      * Initializes the iterator with empty values.
      */
     public function __construct()
     {
-        $this->InternalAttributes = array( 'item' => false,
-                                           'key' => false,
-                                           'index' => false,
-                                           'number' => false,
-                                           'sequence' => false,
-                                           'last' => false );
     }
 
     /*!

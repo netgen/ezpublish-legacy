@@ -18,8 +18,6 @@ class eZTemplateTextOperator
 {
     public function __construct()
     {
-        $this->Operators= array( 'concat', 'indent' );
-
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
@@ -275,7 +273,7 @@ class eZTemplateTextOperator
 
     /// \privatesection
     public $ConcatName;
-    public $Operators;
+    public $Operators = array( 'concat', 'indent' );
     public $IndentName;
 }
 

@@ -20,7 +20,6 @@ class eZTranslatorGroup extends eZTranslatorHandler
     public function __construct( $is_key_based )
     {
         parent::__construct( $is_key_based );
-        $this->Handlers = array();
     }
 
     /*!
@@ -141,7 +140,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
 
     /// \privatesection
     /// The array of grouped handlers
-    public $Handlers;
+    public $Handlers = array();
 }
 
 ?>

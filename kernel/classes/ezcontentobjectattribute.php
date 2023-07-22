@@ -18,19 +18,9 @@
 
 class eZContentObjectAttribute extends eZPersistentObject
 {
+    public $AddToBasketIsValid;
     public function __construct( $row )
     {
-        $this->Content = null;
-        $this->DisplayInfo = null;
-        $this->HTTPValue = null;
-        $this->ValidationError = null;
-        $this->ValidationLog = null;
-        $this->ContentClassAttributeIdentifier = null;
-        $this->ContentClassAttributeID = null;
-        $this->InputParameters = false;
-        $this->HasValidationError = false;
-        $this->DataTypeCustom = null;
-        $this->DataTypeString = null;
         parent::__construct( $row );
     }
 
@@ -1479,37 +1469,37 @@ class eZContentObjectAttribute extends eZPersistentObject
     }
 
     /// Contains the value(s) submitted in HTTP form
-    public $HTTPValue;
+    public $HTTPValue = null;
 
     /// Contains the content for this attribute
-    public $Content;
+    public $Content = null;
 
     /// Contains information on how to display the current attribute in various viewmodes
-    public $DisplayInfo;
+    public $DisplayInfo = null;
 
     /// Stores the is valid
     public $IsValid;
 
-    public $ContentClassAttributeID;
+    public $ContentClassAttributeID = null;
 
     /// Contains the last validation error
-    public $ValidationError;
+    public $ValidationError = null;
 
     /// Contains the last validation error
-    public $ValidationLog;
+    public $ValidationLog = null;
 
     ///
-    public $ContentClassAttributeIdentifier;
+    public $ContentClassAttributeIdentifier = null;
     public $ContentClassAttributeCanTranslate;
     public $ContentClassAttributeName;
     public $ContentClassAttributeIsInformationCollector;
     public $ContentClassAttributeIsRequired;
 
     public $ValidationParameters = array();
-    public $InputParameters;
-    public $HasValidationError;
-    public $DataTypeCustom;
-    public $DataTypeString;
+    public $InputParameters = false;
+    public $HasValidationError = false;
+    public $DataTypeCustom = null;
+    public $DataTypeString = null;
     public $Version;
     public $LanguageCode;
     public $LanguageID;

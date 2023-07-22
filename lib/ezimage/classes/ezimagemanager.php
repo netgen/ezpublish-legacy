@@ -88,18 +88,6 @@ class eZImageManager
      */
     public function __construct()
     {
-        $this->SupportedFormats = array();
-        $this->SupportedMIMEMap = array();
-        $this->ImageHandlers = array();
-        $this->AliasList = array();
-        $this->Factories = array();
-        $this->ImageFilters = array();
-        $this->MIMETypeSettings = array();
-        $this->MIMETypeSettingsMap = array();
-        $this->QualityValues = array();
-        $this->QualityValueMap = array();
-        $this->QualityValueMapOverride = array();
-
         $ini = eZINI::instance( 'image.ini' );
         $this->TemporaryImageDirPath = eZSys::cacheDirectory() . '/' . $ini->variable( 'FileSettings', 'TemporaryDir' );
     }
@@ -1420,7 +1408,7 @@ class eZImageManager
     }
 
     /// \privatesection
-    public $ImageHandlers;
+    public $ImageHandlers = array();
     public $OutputMIME;
     public $OutputMIMEMap;
     public $Rules;
@@ -1428,16 +1416,16 @@ class eZImageManager
     public $RuleMap;
     public $MIMETypes;
     public $Types = array();
-    public $SupportedFormats;
-    public $SupportedMIMEMap;
-    public $AliasList;
-    public $Factories;
-    public $ImageFilters;
-    public $MIMETypeSettings;
-    public $MIMETypeSettingsMap;
-    public $QualityValues;
-    public $QualityValueMap;
-    public $QualityValueMapOverride;
+    public $SupportedFormats = array();
+    public $SupportedMIMEMap = array();
+    public $AliasList = array();
+    public $Factories = array();
+    public $ImageFilters = array();
+    public $MIMETypeSettings = array();
+    public $MIMETypeSettingsMap = array();
+    public $QualityValues = array();
+    public $QualityValueMap = array();
+    public $QualityValueMapOverride = array();
     public $TemporaryImageDirPath;
     public $ConversionRules;
     

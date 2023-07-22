@@ -71,10 +71,6 @@ class eZTemplateLogicOperator
      */
     public function __construct()
     {
-        $this->Operators = array( 'lt', 'gt', 'le', 'ge', 'eq', 'ne',
-                                  'null', 'not',
-                                  'or', 'and',
-                                  'true', 'false', 'choose' );
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
@@ -864,7 +860,10 @@ class eZTemplateLogicOperator
 
     /// \privatesection
     /// The array of operators
-    public $Operators;
+    public $Operators = array( 'lt', 'gt', 'le', 'ge', 'eq', 'ne',
+                              'null', 'not',
+                              'or', 'and',
+                              'true', 'false', 'choose' );
     /// The "less than" name
     public $LtName;
     /// The "greater than" name

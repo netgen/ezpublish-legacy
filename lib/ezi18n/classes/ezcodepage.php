@@ -17,6 +17,7 @@
 
 class eZCodePage
 {
+    public $ReadExtraMap;
     const CACHE_CODE_DATE = 1028204478;
     
     /**
@@ -30,10 +31,6 @@ class eZCodePage
         $this->RequestedCharsetCode = $charset_code;
         $this->CharsetCode = eZCharsetInfo::realCharsetCode( $charset_code );
         $this->CharsetEncodingScheme = eZCharsetInfo::characterEncodingScheme( $charset_code );
-        $this->Valid = false;
-        $this->SubstituteChar = 63; // the ? character
-        $this->MinCharValue = 0;
-        $this->MaxCharValue = 0;
 
         $this->load( $use_cache );
     }
@@ -814,13 +811,13 @@ class eZCodePage
     /// Maps utf8 to normal codes
     public $UTF8CodeMap;
     /// The minimum key value for the mapping tables
-    public $MinCharValue;
+    public $MinCharValue = 0;
     /// The maximum key value for the mapping tables
-    public $MaxCharValue;
+    public $MaxCharValue = 0;
     /// Whether the codepage is valid or not
-    public $Valid;
+    public $Valid = false;
     /// The character to use when an alternative doesn't exist
-    public $SubstituteChar;
+    public $SubstituteChar = 63;
 }
 
 // Checks if index.php or any other script has set any codepage permissions

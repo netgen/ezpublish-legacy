@@ -16,6 +16,7 @@
 
 class eZModuleOperationInfo
 {
+    public $OperationList = array();
     const ERROR_NO_CLASS = 5;
     const ERROR_NO_CLASS_METHOD = 6;
     const ERROR_CLASS_INSTANTIATE_FAILED = 7;
@@ -36,9 +37,6 @@ class eZModuleOperationInfo
     public function __construct( $moduleName, $useTriggers = true )
     {
         $this->ModuleName = $moduleName;
-        $this->IsValid = false;
-        $this->OperationList = array();
-        $this->Memento = null;
         $this->UseTriggers = $useTriggers;
     }
 
@@ -853,13 +851,13 @@ class eZModuleOperationInfo
     /// \privatesection
     public $ModuleName;
     public $FunctionList;
-    public $IsValid;
+    public $IsValid = false;
     public $UseTriggers = false;
 
     /**
      * @var eZOperationMemento
      */
-    public $Memento;
+    public $Memento = null;
 }
 
 ?>

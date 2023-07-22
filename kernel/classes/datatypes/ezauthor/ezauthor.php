@@ -27,10 +27,8 @@
 
 class eZAuthor
 {
-    public function __construct( )
+    public function __construct()
     {
-        $this->Authors = array();
-        $this->AuthorCount = 0;
     }
 
     /*!
@@ -205,10 +203,10 @@ class eZAuthor
     }
 
     /// Contains the Authors.
-    protected $Authors;
+    protected $Authors = array();
 
     /// Contains the author counter value.
-    protected $AuthorCount;
+    protected $AuthorCount = 0;
 
     // Contains the name of the author set.
     protected $Name;

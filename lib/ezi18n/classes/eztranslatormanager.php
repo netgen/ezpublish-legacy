@@ -33,7 +33,6 @@ class eZTranslatorManager
 
     public function __construct()
     {
-        $this->Handlers = array();
     }
 
     /*!
@@ -239,7 +238,7 @@ class eZTranslatorManager
 
     /// \privatesection
     /// The array of handler objects
-    public $Handlers;
+    public $Handlers = array();
 }
 
 ?>

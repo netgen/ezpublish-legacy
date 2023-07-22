@@ -18,7 +18,7 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
      *
      * @var #E#V_SERVER|string
      */
-    protected $httpUserAgent;
+    protected $httpUserAgent = '';
 
     /**
      * Container for the HTTP Accept string
@@ -47,7 +47,6 @@ class ezpMobileDeviceRegexpFilter implements ezpMobileDeviceDetectFilterInterfac
      */
     public function __construct()
     {
-        $this->httpUserAgent = '';
         if ( isset( $_SERVER['HTTP_USER_AGENT'] ) )
         {
             $this->httpUserAgent = $_SERVER['HTTP_USER_AGENT'];

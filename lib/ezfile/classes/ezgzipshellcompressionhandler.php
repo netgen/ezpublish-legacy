@@ -22,8 +22,6 @@ class eZGZIPShellCompressionHandler extends eZCompressionHandler
 {
     public function __construct()
     {
-        $this->File = false;
-        $this->Level = false;
         parent::__construct( 'GZIP (shell)', 'gzipshell' );
     }
 
@@ -139,9 +137,9 @@ class eZGZIPShellCompressionHandler extends eZCompressionHandler
 
     /// \privatesection
     /// File pointer, returned by gzopen
-    public $File;
+    public $File = false;
     /// The compression level
-    public $Level;
+    public $Level = false;
 }
 
 ?>

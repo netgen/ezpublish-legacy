@@ -33,11 +33,11 @@
 
 class eZOrderStatusHistory extends eZPersistentObject
 {
+    public $StatusName = null;
+    public $StatusID;
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Modifier = null;
-        $this->StatusName = null;
         if ( isset( $row['status_name'] ) )
             $this->StatusName = $row['status_name'];
     }
@@ -198,7 +198,7 @@ class eZOrderStatusHistory extends eZPersistentObject
     /// \privatesection
     /// This is used for caching the current modifier,
     /// it will either contain \c null (uncached) or a content object (cached).
-    public $Modifier;
+    public $Modifier = null;
 }
 
 ?>

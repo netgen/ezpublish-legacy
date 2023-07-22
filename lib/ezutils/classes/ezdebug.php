@@ -55,6 +55,7 @@
 
 class eZDebug
 {
+    public $StoreLog;
     const LEVEL_NOTICE = 1;
     const LEVEL_WARNING = 2;
     const LEVEL_ERROR = 3;
@@ -128,12 +129,6 @@ class eZDebug
                                                           "debug.log" ),
                                  self::LEVEL_STRICT => array( 'var/log/',
                                                            'strict.log' ) );
-        $this->MessageTypes = array( self::LEVEL_NOTICE,
-                                     self::LEVEL_WARNING,
-                                     self::LEVEL_ERROR,
-                                     self::LEVEL_TIMING_POINT,
-                                     self::LEVEL_DEBUG,
-                                     self::LEVEL_STRICT );
         $this->MessageNames = array( self::LEVEL_NOTICE => 'Notice',
                                      self::LEVEL_WARNING => 'Warning',
                                      self::LEVEL_ERROR => 'Error',
@@ -152,7 +147,6 @@ class eZDebug
                                   self::LEVEL_TIMING_POINT => false,
                                   self::LEVEL_DEBUG => false,
                                   self::LEVEL_STRICT => false );
-        $this->GlobalLogFileEnabled = true;
         if ( isset( $GLOBALS['eZDebugLogFileEnabled'] ) )
         {
             $this->GlobalLogFileEnabled = $GLOBALS['eZDebugLogFileEnabled'];
@@ -2009,13 +2003,18 @@ class eZDebug
     public $MessageOutput;
 
     /// A list of message types
-    public $MessageTypes;
+    public $MessageTypes = array( self::LEVEL_NOTICE,
+                                 self::LEVEL_WARNING,
+                                 self::LEVEL_ERROR,
+                                 self::LEVEL_TIMING_POINT,
+                                 self::LEVEL_DEBUG,
+                                 self::LEVEL_STRICT );
 
     /// A map with message types and whether they should do file logging.
     public $LogFileEnabled;
 
     /// Controls whether logfiles are used at all.
-    public $GlobalLogFileEnabled;
+    public $GlobalLogFileEnabled = true;
 
     /// The time when the script was started
     public $ScriptStart;

@@ -10,12 +10,11 @@
 
 class eZSerializedObjectNameList
 {
+    public $nameList;
     const ALWAYS_AVAILABLE_STR = 'always-available';
 
     public function __construct( $serializedNamesString = false )
     {
-        $this->DefaultLanguage = null;
-
         if ( $serializedNamesString )
             $this->initFromSerializedList( $serializedNamesString );
     }
@@ -620,7 +619,7 @@ class eZSerializedObjectNameList
 
     public $NameList;
     public $HasDirtyData;
-    public $DefaultLanguage;
+    public $DefaultLanguage = null;
 }
 
 ?>

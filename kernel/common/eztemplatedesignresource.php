@@ -35,8 +35,6 @@ class eZTemplateDesignResource extends eZTemplateFileResource
     public function __construct( $name = "design" )
     {
         parent::__construct( $name, true );
-        $this->Keys = array();
-        $this->KeyStack = array();
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -1040,9 +1038,9 @@ class eZTemplateDesignResource extends eZTemplateFileResource
         $this->OverrideSiteAccess = $siteAccess;
     }
 
-    public $Keys;
+    public $Keys = array();
     public $OverrideSiteAccess = false;
-    public $KeyStack;
+    public $KeyStack = array();
 }
 
 ?>

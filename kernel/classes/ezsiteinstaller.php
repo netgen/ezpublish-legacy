@@ -29,8 +29,6 @@ class eZSiteInstaller
     {
         $this->initSettings( $parameters );
         $this->initSteps();
-
-        $this->LastErrorCode = eZSiteInstaller::ERR_OK;
     }
 
     /**
@@ -1745,7 +1743,7 @@ class eZSiteInstaller
     // define an order of functions to execute.
     public $Steps;
     // hold an error code of last executed step.
-    public $LastErrorCode;
+    public $LastErrorCode = eZSiteInstaller::ERR_OK;
 }
 
 ?>

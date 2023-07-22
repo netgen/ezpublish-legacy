@@ -16,6 +16,7 @@
 
 class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
 {
+    public $InstallItem;
     /**
      * Constructor
      *

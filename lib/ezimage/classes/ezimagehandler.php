@@ -17,6 +17,19 @@
 
 class eZImageHandler
 {
+    /**
+     * @var string
+     */
+    public $HandlerName;
+    public $SupportedInputMIMETypes;
+    public $SupportedOutputMIMETypes;
+    public $ConversionRules;
+    public $OutputRewriteType;
+    public $Filters;
+    public $FilterMap = array();
+    public $SupportImageFilters = array();
+    public $MIMETagMap = array();
+    public $IsEnabled;
     const KEEP_SUFFIX = 1;
     const REPLACE_SUFFIX = 2;
     const PREPEND_TAG_REPLACE_SUFFIX = 3;
@@ -43,9 +56,6 @@ class eZImageHandler
         $this->ConversionRules = $conversionRules;
         $this->OutputRewriteType = $outputRewriteType;
         $this->Filters = $filters;
-        $this->FilterMap = array();
-        $this->SupportImageFilters = array();
-        $this->MIMETagMap = array();
         if ( $mimeTagMap )
             $this->MIMETagMap = $mimeTagMap;
         if ( $this->Filters)

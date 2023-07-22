@@ -18,7 +18,6 @@ class eZVatRule extends eZPersistentObject
 {
     public function __construct( $row )
     {
-        $this->ProductCategories = null;
         parent::__construct( $row );
     }
 
@@ -345,7 +344,7 @@ class eZVatRule extends eZPersistentObject
     }
 
 
-    public $ProductCategories;
+    public $ProductCategories = null;
 }
 
 ?>

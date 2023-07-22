@@ -15,6 +15,7 @@
  */
 class eZContentObject extends eZPersistentObject
 {
+    public $ContentObjectAttributeArray;
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
     const STATUS_ARCHIVED = 2;
@@ -48,7 +49,6 @@ class eZContentObject extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->ClassIdentifier = false;
         if ( isset( $row['contentclass_identifier'] ) )
             $this->ClassIdentifier = $row['contentclass_identifier'];
         if ( isset( $row['class_identifier'] ) )
@@ -6710,7 +6710,7 @@ class eZContentObject extends eZPersistentObject
     /**
      * @var string The object's class identifier
      */
-    public $ClassIdentifier;
+    public $ClassIdentifier = false;
 
     /**
      * @var eZContentObjectAttribute[] The datamap for content object attributes

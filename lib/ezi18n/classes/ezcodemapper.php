@@ -23,8 +23,6 @@ class eZCodeMapper
 
     public function __construct()
     {
-        $this->TransformationTables = array();
-        $this->TransformationFiles = array();
     }
 
     /*!
@@ -1816,8 +1814,8 @@ class eZCodeMapper
     }
 
     /// \privatesection
-    public $TransformationTables;
-    public $TransformationFiles;
+    public $TransformationTables = array();
+    public $TransformationFiles = array();
     public $ISOUnicodeCodec;
 }
 

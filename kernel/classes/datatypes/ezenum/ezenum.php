@@ -28,9 +28,6 @@ class eZEnum
         $this->ClassAttributeID = $id;
         $this->ClassAttributeVersion = $version;
         $this->Enumerations = eZEnumValue::fetchAllElements( $this->ClassAttributeID, $this->ClassAttributeVersion );
-        $this->IsmultipleEnum = null;
-        $this->IsoptionEnum = null;
-        $this->ObjectEnumerations = null;
     }
 
     function attributes()
@@ -191,11 +188,11 @@ class eZEnum
     }
 
     public $Enumerations;
-    public $ObjectEnumerations;
+    public $ObjectEnumerations = null;
     public $ClassAttributeID;
     public $ClassAttributeVersion;
-    public $IsmultipleEnum;
-    public $IsoptionEnum;
+    public $IsmultipleEnum = null;
+    public $IsoptionEnum = null;
 }
 
 ?>

@@ -40,14 +40,6 @@ class eZTemplateArithmeticOperator
 {
     public function __construct()
     {
-        $this->Operators = array( 'sum', 'sub', 'inc', 'dec',
-                                  'div', 'mod', 'mul',
-                                  'max', 'min',
-                                  'abs', 'ceil', 'floor', 'round',
-                                  'int', 'float',
-                                  'count',
-                                  'roman',
-                                  'rand' );
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
@@ -873,7 +865,14 @@ class eZTemplateArithmeticOperator
         return '';
     }
 
-    public $Operators;
+    public $Operators = array( 'sum', 'sub', 'inc', 'dec',
+                              'div', 'mod', 'mul',
+                              'max', 'min',
+                              'abs', 'ceil', 'floor', 'round',
+                              'int', 'float',
+                              'count',
+                              'roman',
+                              'rand' );
     public $SumName;
     public $SubName;
     public $IncName;

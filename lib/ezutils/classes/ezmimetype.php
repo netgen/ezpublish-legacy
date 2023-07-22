@@ -34,12 +34,7 @@ class eZMimeType
 {
     public function __construct()
     {
-        $this->SuffixList = array();
-        $this->PrefixList = array();
-        $this->MIMEList = array();
-
         $ini = eZINI::instance( 'mime.ini' );
-        $this->QuickMIMETypes = array();
         foreach ( $ini->groups() as $extension => $blockValues )
         {
             foreach ( $blockValues['Types'] as $type )
@@ -381,11 +376,11 @@ class eZMimeType
     /// \privatesection
 
     /// An associative array which maps from suffix name to MIME type name.
-    public $SuffixList;
+    public $SuffixList = array();
     /// An associative array which maps from prefix name to MIME type name.
-    public $PrefixList;
+    public $PrefixList = array();
     /// An associative array which maps MIME type name to MIME structure.
-    public $MIMEList;
+    public $MIMEList = array();
 
     public $QuickContentMatch = array(
         array( array( 0, 'string', 'GIF87a', 'image/gif' ),

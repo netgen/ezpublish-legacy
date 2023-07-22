@@ -31,14 +31,6 @@ class eZScriptClusterPurge
 {
     public function __construct()
     {
-        $this->options = array(
-            'dry-run' => false,
-            'iteration-sleep' => 1,
-            'iteration-limit' => 100,
-            'memory-monitoring' => false,
-            'scopes' => false,
-            'expiry' => 2592000 // 60*60*24*30 = 30 days
-        );
     }
 
     /**
@@ -200,7 +192,14 @@ class eZScriptClusterPurge
         }
     }
 
-    private $options = array();
+    private $options = array(
+        'dry-run' => false,
+        'iteration-sleep' => 1,
+        'iteration-limit' => 100,
+        'memory-monitoring' => false,
+        'scopes' => false,
+        'expiry' => 2592000 // 60*60*24*30 = 30 days
+    );
 
     const LOG_FILE = 'clusterpurge.log';
 }

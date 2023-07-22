@@ -18,6 +18,13 @@
 
 class eZOrder extends eZPersistentObject
 {
+    public $ProductCollectionID;
+    public $IgnoreVAT;
+    public $OrderNr;
+    public $StatusID;
+    public $StatusModified;
+    public $StatusModifierID;
+    public $AccountIdentifier;
     const SHOW_NORMAL = 0;
     const SHOW_ARCHIVED = 1;
     const SHOW_ALL = 2;
@@ -25,7 +32,6 @@ class eZOrder extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Status = null;
     }
 
     static function definition()
@@ -1580,7 +1586,7 @@ class eZOrder extends eZPersistentObject
 
     /// \privatesection
     /// The cached status object or \c null if not cached yet.
-    public $Status;
+    public $Status = null;
 
 }
 

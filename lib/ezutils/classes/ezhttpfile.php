@@ -43,7 +43,6 @@ class eZHTTPFile
         $this->MimePart = $mime[1];
         $this->Filename = $variable["tmp_name"];
         $this->Size = $variable["size"];
-        $this->IsTemporary = true;
     }
 
     /*!
@@ -313,7 +312,7 @@ class eZHTTPFile
     /// The size of the local file
     public $Size;
     /// Whether the file is a temporary file or if it has been moved(stored).
-    public $IsTemporary;
+    public $IsTemporary = true;
 }
 
 ?>

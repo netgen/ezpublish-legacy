@@ -16,6 +16,7 @@
 
 class eZWorkflowType
 {
+    public $Attributes = array();
     const STATUS_NONE = 0;
     const STATUS_ACCEPTED = 1;
     const STATUS_REJECTED = 2;
@@ -45,9 +46,6 @@ class eZWorkflowType
         $this->TypeString = $group . "_" . $type;
         $this->GroupName = $groupName;
         $this->Name = $name;
-        $this->Information = "";
-        $this->ActivationDate = false;
-        $this->Attributes = array();
         $this->Attributes["group"] =& $this->Group;
         $this->Attributes["type"] =& $this->Type;
         $this->Attributes["type_string"] =& $this->TypeString;
@@ -404,8 +402,8 @@ class eZWorkflowType
     public $TypeString;
     public $GroupName;
     public $Name;
-    public $ActivationDate;
-    public $Information;
+    public $ActivationDate = false;
+    public $Information = "";
     public $TriggerTypes = array( '*' => true );
 }
 

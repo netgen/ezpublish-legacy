@@ -17,6 +17,12 @@
 
 class eZPackageCreationHandler
 {
+    public $Attributes;
+    public $InitializeStepMethodMap = array();
+    public $ValidateStepMethodMap = array();
+    public $CommitStepMethodMap = array();
+    public $LoadStepMethodMap = array();
+    public $StepMap;
     /**
      * Constructor
      *
@@ -31,10 +37,6 @@ class eZPackageCreationHandler
                                    'steps' => $steps,
                                    'step_map' => false,
                                    'current_steps' => $steps );
-        $this->InitializeStepMethodMap = array();
-        $this->ValidateStepMethodMap = array();
-        $this->CommitStepMethodMap = array();
-        $this->LoadStepMethodMap = array();
     }
 
     /*!

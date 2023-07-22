@@ -36,9 +36,6 @@ class eZRole extends eZPersistentObject
     public function __construct( $row = array() )
     {
         parent::__construct( $row );
-        $this->PolicyArray = 0;
-        $this->LimitIdentifier = false;
-        $this->LimitValue = false;
         if ( isset( $row['limit_identifier'] ) )
             $this->LimitIdentifier = $row['limit_identifier'];
         if ( isset( $row['limit_value'] ) )
@@ -921,10 +918,10 @@ class eZRole extends eZPersistentObject
     public $Name;
     public $Modules;
     public $Functions;
-    public $LimitValue;
-    public $LimitIdentifier;
+    public $LimitValue = false;
+    public $LimitIdentifier = false;
     public $UserRoleID;
-    public $PolicyArray;
+    public $PolicyArray = 0;
     public $Sets;
     public $Policies;
     public $AccessArray;

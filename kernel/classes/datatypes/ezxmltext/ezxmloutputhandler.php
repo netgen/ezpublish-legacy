@@ -18,6 +18,7 @@
 // if ( !class_exists( 'eZXMLSchema' ) )
 class eZXMLOutputHandler
 {
+    public $TemplateUri;
     /**
      * Constructor
      *
@@ -28,7 +29,6 @@ class eZXMLOutputHandler
     public function __construct( $xmlData, $aliasedType, $contentObjectAttribute = null )
     {
         $this->XMLData = $xmlData;
-        $this->AliasedHandler = null;
         $this->AliasedType = $aliasedType;
 
         if ( is_object( $contentObjectAttribute ) )
@@ -660,7 +660,7 @@ class eZXMLOutputHandler
     public $XMLSchema;
 
     public $AliasedType;
-    public $AliasedHandler;
+    public $AliasedHandler = null;
 
     public $Output = '';
     public $Tpl;

@@ -21,10 +21,14 @@
 
 class eZPathElement extends eZPersistentObject
 {
+    public $Path = null;
+    public $PathArray = null;
+    public $LangMask;
+    public $Action;
+    public $Text;
+    public $Parent;
     public function __construct( $row )
     {
-        $this->Path = null;
-        $this->PathArray = null;
         if ( array_key_exists( 'always_available', $row )  )
         {
             $this->AlwaysAvailable = $row['always_available'];

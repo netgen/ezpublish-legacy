@@ -38,7 +38,7 @@ class eZPersistentObject
      * @access protected
      * @var bool
      */
-    public $PersistentDataDirty;
+    public $PersistentDataDirty = false;
 
     /**
      * Initializes the object with the $row.
@@ -51,7 +51,6 @@ class eZPersistentObject
      */
     public function __construct( $row = null )
     {
-        $this->PersistentDataDirty = false;
         if ( is_numeric( $row ) )
             $row = $this->fetch( $row, false );
         $this->fill( $row );

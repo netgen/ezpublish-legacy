@@ -35,14 +35,6 @@ class eZTemplateLocaleOperator
      */
     public function __construct()
     {
-        $this->Operators = array( 'l10n', 'locale', 'datetime', 'currentdate', 'maketime', 'makedate', 'gettime' );
-        $this->LocaleName = 'l10n';
-        $this->LocaleFetchName = 'locale';
-        $this->DateTimeName = 'datetime';
-        $this->CurrentDateName = 'currentdate';
-        $this->MakeTimeName = 'maketime';
-        $this->MakeDateName = 'makedate';
-        $this->GetTimeName = 'gettime';
     }
 
     /*!
@@ -507,17 +499,17 @@ class eZTemplateLocaleOperator
 
     /// \privatesection
     /// The operator array
-    public $Operators;
+    public $Operators = array( 'l10n', 'locale', 'datetime', 'currentdate', 'maketime', 'makedate', 'gettime' );
     /// A reference to the locale object
     public $Locale;
 
-    public $LocaleName;
-    public $DateTimeName;
-    public $CurrentDateName;
-    public $LocaleFetchName;
-    public $MakeTimeName;
-    public $MakeDateName;
-    public $GetTimeName;
+    public $LocaleName = 'l10n';
+    public $DateTimeName = 'datetime';
+    public $CurrentDateName = 'currentdate';
+    public $LocaleFetchName = 'locale';
+    public $MakeTimeName = 'maketime';
+    public $MakeDateName = 'makedate';
+    public $GetTimeName = 'gettime';
 }
 
 ?>

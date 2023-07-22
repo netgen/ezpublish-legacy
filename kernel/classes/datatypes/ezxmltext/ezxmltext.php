@@ -27,9 +27,6 @@ class eZXMLText
     {
         $this->XMLData = $xmlData;
         $this->ContentObjectAttribute = $contentObjectAttribute;
-        $this->XMLInputHandler = null;
-        $this->XMLOutputHandler = null;
-        $this->PDFOutputHandler = null;
     }
 
     function attributes()
@@ -163,9 +160,9 @@ class eZXMLText
     /// Contains the XML data
     public $XMLData;
 
-    public $XMLInputHandler;
-    public $XMLOutputHandler;
-    protected $PDFOutputHandler;
+    public $XMLInputHandler = null;
+    public $XMLOutputHandler = null;
+    protected $PDFOutputHandler = null;
     public $XMLAttributeID;
     public $ContentObjectAttribute;
 }

@@ -18,6 +18,7 @@
 
 class eZImageInterface
 {
+    public $TextColor;
     /**
      * Constructor
      *
@@ -32,13 +33,6 @@ class eZImageInterface
         $this->ImageObject = $imageObject;
         $this->Width = $width;
         $this->Height = $height;
-        $this->AlternativeText = '';
-        $this->IsTrueColor = null;
-        $this->Palette = array();
-        $this->PaletteIndex = array();
-        $this->StoredPath = false;
-        $this->Font = null;
-        $this->IsProcessed = false;
     }
 
     /*!
@@ -775,17 +769,17 @@ class eZImageInterface
     /// \privatesection
     public $Width;
     public $Height;
-    public $Font;
+    public $Font = null;
     public $ImageObject;
     public $ImageObjectRef;
     public $StoredFile;
-    public $StoredPath;
+    public $StoredPath = false;
     public $StoredType;
-    public $PaletteIndex;
-    public $Palette;
-    public $AlternativeText;
-    public $IsTrueColor;
-    public $IsProcessed;
+    public $PaletteIndex = array();
+    public $Palette = array();
+    public $AlternativeText = '';
+    public $IsTrueColor = null;
+    public $IsProcessed = false;
 }
 
 /*!

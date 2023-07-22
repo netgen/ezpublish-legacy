@@ -25,8 +25,6 @@ class eZRangeOption
     public function __construct( $name )
     {
         $this->Name = $name;
-        $this->Options = array();
-        $this->OptionCount = 0;
     }
 
     /*!
@@ -181,10 +179,10 @@ class eZRangeOption
     public $Name;
 
     /// Contains the Options
-    public $Options;
+    public $Options = array();
 
     /// Contains the option counter value
-    public $OptionCount;
+    public $OptionCount = 0;
     public $StartValue;
     public $StopValue;
     public $StepValue;

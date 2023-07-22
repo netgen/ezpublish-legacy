@@ -154,7 +154,6 @@ class eZINI
      */
     public function __construct( $fileName = 'site.ini', $rootDir = '', $useTextCodec = null, $useCache = null, $useLocalOverrides = null, $directAccess = false, $addArrayDefinition = false, $load = true )
     {
-        $this->Charset = 'utf8';
         if ( $fileName == '' )
             $fileName = 'site.ini';
         if ( $rootDir !== false && $rootDir == '' )
@@ -316,7 +315,7 @@ class eZINI
      * @param string parameter parameter name
      * @return bool True if the the parameter is set.
      */
-    static function parameterSet( $fileName = 'site.ini', $rootDir = 'settings', &$section, &$parameter )
+    static function parameterSet(&$section, &$parameter, $fileName = 'site.ini', $rootDir = 'settings')
     {
         if ( !eZINI::exists( $fileName, $rootDir ) )
             return false;
@@ -2072,7 +2071,7 @@ class eZINI
 
     /// \privatesection
     /// The charset of the ini file
-    public $Charset;
+    public $Charset = 'utf8';
 
     /// Variable to store the textcodec.
     public $Codec;

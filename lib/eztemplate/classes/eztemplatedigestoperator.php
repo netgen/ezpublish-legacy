@@ -19,9 +19,12 @@
 
 class eZTemplateDigestOperator
 {
+    public $Crc32Name;
+    public $Md5Name;
+    public $Sha1Name;
+    public $Rot13Name;
     public function __construct()
     {
-        $this->Operators = array( 'crc32', 'md5', 'rot13' );
         if ( function_exists( 'sha1' ) )
         {
             $this->Operators[] = 'sha1';
@@ -169,7 +172,7 @@ class eZTemplateDigestOperator
     }
 
     /// The array of operators, used for registering operators
-    public $Operators;
+    public $Operators = array( 'crc32', 'md5', 'rot13' );
 }
 
 ?>

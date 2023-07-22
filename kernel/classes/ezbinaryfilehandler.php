@@ -41,7 +41,6 @@ class eZBinaryFileHandler
      */
     public function __construct( $identifier, $name, $handleType )
     {
-        $this->Info = array();
         $this->Info['identifier'] = $identifier;
         $this->Info['name'] = $name;
         $this->Info['handle-type'] = $handleType;
@@ -185,7 +184,7 @@ class eZBinaryFileHandler
     }
 
     /// \privatesection
-    public $Info;
+    public $Info = array();
 }
 
 ?>

@@ -29,7 +29,6 @@ class eZTemplateFileResource
     {
         $this->Name = $name;
         $this->ServesStaticData = $servesStaticData;
-        $this->TemplateCache = array();
     }
 
     /*!
@@ -288,7 +287,7 @@ class eZTemplateFileResource
     /// True if the data served from this resource is static, ie it can be cached properly
     public $ServesStaticData;
     /// The cache for templates
-    public $TemplateCache;
+    public $TemplateCache = array();
 }
 
 ?>

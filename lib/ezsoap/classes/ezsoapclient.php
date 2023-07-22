@@ -47,6 +47,12 @@ else
 
 class eZSOAPClient
 {
+    public $errorNumber;
+    public $errorString;
+    /**
+     * @var string
+     */
+    public $ErrorString;
     /**
      * Creates a new SOAP client.
      *
@@ -59,8 +65,6 @@ class eZSOAPClient
      */
     public function __construct( $server, $path = '/', $port = 80, $useSSL = null )
     {
-        $this->Login = "";
-        $this->Password = "";
         $this->Server = $server;
         $this->Path = $path;
         $this->Port = $port;
@@ -259,9 +263,9 @@ class eZSOAPClient
     /// How long to wait for the call.
     public $Timeout = 0;
     /// HTTP login for HTTP authentification
-    public $Login;
+    public $Login = "";
     /// HTTP password for HTTP authentification
-    public $Password;
+    public $Password = "";
     private $UseSSL;
 }
 

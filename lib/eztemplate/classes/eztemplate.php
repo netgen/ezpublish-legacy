@@ -295,34 +295,13 @@ class eZTemplate
      */
     public function __construct()
     {
-        $this->Tree = array( eZTemplate::NODE_ROOT, false );
-        $this->LDelim = "{";
-        $this->RDelim = "}";
-
-        $this->IncludeText = array();
-        $this->IncludeOutput = array();
-
         $this->registerLiteral( "literal" );
 
         $res = new eZTemplateFileResource();
         $this->DefaultResource = $res;
         $this->registerResource( $res );
 
-        $this->Resources = array();
-        $this->Text = null;
-
-        $this->IsCachingAllowed = true;
-
         $this->resetErrorLog();
-
-        $this->AutoloadPathList = array( 'lib/eztemplate/classes/' );
-        $this->Variables = array();
-        $this->LocalVariablesNamesStack = array();
-        $this->CurrentLocalVariablesNames = null;
-        $this->Functions = array();
-        $this->FunctionAttributes = array();
-
-        $this->TestCompile = false;
 
         $ini = eZINI::instance( 'template.ini' );
         if ( $ini->hasVariable( 'ControlSettings', 'MaxLevel' ) )
@@ -2633,53 +2612,53 @@ class eZTemplate
 
     /// \privatesection
     /// Associative array of resource objects
-    public $Resources;
+    public $Resources = array();
     /// Reference to the default resource object
     public $DefaultResource;
     /// The original template text
-    public $Text;
+    public $Text = null;
     /// Included texts, usually performed by custom functions
-    public $IncludeText;
+    public $IncludeText = array();
     /// Included outputs, usually performed by custom functions
-    public $IncludeOutput;
+    public $IncludeOutput = array();
     /// The timestamp of the template when it was last modified
     public $TimeStamp;
     /// The left delimiter used for parsing
-    public $LDelim;
+    public $LDelim = "{";
     /// The right delimiter used for parsing
-    public $RDelim;
+    public $RDelim = "}";
 
     /// The resulting object tree of the template
-    public $Tree;
+    public $Tree = array( eZTemplate::NODE_ROOT, false );
     /// An associative array of template variables
-    public $Variables;
+    public $Variables = array();
     /*!
      Last element of this stack contains names of
      all variables created in the innermost template, for them
      to be destroyed after the template execution finishes.
      */
-    public $LocalVariablesNamesStack;
+    public $LocalVariablesNamesStack = array();
     // Reference to the last element of $LocalVariablesNamesStack.
-    public $CurrentLocalVariablesNames;
+    public $CurrentLocalVariablesNames = null;
     /// An associative array of operators
     public $Operators;
     /// An associative array of functions
-    public $Functions;
+    public $Functions = array();
     /// An associative array of function attributes
-    public $FunctionAttributes;
+    public $FunctionAttributes = array();
     /// An associative array of literal tags
     public $Literals;
     /// True if output details is to be shown
     public $ShowDetails = false;
     /// \c true if caching is allowed
-    public $IsCachingAllowed;
+    public $IsCachingAllowed = true;
 
     /// Array containing all errors occured during a fetch
     public $ErrorLog;
     /// Array containing all warnings occured during a fetch
     public $WarningLog;
 
-    public $AutoloadPathList;
+    public $AutoloadPathList = array( 'lib/eztemplate/classes/' );
     /// include level
     public $Level = 0;
     public $MaxLevel = 40;
@@ -2695,7 +2674,7 @@ class eZTemplate
     public $ElseifCounter;
 
     // Flag for setting compilation in test mode
-    public $TestCompile;
+    public $TestCompile = false;
 
     /**
      * Singelton instance of eZTemplate used by {@link eZTemplate::instance()}

@@ -22,6 +22,9 @@
 
 class eZTemplateImageOperator
 {
+    public $WAdjust = 0;
+    public $HAdjust = 0;
+    public $MissingGDFunctions;
     /**
      * Initializes the image operator with the operator name $name.
      *
@@ -39,25 +42,12 @@ class eZTemplateImageOperator
 
         $ini = eZINI::instance( 'texttoimage.ini' );
         $fontDirs = $ini->variable( "PathSettings", "FontDir" );
-        $this->FontDir = array();
         foreach ( $fontDirs as $fontDir )
         {
             $this->FontDir[] = $fontDir;
         }
         $this->CacheDir = $ini->variable( "PathSettings", "CacheDir" );
         $this->HTMLDir = eZSys::wwwDir() . $ini->variable( "PathSettings", "HtmlDir" );
-
-        $this->DefaultClass = 'default';
-        $this->Family = "arial";
-        $this->Colors = array( "bgcolor" => array( 255, 255, 255 ),
-                               "textcolor" => array( 0, 0, 0 ) );
-        $this->PointSize = 12;
-        $this->Angle = 0;
-        $this->XAdjust = 0;
-        $this->YAdjust = 0;
-        $this->WAdjust = 0;
-        $this->HAdjust = 0;
-        $this->UseCache = true;
         if ( $ini->variable( "ImageSettings", "UseCache" ) == "disabled" )
             $this->UseCache = false;
 
@@ -824,27 +814,28 @@ class eZTemplateImageOperator
     /// The operator array
     public $Operators;
     /// The default class to use for text to image conversion
-    public $DefaultClass;
+    public $DefaultClass = 'default';
     /// the directory were fonts are found, default is ""
-    public $FontDir;
+    public $FontDir = array();
     /// the directory were cache files are created, default is ""
     public $CacheDir;
     /// the directory were html code finds the images, default is ""
     public $HTMLDir;
     /// the default font family, default is "arial"
-    public $Family;
+    public $Family = "arial";
     /// the default font point size, default is 12
-    public $PointSize;
+    public $PointSize = 12;
     /// the default font angle, default is 0
-    public $Angle;
+    public $Angle = 0;
     /// the default font x adjustment, default is 0
-    public $XAdjust;
+    public $XAdjust = 0;
     /// the default font y adjustment, default is 0
-    public $YAdjust;
+    public $YAdjust = 0;
     /// whether to reuse cache files or not
-    public $UseCache;
+    public $UseCache = true;
     /// the color array, default is bgcolor=white and textcolor=black
-    public $Colors;
+    public $Colors = array( "bgcolor" => array( 255, 255, 255 ),
+                           "textcolor" => array( 0, 0, 0 ) );
     /// Whether image GD is supported
     public $ImageGDSupported;
     /// Storage Format, default is "png"

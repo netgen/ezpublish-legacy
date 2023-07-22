@@ -20,9 +20,7 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
     public function __construct( $filePath = false )
     {
         eZDebugSetting::writeDebug( 'kernel-clustering', "fs::instance( '$filePath' )", __METHOD__ );
-        $this->Mutex = null;
-        $this->filePath = $filePath;
-        $this->lifetime = 60; // Lifetime of lock
+        $this->filePath = $filePath; // Lifetime of lock
         $this->loadMetaData();
     }
 
@@ -1021,8 +1019,8 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
 
     public $metaData = null;
     public $filePath;
-    public $Mutex;
-    public $lifetime;
+    public $Mutex = null;
+    public $lifetime = 60;
 }
 
 ?>

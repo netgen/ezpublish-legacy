@@ -18,6 +18,7 @@
 
 class eZContentClass extends eZPersistentObject
 {
+    public $InGroupIDs;
     const VERSION_STATUS_DEFINED = 0;
     const VERSION_STATUS_TEMPORARY = 1;
     const VERSION_STATUS_MODIFIED = 2;

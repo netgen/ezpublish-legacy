@@ -19,13 +19,12 @@
 
 class eZTemplateNl2BrOperator
 {
+    public $Nl2brName = 'nl2br';
     /**
      * Initializes the object with the name $name, default is "nl2br".
      */
     public function __construct()
     {
-        $this->Operators = array( 'nl2br' );
-        $this->Nl2brName = 'nl2br';
     }
 
     /*!
@@ -85,7 +84,7 @@ class eZTemplateNl2BrOperator
     }
 
     /// The array of operators, used for registering operators
-    public $Operators;
+    public $Operators = array( 'nl2br' );
 }
 
 ?>

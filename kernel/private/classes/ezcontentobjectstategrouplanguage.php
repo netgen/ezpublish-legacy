@@ -19,6 +19,8 @@
  */
 class eZContentObjectStateGroupLanguage extends eZPersistentObject
 {
+    public $Description;
+    public $RealLanguageID;
     static function definition()
     {
         static $definition = array( "fields" => array( "contentobject_state_group_id" => array( "name" => "ContentObjectStateGroupID",

@@ -68,7 +68,7 @@ class eZURLAliasML extends eZPersistentObject
      *
      * @var string
      */
-    public $Path;
+    public $Path = null;
 
     /**
      * @var int
@@ -133,7 +133,6 @@ class eZURLAliasML extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Path = null;
         if ( isset( $row['path'] ) )
         {
             $this->Path = $row['path'];
