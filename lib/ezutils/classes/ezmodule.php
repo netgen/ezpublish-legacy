@@ -34,6 +34,7 @@
 
 class eZModule
 {
+    public $ViewActionParameters;
     /**
      * Module execution status: IDLE
      * @var int

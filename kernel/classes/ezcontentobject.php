@@ -15,6 +15,7 @@
  */
 class eZContentObject extends eZPersistentObject
 {
+    public $ContentObjectAttributeArray;
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
     const STATUS_ARCHIVED = 2;
