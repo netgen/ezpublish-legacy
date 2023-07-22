@@ -15,6 +15,12 @@
 */
 class eZMultiOption2
 {
+    public $ID;
+    public $Rules = array();
+    /**
+     * @var int
+     */
+    public $MultiOptionCount;
     /**
      * Initializes with empty multioption2 list.
      *
@@ -29,12 +35,9 @@ class eZMultiOption2
         $this->Name = $name;
         $this->ID = $id;
         $this->GroupID = $groupID;
-        $this->Options = array();
-        $this->ChildGroupList = array();
         $this->MultiOptionIDCounter = $multioptionIDCounter;
         $this->OptionCounter = $optionCounter;
         $this->GroupIDCounter = $groupID;
-        $this->Rules = array();
     }
 
     function setGroupIDCounter( $groupIDCounter )
@@ -865,13 +868,13 @@ class eZMultiOption2
     public $Name;
     public $GroupID;
     /// Contains the Options
-    public $Options;
+    public $Options = array();
     /// Contains the multioption counter value
     public $MultiOptionIDCounter;
     public $GroupIDCounter;
     /// Contains the option counter value
     public $OptionCounter;
-    public $ChildGroupList;
+    public $ChildGroupList = array();
     public $MultioptionIDList = array();
     public $OptionIDList = array();
 }

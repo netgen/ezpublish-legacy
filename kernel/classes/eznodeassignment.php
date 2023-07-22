@@ -15,6 +15,8 @@
 */
 class eZNodeAssignment extends eZPersistentObject
 {
+    public $TempNode = null;
+    public $OpCode;
     // Bit 0 is used to mark if the action is to be performed or not
     // A value of 0 means ignore and 1 means execute
     const OP_CODE_NOP =          0;
@@ -34,7 +36,6 @@ class eZNodeAssignment extends eZPersistentObject
 
     public function __construct( $row )
     {
-        $this->TempNode = null;
         $this->Name = false;
         parent::__construct( $row );
     }

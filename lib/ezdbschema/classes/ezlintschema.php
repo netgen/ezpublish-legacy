@@ -49,8 +49,6 @@ class eZLintSchema extends eZDBSchemaInterface
     {
         parent::__construct( $db );
         $this->OtherSchema = $otherSchema;
-        $this->CorrectSchema = false;
-        $this->IsLintChecked = false;
     }
 
     /*!
@@ -523,9 +521,9 @@ class eZLintSchema extends eZDBSchemaInterface
     /// eZDBSchemaInterface object which should be lint checked
     public $OtherSchema;
     /// The corrected schema
-    public $CorrectSchema;
+    public $CorrectSchema = false;
     /// Whether the schema has been checked or not
-    public $IsLintChecked;
+    public $IsLintChecked = false;
 }
 
 ?>

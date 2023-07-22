@@ -46,7 +46,6 @@ class eZTemplateSwitchFunction
      */
     public function __construct()
     {
-        $this->SwitchName = 'switch';
     }
 
     /*!
@@ -365,7 +364,7 @@ class eZTemplateSwitchFunction
     }
 
     /// The name of the switch function
-    public $SwitchName;
+    public $SwitchName = 'switch';
 }
 
 ?>

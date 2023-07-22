@@ -41,8 +41,6 @@ class eZTemplateDelimitFunction
      */
     public function __construct()
     {
-        $this->LName = 'ldelim';
-        $this->RName = 'rdelim';
     }
 
     /*!
@@ -107,9 +105,9 @@ class eZTemplateDelimitFunction
     }
 
     /// The name of the left delimiter tag
-    public $LName;
+    public $LName = 'ldelim';
     /// The name of the right delimiter tag
-    public $RName;
+    public $RName = 'rdelim';
 }
 
 ?>

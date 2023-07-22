@@ -40,7 +40,7 @@ class ezpAutoloadCliOutput implements ezpAutoloadOutput
      *
      * @var array
      */
-    protected $data = null;
+    protected $data = array();
 
     /**
      * Constructor of the ezpAutoloadCliOutput class
@@ -54,8 +54,6 @@ class ezpAutoloadCliOutput implements ezpAutoloadOutput
         $this->output = new ezcConsoleOutput();
         $this->output->formats->warning->color = 'red';
         $this->output->options->verbosityLevel = $quiet ? 0 : 1;
-
-        $this->data = array();
         $this->data['phase1'] = array();
         $this->data['phase2'] = array();
     }

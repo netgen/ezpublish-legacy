@@ -28,9 +28,6 @@ class eZImageGDHandler extends eZImageHandler
     {
         $supportedInputMIMETypes = array();
         $supportedOutputMIMETypes = array();
-        $this->InputMap = array();
-        $this->OutputMap = array();
-        $this->OutputQualityMap = array();
         $isEnabled = false;
         if ( function_exists( "imagetypes" ) )
         {
@@ -754,9 +751,9 @@ class eZImageGDHandler extends eZImageHandler
     public $PreParameters;
     public $PostParameters;
 
-    public $InputMap;
-    public $OutputMap;
-    public $OutputQualityMap;
+    public $InputMap = array();
+    public $OutputMap = array();
+    public $OutputQualityMap = array();
     public $FilterFunctionMap;
     public $LuminanceColorScales;
     public $ThresholdList;

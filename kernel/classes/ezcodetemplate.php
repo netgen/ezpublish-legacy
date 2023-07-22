@@ -31,7 +31,6 @@ class eZCodeTemplate
     public function __construct()
     {
         $ini = eZINI::instance( 'codetemplate.ini' );
-        $this->Templates = array();
         $templates = $ini->variable( 'Files', 'Templates' );
         foreach ( $templates as $key => $template )
         {
@@ -362,7 +361,7 @@ class eZCodeTemplate
     }
 
     /// \privatesection
-    public $Templates;
+    public $Templates = array();
 }
 
 ?>

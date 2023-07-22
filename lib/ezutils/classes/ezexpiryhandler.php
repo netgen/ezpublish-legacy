@@ -16,9 +16,6 @@ class eZExpiryHandler
 {
     public function __construct()
     {
-        $this->Timestamps = array();
-        $this->IsModified = false;
-
         $cacheDirectory = eZSys::cacheDirectory();
         $this->CacheFile = eZClusterFileHandler::instance( $cacheDirectory . '/' . 'expiry.php' );
         $this->restore();
@@ -192,13 +189,13 @@ class eZExpiryHandler
      * Holds the expiry timestamps array
      * @var array
      */
-    public $Timestamps;
+    public $Timestamps = array();
 
     /**
      * Wether data has been modified or not
      * @var bool
      */
-    public $IsModified;
+    public $IsModified = false;
 
     public $CacheFile;
     

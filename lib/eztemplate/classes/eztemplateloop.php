@@ -47,18 +47,10 @@ class eZTemplateLoopSequence
 */
 class eZTemplateLoop
 {
+    public $Delimiter;
     public function __construct( $functionName, &$functionParameters, $functionChildren, $functionPlacement,
                              $tpl, &$textElements, $rootNamespace, $currentNamespace )
     {
-        $this->SkipDelimiter         = true;
-        $this->SkipSequenceIncrement = false;
-        $this->Delimiter             = null;
-        $this->Initialized           = true;
-        $this->SequenceVarName       = null;
-        $this->Sequence              = null;
-        $this->LoopVariablesNames    = array();
-
-
         $this->FunctionName       = $functionName;
         $this->FunctionParameters =& $functionParameters;
         $this->FunctionChildren   = $functionChildren;
@@ -361,24 +353,24 @@ class eZTemplateLoop
     public $FunctionChildren;
     public $FunctionPlacement;
 
-    public $SkipDelimiter;
-    public $SkipSequenceIncrement;
-    public $delimiter;
+    public $SkipDelimiter = true;
+    public $SkipSequenceIncrement = false;
+    public $delimiter = null;
 
     public $Tpl;
     public $TextElements;
     public $RootNamespace;
     public $CurrentNamespace;
 
-    public $Initialized;
-    public $Sequence;
-    public $SequenceVarName;
+    public $Initialized = true;
+    public $Sequence = null;
+    public $SequenceVarName = null;
     /*!
      * Before we create a new loop variable, we check if it already exists.
      * If it doesn't, we store its name in this array, so that we know
      * which variables to destroy after the loop execution finishes.
      */
-    public $LoopVariablesNames;
+    public $LoopVariablesNames = array();
 }
 
 ?>

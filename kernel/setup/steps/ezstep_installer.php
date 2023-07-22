@@ -50,7 +50,6 @@ class eZStepInstaller
         $this->Identifier = $identifier;
         $this->Name = $name;
         $this->INI = eZINI::instance( 'kickstart.ini', '.' );
-        $this->KickstartData = false;
 
         $this->PersistenceList['use_kickstart'][$identifier] = true;
 
@@ -736,7 +735,7 @@ See the requirements page for more information.",
     /// Kickstart INI file, if one is found
     public $INI;
     /// The kickstart data as an associative array or \c false if no data available
-    public $KickstartData;
+    public $KickstartData = false;
 }
 
 ?>

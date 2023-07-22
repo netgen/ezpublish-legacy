@@ -22,12 +22,15 @@
 
 class eZHTTPTool
 {
+    /**
+     * @var bool
+     */
+    public $UseFullUrl = false;
     /*!
      Initializes the class. Use eZHTTPTool::instance to get a single instance.
     */
     public function __construct()
     {
-        $this->UseFullUrl = false;
     }
 
     /*!

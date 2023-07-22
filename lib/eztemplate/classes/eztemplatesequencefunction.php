@@ -34,7 +34,6 @@ class eZTemplateSequenceFunction
 {
     public function __construct()
     {
-        $this->SequenceName = 'sequence';
     }
 
     /*!
@@ -178,7 +177,7 @@ else
     }
 
     /// Name of sequence function
-    public $SequenceName;
+    public $SequenceName = 'sequence';
 }
 
 ?>

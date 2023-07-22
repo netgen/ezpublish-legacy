@@ -22,7 +22,6 @@ class eZMatrixDefinition
      */
     public function __construct()
     {
-        $this->ColumnNames = array();
     }
 
 
@@ -124,7 +123,7 @@ class eZMatrixDefinition
         }
     }
 
-    public $ColumnNames;
+    public $ColumnNames = array();
 
 }
 

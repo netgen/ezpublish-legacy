@@ -23,6 +23,11 @@
 
 class eZMBStringMapper
 {
+    public $RequestedInputCharsetCode;
+    public $InputCharsetCode;
+    public $RequestedOutputCharsetCode;
+    public $OutputCharsetCode;
+    public $Valid = false;
     /**
      * Constructor
      *
@@ -35,7 +40,6 @@ class eZMBStringMapper
         $this->InputCharsetCode = eZCharsetInfo::realCharsetCode( $input_charset_code );
         $this->RequestedOutputCharsetCode = $output_charset_code;
         $this->OutputCharsetCode = eZCharsetInfo::realCharsetCode( $output_charset_code );
-        $this->Valid = false;
         if ( !$this->isCharsetSupported( $input_charset_code ) )
         {
             eZDebug::writeError( "Input charset $input_charset_code not supported", "eZMBStringMapper" );

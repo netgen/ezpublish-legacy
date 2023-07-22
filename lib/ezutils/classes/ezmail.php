@@ -58,27 +58,15 @@
 
 class eZMail
 {
+    public $References;
     const REGEXP = '(((\"[^\"\f\n\r\t\v\b]+\")|([A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+(\.[A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|((([A-Za-z0-9\-])+\.)+[A-Za-z\-]{2,})))';
 
     public function __construct()
     {
         $this->Mail = new ezpMail();
 
-        $this->ReceiverElements = array();
-        $this->From = false;
-        $this->CcElements = array();
-        $this->BccElements = array();
-        $this->ReplyTo = false;
-        $this->Subject = false;
-        $this->BodyText = false;
-        $this->ExtraHeaders = array();
-        $this->TextCodec = false;
-        $this->MessageID = false;
-
         // Sets some default values
         $version = eZPublishSDK::version();
-
-        $this->MIMEVersion = '1.0';
         $this->ContentType = array( 'type' => 'text/plain',
                                     'charset' => $this->usedCharset(),
                                     'transfer-encoding' => '8bit',
@@ -1201,19 +1189,19 @@ class eZMail
 */
 
     /// \privatesection
-    public $ReceiverElements;
-    public $From;
-    public $CcElements;
-    public $BccElements;
+    public $ReceiverElements = array();
+    public $From = false;
+    public $CcElements = array();
+    public $BccElements = array();
     public $ContentType;
     public $UserAgent;
-    public $ReplyTo;
-    public $Subject;
-    public $BodyText;
-    public $ExtraHeaders;
-    public $TextCodec;
-    public $MessageID;
-    public $MIMEVersion;
+    public $ReplyTo = false;
+    public $Subject = false;
+    public $BodyText = false;
+    public $ExtraHeaders = array();
+    public $TextCodec = false;
+    public $MessageID = false;
+    public $MIMEVersion = '1.0';
 
     /**
      * Contains an object of type ezcMail, which is used to store the

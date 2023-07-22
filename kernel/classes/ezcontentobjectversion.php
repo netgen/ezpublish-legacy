@@ -17,6 +17,15 @@
 
 class eZContentObjectVersion extends eZPersistentObject
 {
+    public $ContentObjectAttributeArray = false;
+    public $DataMap = false;
+    public $TempNode = null;
+    public $VersionName = null;
+    public $VersionNameCache = array();
+    public $Permissions;
+    public $ContentObject;
+    public $Version;
+    public $CreatorID;
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
     const STATUS_PENDING = 2;
@@ -29,11 +38,6 @@ class eZContentObjectVersion extends eZPersistentObject
 
     public function __construct( $row = array() )
     {
-        $this->ContentObjectAttributeArray = false;
-        $this->DataMap = false;
-        $this->TempNode = null;
-        $this->VersionName = null;
-        $this->VersionNameCache = array();
         parent::__construct( $row );
     }
 

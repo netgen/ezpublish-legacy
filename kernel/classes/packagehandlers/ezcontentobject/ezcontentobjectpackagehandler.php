@@ -16,6 +16,7 @@
 
 class eZContentObjectPackageHandler extends eZPackageHandler
 {
+    public $HandlerType;
     const MAX_LISTED_OBJECTS = 30;
 
     // If number of objects in the package is bigger than this constant,

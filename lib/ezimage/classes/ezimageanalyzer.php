@@ -32,8 +32,6 @@ class eZImageAnalyzer
 
     public function __construct()
     {
-        $this->Name = false;
-        $this->MIMEList = array();
     }
 
     /*!
@@ -157,8 +155,8 @@ class eZImageAnalyzer
 
     /// \privatesection
 
-    public $MIMEList;
-    public $Name;
+    public $MIMEList = array();
+    public $Name = false;
 }
 
 ?>

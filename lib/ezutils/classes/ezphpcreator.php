@@ -86,10 +86,6 @@ class eZPHPCreator
         $this->PHPDir = $dir;
         $this->PHPFile = $file;
         $this->FilePrefix = $prefix;
-        $this->FileResource = false;
-        $this->Elements = array();
-        $this->TextChunks = array();
-        $this->TemporaryCounter = 0;
         if ( isset( $options['spacing'] ) and ( $options['spacing'] == 'disabled') )
         {
             $this->Spacing = false;
@@ -1337,11 +1333,11 @@ print( $values['MyValue'] );
     public $PHPDir;
     public $PHPFile;
     public $FilePrefix;
-    public $FileResource;
-    public $Elements;
-    public $TextChunks;
+    public $FileResource = false;
+    public $Elements = array();
+    public $TextChunks = array();
     public $isAtomic;
-    public $TemporaryCounter;
+    public $TemporaryCounter = 0;
     public $tmpFilename;
     public $requestedFilename;
     public $Spacing = true;

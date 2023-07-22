@@ -123,9 +123,6 @@ class eZMultiOption
     public function __construct( $name )
     {
         $this->Name = $name;
-        $this->Options = array();
-        $this->MultiOptionCount = 0;
-        $this->OptionCounter = 0;
     }
 
     /*!
@@ -383,10 +380,10 @@ class eZMultiOption
     /// Contains the Option name
     public $Name;
     /// Contains the Options
-    public $Options;
+    public $Options = array();
     /// Contains the multioption counter value
-    public $MultiOptionCount;
+    public $MultiOptionCount = 0;
     /// Contains the option counter value
-    public $OptionCounter;
+    public $OptionCounter = 0;
 }
 ?>

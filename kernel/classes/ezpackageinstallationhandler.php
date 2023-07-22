@@ -17,6 +17,13 @@
 
 class eZPackageInstallationHandler
 {
+    public $Package;
+    public $Attributes;
+    public $InitializeStepMethodMap = array();
+    public $ValidateStepMethodMap = array();
+    public $CommitStepMethodMap = array();
+    public $InstallItem;
+    public $StepMap;
     /**
      * Constructor
      *
@@ -34,9 +41,6 @@ class eZPackageInstallationHandler
                                    'steps' => $steps,
                                    'step_map' => false,
                                    'current_steps' => $steps );
-        $this->InitializeStepMethodMap = array();
-        $this->ValidateStepMethodMap = array();
-        $this->CommitStepMethodMap = array();
         $this->InstallItem = $installItem;
     }
 

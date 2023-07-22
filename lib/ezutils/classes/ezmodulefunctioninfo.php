@@ -29,8 +29,6 @@ class eZModuleFunctionInfo
     public function __construct( $moduleName )
     {
         $this->ModuleName = $moduleName;
-        $this->IsValid = false;
-        $this->FunctionList = array();
     }
 
     function isValid()
@@ -301,8 +299,8 @@ class eZModuleFunctionInfo
 
     /// \privatesection
     public $ModuleName;
-    public $FunctionList;
-    public $IsValid;
+    public $FunctionList = array();
+    public $IsValid = false;
 }
 
 ?>

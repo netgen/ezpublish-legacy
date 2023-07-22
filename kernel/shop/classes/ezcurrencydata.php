@@ -25,7 +25,6 @@ class eZCurrencyData extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->RateValue = false;
     }
 
     static function definition()
@@ -317,7 +316,7 @@ class eZCurrencyData extends eZPersistentObject
         return ( $this->attribute( 'status' ) == self::STATUS_ACTIVE );
     }
 
-    public $RateValue;
+    public $RateValue = false;
 }
 
 ?>

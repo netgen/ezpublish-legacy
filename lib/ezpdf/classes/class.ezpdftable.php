@@ -16,6 +16,7 @@
 
 class eZPDFTable extends Cezpdf
 {
+    public $fontSize;
     const NEWLINE = '<C:callNewLine>';
     const SPACE = '<C:callSpace>';
     const TAB = '<C:callTab>';
@@ -36,17 +37,10 @@ class eZPDFTable extends Cezpdf
     function __construct($paper='a4',$orientation='portrait')
     {
         parent::__construct( $paper, $orientation );
-        $this->TOC = array();
-        $this->KeywordArray = array();
-        $this->PageCounter = array();
         $this->initFrameMargins();
 
         $this->ez['textStack'] = array();
-
-        $this->PreStack = array();
-        $this->DocSpecification = array();
         $this->pushStack();
-        $this->FrontpageID = null;
     }
 
     /**
@@ -3022,17 +3016,17 @@ class eZPDFTable extends Cezpdf
         return ( $headerIndex != 0 ? $headerIndex : '' );
     }
 
-    public $TOC; // Table of content array
-    public $KeywordArray; // keyword array
-    public $PageCounter;
+    public $TOC = array(); // Table of content array
+    public $KeywordArray = array(); // keyword array
+    public $PageCounter = array();
 
-    public $FrontpageID; // Variable used to store reference to frontpage
+    public $FrontpageID = null; // Variable used to store reference to frontpage
 
     public $ezFrame; // array containing frame definitions
 
     /* Stack and array used for preprocessing document */
-    public $PreStack;
-    public $DocSpecification;
+    public $PreStack = array();
+    public $DocSpecification = array();
 
     /* Stack array for recursive ezText calls */
     public $DocSpecStack = array();

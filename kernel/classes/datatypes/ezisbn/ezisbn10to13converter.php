@@ -10,6 +10,7 @@
 
 class eZISBN10To13Converter
 {
+    public $Force;
     /*!
      Constructor
      \param $script The variable is set earlier in the script and transfered to the class.
@@ -21,7 +22,6 @@ class eZISBN10To13Converter
     {
         $this->Script = $script;
         $this->Cli = $cli;
-        $this->AttributeArray = array();
         if ( isset( $params['force'] ) )
         {
             $this->Force = $params['force'];
@@ -349,7 +349,7 @@ class eZISBN10To13Converter
 
     public $Cli;
     public $Script;
-    public $AttributeArray;
+    public $AttributeArray = array();
 }
 
 ?>

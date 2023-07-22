@@ -19,8 +19,6 @@ class eZWaitUntilDateValue extends eZPersistentObject
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->ClassName = null;
-        $this->ClassAttributeName = null;
 
     }
 
@@ -156,8 +154,8 @@ class eZWaitUntilDateValue extends eZPersistentObject
                                                     $asObject );
     }
 
-    public $ClassName;
-    public $ClassAttributeName;
+    public $ClassName = null;
+    public $ClassAttributeName = null;
 }
 
 ?>

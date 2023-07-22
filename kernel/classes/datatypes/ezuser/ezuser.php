@@ -17,6 +17,7 @@
 
 class eZUser extends eZPersistentObject
 {
+    public $GroupsAsObjects;
     /// No hash, used by external handlers such as LDAP and TextFile
     const PASSWORD_HASH_EMPTY = 0;
     /// MD5 of password
@@ -66,8 +67,6 @@ class eZUser extends eZPersistentObject
     public function __construct( $row = array() )
     {
         parent::__construct( $row );
-        $this->OriginalPassword = false;
-        $this->OriginalPasswordConfirm = false;
     }
 
     /**
@@ -2991,8 +2990,8 @@ WHERE user_id = '" . $userID . "' AND
     public $PasswordHash;
     public $PasswordHashType;
     public $Groups;
-    public $OriginalPassword;
-    public $OriginalPasswordConfirm;
+    public $OriginalPassword = false;
+    public $OriginalPasswordConfirm = false;
     public $AccessArray;
     public $ContentObjectID;
 

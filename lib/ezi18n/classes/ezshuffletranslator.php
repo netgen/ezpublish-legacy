@@ -17,6 +17,7 @@
 
 class eZShuffleTranslator extends eZTranslatorHandler
 {
+    public $MaxChars;
     /**
      * Constructor
      *
@@ -27,7 +28,6 @@ class eZShuffleTranslator extends eZTranslatorHandler
         parent::__construct( false );
 
         $this->MaxChars = $max_chars;
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -81,7 +81,7 @@ class eZShuffleTranslator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached 1337 translations
-    public $Messages;
+    public $Messages = array();
 }
 
 ?>

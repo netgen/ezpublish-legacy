@@ -16,6 +16,22 @@
 
 class eZCodePageMapper
 {
+    /**
+     * @var string
+     */
+    public $RequestedInputCharsetCode;
+    public $InputCharsetCode;
+    /**
+     * @var string
+     */
+    public $RequestedOutputCharsetCode;
+    public $OutputCharsetCode;
+    public $Valid = false;
+    public $InputOutputMap;
+    public $OutputInputMap;
+    public $SubstituteOutputChar;
+    public $SubstituteInputChar;
+    public $SubstituteCharValue;
     const CACHE_CODE_DATE = 1026316422;
 
     /**
@@ -31,7 +47,6 @@ class eZCodePageMapper
         $this->InputCharsetCode = eZCharsetInfo::realCharsetCode( $input_charset_code );
         $this->RequestedOutputCharsetCode = $output_charset_code;
         $this->OutputCharsetCode = eZCharsetInfo::realCharsetCode( $output_charset_code );
-        $this->Valid = false;
         $this->load( $use_cache );
         $this->setSubstituteCharacter( 63 ); // ?
     }

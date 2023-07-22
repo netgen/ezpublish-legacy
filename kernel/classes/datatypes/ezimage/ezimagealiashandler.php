@@ -33,7 +33,6 @@ class eZImageAliasHandler
      */
     public function __construct( $contentObjectAttribute )
     {
-        $this->ContentObjectAttributeData = array();
         if ( is_object( $contentObjectAttribute ) )
         {
             $this->ContentObjectAttributeData['id'] = $contentObjectAttribute->attribute( 'id' );
@@ -1661,7 +1660,7 @@ class eZImageAliasHandler
 
     /// \privatesection
     /// Contains a some eZContentObjectAttribute's attributes.
-    public $ContentObjectAttributeData;
+    public $ContentObjectAttributeData = array();
     /// Deprecated. Contains a reference to the object attribute
     public $ContentObjectAttribute;
 

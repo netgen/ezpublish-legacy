@@ -19,9 +19,6 @@ class eZExchangeRatesUpdateHandler
 
     public function __construct()
     {
-        $this->RateList = false;
-        $this->BaseCurrency = false;
-
         $this->initialize();
     }
 
@@ -118,8 +115,8 @@ class eZExchangeRatesUpdateHandler
         return $error;
     }
 
-    public $RateList;
-    public $BaseCurrency;
+    public $RateList = false;
+    public $BaseCurrency = false;
 }
 
 ?>

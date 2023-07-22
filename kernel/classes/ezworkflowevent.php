@@ -16,10 +16,10 @@
 
 class eZWorkflowEvent extends eZPersistentObject
 {
+    public $EventType;
     public function __construct( $row )
     {
         parent::__construct( $row );
-        $this->Content = null;
     }
 
     /**
@@ -310,7 +310,7 @@ class eZWorkflowEvent extends eZPersistentObject
     public $DataText2;
     public $DataText3;
     public $DataText4;
-    public $Content;
+    public $Content = null;
 }
 
 ?>

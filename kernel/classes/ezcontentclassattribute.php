@@ -21,10 +21,6 @@ class eZContentClassAttribute extends eZPersistentObject
     {
         parent::__construct($row);
 
-        $this->Content = null;
-        $this->DisplayInfo = null;
-        $this->Module = null;
-
         $this->NameList = new eZSerializedObjectNameList();
         if ( isset( $row['serialized_name_list'] ) )
             $this->NameList->initFromSerializedList( $row['serialized_name_list'] );
@@ -1118,9 +1114,9 @@ class eZContentClassAttribute extends eZPersistentObject
 
     /// \privatesection
     /// Contains the content for this attribute
-    public $Content;
+    public $Content = null;
     /// Contains information on how to display the current attribute in various viewmodes
-    public $DisplayInfo;
+    public $DisplayInfo = null;
     public $ID;
     public $Version;
     public $ContentClassID;
@@ -1136,7 +1132,7 @@ class eZContentClassAttribute extends eZPersistentObject
     public $IsSearchable;
     public $IsRequired;
     public $IsInformationCollector;
-    public $Module;
+    public $Module = null;
     public $DataTextI18nList;
 
     // Used locale for use by datatypes in class/edit when storing data

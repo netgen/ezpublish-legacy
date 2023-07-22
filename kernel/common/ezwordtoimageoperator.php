@@ -20,10 +20,6 @@ class eZWordToImageOperator
      */
     public function __construct()
     {
-        $this->Operators = array( "wordtoimage",
-                                  "mimetype_icon", "class_icon", "classgroup_icon", "action_icon", "icon",
-                                  "flag_icon", "icon_info" );
-        $this->IconInfo = array();
     }
 
     /*!
@@ -482,7 +478,9 @@ class eZWordToImageOperator
     }
 
     /// \privatesection
-    public $Operators;
-    public $IconInfo;
+    public $Operators = array( "wordtoimage",
+                              "mimetype_icon", "class_icon", "classgroup_icon", "action_icon", "icon",
+                              "flag_icon", "icon_info" );
+    public $IconInfo = array();
 }
 ?>

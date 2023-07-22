@@ -47,6 +47,27 @@ $script->shutdown(); // Finish execution
 */
 class eZScript
 {
+    public $CurrentOptions = false;
+    public $CurrentOptionConfig = false;
+    public $CurrentStandardOptions = false;
+    public $CurrentExcludeOptions = false;
+    public $CurrentOptionHelp = false;
+    public $IterationTrueString = '.';
+    public $IterationFalseString = '~';
+    public $IterationNumericStrings = false;
+    public $IterationWrapNumeric = false;
+    public $IterationIndex = 0;
+    public $IterationColumn = 0;
+    public $IterationColumnMax = 70;
+    public $IterationMax = false;
+    public $AllowedDebugLevels;
+    public $UseDebugAccumulators;
+    public $UseDebugTimingPoints;
+    public $UseIncludeFiles;
+    public $Description;
+    public $MinVersion;
+    public $MaxVersion;
+    public $ArgumentConfig;
     /**
      * @param array $settings
      */
@@ -69,25 +90,6 @@ class eZScript
             'max_version' => false
         );
         $this->updateSettings( $settings );
-        $this->ExitCode = false;
-        $this->IsQuiet = false;
-        $this->ShowVerbose = false;
-        $this->IsInitialized = false;
-        $this->CurrentOptions = false;
-        $this->CurrentOptionConfig = false;
-        $this->CurrentStandardOptions = false;
-        $this->CurrentExcludeOptions = false;
-        $this->CurrentOptionHelp = false;
-
-        $this->IterationTrueString = '.';
-        $this->IterationFalseString = '~';
-        $this->IterationNumericStrings = false;
-        $this->IterationWrapNumeric = false;
-        $this->IterationIndex = 0;
-        $this->IterationColumn = 0;
-        $this->IterationColumnMax = 70;
-        $this->IterationMax = false;
-        $this->InitializationErrorMessage = 'unknown error';
     }
 
     /**
@@ -1171,8 +1173,8 @@ class eZScript
     }
 
     /// \privatesection
-    public $IsInitialized;
-    public $InitializationErrorMessage;
+    public $IsInitialized = false;
+    public $InitializationErrorMessage = 'unknown error';
     public $DebugMessage;
     public $UseDebugOutput;
     public $UseSession;
@@ -1180,9 +1182,9 @@ class eZScript
     public $UseModules;
     public $User;
     public $SiteAccess;
-    public $ExitCode;
-    public $IsQuiet;
-    public $ShowVerbose;
+    public $ExitCode = false;
+    public $IsQuiet = false;
+    public $ShowVerbose = false;
 }
 
 function eZDBCleanup()

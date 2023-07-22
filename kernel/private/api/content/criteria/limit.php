@@ -18,7 +18,7 @@ class ezpContentLimitCriteria implements ezpContentCriteriaInterface
      * Current offset
      * @var int
      */
-    private $offset;
+    private $offset = 0;
 
     /**
      * Current limit
@@ -28,7 +28,6 @@ class ezpContentLimitCriteria implements ezpContentCriteriaInterface
 
     public function __construct()
     {
-        $this->offset = 0;
     }
 
     /**

@@ -13,8 +13,6 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
     public function __construct( $xmlData, $aliasedType, $contentObjectAttribute )
     {
         parent::__construct( $xmlData, $aliasedType, $contentObjectAttribute );
-
-        $this->IsInputValid = true;
         $this->ContentObjectAttribute = $contentObjectAttribute;
 
         $contentIni = eZINI::instance( 'content.ini' );
@@ -149,7 +147,7 @@ class eZSimplifiedXMLInput extends eZXMLInputHandler
         return $output;
     }
 
-    public $IsInputValid;
+    public $IsInputValid = true;
 }
 
 ?>

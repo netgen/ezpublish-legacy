@@ -17,9 +17,9 @@
 
 class eZInformationCollectionAttribute extends eZPersistentObject
 {
+    public $ContentClassAttributeID;
     public function __construct( $row )
     {
-        $this->Content = null;
         parent::__construct( $row );
     }
 
@@ -212,7 +212,7 @@ class eZInformationCollectionAttribute extends eZPersistentObject
     }
 
     // Contains the content for this attribute
-    public $Content;
+    public $Content = null;
 }
 
 ?>

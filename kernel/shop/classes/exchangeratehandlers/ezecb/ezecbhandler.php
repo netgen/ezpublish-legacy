@@ -12,10 +12,6 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
 {
     public function __construct()
     {
-        $this->ServerName = false;
-        $this->ServerPort = false;
-        $this->RatesURI = false;
-
         parent::__construct();
     }
 
@@ -149,9 +145,9 @@ class eZECBHandler extends eZExchangeRatesUpdateHandler
         return $this->RatesURI;
     }
 
-    public $ServerName;
-    public $ServerPort;
-    public $RatesURI;
+    public $ServerName = false;
+    public $ServerPort = false;
+    public $RatesURI = false;
 }
 
 ?>

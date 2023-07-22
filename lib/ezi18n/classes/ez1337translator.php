@@ -31,8 +31,6 @@ class eZ1337Translator extends eZTranslatorHandler
     public function __construct()
     {
         parent::__construct( false );
-
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -101,7 +99,7 @@ class eZ1337Translator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached 1337 translations
-    public $Messages;
+    public $Messages = array();
 }
 
 ?>

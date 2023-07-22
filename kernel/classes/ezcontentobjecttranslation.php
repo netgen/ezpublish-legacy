@@ -18,6 +18,7 @@
 
 class eZContentObjectTranslation
 {
+    public $Locale = null;
     /**
      * Constructor
      *
@@ -30,7 +31,6 @@ class eZContentObjectTranslation
         $this->ContentObjectID = $contentObjectID;
         $this->Version = $version;
         $this->LanguageCode = $languageCode;
-        $this->Locale = null;
     }
 
     function languageCode()

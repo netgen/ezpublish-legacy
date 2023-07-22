@@ -24,13 +24,6 @@ class eZImageShellHandler extends eZImageHandler
         parent::__construct( $handlerName, $isEnabled, $outputRewriteType,
                                $supportedInputMIMETypes, $supportedOutputMIMETypes,
                                $conversionRules, $filters, $mimeTagMap );
-        $this->Path = false;
-        $this->Executable = false;
-        $this->PreParameters = false;
-        $this->PostParameters = false;
-        $this->UseTypeTag = false;
-        $this->QualityParameters = false;
-        $this->FrameRangeParameters = false;
     }
 
     /*!
@@ -265,10 +258,10 @@ class eZImageShellHandler extends eZImageHandler
     }
 
     /// \privatesection
-    public $Path;
-    public $Executable;
-    public $PreParameters;
-    public $PostParameters;
+    public $Path = false;
+    public $Executable = false;
+    public $PreParameters = false;
+    public $PostParameters = false;
 
     public $ExecutableWin32;
     public $ExecutableMac;
@@ -283,9 +276,9 @@ class eZImageShellHandler extends eZImageHandler
     public $SupportImageFilters;
     public $MIMETagMap;
     public $IsEnabled;
-    public $UseTypeTag;
-    public $QualityParameters;
-    public $FrameRangeParameters;
+    public $UseTypeTag = false;
+    public $QualityParameters = false;
+    public $FrameRangeParameters = false;
 }
 
 ?>

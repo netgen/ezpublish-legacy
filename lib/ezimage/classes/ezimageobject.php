@@ -17,6 +17,7 @@
 
 class eZImageObject extends eZImageInterface
 {
+    public $ImageLayerCounter = 0;
     /// Alignment values @{
     const ALIGN_AXIS_NONE = 0x00;
     const ALIGN_AXIS_START = 0x01;
@@ -35,9 +36,6 @@ class eZImageObject extends eZImageInterface
     public function __construct( $imageObjectRef = null, $imageObject = null, $width = false, $height = false )
     {
         parent::__construct( $imageObjectRef, $imageObject, $width, $height );
-        $this->TemplateURI = 'design:image/imageobject.tpl';
-        $this->ImageLayers = array();
-        $this->ImageLayerCounter = 0;
     }
 
     /*!
@@ -320,8 +318,8 @@ class eZImageObject extends eZImageInterface
     }
 
     /// \privatesection
-    public $ImageLayers;
-    public $TemplateURI;
+    public $ImageLayers = array();
+    public $TemplateURI = 'design:image/imageobject.tpl';
     public $ImageLayerIndex;
 }
 

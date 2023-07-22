@@ -21,23 +21,12 @@ class eZTemplateStringOperator
 {
     public function __construct()
     {
-        $this->Operators = array( 'upcase', 'downcase',
-                                  'count_words', 'count_chars',
-                                  'trim', 'break', 'wrap', 'shorten', 'pad',
-                                  'upfirst', 'upword',
-                                  'simplify', 'wash',
-                                  'chr', 'ord');
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
             $name[0] = $name[0] & "\xdf";
             $this->$name = $operator;
         }
-
-        $this->phpMap = array ('upcase' => 'mb_strtoupper,strtoupper',
-                               'downcase' => 'mb_strtolower,strtolower',
-                               'break' => 'nl2br',
-                               'count_chars' => 'mb_strlen,strlen');
 
         $this->customMap = array ( 'count_words' => array( 'return' => 'int',
                                                           'code' => '$result = preg_match_all( "#(\w+)#", $staticValues[0], $dummy );'
@@ -727,7 +716,12 @@ class eZTemplateStringOperator
     }
 
     /// The array of operators, used for registering operators
-    public $Operators;
+    public $Operators = array( 'upcase', 'downcase',
+                              'count_words', 'count_chars',
+                              'trim', 'break', 'wrap', 'shorten', 'pad',
+                              'upfirst', 'upword',
+                              'simplify', 'wash',
+                              'chr', 'ord');
     public $UpcaseName;
     public $DowncaseName;
     public $Count_wordsName;
@@ -743,7 +737,10 @@ class eZTemplateStringOperator
     public $WashName;
     public $ChrName;
     public $OrdName;
-    public $phpMap;
+    public $phpMap = array ('upcase' => 'mb_strtoupper,strtoupper',
+                           'downcase' => 'mb_strtolower,strtolower',
+                           'break' => 'nl2br',
+                           'count_chars' => 'mb_strlen,strlen');
     public $customMap;
 }
 

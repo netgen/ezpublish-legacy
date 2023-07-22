@@ -68,8 +68,6 @@ class eZDBSchemaInterface
     public function __construct( $params )
     {
         $this->DBInstance = $params['instance'];
-        $this->Schema = false;
-        $this->Data = false;
         if ( isset( $params['schema'] ) )
             $this->Schema = $params['schema'];
         if ( isset( $params['data'] ) )
@@ -1370,8 +1368,8 @@ class eZDBSchemaInterface
 
     /// eZDB instance
     public $DBInstance;
-    public $Schema;
-    public $Data;
+    public $Schema = false;
+    public $Data = false;
 }
 
 ?>

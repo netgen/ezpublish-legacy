@@ -99,7 +99,6 @@ class eZXMLTextType extends eZDataType
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "XML block", 'Datatype name' ),
                            array( 'serialize_supported' => true ) );
-        $this->deletedStoredObjectAttribute = array();
     }
 
     /*!
@@ -859,7 +858,7 @@ class eZXMLTextType extends eZDataType
      * List of fully deleted object attributes by id, used to know when we don't need to perform additional url cleanup
      * @var array
      */
-    protected $deletedStoredObjectAttribute;
+    protected $deletedStoredObjectAttribute = array();
 }
 
 eZDataType::register( eZXMLTextType::DATA_TYPE_STRING, "eZXMLTextType" );

@@ -25,7 +25,6 @@ class eZMatrix
     public function __construct( $name, $numRows = false, $matrixColumnDefinition = false )
     {
         $this->Name = $name;
-        $this->Matrix = array();
 
         if ( $numRows !== false &&  $matrixColumnDefinition !== false )
         {
@@ -880,7 +879,7 @@ class eZMatrix
     public $Name;
 
     /// Contains the Matrix array
-    public $Matrix;
+    public $Matrix = array();
 
     /// Contains the number of columns
     public $NumColumns;

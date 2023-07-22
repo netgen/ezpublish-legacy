@@ -47,8 +47,6 @@ class eZBorkTranslator extends eZTranslatorHandler
     public function __construct()
     {
         parent::__construct( false );
-
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -139,7 +137,7 @@ class eZBorkTranslator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached bork translations
-    public $Messages;
+    public $Messages = array();
 }
 
 ?>
