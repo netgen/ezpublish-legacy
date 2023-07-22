@@ -9,7 +9,7 @@
  */
 class ezpNativeUserAuthFilter extends ezcAuthenticationFilter
 {
-    const STATUS_INVALID_USER = 1;
+    final public const STATUS_INVALID_USER = 1;
 
     /**
      * Will check if UserID provided in credentials is valid
@@ -18,7 +18,7 @@ class ezpNativeUserAuthFilter extends ezcAuthenticationFilter
     public function run( $credentials )
     {
         $status = self::STATUS_INVALID_USER;
-        $count = eZPersistentObject::count( eZUser::definition(), array( 'contentobject_id' => (int)$credentials->id ) );
+        $count = eZPersistentObject::count( eZUser::definition(), ['contentobject_id' => (int)$credentials->id] );
         if ( $count > 0 )
         {
             $status = self::STATUS_OK;

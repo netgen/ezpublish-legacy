@@ -32,19 +32,19 @@
  */
 
 $http           = eZHTTPTool::instance();
-$callType       = isset($Params['type']) ? $Params['type'] : 'call';
-$callFnList     = array();
+$callType       = $Params['type'] ?? 'call';
+$callFnList     = [];
 $debugOutput    = isset($Params['debug']) ? (bool)$Params['debug'] : false;
 $callSeparator = '@SEPARATOR$';
 $streamSeparator = '@END$';
 
 // prefer post parameters, as they are more encoding safe
 if ( $http->hasPostVariable( 'ezjscServer_function_arguments' ) )
-    $callList = explode( $callSeparator, strip_tags( $http->postVariable( 'ezjscServer_function_arguments' ) ) );
+    $callList = explode( $callSeparator, strip_tags( (string) $http->postVariable( 'ezjscServer_function_arguments' ) ) );
 else if ( isset( $Params['function_arguments'] ) )
-    $callList = explode( $callSeparator, strip_tags( $Params['function_arguments'] ) );
+    $callList = explode( $callSeparator, strip_tags( (string) $Params['function_arguments'] ) );
 else
-    $callList = array();
+    $callList = [];
 
 // Allow get parameter to be set to test in browser
 if ( isset( $_GET['ContentType'] ) )
@@ -89,7 +89,7 @@ else
 if ( !$callList )
 {
     header( $_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error' );
-    $response = array( 'error_text' => 'No server call defined', 'content' => '' );
+    $response = ['error_text' => 'No server call defined', 'content' => ''];
     echo ezjscAjaxContent::autoEncode( $response, $contentType );
     eZExecution::cleanExit();
     return;
@@ -100,7 +100,7 @@ if ( !$callList )
 foreach( $callList as $call )
 {
     $temp = ezjscServerRouter::getInstance( explode( '::', $call ), true, true );
-    $callFnList[] = $temp === null ? $call : $temp;
+    $callFnList[] = $temp ?? $call;
 }
 
 $callFnListCount = count( $callFnList ) -1;
@@ -124,7 +124,7 @@ if ( $callType === 'stream' )
     $endTime = time() + 29;
     while ( @ob_end_clean() );
     // flush 256 bytes first to force IE to not buffer the stream
-    if ( strpos( eZSys::serverVariable( 'HTTP_USER_AGENT' ), 'MSIE' ) !== false )
+    if ( str_contains( (string) eZSys::serverVariable( 'HTTP_USER_AGENT' ), 'MSIE' ) )
     {
         echo '                                                  ';
         echo '                                                  ';
@@ -148,10 +148,10 @@ else
 
 function multipleezjscServerCalls( $calls, $contentType = 'json' )
 {
-    $r = array();
+    $r = [];
     foreach( $calls as $call )
     {
-        $response = array( 'error_text' => '', 'content' => '' );
+        $response = ['error_text' => '', 'content' => ''];
         if( $call instanceOf ezjscServerRouter )
         {
             try
@@ -165,7 +165,7 @@ function multipleezjscServerCalls( $calls, $contentType = 'json' )
         }
         else
         {
-            $response['error_text'] = 'Not a valid ezjscServerRouter argument: "' . htmlentities( $call, ENT_QUOTES ) . '"';
+            $response['error_text'] = 'Not a valid ezjscServerRouter argument: "' . htmlentities( (string) $call, ENT_QUOTES ) . '"';
         }
         $r[] = ezjscAjaxContent::autoEncode( $response, $contentType );
     }

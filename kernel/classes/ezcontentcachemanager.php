@@ -24,23 +24,20 @@
 class eZContentCacheManager
 {
     // Clear cache types
-    const CLEAR_NO_CACHE       = 0;
-    const CLEAR_NODE_CACHE     = 1;
-    const CLEAR_PARENT_CACHE   = 2;
-    const CLEAR_RELATING_CACHE = 4;
-    const CLEAR_KEYWORD_CACHE  = 8;
-    const CLEAR_SIBLINGS_CACHE = 16;
-    const CLEAR_CHILDREN_CACHE = 32;
-    const CLEAR_ALL_CACHE      = 63;
-    const CLEAR_DEFAULT        = 15; // CLEAR_NODE_CACHE and CLEAR_PARENT_CACHE and CLEAR_RELATING_CACHE and CLEAR_KEYWORD_CACHE
-
+    final public const CLEAR_NO_CACHE       = 0;
+    final public const CLEAR_NODE_CACHE     = 1;
+    final public const CLEAR_PARENT_CACHE   = 2;
+    final public const CLEAR_RELATING_CACHE = 4;
+    final public const CLEAR_KEYWORD_CACHE  = 8;
+    final public const CLEAR_SIBLINGS_CACHE = 16;
+    final public const CLEAR_CHILDREN_CACHE = 32;
+    final public const CLEAR_ALL_CACHE      = 63;
+    final public const CLEAR_DEFAULT        = 15; // CLEAR_NODE_CACHE and CLEAR_PARENT_CACHE and CLEAR_RELATING_CACHE and CLEAR_KEYWORD_CACHE
     /**
      * Hash of additional NodeIDs to append the node list, for clearing view cache.
      * Indexed by contentObjectID.
-     *
-     * @var array
      */
-    private static $additionalNodeIDsPerObject = array();
+    private static array $additionalNodeIDsPerObject = [];
 
     /**
      * Adds an additional NodeID to be appended to the node list for clearing view cache.
@@ -52,7 +49,7 @@ class eZContentCacheManager
     {
         if ( !isset( self::$additionalNodeIDsPerObject[$contentObjectID] ) )
         {
-            self::$additionalNodeIDsPerObject[$contentObjectID] = array();
+            self::$additionalNodeIDsPerObject[$contentObjectID] = [];
         }
 
         self::$additionalNodeIDsPerObject[$contentObjectID][] = $additionalNodeID;
@@ -61,7 +58,6 @@ class eZContentCacheManager
     /**
      * Appends additional node IDs.
      *
-     * @param eZContentObject $contentObject
      * @param array $nodeIDList
      */
     private static function appendAdditionalNodeIDs( eZContentObject $contentObject, &$nodeIDList )
@@ -110,7 +106,7 @@ class eZContentCacheManager
     */
     static function fetchNodePathString( $nodeList )
     {
-        $pathList = array();
+        $pathList = [];
         foreach ( $nodeList as $node )
         {
             $pathList[] = $node->attribute( 'path_string' );
@@ -131,10 +127,10 @@ class eZContentCacheManager
         {
             $relTypes = $viewCacheIni->variable( 'ViewCacheSettings', 'ClearRelationTypes' );
 
-            if ( !count( $relTypes ) )
+            if ( !(is_countable($relTypes) ? count( $relTypes ) : 0) )
                 return;
 
-            $relatedObjects = array();
+            $relatedObjects = [];
 
             $relationsMask = 0;
             if ( in_array( 'object', $relTypes ) )
@@ -155,13 +151,13 @@ class eZContentCacheManager
             if ( $relationsMask )
             {
                 $objects = $object->relatedContentObjectList( false, false, false, false,
-                                                              array( 'AllRelations' => $relationsMask ) );
-                $previousVersionObjects = array();
+                                                              ['AllRelations' => $relationsMask] );
+                $previousVersionObjects = [];
                 $previousVersion = $object->previousVersion();
                 if ( $previousVersion )
                 {
                     $previousVersionObjects = $object->relatedContentObjectList( $previousVersion, false, false, false,
-                                                              array( 'AllRelations' => $relationsMask ) );
+                                                              ['AllRelations' => $relationsMask] );
                 }
                 $relatedObjects = array_merge( $relatedObjects, $objects, $previousVersionObjects );
             }
@@ -185,13 +181,13 @@ class eZContentCacheManager
             if ( $relationsMask )
             {
                 $objects = $object->reverseRelatedObjectList( false, false, false,
-                                                              array( 'AllRelations' => $relationsMask ) );
-                $previousVersionObjects = array();
+                                                              ['AllRelations' => $relationsMask] );
+                $previousVersionObjects = [];
                 $previousVersion = $object->previousVersion();
                 if ( $previousVersion )
                 {
                     $previousVersionObjects = $object->relatedContentObjectList( $previousVersion, false, false, false,
-                                                              array( 'AllRelations' => $relationsMask ) );
+                                                              ['AllRelations' => $relationsMask] );
                 }
                 $relatedObjects = array_merge( $relatedObjects, $objects, $previousVersionObjects );
             }
@@ -227,7 +223,7 @@ class eZContentCacheManager
             return;
         if ( $versionNum === true )
             $versionNum = false;
-        $keywordArray = array();
+        $keywordArray = [];
         $attributes = $object->contentObjectAttributes( true, $versionNum );
         foreach ( array_keys( $attributes ) as $key )  // Looking for ezkeyword attributes
         {
@@ -254,7 +250,7 @@ class eZContentCacheManager
                 $keywordArray[$k] = "'" . $db->escapeString( $keyword ) . "'";
             }
             $keywordString = implode( ', ', $keywordArray );
-            $params = $limit ? array( 'offset' => 0, 'limit'  => $limit ) : array();
+            $params = $limit ? ['offset' => 0, 'limit'  => $limit] : [];
             $rows = $db->arrayQuery( "SELECT DISTINCT ezcontentobject_tree.node_id
                                        FROM
                                          ezcontentobject_tree,
@@ -282,12 +278,11 @@ class eZContentCacheManager
     */
     static function appendSiblingsNodeIDs( &$nodeList, &$nodeIDList )
     {
-        $params = array( 'Depth' => 1,
-                         'AsObject' => false );
+        $params = ['Depth' => 1, 'AsObject' => false];
         foreach ( $nodeList as $node )
         {
             $siblingNodeList = eZContentObjectTreeNode::subTreeByNodeID( $params, $node->attribute( 'parent_node_id' ) );
-            if ( count( $siblingNodeList ) > 0 )
+            if ( count( (array) $siblingNodeList ) > 0 )
             {
                 foreach ( array_keys( $siblingNodeList ) as $siblingKey )
                 {
@@ -306,8 +301,7 @@ class eZContentCacheManager
      */
     public static function appendChildrenNodeIDs( &$nodeList, &$nodeIDList )
     {
-        $params = array( 'Depth' => 1,
-                         'AsObject' => false );
+        $params = ['Depth' => 1, 'AsObject' => false];
         foreach ( $nodeList as $node )
         {
             $childNodeList = eZContentObjectTreeNode::subTreeByNodeID( $params, $node->attribute( 'node_id' ) );
@@ -342,7 +336,7 @@ class eZContentCacheManager
         {
             if ( $ini->hasGroup( $classID ) )
             {
-                $info = array();
+                $info = [];
                 $info['clear_cache_exclusive'] = $ini->variable( 'ViewCacheSettings', 'SmartCacheClear' ) === 'exclusive';
 
                 if ( $ini->hasVariable( $classID, 'DependentClassIdentifier' ) )
@@ -398,7 +392,7 @@ class eZContentCacheManager
                     $info['clear_cache_type'] = self::CLEAR_DEFAULT;
                 }
 
-                $info['object_filter'] = array();
+                $info['object_filter'] = [];
                 if ( $ini->hasVariable( $classID, 'ObjectFilter' ) )
                 {
                     $info['object_filter'] = $ini->variable( $classID, 'ObjectFilter' );
@@ -414,7 +408,7 @@ class eZContentCacheManager
     */
     static function writeDebugBits( $handledObjectList, $highestBit )
     {
-        $bitPadLength = (int)( pow( $highestBit, 0.5 ) + 1 );
+        $bitPadLength = (int)( $highestBit ** 0.5 + 1 );
         //$bitPadLength = strlen( decbin( $highestBit ) );
 
         $objectIDList = array_keys( $handledObjectList );
@@ -425,7 +419,7 @@ class eZContentCacheManager
         foreach ( $handledObjectList as $objectID => $clearCacheType )
         {
             $bitString = decbin( $clearCacheType );
-            $msg .= str_pad( $objectID, $padLength, ' ', STR_PAD_RIGHT ) . str_pad( $bitString, $bitPadLength, '0', STR_PAD_LEFT );
+            $msg .= str_pad( (string) $objectID, $padLength, ' ', STR_PAD_RIGHT ) . str_pad( $bitString, $bitPadLength, '0', STR_PAD_LEFT );
             $msg .= "\r\n";
         }
 
@@ -612,7 +606,7 @@ class eZContentCacheManager
                             }
                         }
 
-                        if ( count( $dependentClassInfo['object_filter'] ) > 0 )
+                        if ( (is_countable($dependentClassInfo['object_filter']) ? count( $dependentClassInfo['object_filter'] ) : 0) > 0 )
                         {
                             if ( in_array( $objectID, $dependentClassInfo['object_filter'] ) )
                             {
@@ -651,7 +645,7 @@ class eZContentCacheManager
     */
     static function nodeList( $objectID, $versionNum )
     {
-        $nodeList = array();
+        $nodeList = [];
 
         $object = eZContentObject::fetch( $objectID );
         if ( !$object )
@@ -684,19 +678,19 @@ class eZContentCacheManager
 
         if ( $nodeList === false )
         {
-            $nodeList = array();
+            $nodeList = [];
         }
 
         if ( is_array( $additionalNodeList ) )
         {
-            array_splice( $nodeList, count( $nodeList ), 0, $additionalNodeList );
+            array_splice( $nodeList, is_countable($nodeList) ? count( $nodeList ) : 0, 0, $additionalNodeList );
         }
 
         $nodeList = array_unique( $nodeList );
 
         eZDebug::accumulatorStop( 'node_cleanup_list' );
 
-        return self::clearNodeViewCacheArray( $nodeList, array( $objectID ) );
+        return self::clearNodeViewCacheArray( $nodeList, [$objectID] );
     }
 
     /**
@@ -712,7 +706,7 @@ class eZContentCacheManager
     {
         eZDebug::accumulatorStart( 'node_cleanup_list', '', 'Node cleanup list' );
 
-        $nodeList = array();
+        $nodeList = [];
 
         foreach ( $objectIDList as $objectID )
         {
@@ -751,11 +745,7 @@ class eZContentCacheManager
         {
             $staticCacheHandler = eZExtension::getHandlerClass(
                 new ezpExtensionOptions(
-                    array(
-                        'iniFile' => 'site.ini',
-                        'iniSection' => 'ContentSettings',
-                        'iniVariable' => 'StaticCacheHandler',
-                    )
+                    ['iniFile' => 'site.ini', 'iniSection' => 'ContentSettings', 'iniVariable' => 'StaticCacheHandler']
                 )
             );
 
@@ -770,7 +760,7 @@ class eZContentCacheManager
 
         if ( eZContentCache::inCleanupThresholdRange( $cleanupValue ) )
         {
-            ezpEvent::getInstance()->notify( 'content/cache', array( $nodeList, $contentObjectList ) );
+            ezpEvent::getInstance()->notify( 'content/cache', [$nodeList, $contentObjectList] );
             eZContentCache::cleanup( $nodeList );
         }
         else
@@ -852,7 +842,7 @@ class eZContentCacheManager
         }
         else
         {
-            $objects = array( $objectID => eZContentObject::fetch( $objectID ) );
+            $objects = [$objectID => eZContentObject::fetch( $objectID )];
         }
 
         $ini = eZINI::instance( 'viewcache.ini' );
@@ -873,7 +863,7 @@ class eZContentCacheManager
 
                 if ( $getAssignedNodes )
                 {
-                    $nodeList = array_merge( ( $nodeList !== false ? $nodeList : array() ), $object->assignedNodes() );
+                    $nodeList = array_merge( ( $nodeList !== false ? $nodeList : [] ), $object->assignedNodes() );
                 }
             }
         }
@@ -903,11 +893,7 @@ class eZContentCacheManager
             $currentSiteAccess = $GLOBALS['eZCurrentAccess'];
 
             // This is the default view parameters for content/view
-            $viewParameters = array( 'offset' => false,
-                                     'year' => false,
-                                     'month' => false,
-                                     'day' => false,
-                                     'namefilter' => false );
+            $viewParameters = ['offset' => false, 'year' => false, 'month' => false, 'day' => false, 'namefilter' => false];
             if ( is_array( $preCacheSiteaccessArray ) && count( $preCacheSiteaccessArray ) > 0 )
             {
                 foreach ( $preCacheSiteaccessArray as $changeToSiteAccess )
@@ -980,15 +966,13 @@ class eZContentCacheManager
 
         if ( $ini->variable( 'ContentSettings', 'StaticCache' ) == 'enabled' )
         {
-            $nodes = array();
+            $nodes = [];
             $ini = eZINI::instance();
             $useURLAlias =& $GLOBALS['eZContentObjectTreeNodeUseURLAlias'];
             $pathPrefix = $ini->variable( 'SiteAccessSettings', 'PathPrefix' );
 
             // get staticCacheHandler instance
-            $optionArray = array( 'iniFile'      => 'site.ini',
-                                  'iniSection'   => 'ContentSettings',
-                                  'iniVariable'  => 'StaticCacheHandler' );
+            $optionArray = ['iniFile'      => 'site.ini', 'iniSection'   => 'ContentSettings', 'iniVariable'  => 'StaticCacheHandler'];
 
             $options = new ezpExtensionOptions( $optionArray );
             $staticCacheHandler = eZExtension::getHandlerClass( $options );
@@ -1001,7 +985,7 @@ class eZContentCacheManager
             eZContentCacheManager::nodeListForObject( $object, true, self::CLEAR_DEFAULT, $nodes, $handledObjectList );
 
             // If no nodes returns it means that ClearCacheMethod = self::CLEAR_NO_CACHE
-            if ( count( $nodes ) )
+            if ( is_countable($nodes) ? count( $nodes ) : 0 )
             {
                 foreach ( $nodes as $nodeID )
                 {
@@ -1014,11 +998,11 @@ class eZContentCacheManager
                         $urlAlias = $oNode->urlAlias();
                         if ( $pathPrefix != '' )
                         {
-                            $tempAlias = substr( $pathPrefix, strlen( $pathPrefix ) -1 ) == '/'
+                            $tempAlias = substr( (string) $pathPrefix, strlen( (string) $pathPrefix ) -1 ) == '/'
                                             ? $urlAlias . '/'
                                             : $urlAlias;
-                            if ( strncmp( $tempAlias, $pathPrefix, strlen( $tempAlias) ) == 0 )
-                                $urlAlias = substr( $tempAlias, strlen( $pathPrefix ) );
+                            if ( strncmp( $tempAlias, (string) $pathPrefix, strlen( $tempAlias) ) == 0 )
+                                $urlAlias = substr( $tempAlias, strlen( (string) $pathPrefix ) );
                         }
                     }
                     else
@@ -1040,9 +1024,9 @@ class eZContentCacheManager
     static function clearContentCacheIfNeededBySectionID( $sectionID )
     {
         // fetch all objects of this section
-        $objectList = eZContentObject::fetchList( false, array( 'section_id' => "$sectionID" ) );
+        $objectList = eZContentObject::fetchList( false, ['section_id' => "$sectionID"] );
         // Clear cache
-        $objectIDList = array();
+        $objectIDList = [];
         foreach ( $objectList as $object )
         {
             $objectIDList[] = $object['id'];

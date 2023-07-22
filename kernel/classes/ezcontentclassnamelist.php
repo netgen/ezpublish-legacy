@@ -45,7 +45,7 @@ class eZContentClassNameList extends eZSerializedObjectNameList
             }
 
             // create new
-            if ( count( $languages ) > 0 )
+            if ( (is_countable($languages) ? count( $languages ) : 0) > 0 )
             {
                 foreach ( $languages as $languageLocale => $language )
                 {
@@ -58,11 +58,7 @@ class eZContentClassNameList extends eZSerializedObjectNameList
                     if ( $initialLanguageID == $languageID )
                         $languageID = $initialLanguageID | 1;
 
-                    $className = new eZContentClassName( array( 'contentclass_id' => $classID,
-                                                                'contentclass_version' => $classVersion,
-                                                                'language_locale' => $languageLocale,
-                                                                'language_id' => $languageID,
-                                                                'name' => $this->nameByLanguageLocale( $languageLocale ) ) );
+                    $className = new eZContentClassName( ['contentclass_id' => $classID, 'contentclass_version' => $classVersion, 'language_locale' => $languageLocale, 'language_id' => $languageID, 'name' => $this->nameByLanguageLocale( $languageLocale )] );
                     $className->store();
                 }
             }

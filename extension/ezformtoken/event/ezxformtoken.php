@@ -21,11 +21,11 @@
  */
 class ezxFormToken
 {
-    const SESSION_KEY = __CLASS__;
+    final public const SESSION_KEY = self::class;
 
-    const FORM_FIELD = 'ezxform_token';
+    final public const FORM_FIELD = 'ezxform_token';
 
-    const REPLACE_KEY = '@$ezxFormToken@';
+    final public const REPLACE_KEY = '@$ezxFormToken@';
 
     /**
      * @var string|null
@@ -112,8 +112,6 @@ class ezxFormToken
     /**
      * request/input event listener
      * Checks if form token is valid if user is logged in.
-     *
-     * @param eZURI $uri
      */
     static public function input( eZURI $uri )
     {
@@ -188,8 +186,8 @@ class ezxFormToken
             // Note the Content-Type header will not be included in
             // headers_list() unless it has been explicitly set from PHP.
             if (stripos( $header, 'Content-Type:' ) === 0 &&
-                strpos( $header, 'text/html' ) === false &&
-                strpos( $header, 'application/xhtml+xml' ) === false   )
+                !str_contains( $header, 'text/html' ) &&
+                !str_contains( $header, 'application/xhtml+xml' )   )
            {
                eZDebugSetting::writeDebug( 'ezformtoken', 'Output not protected (Content-Type is not html/xhtml)', __METHOD__ );
                return $templateResult;
@@ -205,7 +203,7 @@ class ezxFormToken
 
         // Inject token for programmatical use (also system default for historical reasons)
         // If document has head tag, insert in a html5 valid and semi standard way
-        if ( strpos( $templateResult, '<head>' ) !== false )
+        if ( str_contains( $templateResult, '<head>' ) )
         {
             $templateResult = str_replace(
                 '<head>',

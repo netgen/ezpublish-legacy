@@ -21,24 +21,19 @@ class eZImageInterface
     /**
      * Constructor
      *
-     * @param string $imageObjectRef
-     * @param eZContentObject $imageObject
-     * @param int|bool $width
-     * @param int|bool $height
+     * @param string $ImageObjectRef
+     * @param eZContentObject $ImageObject
+     * @param int|bool $Width
+     * @param int|bool $Height
      */
-    public function __construct( $imageObjectRef = null, $imageObject = null, $width = false, $height = false )
+    public function __construct(
+        public $ImageObjectRef = null,
+        public $ImageObject = null,
+        /// \privatesection
+        public $Width = false,
+        public $Height = false
+    )
     {
-        $this->ImageObjectRef = $imageObjectRef;
-        $this->ImageObject = $imageObject;
-        $this->Width = $width;
-        $this->Height = $height;
-        $this->AlternativeText = '';
-        $this->IsTrueColor = null;
-        $this->Palette = array();
-        $this->PaletteIndex = array();
-        $this->StoredPath = false;
-        $this->Font = null;
-        $this->IsProcessed = false;
     }
 
     /*!
@@ -57,11 +52,7 @@ class eZImageInterface
     */
     function attributeMemberMap()
     {
-        return array( 'filepath' => 'StoredPath',
-                      'filename' => 'StoredFile',
-                      'width' => 'Width',
-                      'height' => 'Height',
-                      'alternative_text' => 'AlternativeText' );
+        return ['filepath' => 'StoredPath', 'filename' => 'StoredFile', 'width' => 'Width', 'height' => 'Height', 'alternative_text' => 'AlternativeText'];
     }
 
     /*!
@@ -71,8 +62,7 @@ class eZImageInterface
     */
     function attributeFunctionMap()
     {
-        return array( 'imagepath' => 'imagePath',
-                      'has_size' => 'hasSize' );
+        return ['imagepath' => 'imagePath', 'has_size' => 'hasSize'];
     }
 
     /*!
@@ -80,8 +70,7 @@ class eZImageInterface
     */
     function attributes()
     {
-        return array_merge( array_keys( eZImageInterface::attributeMemberMap() ),
-                            array_keys( eZImageInterface::attributeFunctionMap() ) );
+        return [...array_keys( (new eZImageInterface())->attributeMemberMap() ), ...array_keys( (new eZImageInterface())->attributeFunctionMap() )];
     }
 
     /*!
@@ -89,10 +78,10 @@ class eZImageInterface
     */
     function hasAttribute( $name )
     {
-        $attributeMemberMap = eZImageInterface::attributeMemberMap();
+        $attributeMemberMap = (new eZImageInterface())->attributeMemberMap();
         if ( isset( $attributeMemberMap[$name] ) )
             return true;
-        $attributeFunctionMap = eZImageInterface::attributeFunctionMap();
+        $attributeFunctionMap = (new eZImageInterface())->attributeFunctionMap();
         if ( isset( $attributeFunctionMap[$name] ) )
             return true;
         return false;
@@ -103,7 +92,7 @@ class eZImageInterface
     */
     function attribute( $name )
     {
-        $attributeMemberMap = eZImageInterface::attributeMemberMap();
+        $attributeMemberMap = (new eZImageInterface())->attributeMemberMap();
         if ( isset( $attributeMemberMap[$name] ) )
         {
             $member = $attributeMemberMap[$name];
@@ -112,7 +101,7 @@ class eZImageInterface
             eZDebug::writeWarning( 'The member variable $member was not found for attribute $name', __METHOD__ );
             return null;
         }
-        $attributeFunctionMap = eZImageInterface::attributeFunctionMap();
+        $attributeFunctionMap = (new eZImageInterface())->attributeFunctionMap();
         if ( isset( $attributeFunctionMap[$name] ) )
         {
             $function = $attributeFunctionMap[$name];
@@ -184,7 +173,7 @@ class eZImageInterface
         $createdImageArray =& $GLOBALS['eZImageCreatedArray'];
         if ( !is_array( $createdImageArray ) )
         {
-            $createdImageArray = array();
+            $createdImageArray = [];
             register_shutdown_function( 'eZGlobalImageCleanupFunction' );
         }
         $createdImageArray[$imageObjectRef] = $image;
@@ -387,7 +376,7 @@ class eZImageInterface
     {
         if ( $this->StoredFile == '' )
             return true;
-        $fileArray = array( $this->StoredPath, $this->StoredFile );
+        $fileArray = [$this->StoredPath, $this->StoredFile];
         $filePath = eZDir::path( $fileArray );
         $imageinfo = getimagesize( $filePath );
         if ( $imageinfo )
@@ -426,7 +415,7 @@ class eZImageInterface
                 {
                     eZDir::mkdir( $filePath, false, true );
                 }
-                $fileFullPath = eZDir::path( array( $filePath, $fileName ) );
+                $fileFullPath = eZDir::path( [$filePath, $fileName] );
                 ImagePNG( $imageObject, $fileFullPath );
                 $this->StoredPath = $filePath;
                 $this->StoredFile = $fileName;
@@ -440,7 +429,7 @@ class eZImageInterface
                 {
                     eZDir::mkdir( $filePath, false, true );
                 }
-                ImageJPEG( $imageObject, eZDir::path( array( $filePath, $fileName ) ) );
+                ImageJPEG( $imageObject, eZDir::path( [$filePath, $fileName] ) );
                 $this->StoredPath = $filePath;
                 $this->StoredFile = $fileName;
                 $this->StoredType = $type;
@@ -676,7 +665,7 @@ class eZImageInterface
     {
         if ( $color === false )
         {
-            if ( count( $this->PaletteIndex ) > 0)
+            if ( (is_countable($this->PaletteIndex) ? count( $this->PaletteIndex ) : 0) > 0)
                 $color = $this->PaletteIndex[0];
             else
                 $color = 'bgcol';
@@ -769,23 +758,17 @@ class eZImageInterface
             $imageObject = $this->ImageObject;
 
         ImageTTFText( $imageObject, $font->pointSize(), $angle, $x, $y,
-                      $textColor, $font->realFile(), $text );
+                      $textColor, $font->realFile(), (string) $text );
     }
-
-    /// \privatesection
-    public $Width;
-    public $Height;
-    public $Font;
-    public $ImageObject;
-    public $ImageObjectRef;
+    public $Font = null;
     public $StoredFile;
-    public $StoredPath;
+    public $StoredPath = false;
     public $StoredType;
-    public $PaletteIndex;
-    public $Palette;
-    public $AlternativeText;
-    public $IsTrueColor;
-    public $IsProcessed;
+    public $PaletteIndex = [];
+    public $Palette = [];
+    public $AlternativeText = '';
+    public $IsTrueColor = null;
+    public $IsProcessed = false;
 }
 
 /*!

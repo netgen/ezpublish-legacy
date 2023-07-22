@@ -61,7 +61,7 @@ class eZStepSiteAccess extends eZStepInstaller
 
             $accessType = $data['Access'];
             if ( in_array( $accessType,
-                           array( 'url', 'port', 'hostname' ) ) )
+                           ['url', 'port', 'hostname'] ) )
             $siteType['access_type'] = $accessType;
 
             $this->setAccessValues( $siteType );
@@ -97,12 +97,11 @@ class eZStepSiteAccess extends eZStepInstaller
 //         $this->Tpl->setVariable( 'error', $this->Error );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/site_access.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Site access' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Site access' ), 'url' => false]];
         return $result;
     }
 

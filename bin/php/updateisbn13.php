@@ -21,22 +21,14 @@ require_once 'autoload.php';
 $url = ''; // http://www.isbn-international.org/agency?rmxml=1 url with the xml.
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => "eZ Publish ISBN-13 update\n\n" .
-                                                      "Update the database with new updated ISBN data to the database.",
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => "eZ Publish ISBN-13 update\n\n" .
+                                                      "Update the database with new updated ISBN data to the database.", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[url:][db-host:][db-user:][db-password:][db-database:][db-driver:]",
                                 "",
-                                array( 'url' => "URL containing the xml file for the different ranges",
-                                       'db-host' => "Database host.",
-                                       'db-user' => "Database user.",
-                                       'db-password' => "Database password.",
-                                       'db-database' => "Database name.",
-                                       'db-driver' => "Database driver." ) );
+                                ['url' => "URL containing the xml file for the different ranges", 'db-host' => "Database host.", 'db-user' => "Database user.", 'db-password' => "Database password.", 'db-database' => "Database name.", 'db-driver' => "Database driver."] );
 
 $script->initialize();
 
@@ -56,15 +48,15 @@ if( !$db->IsConnected )
     // default settings are not valid
     // try user-defined settings
 
-    $dbUser = $options['db-user'] ? $options['db-user'] : false;
-    $dbPassword = $options['db-password'] ? $options['db-password'] : false;
-    $dbHost = $options['db-host'] ? $options['db-host'] : false;
-    $dbName = $options['db-database'] ? $options['db-database'] : false;
-    $dbImpl = $options['db-driver'] ? $options['db-driver'] : false;
+    $dbUser = $options['db-user'] ?: false;
+    $dbPassword = $options['db-password'] ?: false;
+    $dbHost = $options['db-host'] ?: false;
+    $dbName = $options['db-database'] ?: false;
+    $dbImpl = $options['db-driver'] ?: false;
 
     if ( $dbHost or $dbName or $dbUser or $dbImpl )
     {
-        $params = array();
+        $params = [];
         if ( $dbHost !== false )
             $params['server'] = $dbHost;
         if ( $dbUser !== false )
@@ -130,7 +122,7 @@ foreach ( $registrationGroups as $group )
         // if length is 0 there is no need to add to the database
         if( $length > 0 )
         {
-            $rangeArray = explode( '-', $rule->Range );
+            $rangeArray = explode( '-', (string) $rule->Range );
             $fromValue = substr( $rangeArray[0], 0, 5 );
             $toValue = substr( $rangeArray[1], 0, 5 );
             $registrantFrom = substr( $rangeArray[0], 0, $length );

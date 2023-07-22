@@ -41,8 +41,6 @@ class eZTemplateDelimitFunction
      */
     public function __construct()
     {
-        $this->LName = 'ldelim';
-        $this->RName = 'rdelim';
     }
 
     /*!
@@ -50,7 +48,7 @@ class eZTemplateDelimitFunction
     */
     function functionList()
     {
-        return array( $this->LName, $this->RName );
+        return [$this->LName, $this->RName];
     }
 
     /*!
@@ -58,24 +56,21 @@ class eZTemplateDelimitFunction
     */
     function functionTemplateHints()
     {
-        return array(
-            $this->LName => array( 'parameters' => false, 'static' => false, 'tree-transformation' => true ),
-            $this->RName => array( 'parameters' => false, 'static' => false, 'tree-transformation' => true )
-        );
+        return [$this->LName => ['parameters' => false, 'static' => false, 'tree-transformation' => true], $this->RName => ['parameters' => false, 'static' => false, 'tree-transformation' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
                                          $tpl, $parameters, $privateData )
     {
-        $newNodes = array();
+        $newNodes = [];
 
         if ( $functionName == $this->LName )
         {
-            $newNodes = array ( eZTemplateNodeTool::createTextNode( $tpl->leftDelimiter() ) );
+            $newNodes = [eZTemplateNodeTool::createTextNode( $tpl->leftDelimiter() )];
         }
         else
         {
-            $newNodes = array ( eZTemplateNodeTool::createTextNode( $tpl->rightDelimiter() ) );
+            $newNodes = [eZTemplateNodeTool::createTextNode( $tpl->rightDelimiter() )];
         }
         return $newNodes;
     }
@@ -107,9 +102,9 @@ class eZTemplateDelimitFunction
     }
 
     /// The name of the left delimiter tag
-    public $LName;
+    public $LName = 'ldelim';
     /// The name of the right delimiter tag
-    public $RName;
+    public $RName = 'rdelim';
 }
 
 ?>

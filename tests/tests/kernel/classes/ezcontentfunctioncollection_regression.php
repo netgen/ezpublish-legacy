@@ -29,18 +29,12 @@ class eZContentFunctionCollectionRegression extends ezpDatabaseTestCase
      */
     public function testIssue15230()
     {
-        $nonExistingArticleID = 100000000;
+        $nonExistingArticleID = 100_000_000;
 
-        $this->assertFalse(
-            eZContentFunctionCollection::fetchRelatedObjects( $nonExistingArticleID, false, true, false, false ),
-            "eZContentFunctionCollection::fetchRelatedObjects($nonExistingArticleID) should have returned false" );
-        $this->assertFalse(
-            eZContentFunctionCollection::fetchRelatedObjectsCount( $nonExistingArticleID, false, true ),
-            "eZContentFunctionCollection::fetchRelatedObjectsCount($nonExistingArticleID) should have returned false" );
-        $this->assertFalse( eZContentFunctionCollection::fetchReverseRelatedObjects( $nonExistingArticleID, false, true, false, false, false ),
-            "eZContentFunctionCollection::fetchReverseRelatedObjects($nonExistingArticleID) should have returned false" );
-        $this->assertFalse( eZContentFunctionCollection::fetchReverseRelatedObjectsCount( $nonExistingArticleID, false, true, false ),
-            "eZContentFunctionCollection::fetchReverseRelatedObjectsCount($nonExistingArticleID) should have returned false" );
+        static::assertFalse(eZContentFunctionCollection::fetchRelatedObjects( $nonExistingArticleID, false, true, false, false ), "eZContentFunctionCollection::fetchRelatedObjects($nonExistingArticleID) should have returned false");
+        static::assertFalse(eZContentFunctionCollection::fetchRelatedObjectsCount( $nonExistingArticleID, false, true ), "eZContentFunctionCollection::fetchRelatedObjectsCount($nonExistingArticleID) should have returned false");
+        static::assertFalse(eZContentFunctionCollection::fetchReverseRelatedObjects( $nonExistingArticleID, false, true, false, false, false ), "eZContentFunctionCollection::fetchReverseRelatedObjects($nonExistingArticleID) should have returned false");
+        static::assertFalse(eZContentFunctionCollection::fetchReverseRelatedObjectsCount( $nonExistingArticleID, false, true, false ), "eZContentFunctionCollection::fetchReverseRelatedObjectsCount($nonExistingArticleID) should have returned false");
     }
 }
 

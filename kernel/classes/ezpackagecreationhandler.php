@@ -26,15 +26,11 @@ class eZPackageCreationHandler
      */
     public function __construct( $id, $name, $steps )
     {
-        $this->Attributes = array( 'id' => $id,
-                                   'name' => $name,
-                                   'steps' => $steps,
-                                   'step_map' => false,
-                                   'current_steps' => $steps );
-        $this->InitializeStepMethodMap = array();
-        $this->ValidateStepMethodMap = array();
-        $this->CommitStepMethodMap = array();
-        $this->LoadStepMethodMap = array();
+        $this->Attributes = ['id' => $id, 'name' => $name, 'steps' => $steps, 'step_map' => false, 'current_steps' => $steps];
+        $this->InitializeStepMethodMap = [];
+        $this->ValidateStepMethodMap = [];
+        $this->CommitStepMethodMap = [];
+        $this->LoadStepMethodMap = [];
     }
 
     /*!
@@ -47,10 +43,10 @@ class eZPackageCreationHandler
     function generateStepMap( $package, &$persistentData )
     {
         $steps = $this->attribute( 'steps' );
-        $map = array();
+        $map = [];
         $lastStep = false;
-        $currentSteps = array();
-        for ( $i = 0; $i < count( $steps ); ++$i )
+        $currentSteps = [];
+        for ( $i = 0; $i < (is_countable($steps) ? count( $steps ) : 0); ++$i )
         {
             $step =& $steps[$i];
             if ( !isset( $step['previous_step'] ) )
@@ -62,7 +58,7 @@ class eZPackageCreationHandler
             }
             if ( !isset( $step['next_step'] ) )
             {
-                if ( $i + 1 < count( $steps ) )
+                if ( $i + 1 < (is_countable($steps) ? count( $steps ) : 0) )
                     $step['next_step'] = $steps[$i+1]['id'];
                 else
                     $step['next_step'] = false;
@@ -88,9 +84,7 @@ class eZPackageCreationHandler
                 $currentSteps[] =& $step;
             }
         }
-        $this->StepMap = array( 'first' => &$steps[0],
-                                'map' => &$map,
-                                'steps' => &$steps );
+        $this->StepMap = ['first' => &$steps[0], 'map' => &$map, 'steps' => &$steps];
         $this->Attributes['step_map'] =& $this->StepMap;
         $this->Attributes['current_steps'] = $currentSteps;
     }
@@ -153,8 +147,7 @@ class eZPackageCreationHandler
             $stepTemplateDir = "create";
         else
             $stepTemplateDir = "creators/" . $this->attribute( 'id' );
-        return array( 'name' => $stepTemplateName,
-                      'dir' => $stepTemplateDir );
+        return ['name' => $stepTemplateName, 'dir' => $stepTemplateDir];
     }
 
     /*!
@@ -165,7 +158,7 @@ class eZPackageCreationHandler
     function initializeStep( $package, $http, $step, &$persistentData, $tpl )
     {
         $methodMap = $this->initializeStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$step['id']] ) )
             {
@@ -181,7 +174,7 @@ class eZPackageCreationHandler
     function loadStep( $package, $http, $currentStepID, &$persistentData, $tpl, &$module )
     {
         $methodMap = $this->loadStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$currentStepID] ) )
             {
@@ -223,7 +216,7 @@ class eZPackageCreationHandler
     function validateAndAdvanceStep( $package, $http, $currentStepID, &$stepMap, &$persistentData, &$errorList )
     {
         $methodMap = $this->validateStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$currentStepID] ) )
             {
@@ -241,7 +234,7 @@ class eZPackageCreationHandler
     function commitStep( $package, $http, $step, &$persistentData, $tpl )
     {
         $methodMap = $this->commitStepMethodMap();
-        if ( count( $methodMap ) > 0 )
+        if ( (is_countable($methodMap) ? count( $methodMap ) : 0) > 0 )
         {
             if ( isset( $methodMap[$step['id']] ) )
             {
@@ -267,11 +260,10 @@ class eZPackageCreationHandler
     static function creatorLimitationList()
     {
         $creators =& eZPackageCreationHandler::creatorList();
-        $list = array();
+        $list = [];
         foreach ( $creators as $creator )
         {
-            $list[] = array( 'name' => $creator->attribute( 'name' ),
-                             'id' => $creator->attribute( 'id' ) );
+            $list[] = ['name' => $creator->attribute( 'name' ), 'id' => $creator->attribute( 'id' )];
         }
         return $list;
     }
@@ -286,11 +278,11 @@ class eZPackageCreationHandler
 
         $currentUser = eZUser::currentUser();
         $accessResult = $currentUser->hasAccessTo( 'package', 'create' );
-        $limitationList = array();
+        $limitationList = [];
         $canCreate = false;
         if ( $accessResult['accessWord'] == 'no' )
         {
-            $creators = array();
+            $creators = [];
             return $creators;
         }
 
@@ -304,7 +296,7 @@ class eZPackageCreationHandler
                     if ( $key == 'CreatorType' )
                     {
                         if ( !is_array( $allowedCreators ) )
-                            $allowedCreators = array();
+                            $allowedCreators = [];
                         $list = $limitation;
                         $allowedCreators = array_merge( $allowedCreators, $list );
                     }
@@ -315,7 +307,7 @@ class eZPackageCreationHandler
         $creators =& $GLOBALS['eZPackageCreatorList'];
         if ( !isset( $creators ) )
         {
-            $creators = array();
+            $creators = [];
             $ini = eZINI::instance( 'package.ini' );
             $list = $ini->variable( 'CreationSettings', 'HandlerList' );
             foreach ( $list as $name )
@@ -341,7 +333,7 @@ class eZPackageCreationHandler
     {
         $handlers =& $GLOBALS['eZPackageCreationHandlers'];
         if ( !isset( $handlers ) )
-            $handlers = array();
+            $handlers = [];
         $handler = false;
 
         if( isset( $handlers[$handlerName] ) )
@@ -351,11 +343,7 @@ class eZPackageCreationHandler
         }
         else
         {
-            $optionArray = array( 'iniFile'       => 'package.ini',
-                                  'iniSection'    => 'CreationSettings',
-                                  'iniVariable'   => 'HandlerAlias',
-                                  'handlerIndex'  => $handlerName,
-                                  'handlerParams' => array( $handlerName ) );
+            $optionArray = ['iniFile'       => 'package.ini', 'iniSection'    => 'CreationSettings', 'iniVariable'   => 'HandlerAlias', 'handlerIndex'  => $handlerName, 'handlerParams' => [$handlerName]];
 
             $options = new ezpExtensionOptions( $optionArray );
 
@@ -371,13 +359,7 @@ class eZPackageCreationHandler
     */
     function packageInformationStep()
     {
-        return array( 'id' => 'packageinfo',
-                      'name' => ezpI18n::tr( 'kernel/package', 'Package information' ),
-                      'methods' => array( 'initialize' => 'initializePackageInformation',
-                                          'validate' => 'validatePackageInformation',
-                                          'commit' => 'commitPackageInformation' ),
-                      'use_standard_template' => true,
-                      'template' => 'info.tpl' );
+        return ['id' => 'packageinfo', 'name' => ezpI18n::tr( 'kernel/package', 'Package information' ), 'methods' => ['initialize' => 'initializePackageInformation', 'validate' => 'validatePackageInformation', 'commit' => 'commitPackageInformation'], 'use_standard_template' => true, 'template' => 'info.tpl'];
     }
 
     /*!
@@ -386,14 +368,7 @@ class eZPackageCreationHandler
     */
     function packageMaintainerStep()
     {
-        return array( 'id' => 'packagemaintainer',
-                      'name' => ezpI18n::tr( 'kernel/package', 'Package maintainer' ),
-                      'methods' => array( 'initialize' => 'initializePackageMaintainer',
-                                          'validate' => 'validatePackageMaintainer',
-                                          'commit' => 'commitPackageMaintainer',
-                                          'check' => 'checkPackageMaintainer' ),
-                      'use_standard_template' => true,
-                      'template' => 'maintainer.tpl' );
+        return ['id' => 'packagemaintainer', 'name' => ezpI18n::tr( 'kernel/package', 'Package maintainer' ), 'methods' => ['initialize' => 'initializePackageMaintainer', 'validate' => 'validatePackageMaintainer', 'commit' => 'commitPackageMaintainer', 'check' => 'checkPackageMaintainer'], 'use_standard_template' => true, 'template' => 'maintainer.tpl'];
     }
 
     /*!
@@ -402,13 +377,7 @@ class eZPackageCreationHandler
     */
     function packageChangelogStep()
     {
-        return array( 'id' => 'packagechangelog',
-                      'name' => ezpI18n::tr( 'kernel/package', 'Package changelog' ),
-                      'methods' => array( 'initialize' => 'initializePackageChangelog',
-                                          'validate' => 'validatePackageChangelog',
-                                          'commit' => 'commitPackageChangelog' ),
-                      'use_standard_template' => true,
-                      'template' => 'changelog.tpl' );
+        return ['id' => 'packagechangelog', 'name' => ezpI18n::tr( 'kernel/package', 'Package changelog' ), 'methods' => ['initialize' => 'initializePackageChangelog', 'validate' => 'validatePackageChangelog', 'commit' => 'commitPackageChangelog'], 'use_standard_template' => true, 'template' => 'changelog.tpl'];
     }
 
     /*!
@@ -417,13 +386,7 @@ class eZPackageCreationHandler
     */
     function packageThumbnailStep()
     {
-        return array( 'id' => 'packagethumbnail',
-                      'name' => ezpI18n::tr( 'kernel/package', 'Package thumbnail' ),
-                      'methods' => array( 'initialize' => 'initializePackageThumbnail',
-                                          'validate' => 'validatePackageThumbnail',
-                                          'commit' => 'commitPackageThumbnail' ),
-                      'use_standard_template' => true,
-                      'template' => 'thumbnail.tpl' );
+        return ['id' => 'packagethumbnail', 'name' => ezpI18n::tr( 'kernel/package', 'Package thumbnail' ), 'methods' => ['initialize' => 'initializePackageThumbnail', 'validate' => 'validatePackageThumbnail', 'commit' => 'commitPackageThumbnail'], 'use_standard_template' => true, 'template' => 'thumbnail.tpl'];
     }
 
     /*!
@@ -490,7 +453,7 @@ class eZPackageCreationHandler
         if ( !( $package instanceof eZPackage ) )
         {
             $package = eZPackage::create( $persistentData['name'],
-                                          array( 'summary' => $persistentData['summary'] ) );
+                                          ['summary' => $persistentData['summary']] );
             $createdPackage = true;
         }
         else
@@ -532,22 +495,14 @@ class eZPackageCreationHandler
         }
 
 
-        $collections = array();
-        $cleanupFiles = array();
+        $collections = [];
+        $cleanupFiles = [];
 
         if ( isset( $persistentData['thumbnail'] ) and
              $persistentData['thumbnail'] )
         {
             $thumbnail = $persistentData['thumbnail'];
-            $fileItem = array( 'file' => $thumbnail['filename'],
-                               'type' => 'thumbnail',
-                               'role' => false,
-                               'design' => false,
-                               'path' => $thumbnail['url'],
-                               'collection' => 'default',
-                               'file-type' => false,
-                               'role-value' => false,
-                               'variable-name' => 'thumbnail' );
+            $fileItem = ['file' => $thumbnail['filename'], 'type' => 'thumbnail', 'role' => false, 'design' => false, 'path' => $thumbnail['url'], 'collection' => 'default', 'file-type' => false, 'role-value' => false, 'variable-name' => 'thumbnail'];
 
             $package->appendFile( $fileItem['file'], $fileItem['type'], $fileItem['role'],
                                   $fileItem['design'], $fileItem['path'], $fileItem['collection'],
@@ -562,24 +517,20 @@ class eZPackageCreationHandler
         foreach ( $collections as $collection )
         {
             $installItems = $package->installItemsList( 'ezfile', false, $collection, true );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, true,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
             $dependencyItems = $package->dependencyItems( 'provides',
-                                                          array( 'type'   => 'ezfile',
-                                                                 'name'   => 'collection',
-                                                                 'valiue' => $collection ) );
-            if ( count( $dependencyItems ) == 0 )
+                                                          ['type'   => 'ezfile', 'name'   => 'collection', 'valiue' => $collection] );
+            if ( (is_countable($dependencyItems) ? count( $dependencyItems ) : 0) == 0 )
                 $package->appendDependency( 'provides',
-                                            array( 'type'  => 'ezfile',
-                                                   'name'  => 'collection',
-                                                   'value' => $collection ) );
+                                            ['type'  => 'ezfile', 'name'  => 'collection', 'value' => $collection] );
             $installItems = $package->installItemsList( 'ezfile', false, $collection, false );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, false,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
         }
 
         $package->setAttribute( 'is_active', true );
@@ -643,14 +594,14 @@ class eZPackageCreationHandler
         $packagePackager = false;
         if ( $http->hasPostVariable( 'PackageName' ) )
         {
-            $packageName = trim( $http->postVariable( 'PackageName' ) );
+            $packageName = trim( (string) $http->postVariable( 'PackageName' ) );
         }
         if ( $http->hasPostVariable( 'PackageSummary' ) )
             $packageSummary = $http->postVariable( 'PackageSummary' );
         if ( $http->hasPostVariable( 'PackageDescription' ) )
             $packageDescription = $http->postVariable( 'PackageDescription' );
         if ( $http->hasPostVariable( 'PackageVersion' ) )
-            $packageVersion = trim( $http->postVariable( 'PackageVersion' ) );
+            $packageVersion = trim( (string) $http->postVariable( 'PackageVersion' ) );
         if ( $http->hasPostVariable( 'PackageLicence' ) )
             $packageLicence = $http->postVariable( 'PackageLicence' );
         if ( $http->hasPostVariable( 'PackageHost' ) )
@@ -669,8 +620,7 @@ class eZPackageCreationHandler
         $result = true;
         if ( $packageName == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Package name' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'Package name is missing' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Package name' ), 'description' => ezpI18n::tr( 'kernel/package', 'Package name is missing' )];
             $result = false;
         }
         else
@@ -678,8 +628,7 @@ class eZPackageCreationHandler
             $existingPackage = eZPackage::fetch( $packageName, false, true );
             if ( $existingPackage )
             {
-                $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Package name' ),
-                                      'description' => ezpI18n::tr( 'kernel/package', 'A package named %packagename already exists, please give another name', false, array( '%packagename' => $packageName ) ) );
+                $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Package name' ), 'description' => ezpI18n::tr( 'kernel/package', 'A package named %packagename already exists, please give another name', false, ['%packagename' => $packageName] )];
                 $result = false;
             }
             else
@@ -687,24 +636,21 @@ class eZPackageCreationHandler
                 // Make sure the package name contains only valid characters
                 $trans = eZCharTransform::instance();
                 $validPackageName = $trans->transformByGroup( $packageName, 'identifier' );
-                if ( strcmp( $validPackageName, $packageName ) != 0 )
+                if ( strcmp( (string) $validPackageName, $packageName ) != 0 )
                 {
-                    $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Package name' ),
-                                          'description' => ezpI18n::tr( 'kernel/package', "The package name %packagename is not valid, it can only contain characters in the range a-z, 0-9 and underscore.", false, array( '%packagename' => $packageName ) ) );
+                    $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Package name' ), 'description' => ezpI18n::tr( 'kernel/package', "The package name %packagename is not valid, it can only contain characters in the range a-z, 0-9 and underscore.", false, ['%packagename' => $packageName] )];
                     $result = false;
                 }
             }
         }
         if ( !$packageSummary )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Summary' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'Summary is missing' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Summary' ), 'description' => ezpI18n::tr( 'kernel/package', 'Summary is missing' )];
             $result = false;
         }
         if ( !preg_match( "#^[0-9](\.[0-9]([a-zA-Z]+[0-9]*)?)*$#", $packageVersion ) )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Version' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'The version must only contain numbers (optionally followed by text) and must be delimited by dots (.), e.g. 1.0, 3.4.0beta1' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Version' ), 'description' => ezpI18n::tr( 'kernel/package', 'The version must only contain numbers (optionally followed by text) and must be delimited by dots (.), e.g. 1.0, 3.4.0beta1' )];
             $result = false;
         }
         return $result;
@@ -723,6 +669,7 @@ class eZPackageCreationHandler
     */
     function initializePackageChangelog( $package, $http, $step, &$persistentData, $tpl )
     {
+        $changelogPerson = null;
         $user = eZUser::currentUser();
         $userObject = $user->attribute( 'contentobject' );
         if ( $userObject )
@@ -737,7 +684,7 @@ class eZPackageCreationHandler
             $changelogText = $this->initialChangelogEntry( $package, $http, $step, $persistentData, $tpl );
         }
         $persistentData['changelog_text'] = $changelogText;
-        $persistentData['changelog_entries'] = array();
+        $persistentData['changelog_entries'] = [];
     }
 
     /*!
@@ -750,7 +697,7 @@ class eZPackageCreationHandler
         $changelogEmail = false;
         $changelogText = false;
         if ( $http->hasPostVariable( 'PackageChangelogPerson' ) )
-            $changelogPerson = trim( $http->postVariable( 'PackageChangelogPerson' ) );
+            $changelogPerson = trim( (string) $http->postVariable( 'PackageChangelogPerson' ) );
         if ( $http->hasPostVariable( 'PackageChangelogEmail' ) )
             $changelogEmail = $http->postVariable( 'PackageChangelogEmail' );
         if ( $http->hasPostVariable( 'PackageChangelogText' ) )
@@ -763,20 +710,17 @@ class eZPackageCreationHandler
         $result = true;
         if ( trim( $changelogPerson ) == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Name' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must enter a name for the changelog' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Name' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must enter a name for the changelog' )];
             $result = false;
         }
-        if ( trim( $changelogEmail ) == '' )
+        if ( trim( (string) $changelogEmail ) == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Email' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must enter an email for the changelog' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Email' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must enter an email for the changelog' )];
             $result = false;
         }
-        if ( trim( $changelogText ) == '' )
+        if ( trim( (string) $changelogText ) == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Changelog' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must supply some text for the changelog entry' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Changelog' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must supply some text for the changelog entry' )];
             $result = false;
         }
         return $result;
@@ -787,9 +731,9 @@ class eZPackageCreationHandler
     */
     function commitPackageChangelog( $package, $http, $step, &$persistentData, $tpl )
     {
-        $changelogEntries = array();
+        $changelogEntries = [];
         $changelogText = $persistentData['changelog_text'];
-        $lines = preg_split( "#\r\n|\n|\r#", $changelogText );
+        $lines = preg_split( "#\r\n|\n|\r#", (string) $changelogText );
         $currentEntries = false;
         foreach ( $lines as $line )
         {
@@ -800,14 +744,14 @@ class eZPackageCreationHandler
                 {
                     $changelogEntries[] = implode( ' ', $currentEntries );
                 }
-                $currentEntries = array();
+                $currentEntries = [];
                 $currentEntries[] = trim( substr( $line, 1 ) );
             }
             else
             {
                 if ( $currentEntries === false )
                 {
-                    $changelogEntries = array();
+                    $changelogEntries = [];
                 }
                 $currentEntries[] = trim( $line );
             }
@@ -845,7 +789,7 @@ class eZPackageCreationHandler
         $maintainerEmail = false;
         $maintainerRole = false;
         if ( $http->hasPostVariable( 'PackageMaintainerPerson' ) )
-            $maintainerPerson = trim( $http->postVariable( 'PackageMaintainerPerson' ) );
+            $maintainerPerson = trim( (string) $http->postVariable( 'PackageMaintainerPerson' ) );
         if ( $http->hasPostVariable( 'PackageMaintainerEmail' ) )
             $maintainerEmail = $http->postVariable( 'PackageMaintainerEmail' );
         if ( $http->hasPostVariable( 'PackageMaintainerRole' ) )
@@ -858,14 +802,12 @@ class eZPackageCreationHandler
         $result = true;
         if ( trim( $maintainerPerson ) == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Name' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must enter a name of the maintainer' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Name' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must enter a name of the maintainer' )];
             $result = false;
         }
-        if ( trim( $maintainerEmail ) == '' )
+        if ( trim( (string) $maintainerEmail ) == '' )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Email' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must enter an email address of the maintainer' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Email' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must enter an email address of the maintainer' )];
             $result = false;
         }
         return $result;
@@ -887,7 +829,7 @@ class eZPackageCreationHandler
     function checkPackageMaintainer( $package, &$persistentData )
     {
         $roleList = eZPackage::fetchMaintainerRoleIDList( $this->packageType( $package, $persistentData ), true );
-        if ( count( $roleList ) > 0 )
+        if ( (is_countable($roleList) ? count( $roleList ) : 0) > 0 )
         {
             if ( $package instanceof eZPackage )
             {
@@ -954,26 +896,23 @@ class eZPackageCreationHandler
     {
         if ( !isset( $_FILES[$httpFileName] ) || $_FILES[$httpFileName]["tmp_name"] === "" )
         {
-            $errorList[] = array( 'field' => $httpFileName,
-                                  'description' => ezpI18n::tr( 'kernel/package', 'The file does not exist.' ) );
+            $errorList[] = ['field' => $httpFileName, 'description' => ezpI18n::tr( 'kernel/package', 'The file does not exist.' )];
             return false;
         }
 
         $imagefile = $_FILES[$httpFileName]['tmp_name'];
         if ( !$_FILES[$httpFileName]["size"] )
         {
-            $errorList[] = array( 'field' => $httpFileName,
-                                  'description' => ezpI18n::tr( 'kernel/package', 'The image file must have non-zero size.' ) );
+            $errorList[] = ['field' => $httpFileName, 'description' => ezpI18n::tr( 'kernel/package', 'The image file must have non-zero size.' )];
             return false;
         }
 
         $mimeType = eZMimeType::findByURL( $_FILES[$httpFileName]['name'] );
         $nameMimeType = $mimeType['name'];
-        $nameMimeTypes = explode("/", $nameMimeType);
+        $nameMimeTypes = explode("/", (string) $nameMimeType);
         if ( $nameMimeTypes[0] != 'image' )
         {
-            $errorList[] = array( 'field' => $httpFileName,
-                                  'description' => ezpI18n::tr( 'kernel/package', 'A valid image file is required.' ) );
+            $errorList[] = ['field' => $httpFileName, 'description' => ezpI18n::tr( 'kernel/package', 'A valid image file is required.' )];
             return false;
         }
 

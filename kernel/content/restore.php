@@ -43,28 +43,14 @@ if ( $module->isCurrentAction( 'Confirm' ) )
     $type = $module->actionParameter( 'RestoreType' );
     if ( $type == 1 )
     {
-        $selectedNodeIDArray = array( $location->attribute( 'node_id' ) );
+        $selectedNodeIDArray = [$location->attribute( 'node_id' )];
         $module->setCurrentAction( 'AddLocation' );
     }
     elseif ( $type == 2 )
     {
         $languageCode = $object->attribute( 'initial_language_code' );
-        eZContentBrowse::browse( array( 'action_name' => 'AddNodeAssignment',
-                                        'description_template' => 'design:content/browse_placement.tpl',
-                                        'keys' => array( 'class' => $class->attribute( 'id' ),
-                                                         'class_id' => $class->attribute( 'identifier' ),
-                                                         'classgroup' => $class->attribute( 'ingroup_id_list' ),
-                                                         'section' => $object->attribute( 'section_id' ) ),
-                                        'ignore_nodes_select' => array(),
-                                        'ignore_nodes_click'  => array(),
-                                        'persistent_data' => array( 'ContentObjectID' => $objectID,
-                                                                    'AddLocationAction' => '1' ),
-                                        'content' => array( 'object_id' => $objectID,
-                                                            'object_version' => $version->attribute( 'version' ),
-                                                            'object_language' => $languageCode ),
-                                        'cancel_page' => '/content/trash/',
-                                        'from_page' => "/content/restore/" . $objectID ),
-                                 $module );
+        eZContentBrowse::browse( $module,
+                                 ['action_name' => 'AddNodeAssignment', 'description_template' => 'design:content/browse_placement.tpl', 'keys' => ['class' => $class->attribute( 'id' ), 'class_id' => $class->attribute( 'identifier' ), 'classgroup' => $class->attribute( 'ingroup_id_list' ), 'section' => $object->attribute( 'section_id' )], 'ignore_nodes_select' => [], 'ignore_nodes_click'  => [], 'persistent_data' => ['ContentObjectID' => $objectID, 'AddLocationAction' => '1'], 'content' => ['object_id' => $objectID, 'object_version' => $version->attribute( 'version' ), 'object_language' => $languageCode], 'cancel_page' => '/content/trash/', 'from_page' => "/content/restore/" . $objectID] );
 
         return;
     }
@@ -87,8 +73,8 @@ if ( $module->isCurrentAction( 'AddLocation' ) )
     $db->begin();
     $locationAdded = false;
 
-    $newLocationList    = array();
-    $failedLocationList = array();
+    $newLocationList    = [];
+    $failedLocationList = [];
     foreach ( $selectedNodeIDArray as $selectedNodeID )
     {
         $parentNode = eZContentObjectTreeNode::fetch( $selectedNodeID );
@@ -98,15 +84,12 @@ if ( $module->isCurrentAction( 'AddLocation' ) )
 
         if ( $canCreate )
         {
-            $newLocationList[] = array(
-                'parent_node_id' => $selectedNodeID,
-                'is_main' => !$locationAdded
-            );
+            $newLocationList[] = ['parent_node_id' => $selectedNodeID, 'is_main' => !$locationAdded];
             $locationAdded = true;
         }
         else
         {
-            $failedLocationList[] = array( 'parent_node_id' => $selectedNodeID );
+            $failedLocationList[] = ['parent_node_id' => $selectedNodeID];
         }
     }
 
@@ -136,8 +119,7 @@ if ( $module->isCurrentAction( 'AddLocation' ) )
     $object->restoreObjectAttributes();
 
     $user = eZUser::currentUser();
-    $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $objectID,
-                                                                                 'version' => $version->attribute( 'version' ) ) );
+    $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $objectID, 'version' => $version->attribute( 'version' )] );
     if ( ( array_key_exists( 'status', $operationResult ) && $operationResult['status'] != eZModuleOperationInfo::STATUS_CONTINUE ) )
     {
         switch( $operationResult['status'] )
@@ -170,7 +152,7 @@ if ( $module->isCurrentAction( 'AddLocation' ) )
     // we need to clear cache again after db transcation is commited
     eZContentCacheManager::clearContentCacheIfNeeded( $objectID,  $version->attribute( 'version' ) );
 
-    $module->redirectToView( 'view', array( 'full', $mainNodeID ) );
+    $module->redirectToView( 'view', ['full', $mainNodeID] );
     return;
 }
 
@@ -178,23 +160,24 @@ $tpl = eZTemplate::factory();
 
 $res = eZTemplateDesignResource::instance();
 
-$designKeys = array( array( 'object', $object->attribute( 'id' ) ), // Object ID
-                     array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                     array( 'class', $class->attribute( 'id' ) ), // Class ID
-                     array( 'class_identifier', $class->attribute( 'identifier' ) ) ); // Class identifier
+$designKeys = [
+    ['object', $object->attribute( 'id' )],
+    // Object ID
+    ['remote_id', $object->attribute( 'remote_id' )],
+    ['class', $class->attribute( 'id' )],
+    // Class ID
+    ['class_identifier', $class->attribute( 'identifier' )],
+]; // Class identifier
 
 $res->setKeys( $designKeys );
 
-$Result = array();
+$Result = [];
 
 $tpl->setVariable( "object",   $object );
 $tpl->setVariable( "version",  $version );
 $tpl->setVariable( "location", $location );
 
 $Result['content'] = $tpl->fetch( 'design:content/restore.tpl' );
-$Result['path'] = array( array( 'uri'  => false,
-                                'text' => ezpI18n::tr( "kernel/content/restore", "Restore object" ) ),
-                         array( 'uri'  => false,
-                                'text' => $object->attribute( 'name' ) ) );
+$Result['path'] = [['uri'  => false, 'text' => ezpI18n::tr( "kernel/content/restore", "Restore object" )], ['uri'  => false, 'text' => $object->attribute( 'name' )]];
 
 ?>

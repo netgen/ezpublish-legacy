@@ -17,7 +17,7 @@ class eZSimpleTagsOperator
      */
     public function __construct( $name = 'simpletags' )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -33,9 +33,7 @@ class eZSimpleTagsOperator
     */
     function namedParameterList()
     {
-        return array( 'listname' => array( 'type' => 'string',
-                                           'required' => false,
-                                           'default' => false ) );
+        return ['listname' => ['type' => 'string', 'required' => false, 'default' => false]];
     }
 
     /*!
@@ -72,10 +70,10 @@ class eZSimpleTagsOperator
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
     {
         $elements = preg_split( "#(</?[a-zA-Z0-9_-]+>)#",
-                                $operatorValue,
+                                (string) $operatorValue,
                                 false,
                                 PREG_SPLIT_DELIM_CAPTURE );
-        $newElements = array();
+        $newElements = [];
         $i = 0;
         foreach ( $elements as $element )
         {
@@ -88,7 +86,7 @@ class eZSimpleTagsOperator
                     if ( $matches[1] )
                         $isEndTag = true;
                     $tag = $matches[2];
-                    $element = array( $tag, $isEndTag, $tagText );
+                    $element = [$tag, $isEndTag, $tagText];
                 }
             }
             $newElements[] = $element;
@@ -101,31 +99,29 @@ class eZSimpleTagsOperator
 
         $this->initializeIncludes();
 
-        $tagMap = array();
+        $tagMap = [];
         $ini = eZINI::instance( 'template.ini' );
         $tagList = $ini->variable( 'SimpleTagsOperator', $tagListName );
         foreach ( $tagList as $tag => $tagItem )
         {
-            $elements = explode( ';', $tagItem );
+            $elements = explode( ';', (string) $tagItem );
             $pre = $elements[0];
             $post = $elements[1];
-            $phpFunctions = array();
+            $phpFunctions = [];
             if ( isset( $elements[2] ) )
             {
                 $phpFunctionList = explode( ',', $elements[2] );
-                $phpFunctions = array();
+                $phpFunctions = [];
                 foreach ( $phpFunctionList as $phpFunction )
                 {
                     if ( function_exists( $phpFunction ) )
                         $phpFunctions[] = $phpFunction;
                 }
             }
-            $tagMap[$tag] = array( 'pre' => $pre,
-                                   'post' => $post,
-                                   'phpfunctions' => $phpFunctions );
+            $tagMap[$tag] = ['pre' => $pre, 'post' => $post, 'phpfunctions' => $phpFunctions];
         }
 
-        $textPHPFunctions = array( 'htmlspecialchars' );
+        $textPHPFunctions = ['htmlspecialchars'];
         $textPre = false;
         $textPost = false;
         if ( isset( $tagMap['text']['pre'] ) )
@@ -134,7 +130,7 @@ class eZSimpleTagsOperator
             $textPost = $tagMap['text']['post'];
         if ( isset( $tagMap['text']['phpfunctions'] ) )
             $textPHPFunctions = $tagMap['text']['phpfunctions'];
-        $textElements = array();
+        $textElements = [];
         for ( $i = 0; $i < count( $newElements ); ++$i )
         {
             $element = $newElements[$i];
@@ -158,7 +154,7 @@ class eZSimpleTagsOperator
                     $phpFunctions = $tagOptions['phpfunctions'];
                     if ( !$isEndTag )
                     {
-                        $tagElements = array();
+                        $tagElements = [];
                         for ( $j = $i + 1; $j < count( $newElements ); ++$j )
                         {
                             $tagElement = $newElements[$j];

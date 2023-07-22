@@ -15,7 +15,7 @@ $http = eZHTTPTool::instance();
 
 if ( $http->hasPostVariable( 'NewExportButton' ) )
 {
-    return $Module->run( 'edit_export', array() );
+    return $Module->run( 'edit_export', [] );
 }
 else if ( $http->hasPostVariable( 'RemoveExportButton' ) && $http->hasPostVariable( 'DeleteIDArray' ) )
 {
@@ -36,7 +36,7 @@ else if ( $http->hasPostVariable( 'RemoveExportButton' ) && $http->hasPostVariab
 }
 else if ( $http->hasPostVariable( 'NewImportButton' ) )
 {
-    return $Module->run( 'edit_import', array() );
+    return $Module->run( 'edit_import', [] );
 }
 else if ( $http->hasPostVariable( 'RemoveImportButton' ) && $http->hasPostVariable( 'DeleteIDArrayImport' ) )
 {
@@ -59,7 +59,7 @@ else if ( $http->hasPostVariable( 'RemoveImportButton' ) && $http->hasPostVariab
 
 // Get all RSS Exports
 $exportArray = eZRSSExport::fetchList();
-$exportList = array();
+$exportList = [];
 foreach( $exportArray as $export )
 {
     $exportList[$export->attribute( 'id' )] = $export;
@@ -67,7 +67,7 @@ foreach( $exportArray as $export )
 
 // Get all RSS imports
 $importArray = eZRSSImport::fetchList();
-$importList = array();
+$importList = [];
 foreach( $importArray as $import )
 {
     $importList[$import->attribute( 'id' )] = $import;
@@ -78,10 +78,9 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( 'rssexport_list', $exportList );
 $tpl->setVariable( 'rssimport_list', $importList );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:rss/list.tpl" );
-$Result['path'] = array( array( 'url' => 'rss/list',
-                                'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' ) ) );
+$Result['path'] = [['url' => 'rss/list', 'text' => ezpI18n::tr( 'kernel/rss', 'Really Simple Syndication' )]];
 
 
 ?>

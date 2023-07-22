@@ -20,7 +20,7 @@ class eZFunctionHandler
     {
         if ( !isset( $GLOBALS['eZGlobalModuleFunctionList'] ) )
         {
-            $GLOBALS['eZGlobalModuleFunctionList'] = array();
+            $GLOBALS['eZGlobalModuleFunctionList'] = [];
         }
         if ( isset( $GLOBALS['eZGlobalModuleFunctionList'][$moduleName] ) )
         {
@@ -50,7 +50,7 @@ class eZFunctionHandler
 
             $functionName = $aliasSettings->variable( $aliasFunctionName, 'FunctionName' );
 
-            $functionArray = array();
+            $functionArray = [];
             if ( $aliasSettings->hasVariable( $aliasFunctionName, 'Parameter' ) )
             {
                 $parameterTranslation = $aliasSettings->variable( $aliasFunctionName, 'Parameter' );
@@ -69,7 +69,7 @@ class eZFunctionHandler
                 $constantParameterArray = $aliasSettings->variable( $aliasFunctionName, 'Constant' );
                 // prevent PHP warning in the loop below
                 if ( !is_array( $constantParameterArray ) )
-                    $constantParameterArray = array();
+                    $constantParameterArray = [];
                 foreach ( array_keys( $constantParameterArray ) as $constKey )
                 {
                     if ( $moduleFunctionInfo->isParameterArray( $functionName, $constKey ) )
@@ -89,7 +89,7 @@ class eZFunctionHandler
                          I use \x5c instead of \\ here.
                          */
                         $constantParameter = preg_split( '/((?<=\x5c\x5c)|(?<!\x5c{1}));/',
-                                                         $constantParameterArray[$constKey] );
+                                                         (string) $constantParameterArray[$constKey] );
 
                         /*
                          Unfortunately, my PHP 4.3.6 doesn't work correctly
@@ -97,7 +97,7 @@ class eZFunctionHandler
                          That's why we need to manually remove
                          empty strings from $constantParameter.
                          */
-                        $constantParameter = array_diff( $constantParameter, array('') );
+                        $constantParameter = array_diff( $constantParameter, [''] );
 
                         /*
                          Hack: force array keys to be consecutive, starting from zero (0, 1, 2, ...).

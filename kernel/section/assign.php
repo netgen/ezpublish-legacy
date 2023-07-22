@@ -39,11 +39,11 @@ else
                     $nodeList = eZContentObjectTreeNode::fetch( $selectedNodeIDArray );
                     if ( !is_array( $nodeList ) and is_object( $nodeList ) )
                     {
-                        $nodeList = array( $nodeList );
+                        $nodeList = [$nodeList];
                     }
 
-                    $allowedNodeIDList = array();
-                    $deniedNodeIDList = array();
+                    $allowedNodeIDList = [];
+                    $deniedNodeIDList = [];
                     foreach ( $nodeList as $node )
                     {
                         $nodeID = $node->attribute( 'node_id' );
@@ -79,12 +79,9 @@ else
                         $deniedNodes = eZContentObjectTreeNode::fetch( $deniedNodeIDList );
                         $tpl->setVariable( 'denied_node_list', $deniedNodes );
 
-                        $Result = array();
+                        $Result = [];
                         $Result['content'] = $tpl->fetch( "design:section/assign_notification.tpl" );
-                        $Result['path'] = array( array( 'url' => false,
-                                                        'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ),
-                                                 array( 'url' => false,
-                                                        'text' => ezpI18n::tr( 'kernel/section', 'Assign section' ) ) );
+                        $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Assign section' )]];
                         return;
                     }
                 }
@@ -93,20 +90,14 @@ else
             {
                 // Redirect to content node browse
                 $classList = $currentUser->canAssignSectionToClassList( $SectionID );
-                if ( count( $classList ) > 0 )
+                if ( (is_countable($classList) ? count( $classList ) : 0) > 0 )
                 {
                     if ( in_array( '*', $classList ) )
                     {
                         $classList = false;
                     }
-                    eZContentBrowse::browse( array( 'action_name' => 'AssignSection',
-                                                    'keys' => array(),
-                                                    'description_template' => 'design:section/browse_assign.tpl',
-                                                    'content' => array( 'section_id' => $SectionID ),
-                                                    'from_page' => '/section/assign/' . $SectionID . "/",
-                                                    'cancel_page' => '/section/list',
-                                                    'class_array' => $classList ),
-                                             $Module );
+                    eZContentBrowse::browse( $Module,
+                                             ['action_name' => 'AssignSection', 'keys' => [], 'description_template' => 'design:section/browse_assign.tpl', 'content' => ['section_id' => $SectionID], 'from_page' => '/section/assign/' . $SectionID . "/", 'cancel_page' => '/section/list', 'class_array' => $classList] );
                     return;
                 }
                 else
@@ -114,12 +105,9 @@ else
                     $tpl = eZTemplate::factory();
                     $tpl->setVariable( 'section_name', $section->attribute( 'name' ) );
                     $tpl->setVariable( 'error_number', 2 );
-                    $Result = array();
+                    $Result = [];
                     $Result['content'] = $tpl->fetch( "design:section/assign_notification.tpl" );
-                    $Result['path'] = array( array( 'url' => false,
-                                                    'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ),
-                                             array( 'url' => false,
-                                                    'text' => ezpI18n::tr( 'kernel/section', 'Assign section' ) ) );
+                    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Assign section' )]];
                     return;
                 }
             }
@@ -129,12 +117,9 @@ else
             $tpl = eZTemplate::factory();
             $tpl->setVariable( 'section_name', $section->attribute( 'name' ) );
             $tpl->setVariable( 'error_number', 3 );
-            $Result = array();
+            $Result = [];
             $Result['content'] = $tpl->fetch( "design:section/assign_notification.tpl" );
-            $Result['path'] = array( array( 'url' => false,
-                                            'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ),
-                                     array( 'url' => false,
-                                            'text' => ezpI18n::tr( 'kernel/section', 'Assign section' ) ) );
+            $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Assign section' )]];
             return;
         }
     }

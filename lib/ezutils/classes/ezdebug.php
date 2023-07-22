@@ -55,104 +55,54 @@
 
 class eZDebug
 {
-    const LEVEL_NOTICE = 1;
-    const LEVEL_WARNING = 2;
-    const LEVEL_ERROR = 3;
-    const LEVEL_TIMING_POINT = 4;
-    const LEVEL_DEBUG = 5;
-    const LEVEL_STRICT = 6;
+    final public const LEVEL_NOTICE = 1;
+    final public const LEVEL_WARNING = 2;
+    final public const LEVEL_ERROR = 3;
+    final public const LEVEL_TIMING_POINT = 4;
+    final public const LEVEL_DEBUG = 5;
+    final public const LEVEL_STRICT = 6;
 
-    const SHOW_NOTICE = 1; // 1 << (EZ_LEVEL_NOTICE - 1)
-    const SHOW_WARNING = 2; // 1 << (EZ_LEVEL_WARNING - 1)
-    const SHOW_ERROR = 4; // 1 << (EZ_LEVEL_ERROR - 1)
-    const SHOW_TIMING_POINT = 8; // 1 << (EZ_LEVEL_TIMING_POINT - 1)
-    const SHOW_DEBUG = 16; // 1 << (EZ_LEVEL_DEBUG - 1)
-    const SHOW_STRICT = 32; // 1 << (EZ_LEVEL_STRICT - 1)
-    const SHOW_ALL = 63; // EZ_SHOW_NOTICE | EZ_SHOW_WARNING | EZ_SHOW_ERROR | EZ_SHOW_TIMING_POINT | EZ_SHOW_DEBUG | EZ_SHOW_STRICT
+    final public const SHOW_NOTICE = 1; // 1 << (EZ_LEVEL_NOTICE - 1)
+    final public const SHOW_WARNING = 2; // 1 << (EZ_LEVEL_WARNING - 1)
+    final public const SHOW_ERROR = 4; // 1 << (EZ_LEVEL_ERROR - 1)
+    final public const SHOW_TIMING_POINT = 8; // 1 << (EZ_LEVEL_TIMING_POINT - 1)
+    final public const SHOW_DEBUG = 16; // 1 << (EZ_LEVEL_DEBUG - 1)
+    final public const SHOW_STRICT = 32; // 1 << (EZ_LEVEL_STRICT - 1)
+    final public const SHOW_ALL = 63; // EZ_SHOW_NOTICE | EZ_SHOW_WARNING | EZ_SHOW_ERROR | EZ_SHOW_TIMING_POINT | EZ_SHOW_DEBUG | EZ_SHOW_STRICT
 
-    const HANDLE_NONE = 0;
-    const HANDLE_FROM_PHP = 1;
-    const HANDLE_TO_PHP = 2;
-    const HANDLE_EXCEPTION = 3;
+    final public const HANDLE_NONE = 0;
+    final public const HANDLE_FROM_PHP = 1;
+    final public const HANDLE_TO_PHP = 2;
+    final public const HANDLE_EXCEPTION = 3;
 
-    const OUTPUT_MESSAGE_SCREEN = 1;
-    const OUTPUT_MESSAGE_STORE = 2;
+    final public const OUTPUT_MESSAGE_SCREEN = 1;
+    final public const OUTPUT_MESSAGE_STORE = 2;
 
-    const MAX_LOGFILE_SIZE = 204800; // 200*1024
-    const MAX_LOGROTATE_FILES = 3;
+    final public const MAX_LOGFILE_SIZE = 204800; // 200*1024
+    final public const MAX_LOGROTATE_FILES = 3;
 
-    const XDEBUG_SIGNATURE = '--XDEBUG--';
+    final public const XDEBUG_SIGNATURE = '--XDEBUG--';
 
     /*!
       Creates a new debug object.
     */
     function __construct( )
     {
-        $this->TmpTimePoints = array( self::LEVEL_NOTICE => array(),
-                                      self::LEVEL_WARNING => array(),
-                                      self::LEVEL_ERROR => array(),
-                                      self::LEVEL_DEBUG => array(),
-                                      self::LEVEL_STRICT => array() );
+        $this->TmpTimePoints = [self::LEVEL_NOTICE => [], self::LEVEL_WARNING => [], self::LEVEL_ERROR => [], self::LEVEL_DEBUG => [], self::LEVEL_STRICT => []];
 
-        $this->OutputFormat = array( self::LEVEL_NOTICE => array( "color" => "green",
-                                                               'style' => 'notice',
-                                                               'xhtml-identifier' => 'ezdebug-first-notice',
-                                                               "name" => "Notice" ),
-                                     self::LEVEL_WARNING => array( "color" => "orange",
-                                                                'style' => 'warning',
-                                                                'xhtml-identifier' => 'ezdebug-first-warning',
-                                                                "name" => "Warning" ),
-                                     self::LEVEL_ERROR => array( "color" => "red",
-                                                              'style' => 'error',
-                                                              'xhtml-identifier' => 'ezdebug-first-error',
-                                                              "name" => "Error" ),
-                                     self::LEVEL_DEBUG => array( "color" => "brown",
-                                                              'style' => 'debug',
-                                                              'xhtml-identifier' => 'ezdebug-first-debug',
-                                                              "name" => "Debug" ),
-                                     self::LEVEL_TIMING_POINT => array( "color" => "blue",
-                                                                     'style' => 'timing',
-                                                                     'xhtml-identifier' => 'ezdebug-first-timing-point',
-                                                                     "name" => "Timing" ),
-                                     self::LEVEL_STRICT => array( "color" => "purple",
-                                                              'style' => 'strict',
-                                                              'xhtml-identifier' => 'ezdebug-first-strict',
-                                                              'name' => 'Strict' ) );
-        $this->LogFiles = array( self::LEVEL_NOTICE => array( "var/log/",
-                                                           "notice.log" ),
-                                 self::LEVEL_WARNING => array( "var/log/",
-                                                            "warning.log" ),
-                                 self::LEVEL_ERROR => array( "var/log/",
-                                                          "error.log" ),
-                                 self::LEVEL_DEBUG => array( "var/log/",
-                                                          "debug.log" ),
-                                 self::LEVEL_STRICT => array( 'var/log/',
-                                                           'strict.log' ) );
-        $this->MessageTypes = array( self::LEVEL_NOTICE,
-                                     self::LEVEL_WARNING,
-                                     self::LEVEL_ERROR,
-                                     self::LEVEL_TIMING_POINT,
-                                     self::LEVEL_DEBUG,
-                                     self::LEVEL_STRICT );
-        $this->MessageNames = array( self::LEVEL_NOTICE => 'Notice',
-                                     self::LEVEL_WARNING => 'Warning',
-                                     self::LEVEL_ERROR => 'Error',
-                                     self::LEVEL_TIMING_POINT => 'TimingPoint',
-                                     self::LEVEL_DEBUG => 'Debug',
-                                     self::LEVEL_STRICT => 'Strict' );
-        $this->LogFileEnabled = array( self::LEVEL_NOTICE => true,
-                                       self::LEVEL_WARNING => true,
-                                       self::LEVEL_ERROR => true,
-                                       self::LEVEL_TIMING_POINT => true,
-                                       self::LEVEL_DEBUG => true,
-                                       self::LEVEL_STRICT => true );
-        $this->AlwaysLog = array( self::LEVEL_NOTICE => false,
-                                  self::LEVEL_WARNING => false,
-                                  self::LEVEL_ERROR => true, // Error is on by default, due to its importance
-                                  self::LEVEL_TIMING_POINT => false,
-                                  self::LEVEL_DEBUG => false,
-                                  self::LEVEL_STRICT => false );
-        $this->GlobalLogFileEnabled = true;
+        $this->OutputFormat = [self::LEVEL_NOTICE => ["color" => "green", 'style' => 'notice', 'xhtml-identifier' => 'ezdebug-first-notice', "name" => "Notice"], self::LEVEL_WARNING => ["color" => "orange", 'style' => 'warning', 'xhtml-identifier' => 'ezdebug-first-warning', "name" => "Warning"], self::LEVEL_ERROR => ["color" => "red", 'style' => 'error', 'xhtml-identifier' => 'ezdebug-first-error', "name" => "Error"], self::LEVEL_DEBUG => ["color" => "brown", 'style' => 'debug', 'xhtml-identifier' => 'ezdebug-first-debug', "name" => "Debug"], self::LEVEL_TIMING_POINT => ["color" => "blue", 'style' => 'timing', 'xhtml-identifier' => 'ezdebug-first-timing-point', "name" => "Timing"], self::LEVEL_STRICT => ["color" => "purple", 'style' => 'strict', 'xhtml-identifier' => 'ezdebug-first-strict', 'name' => 'Strict']];
+        $this->LogFiles = [self::LEVEL_NOTICE => ["var/log/", "notice.log"], self::LEVEL_WARNING => ["var/log/", "warning.log"], self::LEVEL_ERROR => ["var/log/", "error.log"], self::LEVEL_DEBUG => ["var/log/", "debug.log"], self::LEVEL_STRICT => ['var/log/', 'strict.log']];
+        $this->MessageNames = [self::LEVEL_NOTICE => 'Notice', self::LEVEL_WARNING => 'Warning', self::LEVEL_ERROR => 'Error', self::LEVEL_TIMING_POINT => 'TimingPoint', self::LEVEL_DEBUG => 'Debug', self::LEVEL_STRICT => 'Strict'];
+        $this->LogFileEnabled = [self::LEVEL_NOTICE => true, self::LEVEL_WARNING => true, self::LEVEL_ERROR => true, self::LEVEL_TIMING_POINT => true, self::LEVEL_DEBUG => true, self::LEVEL_STRICT => true];
+        $this->AlwaysLog = [
+            self::LEVEL_NOTICE => false,
+            self::LEVEL_WARNING => false,
+            self::LEVEL_ERROR => true,
+            // Error is on by default, due to its importance
+            self::LEVEL_TIMING_POINT => false,
+            self::LEVEL_DEBUG => false,
+            self::LEVEL_STRICT => false,
+        ];
         if ( isset( $GLOBALS['eZDebugLogFileEnabled'] ) )
         {
             $this->GlobalLogFileEnabled = $GLOBALS['eZDebugLogFileEnabled'];
@@ -163,25 +113,21 @@ class eZDebug
         $this->UseCSS = false;
         $this->MessageOutput = self::OUTPUT_MESSAGE_STORE;
         $this->ScriptStart = microtime( true );
-        $this->TimeAccumulatorList = array();
-        $this->TimeAccumulatorGroupList = array();
-        $this->OverrideList = array();
-        $this->topReportsList = array();
-        $this->bottomReportsList = array();
+        $this->TimeAccumulatorList = [];
+        $this->TimeAccumulatorGroupList = [];
+        $this->OverrideList = [];
+        $this->topReportsList = [];
+        $this->bottomReportsList = [];
     }
 
     function reset()
     {
-        $this->DebugStrings = array();
-        $this->TmpTimePoints = array( self::LEVEL_NOTICE => array(),
-                                      self::LEVEL_WARNING => array(),
-                                      self::LEVEL_ERROR => array(),
-                                      self::LEVEL_DEBUG => array(),
-                                      self::LEVEL_STRICT => array() );
-        $this->TimeAccumulatorList = array();
-        $this->TimeAccumulatorGroupList = array();
-        $this->topReportsList = array();
-        $this->bottomReportsList = array();
+        $this->DebugStrings = [];
+        $this->TmpTimePoints = [self::LEVEL_NOTICE => [], self::LEVEL_WARNING => [], self::LEVEL_ERROR => [], self::LEVEL_DEBUG => [], self::LEVEL_STRICT => []];
+        $this->TimeAccumulatorList = [];
+        $this->TimeAccumulatorGroupList = [];
+        $this->topReportsList = [];
+        $this->bottomReportsList = [];
     }
 
     /*!
@@ -263,7 +209,7 @@ class eZDebug
         {
             case self::HANDLE_FROM_PHP:
             {
-                set_error_handler( array( $instance, 'recursionProtectErrorHandler' ) );
+                set_error_handler( $instance->recursionProtectErrorHandler(...) );
             } break;
 
             case self::HANDLE_TO_PHP:
@@ -273,7 +219,7 @@ class eZDebug
 
             case self::HANDLE_EXCEPTION:
             {
-                set_error_handler( array( $instance, 'exceptionErrorHandler' ) );
+                set_error_handler( $instance->exceptionErrorHandler(...) );
             } break;
 
             case self::HANDLE_NONE:
@@ -335,18 +281,7 @@ class eZDebug
         if ( empty( $GLOBALS['eZDebugPHPErrorNames'] ) )
         {
             $GLOBALS['eZDebugPHPErrorNames'] =
-                array( E_ERROR => 'E_ERROR',
-                       E_PARSE => 'E_PARSE',
-                       E_CORE_ERROR => 'E_CORE_ERROR',
-                       E_COMPILE_ERROR => 'E_COMPILE_ERROR',
-                       E_USER_ERROR => 'E_USER_ERROR',
-                       E_WARNING => 'E_WARNING',
-                       E_CORE_WARNING => 'E_CORE_WARNING',
-                       E_COMPILE_WARNING => 'E_COMPILE_WARNING',
-                       E_USER_WARNING => 'E_USER_WARNING',
-                       E_NOTICE => 'E_NOTICE',
-                       E_USER_NOTICE => 'E_USER_NOTICE',
-                       E_STRICT => 'E_STRICT' );
+                [E_ERROR => 'E_ERROR', E_PARSE => 'E_PARSE', E_CORE_ERROR => 'E_CORE_ERROR', E_COMPILE_ERROR => 'E_COMPILE_ERROR', E_USER_ERROR => 'E_USER_ERROR', E_WARNING => 'E_WARNING', E_CORE_WARNING => 'E_CORE_WARNING', E_COMPILE_WARNING => 'E_COMPILE_WARNING', E_USER_WARNING => 'E_USER_WARNING', E_NOTICE => 'E_NOTICE', E_USER_NOTICE => 'E_USER_NOTICE', E_STRICT => 'E_STRICT'];
             // Since PHP 5.2
             if ( defined('E_RECOVERABLE_ERROR') )
                 $GLOBALS['eZDebugPHPErrorNames'][E_RECOVERABLE_ERROR] = 'E_RECOVERABLE_ERROR';
@@ -684,15 +619,13 @@ class eZDebug
         $usedMemory = 0;
         if ( function_exists( "memory_get_usage" ) )
             $usedMemory = memory_get_usage();
-        $tp = array( "Time" => $time,
-                     "Description" => $description,
-                     "MemoryUsage" => $usedMemory );
+        $tp = ["Time" => $time, "Description" => $description, "MemoryUsage" => $usedMemory];
         $debug->TimePoints[] = $tp;
         $desc = "Timing Point: $description";
-        foreach ( array( self::LEVEL_NOTICE, self::LEVEL_WARNING, self::LEVEL_ERROR, self::LEVEL_DEBUG, self::LEVEL_STRICT ) as $lvl )
+        foreach ( [self::LEVEL_NOTICE, self::LEVEL_WARNING, self::LEVEL_ERROR, self::LEVEL_DEBUG, self::LEVEL_STRICT] as $lvl )
         {
             if ( isset( $debug->TmpTimePoints[$lvl] ) )
-                $debug->TmpTimePoints[$lvl] = array();
+                $debug->TmpTimePoints[$lvl] = [];
             if ( $debug->TmpTimePoints[$lvl] === false and
                  $debug->isLogFileEnabled( $lvl ) )
             {
@@ -744,12 +677,7 @@ class eZDebug
                 $ip = eZSys::clientIP();
                 if ( !$ip )
                     $ip = eZSys::serverVariable( 'HOSTNAME', true );
-                $this->DebugStrings[] = array( "Level" => $verbosityLevel,
-                                               "IP" => $ip,
-                                               "Time" => time(),
-                                               "Label" => $label,
-                                               "String" => $string,
-                                               "BackgroundClass" => $backgroundClass );
+                $this->DebugStrings[] = ["Level" => $verbosityLevel, "IP" => $ip, "Time" => time(), "Label" => $label, "String" => $string, "BackgroundClass" => $backgroundClass];
             }
 
             if ( $fileName !== false )
@@ -910,7 +838,7 @@ class eZDebug
             if ( !$fileExisted )
             {
                 $ini = eZINI::instance();
-                $permissions = octdec( $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
+                $permissions = octdec( (string) $ini->variable( 'FileSettings', 'LogFilePermissions' ) );
                 @chmod( $fileName, $permissions );
             }
             @umask( $oldumask );
@@ -946,7 +874,7 @@ class eZDebug
         }
         if ( !is_array( $types ) )
         {
-            $types = array( $types );
+            $types = [$types];
         }
         foreach ( $types as $type )
         {
@@ -1024,12 +952,7 @@ class eZDebug
     */
     static function isDebugEnabled()
     {
-        if ( isset( $GLOBALS['eZDebugEnabled'] ) )
-        {
-            return $GLOBALS['eZDebugEnabled'];
-        }
-
-        return false;
+        return $GLOBALS['eZDebugEnabled'] ?? false;
     }
 
     /*!
@@ -1039,12 +962,7 @@ class eZDebug
     */
     static function isLogOnlyEnabled()
     {
-        if ( isset( $GLOBALS['eZDebugLogOnly'] ) )
-        {
-            return $GLOBALS['eZDebugLogOnly'];
-        }
-
-        return false;
+        return $GLOBALS['eZDebugLogOnly'] ?? false;
     }
 
     /*!
@@ -1073,7 +991,7 @@ class eZDebug
     private static function isIPInNetIPv6( $ipAddress, $ipAddressRange )
     {
         // Split the ip addres range into network part and netmask number
-        list( $ipAddressRangeNetworkPrefix, $networkMaskBits ) = explode( '/', $ipAddressRange );
+        [$ipAddressRangeNetworkPrefix, $networkMaskBits] = explode( '/', $ipAddressRange );
 
         // Convert ip addresses to their binary representations, truncate to the specified network mask length
         $binaryIpAddressRangeNetworkPrefix = substr( self::packedToBin( inet_pton( $ipAddressRangeNetworkPrefix ) ), 0, $networkMaskBits );
@@ -1105,7 +1023,7 @@ class eZDebug
             // In PHP v5.4 <= format 'A' retains trailing null bytes
             $unpackedIPAddress = unpack( 'A16', $packedIPAddress );
         }
-        $unpackedIPAddressArray = str_split( $unpackedIPAddress[1] );
+        $unpackedIPAddressArray = str_split( (string) $unpackedIPAddress[1] );
 
         // Get each characters ascii number, then turn that number into a binary
         // and pad it with 0's to the left if it isn't 8 digits long
@@ -1162,7 +1080,7 @@ class eZDebug
         // so it can be used in the final check, done by checkDebugByUser()
         if ( isset( $settings['debug-by-user'] ) && $settings['debug-by-user'] )
         {
-            $GLOBALS['eZDebugUserIDList'] = $settings['debug-user-list'] ? $settings['debug-user-list'] : array();
+            $GLOBALS['eZDebugUserIDList'] = $settings['debug-user-list'] ?: [];
         }
 
         $GLOBALS['eZDebugAllowed'] = $GLOBALS['eZDebugAllowedByIP'];
@@ -1230,7 +1148,7 @@ class eZDebug
 
         if ( $newWindow == true )
         {
-            $debugFilePath = eZDir::path( array( eZSys::varDirectory(), 'cache', 'debug.html' ) );
+            $debugFilePath = eZDir::path( [eZSys::varDirectory(), 'cache', 'debug.html'] );
             $debugFileURL = $debugFilePath;
             eZURI::transformURI( $debugFileURL, true );
             print( "
@@ -1318,9 +1236,9 @@ class eZDebug
             $name = $key;
         $debug = eZDebug::instance();
         if ( !array_key_exists( $key, $debug->TimeAccumulatorList ) )
-            $debug->TimeAccumulatorList[$key] = array( 'name' => $name,  'time' => 0, 'count' => 0, 'is_group' => true, 'in_group' => false );
+            $debug->TimeAccumulatorList[$key] = ['name' => $name, 'time' => 0, 'count' => 0, 'is_group' => true, 'in_group' => false];
         if ( !array_key_exists( $key, $debug->TimeAccumulatorGroupList ) )
-            $debug->TimeAccumulatorGroupList[$key] = array();
+            $debug->TimeAccumulatorGroupList[$key] = [];
     }
 
     /*!
@@ -1340,13 +1258,13 @@ class eZDebug
         if ( array_key_exists( $key, $debug->TimeAccumulatorList ) and
              array_key_exists( $key, $debug->TimeAccumulatorGroupList ) )
             $isGroup = true;
-        $debug->TimeAccumulatorList[$key] = array( 'name' => $name,  'time' => 0, 'count' => 0, 'is_group' => $isGroup, 'in_group' => $inGroup );
+        $debug->TimeAccumulatorList[$key] = ['name' => $name, 'time' => 0, 'count' => 0, 'is_group' => $isGroup, 'in_group' => $inGroup];
         if ( $inGroup !== false )
         {
-            $groupKeys = array();
+            $groupKeys = [];
             if ( array_key_exists( $inGroup, $debug->TimeAccumulatorGroupList ) )
                 $groupKeys = $debug->TimeAccumulatorGroupList[$inGroup];
-            $debug->TimeAccumulatorGroupList[$inGroup] = array_unique( array_merge( $groupKeys, array( $key ) ) );
+            $debug->TimeAccumulatorGroupList[$inGroup] = array_unique( array_merge( $groupKeys, [$key] ) );
             if ( array_key_exists( $inGroup, $debug->TimeAccumulatorList ) )
                 $debug->TimeAccumulatorList[$inGroup]['is_group'] = true;
         }
@@ -1430,29 +1348,11 @@ class eZDebug
         }
         else
         {
-            $styles = array( 'strict' => false,
-                             'strict-end' => false,
-                             'warning' => false,
-                             'warning-end' => false,
-                             'error' => false,
-                             'error-end' => false,
-                             'debug' => false,
-                             'debug-end' => false,
-                             'notice' => false,
-                             'notice-end' => false,
-                             'timing' => false,
-                             'timing-end' => false,
-                             'mark' => false,
-                             'mark-end' => false,
-                             'emphasize' => false,
-                             'emphasize-end' => false,
-                             'bold' => false,
-                             'bold-end' => false );
+            $styles = ['strict' => false, 'strict-end' => false, 'warning' => false, 'warning-end' => false, 'error' => false, 'error-end' => false, 'debug' => false, 'debug-end' => false, 'notice' => false, 'notice-end' => false, 'timing' => false, 'timing-end' => false, 'mark' => false, 'mark-end' => false, 'emphasize' => false, 'emphasize-end' => false, 'bold' => false, 'bold-end' => false];
         }
         if ( !$allowedDebugLevels )
         {
-            $allowedDebugLevels = array( self::LEVEL_NOTICE, self::LEVEL_WARNING, self::LEVEL_ERROR,
-                                         self::LEVEL_DEBUG, self::LEVEL_TIMING_POINT, self::LEVEL_STRICT );
+            $allowedDebugLevels = [self::LEVEL_NOTICE, self::LEVEL_WARNING, self::LEVEL_ERROR, self::LEVEL_DEBUG, self::LEVEL_TIMING_POINT, self::LEVEL_STRICT];
         }
 
         $startTime = $this->ScriptStart;
@@ -1494,12 +1394,7 @@ class eZDebug
 
         $this->printTopReportsList();
 
-        $hasLevel = array( self::LEVEL_NOTICE => false,
-                           self::LEVEL_WARNING => false,
-                           self::LEVEL_ERROR => false,
-                           self::LEVEL_TIMING_POINT => false,
-                           self::LEVEL_DEBUG => false,
-                           self::LEVEL_STRICT => false );
+        $hasLevel = [self::LEVEL_NOTICE => false, self::LEVEL_WARNING => false, self::LEVEL_ERROR => false, self::LEVEL_TIMING_POINT => false, self::LEVEL_DEBUG => false, self::LEVEL_STRICT => false];
 
         foreach ( $this->DebugStrings as $debug )
         {
@@ -1523,13 +1418,13 @@ class eZDebug
                 $pre = ($bgclass != '' ? " class='$bgclass'" : '');
                 if ( $as_html )
                 {
-                    $label = htmlspecialchars( $label );
+                    $label = htmlspecialchars( (string) $label );
 
                     $contents = '';
-                    if ( extension_loaded( 'xdebug' ) && ( strncmp( self::XDEBUG_SIGNATURE, $debug['String'], strlen( self::XDEBUG_SIGNATURE ) ) === 0 ) )
-                        $contents = substr( $debug['String'], strlen( self::XDEBUG_SIGNATURE ) );
+                    if ( extension_loaded( 'xdebug' ) && ( strncmp( self::XDEBUG_SIGNATURE, (string) $debug['String'], strlen( self::XDEBUG_SIGNATURE ) ) === 0 ) )
+                        $contents = substr( (string) $debug['String'], strlen( self::XDEBUG_SIGNATURE ) );
                     else
-                        $contents = htmlspecialchars( $debug['String'] );
+                        $contents = htmlspecialchars( (string) $debug['String'] );
 
                     echo "<tr class='$style'><td class='debugheader'$identifierText><b><span>$name:</span> $label</b></td>
                                     <td class='debugheader' style=\"text-align:right;\">$time</td></tr>
@@ -1576,7 +1471,7 @@ class eZDebug
         }
         $dbini = eZINI::instance();
         // note: we cannot use $db->databasename() because we get the same for mysql and mysqli
-        $type = preg_replace( '/^ez/', '', $dbini->variable( 'DatabaseSettings', 'DatabaseImplementation' ) );
+        $type = preg_replace( '/^ez/', '', (string) $dbini->variable( 'DatabaseSettings', 'DatabaseImplementation' ) );
         $type .= '_query';
         if ( isset( $this->TimeAccumulatorList[$type] ) )
         {
@@ -1659,13 +1554,13 @@ class eZDebug
         {
             $timeList = $this->TimeAccumulatorList;
             $groups = $this->TimeAccumulatorGroupList;
-            $groupList = array();
+            $groupList = [];
             foreach ( $groups as $groupKey => $keyList )
             {
-                if ( count( $keyList ) == 0 and
+                if ( (is_countable($keyList) ? count( $keyList ) : 0) == 0 and
                     !array_key_exists( $groupKey, $timeList ) )
                     continue;
-                $groupList[$groupKey] = array( 'name' => $groupKey );
+                $groupList[$groupKey] = ['name' => $groupKey];
                 if ( array_key_exists( $groupKey, $timeList ) )
                 {
                     if ( $timeList[$groupKey]['time'] != 0 )
@@ -1673,7 +1568,7 @@ class eZDebug
                     $groupList[$groupKey]['name'] = $timeList[$groupKey]['name'];
                     unset( $timeList[$groupKey] );
                 }
-                $groupChildren = array();
+                $groupChildren = [];
                 foreach ( $keyList as $timeKey )
                 {
                     if ( array_key_exists( $timeKey, $timeList ) )
@@ -1684,10 +1579,9 @@ class eZDebug
                 }
                 $groupList[$groupKey]['children'] = $groupChildren;
             }
-            if ( count( $timeList ) > 0 )
+            if ( (is_countable($timeList) ? count( $timeList ) : 0) > 0 )
             {
-                $groupList['general'] = array( 'name' => 'General',
-                                               'children' => $timeList );
+                $groupList['general'] = ['name' => 'General', 'children' => $timeList];
             }
 
             if ( $as_html )
@@ -1700,7 +1594,7 @@ class eZDebug
             {
                 $groupName = $group['name'];
                 $groupChildren = $group['children'];
-                if ( count( $groupChildren ) == 0 and
+                if ( (is_countable($groupChildren) ? count( $groupChildren ) : 0) == 0 and
                      !array_key_exists( 'time_data', $group ) )
                     continue;
                 if ( $as_html )
@@ -1875,7 +1769,7 @@ class eZDebug
         {
             if ( is_callable( $debug->bottomReportsList[$reportName] ) )
             {
-                echo call_user_func_array( $debug->bottomReportsList[$reportName], array( $as_html ) );
+                echo call_user_func_array( $debug->bottomReportsList[$reportName], [$as_html] );
             }
             else
             {
@@ -1912,7 +1806,7 @@ class eZDebug
                 // addresses can contain dot separators within them
                 if ( preg_match( "/:/", $ipAddress ) )
                 {
-                    if ( preg_match( $ipAddressIPV6Pattern, $itemToMatch, $matches ) )
+                    if ( preg_match( $ipAddressIPV6Pattern, (string) $itemToMatch, $matches ) )
                     {
                         if ( $matches[69] )
                         {
@@ -1933,7 +1827,7 @@ class eZDebug
                 }
                 elseif ( preg_match( "/\./", $ipAddress) )
                 {
-                    if ( preg_match( $ipAddresIPV4Pattern, $itemToMatch, $matches ) )
+                    if ( preg_match( $ipAddresIPV4Pattern, (string) $itemToMatch, $matches ) )
                     {
                         if ( $matches[6] )
                         {
@@ -1966,23 +1860,23 @@ class eZDebug
      * @since 4.5
      * @throws ErrorException
      */
-    public static function exceptionErrorHandler( $errno, $errstr, $errfile, $errline )
+    public static function exceptionErrorHandler( $errno, $errstr, $errfile, $errline ): never
     {
         throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     /// \privatesection
     /// String array containing the debug information
-    public $DebugStrings = array();
+    public $DebugStrings = [];
 
     /// Array which contains the time points
-    public $TimePoints = array();
+    public $TimePoints = [];
 
     /// Array which contains the temporary time points
     public $TmpTimePoints;
 
     /// Array wich contains time accumulators
-    public $TimeAccumulatorList = array();
+    public $TimeAccumulatorList = [];
 
     /// Determines which debug messages should be shown
     public $ShowTypes;
@@ -2009,13 +1903,13 @@ class eZDebug
     public $MessageOutput;
 
     /// A list of message types
-    public $MessageTypes;
+    public $MessageTypes = [self::LEVEL_NOTICE, self::LEVEL_WARNING, self::LEVEL_ERROR, self::LEVEL_TIMING_POINT, self::LEVEL_DEBUG, self::LEVEL_STRICT];
 
     /// A map with message types and whether they should do file logging.
     public $LogFileEnabled;
 
     /// Controls whether logfiles are used at all.
-    public $GlobalLogFileEnabled;
+    public $GlobalLogFileEnabled = true;
 
     /// The time when the script was started
     public $ScriptStart;
@@ -2033,7 +1927,7 @@ class eZDebug
     /// A list of debug reports that appears at the top of debug output
     public $topReportsList;
 
-    private $recursionFlag = false;
+    private bool $recursionFlag = false;
 
     public $MessageNames;
 

@@ -21,46 +21,14 @@ class eZBasket extends eZPersistentObject
     /*!
      Controls the default value for how many items are cleaned in one batch operation.
     */
-    const ITEM_LIMIT = 3000;
+    final public const ITEM_LIMIT = 3000;
 
     /*!
      \return the persistent object definition for the eZCard class.
     */
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "session_id" => array( 'name' => "SessionID",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "productcollection_id" => array( 'name' => "ProductCollectionID",
-                                                                          'datatype' => 'integer',
-                                                                          'default' => '0',
-                                                                          'required' => true,
-                                                                          'foreign_class' => 'eZProductCollection',
-                                                                          'foreign_attribute' => 'id',
-                                                                          'multiplicity' => '1..*' ),
-                                         "order_id" => array( 'name'     => "OrderID",
-                                                              'datatype' => 'integer',
-                                                              'default'  => 0,
-                                                              'required' => false,
-                                                              'foreign_class' => 'eZOrder',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*') ),
-                      'function_attributes' => array( 'items' => 'items',
-                                                      'items_ordered' => 'itemsOrdered',
-                                                      'total_ex_vat' => 'totalExVAT',
-                                                      'total_inc_vat' => 'totalIncVAT',
-                                                      'is_empty' => 'isEmpty',
-                                                      'productcollection' => 'productCollection',
-                                                      'items_info' => 'itemsInfo' ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZBasket",
-                      "name" => "ezbasket" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "session_id" => ['name' => "SessionID", 'datatype' => 'string', 'default' => '', 'required' => true], "productcollection_id" => ['name' => "ProductCollectionID", 'datatype' => 'integer', 'default' => '0', 'required' => true, 'foreign_class' => 'eZProductCollection', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "order_id" => ['name'     => "OrderID", 'datatype' => 'integer', 'default'  => 0, 'required' => false, 'foreign_class' => 'eZOrder', 'foreign_attribute' => 'id', 'multiplicity' => '1..*']], 'function_attributes' => ['items' => 'items', 'items_ordered' => 'itemsOrdered', 'total_ex_vat' => 'totalExVAT', 'total_inc_vat' => 'totalIncVAT', 'is_empty' => 'isEmpty', 'productcollection' => 'productCollection', 'items_info' => 'itemsInfo'], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZBasket", "name" => "ezbasket"];
         return $definition;
     }
 
@@ -70,15 +38,15 @@ class eZBasket extends eZPersistentObject
      * @param bool $asObject
      * @param array|null $sorts Array with sort data sent directly to {@link eZPersistentObject::fetchObjectList()}
      */
-    function items( $asObject = true, $sorts = array( 'contentobject_id' => 'desc' ) )
+    function items( $asObject = true, $sorts = ['contentobject_id' => 'desc'] )
     {
         $productItems = eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
                                                              null,
-                                                             array( 'productcollection_id' => $this->ProductCollectionID ),
+                                                             ['productcollection_id' => $this->ProductCollectionID],
                                                              $sorts,
                                                              null,
                                                              $asObject );
-        $addedProducts = array();
+        $addedProducts = [];
         foreach ( $productItems as  $productItem )
         {
             $discountPercent = 0.0;
@@ -118,17 +86,7 @@ class eZBasket extends eZPersistentObject
                     $totalPriceIncVAT = $count * $priceIncVAT * ( 100 - $discountPercent ) / 100 ;
                 }
 
-                $addedProduct = array( "id" => $id,
-                                       "vat_value" => $realVatValue,
-                                       "item_count" => $count,
-                                       "node_id" => $nodeID,
-                                       "object_name" => $objectName,
-                                       "price_ex_vat" => $priceExVAT,
-                                       "price_inc_vat" => $priceIncVAT,
-                                       "discount_percent" => $discountPercent,
-                                       "total_price_ex_vat" => $totalPriceExVAT,
-                                       "total_price_inc_vat" => $totalPriceIncVAT,
-                                       'item_object' => $productItem );
+                $addedProduct = ["id" => $id, "vat_value" => $realVatValue, "item_count" => $count, "node_id" => $nodeID, "object_name" => $objectName, "price_ex_vat" => $priceExVAT, "price_inc_vat" => $priceIncVAT, "discount_percent" => $discountPercent, "total_price_ex_vat" => $totalPriceExVAT, "total_price_inc_vat" => $totalPriceIncVAT, 'item_object' => $productItem];
                 $addedProducts[] = $addedProduct;
             }
         }
@@ -143,7 +101,7 @@ class eZBasket extends eZPersistentObject
      */
     function itemsOrdered( $asObject = true, $order = true )
     {
-        return $this->items( $asObject, array( 'id' => ( $order ? 'asc' : 'desc' )) );
+        return $this->items( $asObject, ['id' => ( $order ? 'asc' : 'desc' )] );
     }
 
     /*!
@@ -151,7 +109,7 @@ class eZBasket extends eZPersistentObject
     */
     function itemsInfo()
     {
-        $basketInfo = array();
+        $basketInfo = [];
         // Build a price summary for the items based on VAT.
         foreach ( $this->items() as $item )
         {
@@ -272,7 +230,7 @@ class eZBasket extends eZPersistentObject
     function isEmpty()
     {
         $items = $this->items();
-        return count( $items ) < 1;
+        return (is_countable($items) ? count( $items ) : 0) < 1;
     }
 
     /*!
@@ -283,7 +241,7 @@ class eZBasket extends eZPersistentObject
     static function fetch( $sessionKey )
     {
         return eZPersistentObject::fetchObject( eZBasket::definition(),
-                                                null, array( "session_id" => $sessionKey ),
+                                                null, ["session_id" => $sessionKey],
                                                 true );
     }
 
@@ -295,12 +253,12 @@ class eZBasket extends eZPersistentObject
     */
     static function currentBasket( $asObject=true, $byOrderID=-1 )
     {
-        $basketList = array();
+        $basketList = [];
 
         if( $byOrderID != -1 )
         {
             $basketList = eZPersistentObject::fetchObjectList( eZBasket::definition(),
-                                                                null, array( "order_id" => $byOrderID ),
+                                                                null, ["order_id" => $byOrderID],
                                                                 null, null,
                                                                 $asObject );
         }
@@ -310,21 +268,20 @@ class eZBasket extends eZPersistentObject
             $sessionID = $http->sessionID();
 
             $basketList = eZPersistentObject::fetchObjectList( eZBasket::definition(),
-                                                                null, array( "session_id" => $sessionID ),
+                                                                null, ["session_id" => $sessionID],
                                                                 null, null,
                                                                 $asObject );
         }
 
         $currentBasket = false;
-        if ( count( $basketList ) == 0 )
+        if ( count( (array) $basketList ) == 0 )
         {
             $db = eZDB::instance();
             $db->begin();
             $collection = eZProductCollection::create();
             $collection->store();
 
-            $currentBasket = new eZBasket( array( "session_id" => $sessionID,
-                                                  "productcollection_id" => $collection->attribute( "id" ) ) );
+            $currentBasket = new eZBasket( ["session_id" => $sessionID, "productcollection_id" => $collection->attribute( "id" )] );
             $currentBasket->store();
             $db->commit();
         }
@@ -350,14 +307,7 @@ class eZBasket extends eZPersistentObject
         $userID = $user->attribute( 'contentobject_id' );
 
         $time = time();
-        $order = new eZOrder( array( 'productcollection_id' => $productCollectionID,
-                                     'user_id' => $userID,
-                                     'is_temporary' => 1,
-                                     'created' => $time,
-                                     'status_id' => eZOrderStatus::PENDING,
-                                     'status_modified' => $time,
-                                     'status_modifier_id' => $userID
-                                     ) );
+        $order = new eZOrder( ['productcollection_id' => $productCollectionID, 'user_id' => $userID, 'is_temporary' => 1, 'created' => $time, 'status_id' => eZOrderStatus::PENDING, 'status_modified' => $time, 'status_modifier_id' => $userID] );
 
         $db = eZDB::instance();
         $db->begin();
@@ -472,12 +422,12 @@ WHERE ezbasket.session_id = ezsession.session_key AND
 
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
             if ( count( $rows ) == 0 )
                 break;
 
-            $productCollectionIDList = array();
-            $idList = array();
+            $productCollectionIDList = [];
+            $idList = [];
             foreach ( $rows as $row )
             {
                 $idList[] = (int)$row['id'];
@@ -506,12 +456,12 @@ WHERE ezbasket.session_id = ezsession.session_key AND
         $db->begin();
         do
         {
-            $rows = $db->arrayQuery( $sql, array( 'offset' => 0, 'limit' => $limit ) );
+            $rows = $db->arrayQuery( $sql, ['offset' => 0, 'limit' => $limit] );
 
             if ( count( $rows ) == 0 )
                 break;
 
-            $productCollectionIDList = array();
+            $productCollectionIDList = [];
             foreach ( $rows as $row )
             {
                 $productCollectionIDList[] = (int)$row['productcollection_id'];
@@ -533,7 +483,7 @@ WHERE ezbasket.session_id = ezsession.session_key AND
         $type = false;
 
         // get first product
-        $productCollectionItemList = eZProductCollectionItem::fetchList( array( 'productcollection_id' => $this->attribute( 'productcollection_id' ) ),
+        $productCollectionItemList = eZProductCollectionItem::fetchList( ['productcollection_id' => $this->attribute( 'productcollection_id' )],
                                                                          true,
                                                                          0,
                                                                          1 );
@@ -604,7 +554,7 @@ WHERE ezbasket.session_id = ezsession.session_key AND
             $db = eZDB::instance();
             $db->begin();
             $productCollectionID = $basket->attribute( 'productcollection_id' );
-            eZProductCollection::cleanupList( array( $productCollectionID ) );
+            eZProductCollection::cleanupList( [$productCollectionID] );
             $basket->remove();
             $db->commit();
         }

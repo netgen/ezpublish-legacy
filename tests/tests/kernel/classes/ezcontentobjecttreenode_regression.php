@@ -58,7 +58,7 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         // INi changes: set language to french only, untranslatedobjects disabled
         ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'ContentObjectLocale', 'fre-FR' );
         // ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'SiteLanguageList', array( 'fre-FR' ) );
-        eZContentLanguage::setPrioritizedLanguages( array( 'fre-FR' ) );
+        eZContentLanguage::setPrioritizedLanguages( ['fre-FR'] );
         ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'ShowUntranslatedObjects', 'disabled' );
         eZContentLanguage::expireCache();
 
@@ -96,9 +96,9 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         $filterSQL = eZContentObjectTreeNode::createAttributeFilterSQLStrings(
             $attributeFilter );
 
-        $this->assertInternalType( 'array', $filterSQL );
-        $this->assertArrayHasKey( 'from', $filterSQL );
-        $this->assertArrayHasKey( 'where', $filterSQL );
+        static::assertInternalType('array', $filterSQL);
+        static::assertArrayHasKey('from', $filterSQL);
+        static::assertArrayHasKey('where', $filterSQL);
     }
 
     /**
@@ -108,30 +108,22 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
      */
     public function testIssue15062()
     {
-        $policyLimitationArray = array(
-            array(
-                'StateGroup_abcdefghijkl' => array( 1 ),
-                'StateGroup_abcdefghiklmnop' => array( 1, 2, 3 ),
-            ),
-            array(
-                'StateGroup_abcdefghijkl' => array( 2, 3 ),
-            )
-        );
+        $policyLimitationArray = [['StateGroup_abcdefghijkl' => [1], 'StateGroup_abcdefghiklmnop' => [1, 2, 3]], ['StateGroup_abcdefghijkl' => [2, 3]]];
 
         $sqlArray = eZContentObjectTreeNode::createPermissionCheckingSQL( $policyLimitationArray );
 
-        $this->assertInternalType( 'array', $sqlArray );
-        $this->assertArrayHasKey( 'from', $sqlArray );
+        static::assertInternalType('array', $sqlArray);
+        static::assertArrayHasKey('from', $sqlArray);
 
         // we need to check that each identifier in the 'from' of this array
         // doesn't exceed 30 characters
-        $matches = explode( ', ', str_replace( "\r\n", '', $sqlArray['from'] ) );
+        $matches = explode( ', ', str_replace( "\r\n", '', (string) $sqlArray['from'] ) );
         foreach( $matches as $match )
         {
             if ( $match == '' )
                 continue;
-            list( $table, $alias ) = explode( ' ', $match );
-            $this->assertTrue( strlen( $alias ) <= 30 , "Identifier {$alias} exceeds the 30 characters limit" );
+            [$table, $alias] = explode( ' ', $match );
+            static::assertTrue(strlen( $alias ) <= 30, "Identifier {$alias} exceeds the 30 characters limit");
         }
     }
 
@@ -148,9 +140,9 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         $nodeID = $object->attribute( 'main_node_id' );
 
         $node = eZContentObjectTreeNode::fetch( $nodeID, false, true,
-            array( 'contentobject_version' => 1 ) );
+            ['contentobject_version' => 1] );
 
-        $this->assertInstanceOf( 'eZContentObjectTreeNode', $node );
+        static::assertInstanceOf('eZContentObjectTreeNode', $node);
     }
 
 
@@ -165,28 +157,23 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
 
 
         //test generated result of createSortingSQLStrings
-        $sortList = array( array( 'class_name', true ) );
+        $sortList = [['class_name', true]];
         $result = eZContentObjectTreeNode::createSortingSQLStrings( $sortList );
-        $this->assertEquals( ', ezcontentclass_name.name as contentclass_name',
-                            strtolower( $result['attributeTargetSQL'] ) );
-        $this->assertEquals( 'contentclass_name asc', strtolower( $result['sortingFields'] ) );
+        static::assertEquals(', ezcontentclass_name.name as contentclass_name', strtolower( (string) $result['attributeTargetSQL'] ));
+        static::assertEquals('contentclass_name asc', strtolower( (string) $result['sortingFields'] ));
 
-        $sortListTwo = array( array( 'class_name', false ),
-                              array( 'class_identifier', true ) );
+        $sortListTwo = [['class_name', false], ['class_identifier', true]];
         $result = eZContentObjectTreeNode::createSortingSQLStrings( $sortListTwo );
-        $this->assertEquals( ', ezcontentclass_name.name as contentclass_name',
-                            strtolower( $result['attributeTargetSQL'] ));
-        $this->assertEquals( 'contentclass_name desc, ezcontentclass.identifier asc',
-                            strtolower( $result['sortingFields'] ) );
+        static::assertEquals(', ezcontentclass_name.name as contentclass_name', strtolower( (string) $result['attributeTargetSQL'] ));
+        static::assertEquals('contentclass_name desc, ezcontentclass.identifier asc', strtolower( (string) $result['sortingFields'] ));
 
         //test trash node with classname
-        $sortBy = array( array( 'class_name', true ),
-                         array( 'contentobject_id', true ) );
-        $params = array( 'SortBy', $sortBy );
+        $sortBy = [['class_name', true], ['contentobject_id', true]];
+        $params = ['SortBy', $sortBy];
         $result = eZContentObjectTrashNode::trashList( $params );
-        $this->assertEquals( array(), $result );
+        static::assertEquals([], $result);
         $result = eZContentObjectTrashNode::trashList( $params, true );
-        $this->assertEquals( 0, $result );  //if there is an error, there will be fatal error message
+        static::assertEquals(0, $result);  //if there is an error, there will be fatal error message
 
         //test subtreenode with classname
         $parent = new ezpObject( 'folder', 1 );
@@ -205,16 +192,15 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         $folder2 = new ezpObject( 'folder', $parentNodeID );
         $folder2->publish();
 
-        $sortBy = array( array( 'class_name', false ) );
-        $params = array( 'SortBy' => $sortBy );
+        $sortBy = [['class_name', false]];
+        $params = ['SortBy' => $sortBy];
         $result = eZContentObjectTreeNode::subTreeByNodeID( $params, $parentNodeID );
-        $this->assertEquals( $article->mainNode->node_id, $result[count( $result )-1]->attribute( 'node_id' ) );
+        static::assertEquals($article->mainNode->node_id, $result[count( (array) $result )-1]->attribute( 'node_id' ));
 
-        $sortBy = array( array( 'class_name', false ),
-                         array( 'contentobject_id', false ) );
-        $params = array( 'SortBy' => $sortBy );
+        $sortBy = [['class_name', false], ['contentobject_id', false]];
+        $params = ['SortBy' => $sortBy];
         $result = eZContentObjectTreeNode::subTreeByNodeID( $params, $parentNodeID );
-        $this->assertEquals( $folder2->mainNode->node_id, $result[1]->attribute( 'node_id' ) );
+        static::assertEquals($folder2->mainNode->node_id, $result[1]->attribute( 'node_id' ));
     }
 
     /**
@@ -238,16 +224,16 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         $currentUserID = eZUser::currentUserID();
         eZUser::setCurrentlyLoggedInUser( $adminUser, $adminUserID );
 
-        $result = eZContentObjectTreeNode::subtreeRemovalInformation( array( $top->mainNode->node_id ) );
-        $this->assertFalse( $result['has_pending_object'] );
+        $result = eZContentObjectTreeNode::subtreeRemovalInformation( [$top->mainNode->node_id] );
+        static::assertFalse($result['has_pending_object']);
         $workflowArticle = new ezpObject( 'article', $top->mainNode->node_id );
         $workflowArticle->title = 'THIS IS AN ARTICLE WITH WORKFLOW';
         $workflowArticle->publish();
         $version = $workflowArticle->currentVersion();
         $version->setAttribute( 'status', eZContentObjectVersion::STATUS_PENDING );
         $version->store();
-        $result = eZContentObjectTreeNode::subtreeRemovalInformation( array( $top->mainNode->node_id ) );
-        $this->assertTrue( $result['has_pending_object'] );
+        $result = eZContentObjectTreeNode::subtreeRemovalInformation( [$top->mainNode->node_id] );
+        static::assertTrue($result['has_pending_object']);
 
         eZUser::setCurrentlyLoggedInUser( $currentUser, $currentUserID );
     }
@@ -271,15 +257,15 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
 
         // set the prioritize language list to contain english
         // ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'SiteLanguageList', array( 'fre-FR' ) );
-        eZContentLanguage::setPrioritizedLanguages( array( 'fre-FR' ) );
+        eZContentLanguage::setPrioritizedLanguages( ['fre-FR'] );
 
         // Create an object with data in fre-FR and eng-GB
         $folder = new ezpObject( 'folder', 2, 14, 1, 'eng-GB' );
         $folder->publish();
 
         // Workaround as setting folder->name directly doesn't produce the expected result
-        $folder->addTranslation( 'eng-GB', array( 'name' => $strNameEngGB ) );
-        $folder->addTranslation( 'fre-FR', array( 'name' => $strNameFreFR ) );
+        $folder->addTranslation( 'eng-GB', ['name' => $strNameEngGB] );
+        $folder->addTranslation( 'fre-FR', ['name' => $strNameFreFR] );
 
         $nodeId = $folder->main_node_id;
 
@@ -315,22 +301,22 @@ class eZContentObjectTreeNodeRegression extends ezpDatabaseTestCase
         $translation = eZContentLanguage::addLanguage( $locale->localeCode(), $locale->internationalLanguageName() );
 
         // set the prioritize language list to contain english
-        eZContentLanguage::setPrioritizedLanguages( array( 'fre-FR', 'eng-GB' ) );
+        eZContentLanguage::setPrioritizedLanguages( ['fre-FR', 'eng-GB'] );
 
         // Create an object with data in fre-FR and eng-GB
         $folder = new ezpObject( 'folder', 2, 14, 1, 'eng-GB' );
         $folder->publish();
 
         // Workaround as setting folder->name directly doesn't produce the expected result
-        $folder->addTranslation( 'eng-GB', array( 'name' => $strNameEngGB ) );
-        $folder->addTranslation( 'fre-FR', array( 'name' => $strNameFreFR ) );
+        $folder->addTranslation( 'eng-GB', ['name' => $strNameEngGB] );
+        $folder->addTranslation( 'fre-FR', ['name' => $strNameFreFR] );
 
 
         $article = new ezpObject( 'article', $folder->main_node_id, 14, 1, 'eng-GB' );
         $article->publish();
 
         // Workaround as setting article->name directly doesn't produce the expected result
-        $article->addTranslation( 'eng-GB', array( 'title' => $strNameEngGB ) );
+        $article->addTranslation( 'eng-GB', ['title' => $strNameEngGB] );
 
         $nodeId = $article->main_node_id;
 

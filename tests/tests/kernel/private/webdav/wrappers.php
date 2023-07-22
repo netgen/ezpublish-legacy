@@ -12,7 +12,7 @@ class ezcWebdavTransportWrapper extends ezcWebdavKonquerorCompatibleTransport//e
 {
     protected function retrieveBody()
     {
-        return isset( $GLOBALS['ezc_post_body'] ) ? $GLOBALS['ezc_post_body'] : null;
+        return $GLOBALS['ezc_post_body'] ?? null;
     }
 
     protected function sendResponse( ezcWebdavOutputResult $output )
@@ -21,7 +21,7 @@ class ezcWebdavTransportWrapper extends ezcWebdavKonquerorCompatibleTransport//e
         // Sends HTTP headers
         foreach ( $output->headers as $name => $content )
         {
-            $content   = is_array( $content ) ? $content : array( $content );
+            $content   = is_array( $content ) ? $content : [$content];
             $response .= "{$name}: ";
             foreach ( $content as $contentLine )
             {

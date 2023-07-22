@@ -21,20 +21,17 @@ class eZXMLInputHandler
      * Constructor
      *
      * @param string $xmlData
-     * @param string $aliasedType
-     * @param eZContentObjectAttribute $contentObjectAttribute
+     * @param string $AliasedType
+     * @param eZContentObjectAttribute $ContentObjectAttribute
      */
-    public function __construct( $xmlData, $aliasedType, $contentObjectAttribute )
+    public function __construct( $xmlData, public $AliasedType, public $ContentObjectAttribute )
     {
         $this->XMLData = preg_replace( '/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u', '', $xmlData, -1, $count );
         if ( $count > 0 )
         {
             eZDebug::writeWarning( "$count invalid character(s) detected. They have been removed from input.", __METHOD__ );
         }
-        $this->ContentObjectAttribute = $contentObjectAttribute;
         $this->AliasedHandler = null;
-        // use of $aliasedType is deprecated as of 4.1 and setting is ignored  in aliased_handler
-        $this->AliasedType = $aliasedType;
     }
 
     /*!
@@ -42,11 +39,7 @@ class eZXMLInputHandler
     */
     function attributes()
     {
-        return array( 'input_xml',
-                      'aliased_type',
-                      'aliased_handler',
-                      'edit_template_name',
-                      'information_template_name' );
+        return ['input_xml', 'aliased_type', 'aliased_handler', 'edit_template_name', 'information_template_name'];
     }
 
     /*!
@@ -205,9 +198,7 @@ class eZXMLInputHandler
     /// \privatesection
     /// Contains the XML data as text
     public $XMLData;
-    public $AliasedType;
     public $AliasedHandler;
-    public $ContentObjectAttribute;
 }
 
 ?>

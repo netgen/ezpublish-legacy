@@ -29,7 +29,7 @@ $cli->output( "This is a text string" );
 
 class eZCLI
 {
-    const TERMINAL_ENDOFLINE_STRING = "\n";
+    final public const TERMINAL_ENDOFLINE_STRING = "\n";
 
     /**
      * Initializes object and detects if the CLI is used.
@@ -45,153 +45,11 @@ class eZCLI
         }
         $this->EndlineString = $endl;
         $this->WebOutput = $webOutput;
-        $this->TerminalStyles = array( 'warning' => "\033[1;33m",
-                                       'warning-end' => "\033[0;39m",
-                                       'error' => "\033[1;31m",
-                                       'error-end' => "\033[0;39m",
-                                       'failure' => "\033[1;31m",
-                                       'failure-end' => "\033[0;39m",
-                                       'notice' => "\033[0;32m",
-                                       'notice-end' => "\033[0;39m",
-                                       'strict' => "\033[0;35m",
-                                       'strict-end' => "\033[0;39m",
-                                       'debug' => "\033[0;30m",
-                                       'debug-end' => "\033[0;39m",
-                                       'timing' => "\033[1;34m",
-                                       'timing-end' => "\033[0;39m",
-                                       'success' => "\033[1;32m",
-                                       'success-end' => "\033[0;39m",
-                                       'file' => "\033[1;38m",
-                                       'file-end' => "\033[0;39m",
-                                       'dir' => "\033[1;34m",
-                                       'dir-end' => "\033[0;39m",
-                                       'link' => "\033[0;36m",
-                                       'link-end' => "\033[0;39m",
-                                       'exe' => "\033[1;32m",
-                                       'exe-end' => "\033[0;39m",
-                                       'archive' => "\033[1;31m",
-                                       'archive-end' => "\033[0;39m",
-                                       'image' => "\033[1;35m",
-                                       'image-end' => "\033[0;39m",
+        $this->TerminalStyles = ['warning' => "\033[1;33m", 'warning-end' => "\033[0;39m", 'error' => "\033[1;31m", 'error-end' => "\033[0;39m", 'failure' => "\033[1;31m", 'failure-end' => "\033[0;39m", 'notice' => "\033[0;32m", 'notice-end' => "\033[0;39m", 'strict' => "\033[0;35m", 'strict-end' => "\033[0;39m", 'debug' => "\033[0;30m", 'debug-end' => "\033[0;39m", 'timing' => "\033[1;34m", 'timing-end' => "\033[0;39m", 'success' => "\033[1;32m", 'success-end' => "\033[0;39m", 'file' => "\033[1;38m", 'file-end' => "\033[0;39m", 'dir' => "\033[1;34m", 'dir-end' => "\033[0;39m", 'link' => "\033[0;36m", 'link-end' => "\033[0;39m", 'exe' => "\033[1;32m", 'exe-end' => "\033[0;39m", 'archive' => "\033[1;31m", 'archive-end' => "\033[0;39m", 'image' => "\033[1;35m", 'image-end' => "\033[0;39m", 'red' => "\033[1;31m", 'red-end' => "\033[0;39m", 'green' => "\033[1;32m", 'green-end' => "\033[0;39m", 'yellow' => "\033[1;33m", 'yellow-end' => "\033[0;39m", 'blue' => "\033[1;34m", 'blue-end' => "\033[0;39m", 'magenta' => "\033[1;35m", 'magenta-end' => "\033[0;39m", 'cyan' => "\033[1;36m", 'cyan-end' => "\033[0;39m", 'white' => "\033[1;37m", 'white-end' => "\033[0;39m", 'gray' => "\033[1;30m", 'gray-end' => "\033[0;39m", 'dark-red' => "\033[0;31m", 'dark-red-end' => "\033[0;39m", 'dark-green' => "\033[0;32m", 'dark-green-end' => "\033[0;39m", 'dark-yellow' => "\033[0;33m", 'dark-yellow-end' => "\033[0;39m", 'dark-blue' => "\033[0;34m", 'dark-blue-end' => "\033[0;39m", 'dark-magenta' => "\033[0;35m", 'dark-magenta-end' => "\033[0;39m", 'dark-cyan' => "\033[0;36m", 'dark-cyan-end' => "\033[0;39m", 'dark-white' => "\033[0;37m", 'dark-white-end' => "\033[0;39m", 'dark-gray' => "\033[0;30m", 'dark-gray-end' => "\033[0;39m", 'red-bg' => "\033[1;41m", 'red-bg-end' => "\033[0;39m", 'green-bg' => "\033[1;42m", 'green-bg-end' => "\033[0;39m", 'yellow-bg' => "\033[1;43m", 'yellow-bg-end' => "\033[0;39m", 'blue-bg' => "\033[1;44m", 'blue-bg-end' => "\033[0;39m", 'magenta-bg' => "\033[1;45m", 'magenta-bg-end' => "\033[0;39m", 'cyan-bg' => "\033[1;46m", 'cyan-bg-end' => "\033[0;39m", 'white-bg' => "\033[1;47m", 'white-bg-end' => "\033[0;39m", 'text' => "\033[0;39m", 'text-end' => "\033[0;39m", 'variable' => "\033[1;34m", 'variable-end' => "\033[0;39m", 'symbol' => "\033[0;37m", 'symbol-end' => "\033[0;39m", 'emphasize' => "\033[1;38m", 'emphasize-end' => "\033[0;39m", 'header' => "\033[1;38m", 'header-end' => "\033[0;39m", 'strong' => "\033[1;39m", 'strong-end' => "\033[0;39m", 'mark' => "\033[1;30m", 'mark-end' => "\033[0;39m", 'bold' => "\033[1;38m", 'bold-end' => "\033[0;39m", 'italic' => "\033[0;39m", 'italic-end' => "\033[0;39m", 'underline' => "\033[0;39m", 'underline-end' => "\033[0;39m", 'paragraph' => "\033[0;39m", 'paragraph-end' => "\033[0;39m", 'normal' => "\033[0;39m", 'normal-end' => "\033[0;39m"];
 
-                                       'red' => "\033[1;31m",
-                                       'red-end' => "\033[0;39m",
-                                       'green' => "\033[1;32m",
-                                       'green-end' => "\033[0;39m",
-                                       'yellow' => "\033[1;33m",
-                                       'yellow-end' => "\033[0;39m",
-                                       'blue' => "\033[1;34m",
-                                       'blue-end' => "\033[0;39m",
-                                       'magenta' => "\033[1;35m",
-                                       'magenta-end' => "\033[0;39m",
-                                       'cyan' => "\033[1;36m",
-                                       'cyan-end' => "\033[0;39m",
-                                       'white' => "\033[1;37m",
-                                       'white-end' => "\033[0;39m",
-                                       'gray' => "\033[1;30m",
-                                       'gray-end' => "\033[0;39m",
+        $this->WebStyles = ['warning' => '<span class="cli warning" style="color: orange;">', 'warning-end' => '</span>', 'error' => '<span class="cli error" style="color: red;">', 'error-end' => '</span>', 'failure' => '<span class="cli failure" style="color: red;">', 'failure-end' => '</span>', 'notice' => '<span class="cli notice" style="color: green;">', 'notice-end' => '</span>', 'debug' => '<span class="cli debug" style="color: brown;">', 'debug-end' => '</span>', 'timing' => '<span class="cli timing" style="color: blue;">', 'timing-end' => '</span>', 'success' => '<span class="cli success" style="color: green;">', 'success-end' => '</span>', 'file' => '<span class="cli file" style="font-style: italic;">', 'file-end' => '</span>', 'dir' => '<span class="cli dir" style="color: blue;">', 'dir-end' => '</span>', 'link' => '<span class="cli link" style="color: cyan;">', 'link-end' => '</span>', 'symbol' => '<span class="cli symbol" style="font-style: italic;">', 'symbol-end' => '</span>', 'emphasize' => "<em>", 'emphasize-end' => "</em>", 'header' => "<h1>", 'header-end' => "</h1>", 'strong' => '<strong>', 'strong-end' => '</strong>', 'mark' => '', 'mark-end' => '', 'bold' => '<span style="font-weight: bold;">', 'bold-end' => '</span>', 'italic' => '<span style="font-style: italic;">', 'italic-end' => '</span>', 'underline' => '<span style="text-decoration: underline">', 'underline-end' => '</span>', 'paragraph' => '<p>', 'paragraph-end' => '</p>', 'normal' => '', 'normal-end' => ''];
 
-                                       'dark-red' => "\033[0;31m",
-                                       'dark-red-end' => "\033[0;39m",
-                                       'dark-green' => "\033[0;32m",
-                                       'dark-green-end' => "\033[0;39m",
-                                       'dark-yellow' => "\033[0;33m",
-                                       'dark-yellow-end' => "\033[0;39m",
-                                       'dark-blue' => "\033[0;34m",
-                                       'dark-blue-end' => "\033[0;39m",
-                                       'dark-magenta' => "\033[0;35m",
-                                       'dark-magenta-end' => "\033[0;39m",
-                                       'dark-cyan' => "\033[0;36m",
-                                       'dark-cyan-end' => "\033[0;39m",
-                                       'dark-white' => "\033[0;37m",
-                                       'dark-white-end' => "\033[0;39m",
-                                       'dark-gray' => "\033[0;30m",
-                                       'dark-gray-end' => "\033[0;39m",
-
-                                       'red-bg' => "\033[1;41m",
-                                       'red-bg-end' => "\033[0;39m",
-                                       'green-bg' => "\033[1;42m",
-                                       'green-bg-end' => "\033[0;39m",
-                                       'yellow-bg' => "\033[1;43m",
-                                       'yellow-bg-end' => "\033[0;39m",
-                                       'blue-bg' => "\033[1;44m",
-                                       'blue-bg-end' => "\033[0;39m",
-                                       'magenta-bg' => "\033[1;45m",
-                                       'magenta-bg-end' => "\033[0;39m",
-                                       'cyan-bg' => "\033[1;46m",
-                                       'cyan-bg-end' => "\033[0;39m",
-                                       'white-bg' => "\033[1;47m",
-                                       'white-bg-end' => "\033[0;39m",
-
-                                       'text' => "\033[0;39m",
-                                       'text-end' => "\033[0;39m",
-                                       'variable' => "\033[1;34m",
-                                       'variable-end' => "\033[0;39m",
-                                       'symbol' => "\033[0;37m",
-                                       'symbol-end' => "\033[0;39m",
-                                       'emphasize' => "\033[1;38m",
-                                       'emphasize-end' => "\033[0;39m",
-                                       'header' => "\033[1;38m",
-                                       'header-end' => "\033[0;39m",
-                                       'strong' => "\033[1;39m",
-                                       'strong-end' => "\033[0;39m",
-                                       'mark' => "\033[1;30m",
-                                       'mark-end' => "\033[0;39m",
-                                       'bold' => "\033[1;38m",
-                                       'bold-end' => "\033[0;39m",
-                                       'italic' => "\033[0;39m",
-                                       'italic-end' => "\033[0;39m",
-                                       'underline' => "\033[0;39m",
-                                       'underline-end' => "\033[0;39m",
-                                       'paragraph' => "\033[0;39m",
-                                       'paragraph-end' => "\033[0;39m",
-                                       'normal' => "\033[0;39m",
-                                       'normal-end' => "\033[0;39m",
-
-                                       );
-
-        $this->WebStyles = array( 'warning' => '<span class="cli warning" style="color: orange;">',
-                                  'warning-end' => '</span>',
-                                  'error' => '<span class="cli error" style="color: red;">',
-                                  'error-end' => '</span>',
-                                  'failure' => '<span class="cli failure" style="color: red;">',
-                                  'failure-end' => '</span>',
-                                  'notice' => '<span class="cli notice" style="color: green;">',
-                                  'notice-end' => '</span>',
-                                  'debug' => '<span class="cli debug" style="color: brown;">',
-                                  'debug-end' => '</span>',
-                                  'timing' => '<span class="cli timing" style="color: blue;">',
-                                  'timing-end' => '</span>',
-                                  'success' => '<span class="cli success" style="color: green;">',
-                                  'success-end' => '</span>',
-                                  'file' => '<span class="cli file" style="font-style: italic;">',
-                                  'file-end' => '</span>',
-                                  'dir' => '<span class="cli dir" style="color: blue;">',
-                                  'dir-end' => '</span>',
-                                  'link' => '<span class="cli link" style="color: cyan;">',
-                                  'link-end' => '</span>',
-                                  'symbol' => '<span class="cli symbol" style="font-style: italic;">',
-                                  'symbol-end' => '</span>',
-                                  'emphasize' => "<em>",
-                                  'emphasize-end' => "</em>",
-                                  'header' => "<h1>",
-                                  'header-end' => "</h1>",
-                                  'strong' => '<strong>',
-                                  'strong-end' => '</strong>',
-                                  'mark' => '',
-                                  'mark-end' => '',
-                                  'bold' => '<span style="font-weight: bold;">',
-                                  'bold-end' => '</span>',
-                                  'italic' => '<span style="font-style: italic;">',
-                                  'italic-end' => '</span>',
-                                  'underline' => '<span style="text-decoration: underline">',
-                                  'underline-end' => '</span>',
-                                  'paragraph' => '<p>',
-                                  'paragraph-end' => '</p>',
-                                  'normal' => '',
-                                  'normal-end' => '' );
-
-        $this->EmptyStyles = array();
+        $this->EmptyStyles = [];
         foreach ( $this->TerminalStyles as $styleName => $styleValue )
         {
             $this->EmptyStyles[$styleName] = false;
@@ -222,11 +80,7 @@ class eZCLI
     */
     function terminalStyle( $name )
     {
-        if ( isset( $this->TerminalStyles[$name] ) )
-        {
-            return $this->TerminalStyles[$name];
-        }
-        return false;
+        return $this->TerminalStyles[$name] ?? false;
     }
 
     /*!
@@ -359,9 +213,9 @@ class eZCLI
     */
     function notice( $string = false, $addEOL = true )
     {
-        fputs( STDERR, $string );
+        fputs( STDERR, (string) $string );
         if ( $addEOL )
-            fputs( STDERR, $this->endlineString() );
+            fputs( STDERR, (string) $this->endlineString() );
     }
 
     /*!
@@ -371,9 +225,9 @@ class eZCLI
     function warning( $string = false, $addEOL = true )
     {
         $string = $this->stylize( 'warning', $string );
-        fputs( STDERR, $string );
+        fputs( STDERR, (string) $string );
         if ( $addEOL )
-            fputs( STDERR, $this->endlineString() );
+            fputs( STDERR, (string) $this->endlineString() );
     }
 
     /*!
@@ -383,9 +237,9 @@ class eZCLI
     function error( $string = false, $addEOL = true )
     {
         $string = $this->stylize( 'error', $string );
-        fputs( STDERR, $string );
+        fputs( STDERR, (string) $string );
         if ( $addEOL )
-            fputs( STDERR, $this->endlineString() );
+            fputs( STDERR, (string) $this->endlineString() );
     }
 
     /**
@@ -438,26 +292,24 @@ class eZCLI
     */
     static function parseOptionString( $configString, &$optionConfig )
     {
-        $len = strlen( $configString );
+        $len = strlen( (string) $configString );
         $i = 0;
         if ( !is_array( $optionConfig ) )
         {
-            $optionConfig = array( 'list' => array(),
-                                   'short' => array(),
-                                   'long' => array() );
+            $optionConfig = ['list' => [], 'short' => [], 'long' => []];
         }
         while ( $i < $len )
         {
             $option = $configString[$i];
             if ( $option == '[' )
             {
-                $end = strpos( $configString, ']', $i + 1 );
+                $end = strpos( (string) $configString, ']', $i + 1 );
                 if ( $end === false )
                 {
                     eZDebug::writeError( "Missing end marker ] in option string at position $i", __METHOD__ );
                     return $optionConfig;
                 }
-                $optionList = substr( $configString, $i + 1, $end - $i - 1 );
+                $optionList = substr( (string) $configString, $i + 1, $end - $i - 1 );
                 $i += 1 + ( $end - $i );
                 $startMarkerPos = strpos( $optionList, '[' );
                 if ( $startMarkerPos !== false )
@@ -473,64 +325,56 @@ class eZCLI
                 $text = $option;
                 ++$i;
                 if ( $i < $len and
-                     in_array( $configString[$i], array( ':', ';' ) ) )
+                     in_array( $configString[$i], [':', ';'] ) )
                 {
                     $text .= $configString[$i];
                     ++$i;
                 }
                 if ( $i < $len and
-                     in_array( $configString[$i], array( '?', '*', '+' ) ) )
+                     in_array( $configString[$i], ['?', '*', '+'] ) )
                 {
                     $text .= $configString[$i];
                     ++$i;
                 }
-                $optionList = array( $text );
+                $optionList = [$text];
             }
             $optionStoreName = false;
             unset( $optionConfigList );
-            $optionConfigList = array();
+            $optionConfigList = [];
             foreach ( $optionList as $optionItem )
             {
-                $optionLen = strlen( $optionItem );
+                $optionLen = strlen( (string) $optionItem );
                 $hasValue = false;
                 $optionName = $optionItem;
                 $quantifierText = false;
-                $quantifier = array( 'min' => 0,
-                                     'max' => 0 );
-                if ( $optionLen > 0 and in_array( $optionName[$optionLen - 1], array( '?', '*', '+' ) ) )
+                $quantifier = ['min' => 0, 'max' => 0];
+                if ( $optionLen > 0 and in_array( $optionName[$optionLen - 1], ['?', '*', '+'] ) )
                 {
                     $quantifierText = $optionName[$optionLen - 1];
-                    $optionName = substr( $optionName, 0, $optionLen - 1 );
+                    $optionName = substr( (string) $optionName, 0, $optionLen - 1 );
                     --$optionLen;
                     if ( $quantifierText == '?' )
-                        $quantifier = array( 'min' => 0,
-                                             'max' => 1 );
+                        $quantifier = ['min' => 0, 'max' => 1];
                     else if ( $quantifierText == '*' )
-                        $quantifier = array( 'min' => 0,
-                                             'max' => false );
+                        $quantifier = ['min' => 0, 'max' => false];
                     else if ( $quantifierText == '+' )
-                        $quantifier = array( 'min' => 1,
-                                             'max' => false );
+                        $quantifier = ['min' => 1, 'max' => false];
                 }
-                if ( $optionLen > 0 and in_array( $optionName[$optionLen - 1], array( ':', ';' ) ) )
+                if ( $optionLen > 0 and in_array( $optionName[$optionLen - 1], [':', ';'] ) )
                 {
                     $valueText = $optionName[$optionLen - 1];
-                    $optionName = substr( $optionName, 0, $optionLen - 1 );
+                    $optionName = substr( (string) $optionName, 0, $optionLen - 1 );
                     --$optionLen;
                     if ( $valueText == ':' )
                         $hasValue = true;
                     else if ( $valueText == ';' )
                         $hasValue = 'optional';
                 }
-                $optionLen = strlen( $optionName );
+                $optionLen = strlen( (string) $optionName );
                 if ( $optionLen == 0 )
                     continue;
                 $optionStoreName = $optionName;
-                $optionConfigItem = array( 'name' => $optionName,
-                                           'has-value' => $hasValue,
-                                           'quantifier' => $quantifier,
-                                           'store-name' => false,
-                                           'is-long-option' => strlen( $optionName ) > 1 );
+                $optionConfigItem = ['name' => $optionName, 'has-value' => $hasValue, 'quantifier' => $quantifier, 'store-name' => false, 'is-long-option' => strlen( (string) $optionName ) > 1];
                 $optionConfigList[] = $optionConfigItem;
             }
             foreach ( array_keys( $optionConfigList ) as $optionConfigItemKey )
@@ -580,7 +424,7 @@ class eZCLI
         if ( is_string( $argumentConfig ) )
             $argumentConfig = eZCLI::parseOptionString( $argumentConfig, $tmpArgumentConfig );
 
-        $options = array();
+        $options = [];
 
         $helpOption = false;
         $helpText = false;
@@ -591,14 +435,14 @@ class eZCLI
         if ( $helpOption )
             $helpText = "\n" . "Try `$program $helpOption' for more information.";
 
-        $options['arguments'] = array();
+        $options['arguments'] = [];
 
         $arguments = array_values( $arguments );
         $argumentCount = count( $arguments );
         for ( $i = 0; $i < $argumentCount; ++$i )
         {
             $argument = $arguments[$i];
-            $argumentLen = strlen( $argument );
+            $argumentLen = strlen( (string) $argument );
             if ( $argumentLen > 1 and
                  $argument[0] == '-' )
             {
@@ -606,7 +450,7 @@ class eZCLI
                 if ( $argumentLen > 2 and
                      $argument[1] == '-' )
                 {
-                    $optionName = substr( $argument, 2 );
+                    $optionName = substr( (string) $argument, 2 );
                     $assignPosition = strpos( $optionName, '=' );
                     if ( $assignPosition !== false )
                     {
@@ -622,7 +466,7 @@ class eZCLI
                     $optionName = $argument[1];
                     if ( $argumentLen > 2 )
                     {
-                        $argumentValue = substr( $argument, 2 );
+                        $argumentValue = substr( (string) $argument, 2 );
                     }
                     $optionType = 'short';
                     $optionPrefix = '-';
@@ -674,7 +518,7 @@ class eZCLI
                     if ( $hasMultipleValues )
                     {
                         if ( !isset( $options[$optionStoreName] ) )
-                            $options[$optionStoreName] = array();
+                            $options[$optionStoreName] = [];
                         $options[$optionStoreName][] = $value;
                     }
                     else

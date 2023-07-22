@@ -21,7 +21,7 @@ class ezpRestCacheStorageApcCluster extends ezcCacheStorageApcPlain
      */
     public $forceStoreRegistry = false;
 
-    public function __construct( $location = null, array $options = array() )
+    public function __construct( $location = null, array $options = [] )
     {
         $this->expiryHandler = eZExpiryHandler::instance();
 
@@ -33,7 +33,7 @@ class ezpRestCacheStorageApcCluster extends ezcCacheStorageApcPlain
      * to add a cluster cache control, driven by {@link eZExpiryHandler} (expiry.php)
      * @see lib/ezc/Cache/src/storage/ezcCacheStorageMemory::restore()
      */
-    public function restore( $id, $attributes = array(), $search = false )
+    public function restore( $id, $attributes = [], $search = false )
     {
         $ttl = (int)eZINI::instance( 'rest.ini' )->variable( 'CacheSettings', 'RouteApcCacheTTL' );
         $currentTime = time();
@@ -93,7 +93,7 @@ class ezpRestCacheStorageApcCluster extends ezcCacheStorageApcPlain
      * Makes the registry to be stored
      * @see lib/ezc/Cache/src/storage/ezcCacheStorageMemory::store()
      */
-    public function store( $id, $data, $attributes = array() )
+    public function store( $id, $data, $attributes = [] )
     {
         $this->forceStoreRegistry = true;
         $storeResult = parent::store( $id, $data, $attributes );
@@ -109,7 +109,7 @@ class ezpRestCacheStorageApcCluster extends ezcCacheStorageApcPlain
      * Direct delete instruction. Registry will be stored
      * @see lib/ezc/Cache/src/storage/ezcCacheStorageMemory::delete()
      */
-    public function delete( $id = null, $attributes = array(), $search = false )
+    public function delete( $id = null, $attributes = [], $search = false )
     {
         $this->forceStoreRegistry = true;
         parent::delete( $id, $attributes, $search );

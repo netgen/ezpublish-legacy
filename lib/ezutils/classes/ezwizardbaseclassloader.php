@@ -46,7 +46,7 @@ class eZWizardBaseClassLoader
         }
         $currentStep = $metaData['current_step'];
 
-        if ( count( $stepArray ) <= $currentStep )
+        if ( (is_countable($stepArray) ? count( $stepArray ) : 0) <= $currentStep )
         {
             eZDebug::writeError( 'Invalid wizard step count: ' . $currentStep, __METHOD__ );
             return false;

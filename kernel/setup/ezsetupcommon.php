@@ -29,30 +29,18 @@ function eZSetupOptionalTests()
 
 function eZSetupDatabaseMap()
 {
-    return array( 'mysqli' => array( 'type' => 'mysqli',
-                                     'driver' => 'ezmysqli',
-                                     'name' => 'MySQL Improved',
-                                     'required_version' => '4.1.1',
-                                     'has_demo_data' => true,
-                                     'supports_unicode' => true ),
-                  'pgsql' => array( 'type' => 'pgsql',
-                                    'driver' => 'ezpostgresql',
-                                    'name' => 'PostgreSQL',
-                                    'required_version' => '8.0',
-                                    'has_demo_data' => false,
-                                    'supports_unicode' => true ),
-                   );
+    return ['mysqli' => ['type' => 'mysqli', 'driver' => 'ezmysqli', 'name' => 'MySQL Improved', 'required_version' => '4.1.1', 'has_demo_data' => true, 'supports_unicode' => true], 'pgsql' => ['type' => 'pgsql', 'driver' => 'ezpostgresql', 'name' => 'PostgreSQL', 'required_version' => '8.0', 'has_demo_data' => false, 'supports_unicode' => true]];
 }
 
 function eZSetupFetchPersistenceList()
 {
-    $persistenceList = array();
+    $persistenceList = [];
     $http = eZHTTPTool::instance();
     $postVariables = $http->attribute( 'post' );
 
     foreach ( $postVariables as $name => $value )
     {
-        if ( preg_match( '/^P_([a-zA-Z0-9_]+)-([a-zA-Z0-9_]+)$/', $name, $matches ) )
+        if ( preg_match( '/^P_([a-zA-Z0-9_]+)-([a-zA-Z0-9_]+)$/', (string) $name, $matches ) )
         {
             $persistenceGroup = $matches[1];
             $persistenceName = $matches[2];
@@ -124,15 +112,13 @@ function eZSetupMergePersistenceList( &$persistenceList, $persistenceDataList )
 function eZSetupLanguageList( &$languageList, &$defaultLanguage, &$defaultExtraLanguages )
 {
     $locales = eZLocale::localeList( true );
-    $languageList = array();
-    $httpMap   = array();
-    $httpMapShort = array();
+    $languageList = [];
+    $httpMap   = [];
+    $httpMapShort = [];
     // This alias array must be filled in with known names.
     // The key is the value from the locale INI file (HTTP group)
     // and the value is the HTTP alias.
-    $httpAliases = array( 'no-bokmaal' => 'nb',
-                          'no-nynorsk' => 'nn',
-                          'ru-ru' => 'ru' );
+    $httpAliases = ['no-bokmaal' => 'nb', 'no-nynorsk' => 'nn', 'ru-ru' => 'ru'];
 
     foreach ( array_keys( $locales ) as $localeKey )
     {
@@ -140,9 +126,9 @@ function eZSetupLanguageList( &$languageList, &$defaultLanguage, &$defaultExtraL
         if ( !$locale->attribute( 'country_variation' ) )
         {
             $languageList[] = $locale;
-            $httpLocale = strtolower( $locale->httpLocaleCode() );
+            $httpLocale = strtolower( (string) $locale->httpLocaleCode() );
             $httpMap[$httpLocale] = $locale;
-            list( $httpLocaleShort ) = explode( '-', $httpLocale );
+            [$httpLocaleShort] = explode( '-', $httpLocale );
             $httpMapShort[$httpLocale] = $locale;
             if ( isset( $httpAliases[$httpLocale] ) )
             {
@@ -155,7 +141,7 @@ function eZSetupLanguageList( &$languageList, &$defaultLanguage, &$defaultExtraL
     for ( $i =0; $i < count( $languageList ); $i++ )
         for ( $n = 0; $n < count( $languageList ) - 1; $n++ )
         {
-            if ( strcmp( $languageList[$n]->attribute( 'language_name' ), $languageList[$n+1]->attribute( 'language_name' ) ) > 0 )
+            if ( strcmp( (string) $languageList[$n]->attribute( 'language_name' ), (string) $languageList[$n+1]->attribute( 'language_name' ) ) > 0 )
             {
                 $tmpElement = $languageList[$n];
                 $languageList[$n] = $languageList[$n+1];
@@ -164,13 +150,13 @@ function eZSetupLanguageList( &$languageList, &$defaultLanguage, &$defaultExtraL
         }
 
     $defaultLanguage = false;
-    $defaultExtraLanguages = array();
+    $defaultExtraLanguages = [];
     if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) )
     {
-        $acceptLanguages = explode( ',', $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
+        $acceptLanguages = explode( ',', (string) $_SERVER['HTTP_ACCEPT_LANGUAGE'] );
         foreach ( $acceptLanguages as $acceptLanguage )
         {
-            list( $acceptLanguageCode ) = explode( ';', $acceptLanguage );
+            [$acceptLanguageCode] = explode( ';', $acceptLanguage );
             $acceptLanguageCode = strtolower( $acceptLanguageCode );
             $languageCode = false;
             if ( isset( $httpMap[$acceptLanguageCode] ) )
@@ -200,7 +186,7 @@ function eZSetupLanguageList( &$languageList, &$defaultLanguage, &$defaultExtraL
     {
         $defaultLanguage = 'eng-GB';
     }
-    $defaultExtraLanguages = array_unique( array_diff( $defaultExtraLanguages, array( $defaultLanguage ) ) );
+    $defaultExtraLanguages = array_unique( array_diff( $defaultExtraLanguages, [$defaultLanguage] ) );
 }
 
 ?>

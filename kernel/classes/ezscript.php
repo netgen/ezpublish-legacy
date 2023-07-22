@@ -50,29 +50,10 @@ class eZScript
     /**
      * @param array $settings
      */
-    function __construct( $settings = array() )
+    function __construct( $settings = [] )
     {
-        $settings += array(
-            'debug-message' => false,
-            'debug-output' => false,
-            'debug-include' => false,
-            'debug-levels' => false,
-            'debug-accumulator' => false,
-            'debug-timing' => false,
-            'use-session' => false,
-            'use-extensions' => true,
-            'use-modules' => false,
-            'user' => false,
-            'description' => 'eZ Publish script',
-            'site-access' => false,
-            'min_version' => false,
-            'max_version' => false
-        );
+        $settings += ['debug-message' => false, 'debug-output' => false, 'debug-include' => false, 'debug-levels' => false, 'debug-accumulator' => false, 'debug-timing' => false, 'use-session' => false, 'use-extensions' => true, 'use-modules' => false, 'user' => false, 'description' => 'eZ Publish script', 'site-access' => false, 'min_version' => false, 'max_version' => false];
         $this->updateSettings( $settings );
-        $this->ExitCode = false;
-        $this->IsQuiet = false;
-        $this->ShowVerbose = false;
-        $this->IsInitialized = false;
         $this->CurrentOptions = false;
         $this->CurrentOptionConfig = false;
         $this->CurrentStandardOptions = false;
@@ -87,7 +68,6 @@ class eZScript
         $this->IterationColumn = 0;
         $this->IterationColumnMax = 70;
         $this->IterationMax = false;
-        $this->InitializationErrorMessage = 'unknown error';
     }
 
     /**
@@ -111,7 +91,7 @@ class eZScript
      *
      * @param array $settings
      */
-    private function updateSettings( array $settings = array() )
+    private function updateSettings( array $settings = [] )
     {
         if ( isset( $settings['debug-message'] ) )
             $this->DebugMessage = $settings['debug-message'];
@@ -197,7 +177,7 @@ class eZScript
         }
 
         $ini = eZINI::instance();
-        $phpLocale = trim( $ini->variable( 'RegionalSettings', 'SystemLocale' ) );
+        $phpLocale = trim( (string) $ini->variable( 'RegionalSettings', 'SystemLocale' ) );
         if ( $phpLocale != '' )
         {
             setlocale( LC_ALL, explode( ',', $phpLocale ) );
@@ -253,9 +233,7 @@ class eZScript
         $iniDirPermission = $ini->variable( 'FileSettings', 'StorageDirPermissions' );
         $iniVarDirectory = eZSys::cacheDirectory() ;
 
-        eZCodePage::setPermissionSetting( array( 'file_permission' => octdec( $iniFilePermission ),
-                                                 'dir_permission'  => octdec( $iniDirPermission ),
-                                                 'var_directory'   => $iniVarDirectory ) );
+        eZCodePage::setPermissionSetting( ['file_permission' => octdec( (string) $iniFilePermission ), 'dir_permission'  => octdec( (string) $iniDirPermission ), 'var_directory'   => $iniVarDirectory] );
 
         eZExecution::addCleanupHandler( 'eZDBCleanup' );
         eZExecution::addFatalErrorHandler( 'eZFatalError' );
@@ -277,15 +255,13 @@ class eZScript
         $siteaccess = $this->SiteAccess;
         if ( $siteaccess )
         {
-            $access = array( 'name' => $siteaccess,
-                             'type' => eZSiteAccess::TYPE_STATIC );
+            $access = ['name' => $siteaccess, 'type' => eZSiteAccess::TYPE_STATIC];
         }
         else
         {
             $ini = eZINI::instance();
             $siteaccess = $ini->variable( 'SiteSettings', 'DefaultAccess' );
-            $access = array( 'name' => $siteaccess,
-                             'type' => eZSiteAccess::TYPE_DEFAULT );
+            $access = ['name' => $siteaccess, 'type' => eZSiteAccess::TYPE_DEFAULT];
         }
 
         $access = eZSiteAccess::change( $access );
@@ -377,7 +353,7 @@ class eZScript
         if ( class_exists( 'eZDB' )
              and eZDB::hasInstance() )
         {
-            $db = eZDB::instance( false, array( 'show_errors' => false ) );
+            $db = eZDB::instance( false, ['show_errors' => false] );
             // Perform transaction check
             $transactionCounterCheck = eZDB::checkTransactionCounter();
             if ( isset( $transactionCounterCheck['error'] ) )
@@ -397,8 +373,8 @@ class eZScript
              eZDebug::isDebugEnabled() )
         {
             if ( $this->DebugMessage )
-                fputs( STDERR, $this->DebugMessage );
-            fputs( STDERR, eZDebug::printReport( false, $webOutput, true,
+                fputs( STDERR, (string) $this->DebugMessage );
+            fputs( STDERR, (string) eZDebug::printReport( false, $webOutput, true,
                                                  $this->AllowedDebugLevels, $this->UseDebugAccumulators,
                                                  $this->UseDebugTimingPoints, $this->UseIncludeFiles ) );
         }
@@ -522,8 +498,7 @@ class eZScript
 
     function setUser( $userLogin, $userPassword )
     {
-        $this->User = array( 'login' => $userLogin,
-                             'password' => $userPassword );
+        $this->User = ['login' => $userLogin, 'password' => $userPassword];
     }
 
     /*!
@@ -637,8 +612,8 @@ class eZScript
             else
             {
                 if ( $this->IterationWrapNumeric )
-                    $status = $status % count( $this->IterationNumericStrings );
-                if ( $status < count( $this->IterationNumericStrings ) )
+                    $status = $status % (is_countable($this->IterationNumericStrings) ? count( $this->IterationNumericStrings ) : 0);
+                if ( $status < (is_countable($this->IterationNumericStrings) ? count( $this->IterationNumericStrings ) : 0) )
                     $statusText = $this->IterationNumericStrings[$status];
                 else
                     $statusText = ' ';
@@ -687,7 +662,7 @@ class eZScript
             if ( $statusLevel > 0 )
             {
                 --$statusLevel;
-                $statusLevels = array( 'warning', 'failure' );
+                $statusLevels = ['warning', 'failure'];
                 if ( $statusLevel > count( $statusLevels ) )
                     $statusLevel = count( $statusLevels ) - 1;
                 $levelText = $statusLevels[$statusLevel];
@@ -702,6 +677,7 @@ class eZScript
 
     function showHelp( $useStandardOptions = false, $optionConfig = false, $optionHelp = false, $argumentConfig = false, $arguments = false )
     {
+        $program = null;
         if ( $useStandardOptions === false )
         {
             $useStandardOptions = $this->CurrentStandardOptions;
@@ -718,7 +694,7 @@ class eZScript
         {
             $argumentConfig = $this->ArgumentConfig;
         }
-        $optionList = array();
+        $optionList = [];
         foreach ( $optionConfig['list'] as $configItem )
         {
             if ( in_array( $configItem['name'], $this->CurrentExcludeOptions ) )
@@ -737,7 +713,7 @@ class eZScript
             $optionDescription = '';
             if ( isset( $optionHelp[$configItem['name']] ) )
                 $optionDescription = $optionHelp[$configItem['name']];
-            $optionList[] = array( $optionText, $optionDescription );
+            $optionList[] = [$optionText, $optionDescription];
         }
         if ( $arguments === false )
         {
@@ -745,40 +721,40 @@ class eZScript
             $program = $arguments[0];
         }
         $cli = eZCLI::instance();
-        $generalOptionList = array();
-        $generalOptionList = array();
+        $generalOptionList = [];
+        $generalOptionList = [];
         if ( $useStandardOptions )
         {
-            $generalOptionList[] = array( '-h,--help', 'display this help and exit');
-            $generalOptionList[] = array( '-q,--quiet', 'do not give any output except when errors occur' );
+            $generalOptionList[] = ['-h,--help', 'display this help and exit'];
+            $generalOptionList[] = ['-q,--quiet', 'do not give any output except when errors occur'];
             if ( $useStandardOptions['siteaccess'] )
-                $generalOptionList[] = array( '-s,--siteaccess', "selected siteaccess for operations,\nif not specified default siteaccess is used" );
+                $generalOptionList[] = ['-s,--siteaccess', "selected siteaccess for operations,\nif not specified default siteaccess is used"];
             if ( $useStandardOptions['debug'] )
-                $generalOptionList[] = array( '-d,--debug...', ( "display debug output at end of execution,\n" .
+                $generalOptionList[] = ['-d,--debug...', ( "display debug output at end of execution,\n" .
                                                                  "the following debug items can be controlled: \n" .
-                                                                 "all, accumulator, include, timing, error, warning, debug, notice or strict." ) );
+                                                                 "all, accumulator, include, timing, error, warning, debug, notice or strict." )];
             if ( $useStandardOptions['colors'] )
             {
-                $generalOptionList[] = array( '-c,--colors', 'display output using ANSI colors (default)' );
-                $generalOptionList[] = array( '--no-colors', 'do not use ANSI coloring' );
+                $generalOptionList[] = ['-c,--colors', 'display output using ANSI colors (default)'];
+                $generalOptionList[] = ['--no-colors', 'do not use ANSI coloring'];
             }
             if ( $useStandardOptions['user'] )
             {
-                $generalOptionList[] = array( '-l,--login USER', 'login with USER and use it for all operations' );
-                $generalOptionList[] = array( '-p,--password PWD', 'use PWD as password for USER' );
+                $generalOptionList[] = ['-l,--login USER', 'login with USER and use it for all operations'];
+                $generalOptionList[] = ['-p,--password PWD', 'use PWD as password for USER'];
             }
             if ( $useStandardOptions['log'] )
             {
-                $generalOptionList[] = array( '--logfiles', 'create log files' );
-                $generalOptionList[] = array( '--no-logfiles', 'do not create log files (default)' );
+                $generalOptionList[] = ['--logfiles', 'create log files'];
+                $generalOptionList[] = ['--no-logfiles', 'do not create log files (default)'];
             }
             if ( $useStandardOptions['verbose'] )
             {
-                $generalOptionList[] = array( '-v,--verbose...', "display more information, \nused multiple times will increase amount of information" );
+                $generalOptionList[] = ['-v,--verbose...', "display more information, \nused multiple times will increase amount of information"];
             }
             if( $useStandardOptions['root'] )
             {
-                $generalOptionList[] = array( '-r,--allow-root-user', "Allows the script to be run by the root user" );
+                $generalOptionList[] = ['-r,--allow-root-user', "Allows the script to be run by the root user"];
             }
         }
         $description = $this->Description;
@@ -791,7 +767,7 @@ class eZScript
         {
             foreach ( $argumentConfig['list'] as $argumentItem )
             {
-                $argumentName = strtoupper( $argumentItem['name'] );
+                $argumentName = strtoupper( (string) $argumentItem['name'] );
                 $quantifier = $argumentItem['quantifier'];
                 if ( $quantifier['min'] > 1 or $quantifier['max'] === false or $quantifier['max'] > 1 )
                     $helpText .= " [$argumentName]...";
@@ -851,7 +827,7 @@ class eZScript
                 $option = $optionItem[0];
                 $optionDescription = $optionItem[1];
                 $optionLines = explode( "\n", $option );
-                $optionDescriptionLines = explode( "\n", $optionDescription );
+                $optionDescriptionLines = explode( "\n", (string) $optionDescription );
                 $count = max( count( $optionLines ), count( $optionDescriptionLines ) );
                 for ( $i = 0; $i < $count; ++$i )
                 {
@@ -889,6 +865,7 @@ class eZScript
     function getOptions( $config = '', $argumentConfig = '', $optionHelp = false,
                          $arguments = false, $useStandardOptions = true )
     {
+        $excludeOptions = [];
         if ( is_string( $config ) )
             $config = eZCLI::parseOptionString( $config, $tmpConfig );
         if ( is_string( $argumentConfig ) )
@@ -897,21 +874,15 @@ class eZScript
         if ( $useStandardOptions )
         {
             if ( !is_array( $useStandardOptions ) )
-                $useStandardOptions = array();
-            $useStandardOptions = array_merge( array( 'debug' => true,
-                                                      'colors' => true,
-                                                      'log' => true,
-                                                      'siteaccess' => true,
-                                                      'verbose' => true,
-                                                      'root' => true,
-                                                      'user' => false ),
+                $useStandardOptions = [];
+            $useStandardOptions = array_merge( ['debug' => true, 'colors' => true, 'log' => true, 'siteaccess' => true, 'verbose' => true, 'root' => true, 'user' => false],
                                                $useStandardOptions );
         }
 
         if ( $useStandardOptions )
         {
             $optionConfig = $config;
-            $excludeOptions = array();
+            $excludeOptions = [];
             $optionString = "[h|help][q|quiet]";
             $excludeOptions[] = 'h';
             $excludeOptions[] = 'help';
@@ -1019,12 +990,12 @@ class eZScript
             $cli->setUseStyles( $useColors );
             if ( $options['debug'] )
             {
-                $levels = array();
+                $levels = [];
                 foreach ( $options['debug'] as $debugOption )
                 {
-                    $levels = array_merge( $levels, explode( ',', $debugOption ) );
+                    $levels = array_merge( $levels, explode( ',', (string) $debugOption ) );
                 }
-                $allowedDebugLevels = array();
+                $allowedDebugLevels = [];
                 $useDebugAccumulators = false;
                 $useDebugTimingpoints = false;
                 $useIncludeFiles = false;
@@ -1089,7 +1060,7 @@ class eZScript
             }
 
             if ( isset( $options['login'] ) and $options['login'] )
-                $this->setUser( $options['login'], isset( $options['password'] ) ? $options['password'] : false );
+                $this->setUser( $options['login'], $options['password'] ?? false );
         }
         return $options;
     }
@@ -1100,7 +1071,7 @@ class eZScript
      * @param array $settings Used by the first generated instance, but ignored for subsequent calls.
      * @return eZScript
      */
-    static function instance( $settings = array() )
+    static function instance( $settings = [] )
     {
         if (
             !isset( $GLOBALS['eZScriptInstance'] )
@@ -1127,7 +1098,7 @@ class eZScript
         global $useLogFiles;
         $ini = eZINI::instance();
         $cli = eZCLI::instance();
-        $debugSettings = array();
+        $debugSettings = [];
         $debugSettings['debug-enabled'] = ( $ini->variable( 'DebugSettings', 'DebugOutput' ) == 'enabled' and
                                             $ini->variable( 'DebugSettings', 'ScriptDebugOutput' ) == 'enabled' );
         if ( $useDebug !== null )
@@ -1143,12 +1114,8 @@ class eZScript
             $debugSettings['debug-styles'] = $cli->terminalStyles();
         }
         $logList = $ini->variable( 'DebugSettings', 'AlwaysLog' );
-        $logMap = array( 'notice' => eZDebug::LEVEL_NOTICE,
-                         'warning' => eZDebug::LEVEL_WARNING,
-                         'error' => eZDebug::LEVEL_ERROR,
-                         'debug' => eZDebug::LEVEL_DEBUG,
-                         'strict' => eZDebug::LEVEL_STRICT );
-        $debugSettings['always-log'] = array();
+        $logMap = ['notice' => eZDebug::LEVEL_NOTICE, 'warning' => eZDebug::LEVEL_WARNING, 'error' => eZDebug::LEVEL_ERROR, 'debug' => eZDebug::LEVEL_DEBUG, 'strict' => eZDebug::LEVEL_STRICT];
+        $debugSettings['always-log'] = [];
         foreach ( $logMap as $name => $level )
         {
             $debugSettings['always-log'][$level] = in_array( $name, $logList );
@@ -1163,7 +1130,7 @@ class eZScript
     function updateTextCodecSettings()
     {
         $ini = eZINI::instance( 'i18n.ini' );
-        $i18nSettings = array();
+        $i18nSettings = [];
         $i18nSettings['internal-charset'] = $ini->variable( 'CharacterSettings', 'Charset' );
         $i18nSettings['http-charset'] = $ini->variable( 'CharacterSettings', 'HTTPCharset' );
         $i18nSettings['mbstring-extension'] = $ini->variable( 'CharacterSettings', 'MBStringExtension' ) == 'enabled';
@@ -1171,8 +1138,8 @@ class eZScript
     }
 
     /// \privatesection
-    public $IsInitialized;
-    public $InitializationErrorMessage;
+    public $IsInitialized = false;
+    public $InitializationErrorMessage = 'unknown error';
     public $DebugMessage;
     public $UseDebugOutput;
     public $UseSession;
@@ -1180,9 +1147,9 @@ class eZScript
     public $UseModules;
     public $User;
     public $SiteAccess;
-    public $ExitCode;
-    public $IsQuiet;
-    public $ShowVerbose;
+    public $ExitCode = false;
+    public $IsQuiet = false;
+    public $ShowVerbose = false;
 }
 
 function eZDBCleanup()
@@ -1211,10 +1178,10 @@ function eZFatalError()
 
     eZDebug::setHandleType( eZDebug::HANDLE_NONE );
     if ( !$webOutput )
-        fputs( STDERR, $endl );
+        fputs( STDERR, (string) $endl );
     fputs( STDERR, $bold . "Fatal error" . $unbold . ": eZ Publish did not finish its request$endl" );
     fputs( STDERR, $par . "The execution of eZ Publish was abruptly ended, the debug output is present below." . $unpar . $endl );
-    fputs( STDERR, eZDebug::printReport( false, $webOutput, true ) );
+    fputs( STDERR, (string) eZDebug::printReport( false, $webOutput, true ) );
 }
 
 /*!

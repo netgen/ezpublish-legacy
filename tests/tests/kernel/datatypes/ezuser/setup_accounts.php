@@ -36,66 +36,39 @@ Ldap::addGroup( $connection, 'StarWars', $dc );
 
 $chewbaccaDN =
 Ldap::add( $connection, 'chewbacca', '{MD5}' . base64_encode( pack( 'H*', md5( 'aaawwwwrrrkk' ) ) ), "ou=StarWars,{$dc}", 'Chewbacca', 'Chewbacca',
-           array( 'givenName' => 'Chewbacca',
-                  'displayName' => 'Chewbacca the Wokiee',
-                  'ou' => array( 'StarWars', 'Rogues', 'RebelAlliance' ),
-                  'mail' => array( 'chewbacca@millenniumfalcon.net' ) ) );
+           ['givenName' => 'Chewbacca', 'displayName' => 'Chewbacca the Wokiee', 'ou' => ['StarWars', 'Rogues', 'RebelAlliance'], 'mail' => ['chewbacca@millenniumfalcon.net']] );
 $hanSoloDN =
 Ldap::add( $connection, 'han.solo', '{MD5}' . base64_encode( pack( 'H*', md5( 'leiaishot' ) ) ), "ou=StarWars,{$dc}", 'Solo', 'Han Solo',
-           array( 'givenName' => 'Han',
-                  'displayName' => 'He who shot first',
-                  'ou' => array( 'StarWars', 'Rogues', 'RebelAlliance' ),
-                  'mail' => array( 'han.solo@millenniumfalcon.net' ) ) );
+           ['givenName' => 'Han', 'displayName' => 'He who shot first', 'ou' => ['StarWars', 'Rogues', 'RebelAlliance'], 'mail' => ['han.solo@millenniumfalcon.net']] );
 $princessLeiaDN =
 Ldap::add( $connection, 'leia', '{MD5}' . base64_encode( pack( 'H*', md5( 'bunhead' ) ) ), "ou=StarWars,{$dc}", 'Organa', 'Leia Organa',
-           array( 'givenName' => 'Leia',
-                  'displayName' => 'Princess Leia',
-                  'ou' => array( 'StarWars', 'RebelAlliance' ),
-                  'mail' => array( 'leia@rebelalliance.org' ) ) );
+           ['givenName' => 'Leia', 'displayName' => 'Princess Leia', 'ou' => ['StarWars', 'RebelAlliance'], 'mail' => ['leia@rebelalliance.org']] );
 $darthVaderDN =
 Ldap::add( $connection, 'darth.vader', '{MD5}' . base64_encode( pack( 'H*', md5( 'whosyourdaddy' ) ) ), "ou=StarWars,{$dc}", 'Skywalker', 'Anakin Skywalker',
-           array( 'givenName' => 'Anakin',
-                  'displayName' => 'Darth Vader',
-                  'ou' => array( 'StarWars', 'GalacticEmpire', 'Sith' ),
-                  'mail' => array( 'vader@empire.com' ) ) );
+           ['givenName' => 'Anakin', 'displayName' => 'Darth Vader', 'ou' => ['StarWars', 'GalacticEmpire', 'Sith'], 'mail' => ['vader@empire.com']] );
 $jabbaTheHuttDN =
 Ldap::add( $connection, 'jabba.thehutt', '{MD5}' . base64_encode( pack( 'H*', md5( 'wishihadlegs' ) ) ), "ou=StarWars,{$dc}", 'Hutt', 'Jabba Hutt',
-           array( 'givenName' => 'Jabba',
-                  'displayName' => 'Jabba the Hutt',
-                  'ou' => array( 'Hutts' ),
-                  'mail' => array( 'jabba@hutt.com' ) ) );
+           ['givenName' => 'Jabba', 'displayName' => 'Jabba the Hutt', 'ou' => ['Hutts'], 'mail' => ['jabba@hutt.com']] );
 $obiWanDN =
 Ldap::add( $connection, 'obi.wan', '{MD5}' . base64_encode( pack( 'H*', md5( 'thesearenotthedroids' ) ) ), "ou=StarWars,{$dc}", 'Kenobi', 'Obi Wan Kenobi',
-           array( 'givenName' => 'Obi Wan',
-                  'displayName' => 'Obi Wan Kenobi',
-                  'ou' => array( 'StarWars', 'RebelAlliance', 'Jedi' ),
-                  'seeAlso' => array( "ou=StarWars,{$dc}", "ou=RebelAlliance,ou=StarWars,{$dc}", "ou=Jedi,ou=RebelAlliance,ou=StarWars,{$dc}" ),
-                  'mail' => array( 'obi.wan@jedi.org' ) ) );
+           ['givenName' => 'Obi Wan', 'displayName' => 'Obi Wan Kenobi', 'ou' => ['StarWars', 'RebelAlliance', 'Jedi'], 'seeAlso' => ["ou=StarWars,{$dc}", "ou=RebelAlliance,ou=StarWars,{$dc}", "ou=Jedi,ou=RebelAlliance,ou=StarWars,{$dc}"], 'mail' => ['obi.wan@jedi.org']] );
 $bobaFettDN =
 Ldap::add( $connection, 'boba.fett', '{MD5}' . base64_encode( pack( 'H*', md5( 'ihatesarlacs' ) ) ), "ou=StarWars,{$dc}", 'Fett', 'Boba Fett',
-           array( 'givenName' => 'Boba',
-                  'displayName' => 'Boba Fett',
-                  'ou' => array( 'StarWars', 'Rogues' ),
-                  'seeAlso' => array( "ou=StarWars,{$dc}", "ou=Rogues,ou=StarWars,{$dc}" ),
-                  'mail' => array( 'boba.fett@bountyhunter.com' ) ) );
+           ['givenName' => 'Boba', 'displayName' => 'Boba Fett', 'ou' => ['StarWars', 'Rogues'], 'seeAlso' => ["ou=StarWars,{$dc}", "ou=Rogues,ou=StarWars,{$dc}"], 'mail' => ['boba.fett@bountyhunter.com']] );
 $yodaDN =
 Ldap::add( $connection, 'yoda', '{MD5}' . base64_encode( pack( 'H*', md5( 'dagobah4eva' ) ) ), "ou=StarWars,{$dc}", 'Yoda', 'Yoda',
-           array( 'givenName' => 'Yoda',
-                  'displayName' => 'Yoda',
-                  'ou' => array( 'StarWars', 'RebelAlliance', 'Jedi' ),
-                  'seeAlso' => array( "ou=StarWars,{$dc}", "ou=RebelAlliance,ou=StarWars,{$dc}", "ou=Jedi,ou=RebelAlliance,ou=StarWars,{$dc}" ),
-                  'mail' => array( 'yoda@jedi.org' ) ) );
+           ['givenName' => 'Yoda', 'displayName' => 'Yoda', 'ou' => ['StarWars', 'RebelAlliance', 'Jedi'], 'seeAlso' => ["ou=StarWars,{$dc}", "ou=RebelAlliance,ou=StarWars,{$dc}", "ou=Jedi,ou=RebelAlliance,ou=StarWars,{$dc}"], 'mail' => ['yoda@jedi.org']] );
 
 Ldap::addGroup( $connection, 'RebelAlliance', "ou=StarWars,{$dc}",
-                array( 'seeAlso' => array( $princessLeiaDN, $chewbaccaDN, $hanSoloDN, $obiWanDN, $yodaDN ) ) );
+                ['seeAlso' => [$princessLeiaDN, $chewbaccaDN, $hanSoloDN, $obiWanDN, $yodaDN]] );
 Ldap::addGroup( $connection, 'Rogues', "ou=StarWars,{$dc}",
-                array( 'seeAlso' => array( $chewbaccaDN, $hanSoloDN ) ) );
+                ['seeAlso' => [$chewbaccaDN, $hanSoloDN]] );
 Ldap::addGroup( $connection, 'GalacticEmpire', "ou=StarWars,{$dc}",
-                array( 'seeAlso' => array( $darthVaderDN ) ) );
+                ['seeAlso' => [$darthVaderDN]] );
 Ldap::addGroup( $connection, 'Sith', "ou=GalacticEmpire,ou=StarWars,$dc",
-                array( 'seeAlso' => array( $darthVaderDN ) ) );
+                ['seeAlso' => [$darthVaderDN]] );
 Ldap::addGroup( $connection, 'Jedi', "ou=RebelAlliance,ou=StarWars,{$dc}",
-                array( 'seeAlso' => array( $obiWanDN, $yodaDN ) ) );
+                ['seeAlso' => [$obiWanDN, $yodaDN]] );
 
 // This dumps all the LDAP data
 // Ldap::fetchAll( $connection, $dc );
@@ -133,21 +106,10 @@ class Ldap
         ldap_set_option( $connection, LDAP_OPT_PROTOCOL_VERSION, 3 );
         @ldap_bind( $connection, sprintf( $format, $user ), $password );
         $err = ldap_errno( $connection );
-        switch ( $err )
-        {
-            case 0x51: // LDAP_SERVER_DOWN
-            case 0x52: // LDAP_LOCAL_ERROR
-            case 0x53: // LDAP_ENCODING_ERROR
-            case 0x54: // LDAP_DECODING_ERROR
-            case 0x55: // LDAP_TIMEOUT
-            case 0x56: // LDAP_AUTH_UNKNOWN
-            case 0x57: // LDAP_FILTER_ERROR
-            case 0x58: // LDAP_USER_CANCELLED
-            case 0x59: // LDAP_PARAM_ERROR
-            case 0x5a: // LDAP_NO_MEMORY
-                throw new Exception( "Could not connect to host '{$uri}'. (0x" . dechex( $err ) . ")" );
-                break;
-        }
+        match ($err) {
+            0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a => throw new Exception( "Could not connect to host '{$uri}'. (0x" . dechex( $err ) . ")" ),
+            default => $connection,
+        };
         return $connection;
     }
 
@@ -161,14 +123,15 @@ class Ldap
      * @param string $password Password for username. Use an encryption function and put method in front of hash, like: '{MD5}hash'
      * @param string $dc The dc part of the entry, like: 'dc=example,dc=com'
      */
-    public static function add( $connection, $user, $password, $dc, $sn, $cn, $extra = array() )
+    public static function add( $connection, $user, $password, $dc, $sn, $cn, $extra = [] )
     {
+        $ldaprecord = [];
         $ldaprecord['uid'][0] = $user;
         $ldaprecord['objectclass'][0] = "person";
         $ldaprecord['objectclass'][] = "organizationalPerson";
         $ldaprecord['objectclass'][] = "inetOrgPerson";
-        $ldaprecord['sn'] = array( $sn );
-        $ldaprecord['cn'] = array( $cn );
+        $ldaprecord['sn'] = [$sn];
+        $ldaprecord['cn'] = [$cn];
         $ldaprecord['objectclass'][] = "top";
         $ldaprecord['userPassword'][0] = $password;
 
@@ -197,8 +160,9 @@ class Ldap
         ldap_delete( $connection, "uid={$user},{$dc}" );
     }
 
-    public static function addGroup( $connection, $group, $dc, $extra = array() )
+    public static function addGroup( $connection, $group, $dc, $extra = [] )
     {
+        $ldaprecord = [];
         $ldaprecord['ou'] = $group;
         $ldaprecord['objectclass'][0] = "organizationalUnit";
         $ldaprecord['objectclass'][1] = "top";

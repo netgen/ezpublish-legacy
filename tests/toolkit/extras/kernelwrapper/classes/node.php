@@ -33,7 +33,7 @@ class ezpNode
 
                 if ( !$this->node instanceof eZContentObjectTreeNode )
                     throw new ezcBaseValueException( 'node',
-                                                     ( isset( $this->node ) ? get_class( $this->node ) : null ),
+                                                     ( isset( $this->node ) ? $this->node::class : null ),
                                                      'eZContentObjectTreeNode (parent_node was: ' . $this->nodeAssignment->attribute('parent_node') . ' ) ',
                                                      'member' );
 
@@ -46,7 +46,7 @@ class ezpNode
 
                 if ( !$this->node instanceof eZContentObjectTreeNode )
                     throw new ezcBaseValueException( 'node',
-                                                     ( isset( $this->node ) ? get_class( $this->node ) : null ),
+                                                     ( isset( $this->node ) ? $this->node::class : null ),
                                                      'eZContentObjectTreeNode (parent_node was: ' . $this->nodeAssignment->attribute('parent_node') . ' ) ',
                                                      'member' );
 
@@ -60,7 +60,7 @@ class ezpNode
 
     public function __call( $name, $arguments )
     {
-        return call_user_func_array( array( $this->node, $name ), $arguments );
+        return call_user_func_array( [$this->node, $name], $arguments );
     }
 
     /**

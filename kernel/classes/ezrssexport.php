@@ -17,95 +17,19 @@
 
 class eZRSSExport extends eZPersistentObject
 {
-    const STATUS_VALID = 1;
-    const STATUS_DRAFT = 0;
+    final public const STATUS_VALID = 1;
+    final public const STATUS_DRAFT = 0;
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'node_id' => array( 'name' => 'NodeID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => false ),
-                                         'title' => array( 'name' => 'Title',
-                                                           'datatype' => 'string',
-                                                           'default' => ezpI18n::tr( 'kernel/rss', 'New RSS Export' ),
-                                                           'required' => true ),
-                                         'url' => array( 'name' => 'URL',
-                                                         'datatype' => 'string',
-                                                         'default' => '',
-                                                         'required' => true ),
-                                         'site_access' => array( 'name' => 'SiteAccess',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'modifier_id' => array( 'name' => 'ModifierID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'created' => array( 'name' => 'Created',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'creator_id' => array( 'name' => 'CreatorID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         'description' => array( 'name' => 'Description',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => false ),
-                                         'image_id' => array( 'name' => 'ImageID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => false ),
-                                         'rss_version' => array( 'name' => 'RSSVersion',
-                                                                 'datatype' => 'string',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'active' => array( 'name' => 'Active',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'access_url' => array( 'name' => 'AccessURL',
-                                                                'datatype' => 'string',
-                                                                'default' => 'rss_feed',
-                                                                'required' => false ),
-                                         'number_of_objects' => array( 'name' => 'NumberOfObjects',
-                                                                       'datatype' => 'integer',
-                                                                       'default' => 0,
-                                                                       'required' => true ),
-                                         'main_node_only' => array( 'name' => 'MainNodeOnly',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true ) ),
-                      'keys' => array( 'id', 'status' ),
-                      'function_attributes' => array( 'item_list' => 'itemList',
-                                                      'modifier' => 'modifier',
-                                                      'rss-xml-content' => 'rssXmlContent', // new attribute which uses the Feed component
-                                                      'image_path' => 'imagePath',
-                                                      'image_node' => 'imageNode' ),
-                      'increment_key' => 'id',
-                      'sort' => array( 'title' => 'asc' ),
-                      'class_name' => 'eZRSSExport',
-                      'name' => 'ezrss_export' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'node_id' => ['name' => 'NodeID', 'datatype' => 'integer', 'default' => 0, 'required' => false], 'title' => ['name' => 'Title', 'datatype' => 'string', 'default' => ezpI18n::tr( 'kernel/rss', 'New RSS Export' ), 'required' => true], 'url' => ['name' => 'URL', 'datatype' => 'string', 'default' => '', 'required' => true], 'site_access' => ['name' => 'SiteAccess', 'datatype' => 'string', 'default' => '', 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modifier_id' => ['name' => 'ModifierID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'creator_id' => ['name' => 'CreatorID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'description' => ['name' => 'Description', 'datatype' => 'string', 'default' => '', 'required' => false], 'image_id' => ['name' => 'ImageID', 'datatype' => 'integer', 'default' => 0, 'required' => false], 'rss_version' => ['name' => 'RSSVersion', 'datatype' => 'string', 'default' => 0, 'required' => true], 'active' => ['name' => 'Active', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'access_url' => ['name' => 'AccessURL', 'datatype' => 'string', 'default' => 'rss_feed', 'required' => false], 'number_of_objects' => ['name' => 'NumberOfObjects', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'main_node_only' => ['name' => 'MainNodeOnly', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id', 'status'], 'function_attributes' => [
+            'item_list' => 'itemList',
+            'modifier' => 'modifier',
+            'rss-xml-content' => 'rssXmlContent',
+            // new attribute which uses the Feed component
+            'image_path' => 'imagePath',
+            'image_node' => 'imageNode',
+        ], 'increment_key' => 'id', 'sort' => ['title' => 'asc'], 'class_name' => 'eZRSSExport', 'name' => 'ezrss_export'];
 
     }
 
@@ -120,20 +44,7 @@ class eZRSSExport extends eZPersistentObject
     {
         $config = eZINI::instance( 'site.ini' );
         $dateTime = time();
-        $row = array( 'id' => null,
-                      'node_id', '',
-                      'title' => ezpI18n::tr( 'kernel/classes', 'New RSS Export' ),
-                      'site_access' => '',
-                      'modifier_id' => $user_id,
-                      'modified' => $dateTime,
-                      'creator_id' => $user_id,
-                      'created' => $dateTime,
-                      'status' => self::STATUS_DRAFT,
-                      'url' => 'http://'. $config->variable( 'SiteSettings', 'SiteURL' ),
-                      'description' => '',
-                      'image_id' => 0,
-                      'active' => 1,
-                      'access_url' => '' );
+        $row = ['id' => null, 'node_id', '', 'title' => ezpI18n::tr( 'kernel/classes', 'New RSS Export' ), 'site_access' => '', 'modifier_id' => $user_id, 'modified' => $dateTime, 'creator_id' => $user_id, 'created' => $dateTime, 'status' => self::STATUS_DRAFT, 'url' => 'http://'. $config->variable( 'SiteSettings', 'SiteURL' ), 'description' => '', 'image_id' => 0, 'active' => 1, 'access_url' => ''];
         return new eZRSSExport( $row );
     }
 
@@ -198,8 +109,7 @@ class eZRSSExport extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZRSSExport::definition(),
                                                 null,
-                                                array( "id" => $id,
-                                                       'status' => $status ),
+                                                ["id" => $id, 'status' => $status],
                                                 $asObject );
     }
 
@@ -213,9 +123,7 @@ class eZRSSExport extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZRSSExport::definition(),
                                                 null,
-                                                array( 'access_url' => $access_url,
-                                                       'active' => 1,
-                                                       'status' => self::STATUS_VALID ),
+                                                ['access_url' => $access_url, 'active' => 1, 'status' => self::STATUS_VALID],
                                                 $asObject );
     }
 
@@ -226,7 +134,7 @@ class eZRSSExport extends eZPersistentObject
     static function fetchList( $asObject = true )
     {
         return eZPersistentObject::fetchObjectList( eZRSSExport::definition(),
-                                                    null, array( 'status' => self::STATUS_VALID ), null, null,
+                                                    null, ['status' => self::STATUS_VALID], null, null,
                                                     $asObject );
     }
 
@@ -253,7 +161,7 @@ class eZRSSExport extends eZPersistentObject
             {
                 $retValue = '';
                 $path_array = $objectNode->attribute( 'path_array' );
-                for ( $i = 0; $i < count( $path_array ); $i++ )
+                for ( $i = 0; $i < (is_countable($path_array) ? count( $path_array ) : 0); $i++ )
                 {
                     $treenode = eZContentObjectTreeNode::fetch( $path_array[$i], false, false );
 
@@ -262,7 +170,7 @@ class eZRSSExport extends eZPersistentObject
                         $retValue .= '/';
                     }
 
-                    $retValue .= array_key_exists( 'name', $treenode ) ? $treenode['name'] : '';
+                    $retValue .= property_exists( $treenode, 'name' ) ? $treenode['name'] : '';
                 }
                 return $retValue;
             }
@@ -294,28 +202,12 @@ class eZRSSExport extends eZPersistentObject
     {
         try
         {
-            switch ( $this->attribute( 'rss_version' ) )
-            {
-                case '1.0':
-                {
-                    return $this->generateFeed( 'rss1' );
-                } break;
-
-                case '2.0':
-                {
-                    return $this->generateFeed( 'rss2' );
-                } break;
-
-                case 'ATOM':
-                {
-                    return $this->generateFeed( 'atom' );
-                } break;
-
-                default:
-                {
-                    return null;
-                } break;
-            }
+            return match ($this->attribute( 'rss_version' )) {
+                '1.0' => $this->generateFeed( 'rss1' ),
+                '2.0' => $this->generateFeed( 'rss2' ),
+                'ATOM' => $this->generateFeed( 'atom' ),
+                default => null,
+            };
         }
         catch ( ezcFeedException $e )
         {
@@ -348,7 +240,7 @@ class eZRSSExport extends eZPersistentObject
             }
         }
         if ( $id !== null )
-            $itemList = eZRSSExportItem::fetchFilteredList( array( 'rssexport_id' => $id, 'status' => $status ) );
+            $itemList = eZRSSExportItem::fetchFilteredList( ['rssexport_id' => $id, 'status' => $status] );
         else
             $itemList = null;
         return $itemList;
@@ -365,9 +257,7 @@ class eZRSSExport extends eZPersistentObject
             $this->MainNodeOnly = false;
         }
 
-        return array( 'number_of_objects' => intval($this->NumberOfObjects),
-                      'main_node_only'    => $this->MainNodeOnly
-                     );
+        return ['number_of_objects' => intval($this->NumberOfObjects), 'main_node_only'    => $this->MainNodeOnly];
     }
 
     /**
@@ -410,14 +300,14 @@ class eZRSSExport extends eZPersistentObject
         $feed = new ezcFeed();
 
         $feed->title = htmlspecialchars(
-            $this->attribute( 'title' ), ENT_NOQUOTES, 'UTF-8'
+            (string) $this->attribute( 'title' ), ENT_NOQUOTES, 'UTF-8'
         );
 
         $link = $feed->add( 'link' );
         $link->href = htmlspecialchars( $baseItemURL, ENT_NOQUOTES, 'UTF-8' );
 
         $feed->description = htmlspecialchars(
-            $this->attribute( 'description' ), ENT_NOQUOTES, 'UTF-8'
+            (string) $this->attribute( 'description' ), ENT_NOQUOTES, 'UTF-8'
         );
         $feed->language = $locale->httpLocaleCode();
 
@@ -431,21 +321,21 @@ class eZRSSExport extends eZPersistentObject
         $feed->updated = time();
         $author        = $feed->add( 'author' );
         $author->email = htmlspecialchars(
-            $config->variable( 'MailSettings', 'AdminEmail' ),
+            (string) $config->variable( 'MailSettings', 'AdminEmail' ),
             ENT_NOQUOTES, 'UTF-8'
         );
         $creatorObject = eZContentObject::fetch( $this->attribute( 'creator_id' ) );
         if ( $creatorObject instanceof eZContentObject )
         {
             $author->name = htmlspecialchars(
-                $creatorObject->attribute('name'), ENT_NOQUOTES, 'UTF-8'
+                (string) $creatorObject->attribute('name'), ENT_NOQUOTES, 'UTF-8'
             );
         }
 
         $imageURL = $this->fetchImageURL();
         if ( $imageURL !== false )
         {
-            $imageURL = htmlspecialchars( $imageURL, ENT_NOQUOTES, 'UTF-8' );
+            $imageURL = htmlspecialchars( (string) $imageURL, ENT_NOQUOTES, 'UTF-8' );
             $image = $feed->add( 'image' );
 
             // Required for RSS1
@@ -453,15 +343,12 @@ class eZRSSExport extends eZPersistentObject
 
             $image->url = $imageURL;
             $image->title = htmlspecialchars(
-                $this->attribute( 'title' ), ENT_NOQUOTES, 'UTF-8'
+                (string) $this->attribute( 'title' ), ENT_NOQUOTES, 'UTF-8'
             );
             $image->link = $link->href;
         }
 
-        $cond = array(
-                    'rssexport_id'  => $this->ID,
-                    'status'        => $this->Status
-                    );
+        $cond = ['rssexport_id'  => $this->ID, 'status'        => $this->Status];
         $rssSources = eZRSSExportItem::fetchFilteredList( $cond );
 
         $nodeArray = eZRSSExportItem::fetchNodeList( $rssSources, $this->getObjectListFilter() );
@@ -535,10 +422,10 @@ class eZRSSExport extends eZPersistentObject
 
                 $item = $feed->add( 'item' );
 
-                $item->title = htmlspecialchars( $itemTitleText, ENT_NOQUOTES, 'UTF-8' );
+                $item->title = htmlspecialchars( (string) $itemTitleText, ENT_NOQUOTES, 'UTF-8' );
 
                 $link = $item->add( 'link' );
-                $link->href = htmlspecialchars( $nodeURL, ENT_NOQUOTES, 'UTF-8' );
+                $link->href = htmlspecialchars( (string) $nodeURL, ENT_NOQUOTES, 'UTF-8' );
 
                 switch ( $type )
                 {
@@ -555,7 +442,7 @@ class eZRSSExport extends eZPersistentObject
                 {
                     $author = $item->add( 'author' );
                     $author->name = htmlspecialchars(
-                        $itemCreatorObject->attribute('name'), ENT_NOQUOTES, 'UTF-8'
+                        (string) $itemCreatorObject->attribute('name'), ENT_NOQUOTES, 'UTF-8'
                     );
                     $author->email = $config->variable( 'MailSettings', 'AdminEmail' );
                 }
@@ -568,7 +455,7 @@ class eZRSSExport extends eZPersistentObject
                     {
                         $outputHandler =  $descContent->attribute( 'output' );
                         $itemDescriptionText = htmlspecialchars(
-                            $outputHandler->attribute( 'output_text' ), ENT_NOQUOTES, 'UTF-8'
+                            (string) $outputHandler->attribute( 'output_text' ), ENT_NOQUOTES, 'UTF-8'
                         );
                     }
                     else if ( $descContent instanceof eZImageAliasHandler )
@@ -577,9 +464,9 @@ class eZRSSExport extends eZPersistentObject
                         $origImage   = $descContent->attribute( 'original' );
                         eZURI::transformURI( $itemImage['full_path'], true, 'full' );
                         eZURI::transformURI( $origImage['full_path'], true, 'full' );
-                        $itemDescriptionText = '&lt;a href="' . htmlspecialchars( $origImage['full_path'] )
-                                             . '"&gt;&lt;img alt="' . htmlspecialchars( $descContent->attribute( 'alternative_text' ) )
-                                             . '" src="' . htmlspecialchars( $itemImage['full_path'] )
+                        $itemDescriptionText = '&lt;a href="' . htmlspecialchars( (string) $origImage['full_path'] )
+                                             . '"&gt;&lt;img alt="' . htmlspecialchars( (string) $descContent->attribute( 'alternative_text' ) )
+                                             . '" src="' . htmlspecialchars( (string) $itemImage['full_path'] )
                                              . '" width="' . $itemImage['width']
                                              . '" height="' . $itemImage['height']
                                              . '" /&gt;&lt;/a&gt;';
@@ -587,7 +474,7 @@ class eZRSSExport extends eZPersistentObject
                     else
                     {
                         $itemDescriptionText = htmlspecialchars(
-                            $descContent, ENT_NOQUOTES, 'UTF-8'
+                            (string) $descContent, ENT_NOQUOTES, 'UTF-8'
                         );
                     }
                     $item->description = $itemDescriptionText;
@@ -615,7 +502,7 @@ class eZRSSExport extends eZPersistentObject
                     {
                         $cat = $item->add( 'category' );
                         $cat->term = htmlspecialchars(
-                            $itemCategoryText, ENT_NOQUOTES, 'UTF-8'
+                            (string) $itemCategoryText, ENT_NOQUOTES, 'UTF-8'
                         );
                     }
                 }
@@ -632,7 +519,7 @@ class eZRSSExport extends eZPersistentObject
                         $enc->type   = $enclosureContent->attribute('mime_type');
                         $encItemURL = 'content/download/' . $enclosure->attribute('contentobject_id')
                                     . '/' . $enclosureContent->attribute( 'contentobject_attribute_id' )
-                                    . '/' . urlencode( $enclosureContent->attribute( 'original_filename' ) );
+                                    . '/' . urlencode( (string) $enclosureContent->attribute( 'original_filename' ) );
                         eZURI::transformURI( $encItemURL, false, 'full' );
                     }
                     else if ( $enclosureContent instanceof eZBinaryFile )
@@ -643,7 +530,7 @@ class eZRSSExport extends eZPersistentObject
                         $encItemURL = 'content/download/' . $enclosure->attribute('contentobject_id')
                                     . '/' . $enclosureContent->attribute( 'contentobject_attribute_id' )
                                     . '/version/' . $enclosureContent->attribute( 'version' )
-                                    . '/file/' . urlencode( $enclosureContent->attribute( 'original_filename' ) );
+                                    . '/file/' . urlencode( (string) $enclosureContent->attribute( 'original_filename' ) );
                         eZURI::transformURI( $encItemURL, false, 'full' );
                     }
                     else if ( $enclosureContent instanceof eZImageAliasHandler )
@@ -658,7 +545,7 @@ class eZRSSExport extends eZPersistentObject
 
                     if ( $encItemURL )
                     {
-                        $enc->url = htmlspecialchars( $encItemURL, ENT_NOQUOTES, 'UTF-8' );
+                        $enc->url = htmlspecialchars( (string) $encItemURL, ENT_NOQUOTES, 'UTF-8' );
                     }
                 }
 
@@ -719,7 +606,7 @@ class eZRSSExport extends eZPersistentObject
     function urlEncodePath( $url )
     {
         // Raw encode the path part of the URL
-        $urlComponents = parse_url( $url );
+        $urlComponents = parse_url( (string) $url );
         $pathParts = explode( '/', $urlComponents['path'] );
         foreach ( $pathParts as $key => $pathPart )
         {

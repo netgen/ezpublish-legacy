@@ -17,15 +17,14 @@
 
 class eZISBNType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezisbn";
-    const CLASS_IS_ISBN13 = 'data_int1';
-    const CONTENT_VALUE = 'data_text';
+    final public const DATA_TYPE_STRING = "ezisbn";
+    final public const CLASS_IS_ISBN13 = 'data_int1';
+    final public const CONTENT_VALUE = 'data_text';
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "ISBN", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( self::CONTENT_VALUE => 'isbn' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => [self::CONTENT_VALUE => 'isbn']] );
     }
 
     /*!
@@ -55,7 +54,7 @@ class eZISBNType extends eZDataType
             }
 
             // Should also accept ISBN-10 values, which should be automatically converted to ISBN-13 later.
-            $isbn10TestNumber = preg_replace( "/[\s|\-]/", "", trim( $number13 ) );
+            $isbn10TestNumber = preg_replace( "/[\s|\-]/", "", trim( (string) $number13 ) );
             if ( strlen( $isbn10TestNumber ) == 10 )
             {
                 $status = $this->validateISBNChecksum( $isbn10TestNumber );
@@ -144,7 +143,7 @@ class eZISBNType extends eZDataType
     function validateISBNChecksum ( $isbnNr )
     {
         $result = 0;
-        $isbnNr = strtoupper( $isbnNr );
+        $isbnNr = strtoupper( (string) $isbnNr );
         for ( $i = 10; $i > 0; $i-- )
         {
             if ( is_numeric( $isbnNr[$i-1] ) or ( $i == 10  and $isbnNr[$i-1] == 'X' ) )
@@ -188,7 +187,7 @@ class eZISBNType extends eZDataType
     */
     static function convertISBN10toISBN13( $isbnNr )
     {
-        $isbnNr = 978 . substr( $isbnNr, 0, 9 );
+        $isbnNr = 978 . substr( (string) $isbnNr, 0, 9 );
 
         $weight13 = 1;
         $checksum13 = 0;
@@ -212,6 +211,7 @@ class eZISBNType extends eZDataType
     */
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
+        $error = null;
         $classAttribute = $contentObjectAttribute->contentClassAttribute();
         $classContent = $classAttribute->content();
         if ( isset( $classContent['ISBN13'] ) and $classContent['ISBN13'] )
@@ -229,13 +229,13 @@ class eZISBNType extends eZDataType
             }
 
             // Test if we have an ISBN-10 number. This should be automatically converted to ISBN-13 if found.
-            $isbn10TestNumber = preg_replace( "/[\s|\-]/", "", trim( $number13 ) );
+            $isbn10TestNumber = preg_replace( "/[\s|\-]/", "", trim( (string) $number13 ) );
             if ( strlen( $isbn10TestNumber ) == 10 )
             {
                 if ( $contentObjectAttribute->IsValid == eZInputValidator::STATE_ACCEPTED )
                 {
                     // Convert the ISBN-10 number to ISBN-13.
-                    $number13 = $this->convertISBN10toISBN13( $isbn10TestNumber );
+                    $number13 = static::convertISBN10toISBN13($isbn10TestNumber);
                 }
                 else
                 {
@@ -247,7 +247,7 @@ class eZISBNType extends eZDataType
 
             // Extract the different parts and set the hyphens correctly.
             $isbn13 = new eZISBN13();
-            $isbn13Value = $isbn13->formatedISBNValue( $number13, $error );
+            $isbn13Value = $isbn13->formatedISBNValue( $error, $number13 );
             $contentObjectAttribute->setAttribute( self::CONTENT_VALUE, $isbn13Value );
             return true;
         }
@@ -301,7 +301,7 @@ class eZISBNType extends eZDataType
 
     function preStoreClassAttribute( $classAttribute, $version )
     {
-        return eZISBNType::storeClassAttributeContent( $classAttribute, $classAttribute->content() );
+        return (new eZISBNType())->storeClassAttributeContent($classAttribute, $classAttribute->content());
     }
 
     function storeClassAttributeContent( $classAttribute, $content )
@@ -324,25 +324,16 @@ class eZISBNType extends eZDataType
         $classContent = $classAttribute->content();
         if ( isset( $classContent['ISBN13'] ) and $classContent['ISBN13'] )
         {
-            list ( $prefix, $field1, $field2, $field3, $field4 ) = array_merge( preg_split( '#-#', $data ),
-                                                                       array( 0 => '', 1 => '', 2 => '', 3 => '', 4 => '' ) );
-            $dataArray = array(  'prefix' => $prefix,
-                                 'field1' => $field1, 'field2' => $field2,
-                                 'field3' => $field3, 'field4' => $field4,
-                                 'value' => $data,
-                                 'value_without_hyphens' => str_replace( "-", "", $data ),
-                                 'value_with_spaces' => str_replace( "-", " ", $data ) );
+            [$prefix, $field1, $field2, $field3, $field4] = array_merge( preg_split( '#-#', (string) $data ),
+                                                                       [0 => '', 1 => '', 2 => '', 3 => '', 4 => ''] );
+            $dataArray = ['prefix' => $prefix, 'field1' => $field1, 'field2' => $field2, 'field3' => $field3, 'field4' => $field4, 'value' => $data, 'value_without_hyphens' => str_replace( "-", "", (string) $data ), 'value_with_spaces' => str_replace( "-", " ", (string) $data )];
             return $dataArray;
         }
 
         // The array_merge makes sure missing elements gets an empty string instead of NULL
-        list ( $field1, $field2, $field3, $field4 ) = array_merge( preg_split( '#-#', $data ),
-                                                                   array( 0 => '', 1 => '', 2 => '', 3 => '' ) );
-        $isbn = array( 'field1' => $field1, 'field2' => $field2,
-                       'field3' => $field3, 'field4' => $field4,
-                       'value' => $data,
-                       'value_without_hyphens' => str_replace( "-", "", $data ),
-                       'value_with_spaces' => str_replace( "-", " ", $data ) );
+        [$field1, $field2, $field3, $field4] = array_merge( preg_split( '#-#', (string) $data ),
+                                                                   [0 => '', 1 => '', 2 => '', 3 => ''] );
+        $isbn = ['field1' => $field1, 'field2' => $field2, 'field3' => $field3, 'field4' => $field4, 'value' => $data, 'value_without_hyphens' => str_replace( "-", "", (string) $data ), 'value_with_spaces' => str_replace( "-", " ", (string) $data )];
         return $isbn;
     }
 
@@ -350,8 +341,7 @@ class eZISBNType extends eZDataType
     {
         $ISBN_13 = $classAttribute->attribute( self::CLASS_IS_ISBN13 );
         $isbn13Info = new eZISBN13();
-        $content = array( 'ISBN13' => $ISBN_13,
-                          'ranges' => $isbn13Info );
+        $content = ['ISBN13' => $ISBN_13, 'ranges' => $isbn13Info];
         return $content;
     }
 
@@ -411,7 +401,7 @@ class eZISBNType extends eZDataType
     */
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
-        return trim( $contentObjectAttribute->attribute( self::CONTENT_VALUE ) ) != '';
+        return trim( (string) $contentObjectAttribute->attribute( self::CONTENT_VALUE ) ) != '';
     }
 
     /*!

@@ -45,14 +45,7 @@ class ezpMvcConfigurableDispatcher extends ezcMvcConfigurableDispatcher
             {
                 $routingInformation = $router->getRoutingInformation();
             }
-            catch ( ezcMvcRouteNotFoundException $e )
-            {
-                $request = $this->getFatalRedirectRequest( $request, new ezcMvcResult, $e );
-                $continue = true;
-                continue;
-            }
-            // here's the reason to override ezcMvcConfigurableDispatcher::run()
-            catch ( ezpRouteMethodNotAllowedException $e )
+            catch ( ezcMvcRouteNotFoundException|ezpRouteMethodNotAllowedException $e )
             {
                 $request = $this->getFatalRedirectRequest( $request, new ezcMvcResult, $e );
                 $continue = true;

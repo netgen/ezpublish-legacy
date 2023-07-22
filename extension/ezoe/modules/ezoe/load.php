@@ -38,7 +38,7 @@ if ( isset( $Params['EmbedID'] ) && $Params['EmbedID'])
     if (  is_numeric( $Params['EmbedID'] ) )
         $embedId = $Params['EmbedID'];
     else
-        list($embedType, $embedId) = explode('_', $Params['EmbedID']);
+        [$embedType, $embedId] = explode('_', (string) $Params['EmbedID']);
 
     if ( strcasecmp( $embedType  , 'eznode'  ) === 0 )
         $embedObject = eZContentObject::fetchByNodeID( $embedId );
@@ -53,12 +53,12 @@ if ( !$embedObject instanceof eZContentObject || !$embedObject->canRead() )
 }
 
 // Params for node to json encoder
-$params    = array('loadImages' => true);
-$params['imagePreGenerateSizes'] = array('small', 'original');
+$params    = ['loadImages' => true];
+$params['imagePreGenerateSizes'] = ['small', 'original'];
 
 // look for datamap parameter ( what datamap attribute we should load )
 if ( isset( $Params['DataMap'] )  && $Params['DataMap'])
-    $params['dataMap'] = array($Params['DataMap']);
+    $params['dataMap'] = [$Params['DataMap']];
 
 // what image sizes we want returned with full data ( url++ )
 if ( $http->hasPostVariable( 'imagePreGenerateSizes' ) )

@@ -18,12 +18,12 @@ class ezjscServerFunctionsPublishingQueue extends ezjscServerFunctions
 {
     public static function status( $args )
     {
-        if ( count( $args ) != 2 )
+        if ( (is_countable($args) ? count( $args ) : 0) != 2 )
         {
             throw new ezcBaseFunctionalityNotSupportedException( 'status', 'Missing argument(s)' );
         }
 
-        list( $contentObjectId, $version ) = $args;
+        [$contentObjectId, $version] = $args;
 
         $process = ezpContentPublishingProcess::fetchByContentObjectVersion( $contentObjectId, $version );
 
@@ -31,7 +31,7 @@ class ezjscServerFunctionsPublishingQueue extends ezjscServerFunctions
         // @todo Change to a PENDING check when applied (operation => step 2)
         if ( $process instanceof ezpContentPublishingProcess )
         {
-            $return = array();
+            $return = [];
             $status = $process->attribute( 'status' ) == ezpContentPublishingProcess::STATUS_WORKING ? 'working' : 'finished';
             switch( $process->attribute( 'status' ) )
             {
@@ -68,7 +68,7 @@ class ezjscServerFunctionsPublishingQueue extends ezjscServerFunctions
             if ( !$version )
                 throw new ezcBaseFunctionalityNotSupportedException( 'status', 'Object version not found' );
             else
-                $return = array( 'status' =>  'queued' );
+                $return = ['status' =>  'queued'];
         }
 
         return $return;

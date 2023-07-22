@@ -17,12 +17,12 @@
 
 class eZAuthorType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezauthor";
+    final public const DATA_TYPE_STRING = "ezauthor";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Authors", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -51,20 +51,20 @@ class eZAuthorType extends eZDataType
             if ( $http->hasPostVariable( $base . "_data_author_remove_" . $contentObjectAttribute->attribute( "id" ) ) )
                 $removeList = $http->postVariable( $base . "_data_author_remove_" . $contentObjectAttribute->attribute( "id" ) );
             else
-                $removeList = array();
+                $removeList = [];
 
             if ( $contentObjectAttribute->validateIsRequired() )
             {
-                if ( trim( $nameList[0] ) == "" )
+                if ( trim( (string) $nameList[0] ) == "" )
                 {
                     $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                          'At least one author is required.' ) );
                     return eZInputValidator::STATE_INVALID;
                 }
             }
-            if ( trim( $nameList[0] ) != "" )
+            if ( trim( (string) $nameList[0] ) != "" )
             {
-                for ( $i=0;$i<count( $idList );$i++ )
+                for ( $i=0;$i<(is_countable($idList) ? count( $idList ) : 0);$i++ )
                 {
                     if ( $actionRemoveSelected )
                         if ( in_array( $idList[$i], $removeList ) )
@@ -72,7 +72,7 @@ class eZAuthorType extends eZDataType
 
                     $name =  $nameList[$i];
                     $email =  $emailList[$i];
-                    if ( trim( $name )== "" )
+                    if ( trim( (string) $name )== "" )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              'The author name must be provided.' ) );
@@ -129,7 +129,7 @@ class eZAuthorType extends eZDataType
     {
         $author = new eZAuthor( );
 
-        if ( trim( $contentObjectAttribute->attribute( "data_text" ) ) != "" )
+        if ( trim( (string) $contentObjectAttribute->attribute( "data_text" ) ) != "" )
         {
             $author->decodeXML( $contentObjectAttribute->attribute( "data_text" ) );
             $temp = $contentObjectAttribute->attribute( "data_text");
@@ -144,7 +144,7 @@ class eZAuthorType extends eZDataType
             }
          }
 
-        if ( count( $author->attribute( 'author_list' ) ) == 0 )
+        if ( (is_countable($author->attribute( 'author_list' )) ? count( $author->attribute( 'author_list' ) ) : 0) == 0 )
         {
 //             $author->addAuthor( "Default", "" );
         }
@@ -167,11 +167,11 @@ class eZAuthorType extends eZDataType
 
     function toString( $contentObjectAttribute )
     {
-        $authorList = array();
+        $authorList = [];
         $content = $contentObjectAttribute->attribute( 'content' );
         foreach ( $content->attribute( 'author_list') as $author )
         {
-            $authorList[] = eZStringUtils::implodeStr( array( $author['name'], $author['email'],$author['id'] ), '|' );
+            $authorList[] = eZStringUtils::implodeStr( [$author['name'], $author['email'], $author['id']], '|' );
         }
         return eZStringUtils::implodeStr( $authorList, "&" );
     }
@@ -250,7 +250,7 @@ class eZAuthorType extends eZDataType
     {
         $author = $contentObjectAttribute->content( );
         $authorList = $author->attribute( 'author_list' );
-        return count( $authorList ) > 0;
+        return (is_countable($authorList) ? count( $authorList ) : 0) > 0;
     }
 
     /*!
@@ -260,7 +260,7 @@ class eZAuthorType extends eZDataType
     {
         $author = $contentObjectAttribute->content( );
         $name = $author->attribute( 'name' );
-        if ( trim( $name ) == '' )
+        if ( trim( (string) $name ) == '' )
         {
             $authorList = $author->attribute( 'author_list' );
             if ( is_array( $authorList ) and isset( $authorList[0]['name'] ) )

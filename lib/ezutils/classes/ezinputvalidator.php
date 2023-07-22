@@ -76,9 +76,9 @@ class BooleanValidator
 
 class eZInputValidator
 {
-    const STATE_ACCEPTED = 1;
-    const STATE_INTERMEDIATE = 2;
-    const STATE_INVALID = 3;
+    public const STATE_ACCEPTED = 1;
+    public const STATE_INTERMEDIATE = 2;
+    public const STATE_INVALID = 3;
 
     /*!
      Tries to validate to the text \a $text and returns one of the validator states

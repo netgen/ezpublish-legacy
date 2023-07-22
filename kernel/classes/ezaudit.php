@@ -10,7 +10,7 @@
 
 class eZAudit
 {
-    const DEFAULT_LOG_DIR = 'log/audit';
+    final public const DEFAULT_LOG_DIR = 'log/audit';
 
     /**
      * Returns an associative array of all names of audit and the log files used by this class,
@@ -24,18 +24,17 @@ class eZAudit
 
         $auditNames = $ini->hasVariable( 'AuditSettings', 'AuditFileNames' )
                       ? $ini->variable( 'AuditSettings', 'AuditFileNames' )
-                      : array();
+                      : [];
         $varDir = eZINI::instance()->variable( 'FileSettings', 'VarDir' );
         // concat varDir setting with LogDir setting
         $logDir = $varDir . '/';
         $logDir .= $ini->hasVariable( 'AuditSettings', 'LogDir' ) ? $ini->variable( 'AuditSettings', 'LogDir' ): self::DEFAULT_LOG_DIR;
 
-        $resultArray = array();
+        $resultArray = [];
         foreach ( array_keys( $auditNames ) as $auditNameKey )
         {
             $auditNameValue = $auditNames[$auditNameKey];
-            $resultArray[$auditNameKey] = array( 'dir' => $logDir,
-                                                 'file_name' => $auditNameValue );
+            $resultArray[$auditNameKey] = ['dir' => $logDir, 'file_name' => $auditNameValue];
         }
         return $resultArray;
     }
@@ -48,7 +47,7 @@ class eZAudit
      * @param array $auditAttributes
      * @return bool
      */
-    static function writeAudit( $auditName, $auditAttributes = array() )
+    static function writeAudit( $auditName, $auditAttributes = [] )
     {
         $enabled = eZAudit::isAuditEnabled();
         if ( !$enabled )

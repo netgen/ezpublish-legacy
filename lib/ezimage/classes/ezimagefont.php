@@ -31,21 +31,20 @@ class eZImageFont
     /**
      * Initializes the object with a family, point size and path. X and y adjustment may also be specified.
      *
-     * @param string $family
-     * @param int $size
-     * @param string $path
-     * @param int $xAdjustment
-     * @param int $yAdjustment
+     * @param string $FontFamily
+     * @param int $PointSize
+     * @param string $FontPath
+     * @param int $XAdjustment
+     * @param int $YAdjustment
      */
-    public function __construct( $family, $size, $path, $xAdjustment = 0, $yAdjustment = 0 )
+    public function __construct( /// \privatesection
+    /// The current font family
+    public $FontFamily, /// The size of the font in points.
+    public $PointSize, /// The path or path array to the fonts
+    public $FontPath, /// Adjustment in the x direction
+    public $XAdjustment = 0, /// Adjustment in the y direction
+    public $YAdjustment = 0 )
     {
-        $this->FontFamily = $family;
-        $this->FontPath = $path;
-        $this->PointSize = $size;
-
-        $this->XAdjustment = $xAdjustment;
-        $this->YAdjustment = $yAdjustment;
-
         $this->initialize();
     }
 
@@ -194,14 +193,14 @@ class eZImageFont
     */
     static function fontFile( $fontFamily, $fontPath )
     {
-        if ( preg_match( '/\.ttf$/i', $fontFamily ) )
+        if ( preg_match( '/\.ttf$/i', (string) $fontFamily ) )
             $family_file = $fontFamily;
         else
             $family_file = $fontFamily . '.ttf';
         if ( $fontPath != null )
         {
             if ( !is_array( $fontPath ) )
-                $fontPath = array( $fontPath );
+                $fontPath = [$fontPath];
             foreach ( $fontPath as $singleFontPath )
             {
                 $font = $singleFontPath . "/$family_file";
@@ -215,20 +214,8 @@ class eZImageFont
             $font = $fontFamily;
         return $font;
     }
-
-    /// \privatesection
-    /// The current font family
-    public $FontFamily;
-    /// The path or path array to the fonts
-    public $FontPath;
     /// The path to the font file one was found
     public $FontFile;
-    /// The size of the font in points.
-    public $PointSize;
-    /// Adjustment in the x direction
-    public $XAdjustment;
-    /// Adjustment in the y direction
-    public $YAdjustment;
 }
 
 ?>

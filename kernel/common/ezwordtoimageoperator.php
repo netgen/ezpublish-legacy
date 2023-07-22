@@ -20,10 +20,6 @@ class eZWordToImageOperator
      */
     public function __construct()
     {
-        $this->Operators = array( "wordtoimage",
-                                  "mimetype_icon", "class_icon", "classgroup_icon", "action_icon", "icon",
-                                  "flag_icon", "icon_info" );
-        $this->IconInfo = array();
     }
 
     /*!
@@ -52,12 +48,12 @@ class eZWordToImageOperator
                 foreach( $replaceIcon as $icon )
                 {
                     // Issue 015718, constructing alt text from icon name
-                    $aReplaceIconName = explode( '.', $icon );
+                    $aReplaceIconName = explode( '.', (string) $icon );
                     $altText = htmlspecialchars( $aReplaceIconName[0], ENT_COMPAT, 'UTF-8' );
                     $icons[] = '<img src="' . htmlspecialchars( $wwwDirPrefix . $iconRoot .'/' . $icon, ENT_COMPAT, 'UTF-8' ) . '" alt="'.$altText.'"/>';
                 }
 
-                $operatorValue = str_replace( $replaceText, $icons, $operatorValue );
+                $operatorValue = str_replace( $replaceText, $icons, (string) $operatorValue );
             } break;
 
             // icon_info( <type> ) => array() containing:
@@ -87,17 +83,9 @@ class eZWordToImageOperator
                 $ini = eZINI::instance( 'icon.ini' );
                 $repository = $ini->variable( 'IconSettings', 'Repository' );
                 $theme = $ini->variable( 'IconSettings', 'Theme' );
-                $groups = array( 'mimetype' => 'MimeIcons',
-                                 'class' => 'ClassIcons',
-                                 'classgroup' => 'ClassGroupIcons',
-                                 'action' => 'ActionIcons',
-                                 'icon' => 'Icons' );
+                $groups = ['mimetype' => 'MimeIcons', 'class' => 'ClassIcons', 'classgroup' => 'ClassGroupIcons', 'action' => 'ActionIcons', 'icon' => 'Icons'];
                 $configGroup = $groups[$type];
-                $mapNames = array( 'mimetype' => 'MimeMap',
-                                   'class' => 'ClassMap',
-                                   'classgroup' => 'ClassGroupMap',
-                                   'action' => 'ActionMap',
-                                   'icon' => 'IconMap' );
+                $mapNames = ['mimetype' => 'MimeMap', 'class' => 'ClassMap', 'classgroup' => 'ClassGroupMap', 'action' => 'ActionMap', 'icon' => 'IconMap'];
                 $mapName = $mapNames[$type];
 
                 // Check if the specific icon type has a theme setting
@@ -116,18 +104,18 @@ class eZWordToImageOperator
                                           $ini->variable( 'IconSettings', 'Sizes' ) );
                 }
 
-                $sizePathList = array();
-                $sizeInfoList = array();
+                $sizePathList = [];
+                $sizeInfoList = [];
 
                 if ( is_array( $sizes ) )
                 {
                     foreach ( $sizes as $key => $size )
                     {
-                        $pathDivider = strpos( $size, ';' );
+                        $pathDivider = strpos( (string) $size, ';' );
                         if ( $pathDivider !== false )
                         {
-                            $sizePath = substr( $size, $pathDivider + 1 );
-                            $size = substr( $size, 0, $pathDivider );
+                            $sizePath = substr( (string) $size, $pathDivider + 1 );
+                            $size = substr( (string) $size, 0, $pathDivider );
                         }
                         else
                         {
@@ -136,18 +124,18 @@ class eZWordToImageOperator
 
                         $width = false;
                         $height = false;
-                        $xDivider = strpos( $size, 'x' );
+                        $xDivider = strpos( (string) $size, 'x' );
                         if ( $xDivider !== false )
                         {
-                            $width = (int)substr( $size, 0, $xDivider );
-                            $height = (int)substr( $size, $xDivider + 1 );
+                            $width = (int)substr( (string) $size, 0, $xDivider );
+                            $height = (int)substr( (string) $size, $xDivider + 1 );
                         }
                         $sizePathList[$key] = $sizePath;
-                        $sizeInfoList[$key] = array( $width, $height );
+                        $sizeInfoList[$key] = [$width, $height];
                     }
                 }
 
-                $map = array();
+                $map = [];
 
                 // Load mapping from theme
                 if ( $themeINI->hasVariable( $configGroup, $mapName ) )
@@ -169,13 +157,7 @@ class eZWordToImageOperator
                     $default = $ini->variable( $configGroup, 'Default' );
 
                 // Build return value
-                $iconInfo = array( 'repository' => $repository,
-                                   'theme' => $theme,
-                                   'theme_path' => $repository . '/' . $theme,
-                                   'size_path_list' => $sizePathList,
-                                   'size_info_list' => $sizeInfoList,
-                                   'icons' => $map,
-                                   'default' => $default );
+                $iconInfo = ['repository' => $repository, 'theme' => $theme, 'theme_path' => $repository . '/' . $theme, 'size_path_list' => $sizePathList, 'size_info_list' => $sizeInfoList, 'icons' => $map, 'default' => $default];
 
                 $this->IconInfo[$type] = $iconInfo;
                 $operatorValue = $iconInfo;
@@ -225,11 +207,7 @@ class eZWordToImageOperator
                 $ini = eZINI::instance( 'icon.ini' );
                 $repository = $ini->variable( 'IconSettings', 'Repository' );
                 $theme = $ini->variable( 'IconSettings', 'Theme' );
-                $groups = array( 'mimetype_icon' => 'MimeIcons',
-                                 'class_icon' => 'ClassIcons',
-                                 'classgroup_icon' => 'ClassGroupIcons',
-                                 'action_icon' => 'ActionIcons',
-                                 'icon' => 'Icons' );
+                $groups = ['mimetype_icon' => 'MimeIcons', 'class_icon' => 'ClassIcons', 'classgroup_icon' => 'ClassGroupIcons', 'action_icon' => 'ActionIcons', 'icon' => 'Icons'];
                 $configGroup = $groups[$operatorName];
 
                 // Check if the specific icon type has a theme setting
@@ -271,11 +249,11 @@ class eZWordToImageOperator
                     $size = reset($sizes);
                 }
 
-                $pathDivider = strpos( $size, ';' );
+                $pathDivider = strpos( (string) $size, ';' );
                 if ( $pathDivider !== false )
                 {
-                    $sizePath = substr( $size, $pathDivider + 1 );
-                    $size = substr( $size, 0, $pathDivider );
+                    $sizePath = substr( (string) $size, $pathDivider + 1 );
+                    $size = substr( (string) $size, 0, $pathDivider );
                 }
                 else
                 {
@@ -284,11 +262,11 @@ class eZWordToImageOperator
 
                 $width = false;
                 $height = false;
-                $xDivider = strpos( $size, 'x' );
+                $xDivider = strpos( (string) $size, 'x' );
                 if ( $xDivider !== false )
                 {
-                    $width = (int)substr( $size, 0, $xDivider );
-                    $height = (int)substr( $size, $xDivider + 1 );
+                    $width = (int)substr( (string) $size, 0, $xDivider );
+                    $height = (int)substr( (string) $size, $xDivider + 1 );
                 }
 
                 if ( isset( $operatorParameters[1] ) )
@@ -304,31 +282,31 @@ class eZWordToImageOperator
                 {
                     $icon = $this->iconGroupMapping( $ini, $themeINI,
                                                      'MimeIcons', 'MimeMap',
-                                                     strtolower( $operatorValue ) );
+                                                     strtolower( (string) $operatorValue ) );
                 }
                 else if ( $operatorName == 'class_icon' )
                 {
                     $icon = $this->iconDirectMapping( $ini, $themeINI,
                                                       'ClassIcons', 'ClassMap',
-                                                      strtolower( $operatorValue ) );
+                                                      strtolower( (string) $operatorValue ) );
                 }
                 else if ( $operatorName == 'classgroup_icon' )
                 {
                     $icon = $this->iconDirectMapping( $ini, $themeINI,
                                                       'ClassGroupIcons', 'ClassGroupMap',
-                                                      strtolower( $operatorValue ) );
+                                                      strtolower( (string) $operatorValue ) );
                 }
                 else if ( $operatorName == 'action_icon' )
                 {
                     $icon = $this->iconDirectMapping( $ini, $themeINI,
                                                       'ActionIcons', 'ActionMap',
-                                                      strtolower( $operatorValue ) );
+                                                      strtolower( (string) $operatorValue ) );
                 }
                 else if ( $operatorName == 'icon' )
                 {
                     $icon = $this->iconDirectMapping( $ini, $themeINI,
                                                       'Icons', 'IconMap',
-                                                      strtolower( $operatorValue ) );
+                                                      strtolower( (string) $operatorValue ) );
                 }
 
                 $iconPath = '/' . $repository . '/' . $theme;
@@ -357,7 +335,7 @@ class eZWordToImageOperator
                 if ( $returnURIOnly )
                     $operatorValue = $wwwDirPrefix . $iconPath;
                 else
-                    $operatorValue = '<img ' . $class . 'src="' . htmlspecialchars( $wwwDirPrefix . $iconPath, ENT_COMPAT, 'UTF-8' ) . '"' . $sizeText . ' alt="' .  htmlspecialchars( $altText, ENT_COMPAT, 'UTF-8' ) . '" title="' . htmlspecialchars( $altText ) . '" />';
+                    $operatorValue = '<img ' . $class . 'src="' . htmlspecialchars( $wwwDirPrefix . $iconPath, ENT_COMPAT, 'UTF-8' ) . '"' . $sizeText . ' alt="' .  htmlspecialchars( (string) $altText, ENT_COMPAT, 'UTF-8' ) . '" title="' . htmlspecialchars( (string) $altText ) . '" />';
             } break;
 
             default:
@@ -386,7 +364,7 @@ class eZWordToImageOperator
     */
     function iconDirectMapping( &$ini, &$themeINI, $iniGroup, $mapName, $matchItem )
     {
-        $map = array();
+        $map = [];
 
         // Load mapping from theme
         if ( $themeINI->hasVariable( $iniGroup, $mapName ) )
@@ -435,7 +413,7 @@ class eZWordToImageOperator
     */
     function iconGroupMapping( &$ini, &$themeINI, $iniGroup, $mapName, $matchItem )
     {
-        $map = array();
+        $map = [];
 
         // Load mapping from theme
         if ( $themeINI->hasVariable( $iniGroup, $mapName ) )
@@ -459,10 +437,10 @@ class eZWordToImageOperator
         else
         {
             // If not we have to check the group (first part)
-            $pos = strpos( $matchItem, '/' );
+            $pos = strpos( (string) $matchItem, '/' );
             if ( $pos !== false )
             {
-                $mimeGroup = substr( $matchItem, 0, $pos );
+                $mimeGroup = substr( (string) $matchItem, 0, $pos );
                 if ( isset( $map[$mimeGroup] ) )
                 {
                     $icon = $map[$mimeGroup];
@@ -482,7 +460,7 @@ class eZWordToImageOperator
     }
 
     /// \privatesection
-    public $Operators;
-    public $IconInfo;
+    public $Operators = ["wordtoimage", "mimetype_icon", "class_icon", "classgroup_icon", "action_icon", "icon", "flag_icon", "icon_info"];
+    public $IconInfo = [];
 }
 ?>

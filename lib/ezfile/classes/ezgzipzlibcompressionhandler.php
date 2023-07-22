@@ -20,8 +20,6 @@ class eZGZIPZLIBCompressionHandler extends eZCompressionHandler
 {
     public function __construct()
     {
-        $this->File = false;
-        $this->Level = false;
         parent::__construct( 'GZIP (zlib)', 'gzipzlib' );
     }
 
@@ -75,9 +73,9 @@ class eZGZIPZLIBCompressionHandler extends eZCompressionHandler
     function doWrite( $data, $uncompressedLength = false )
     {
         if ( $uncompressedLength )
-            return @gzwrite( $this->File, $data, $uncompressedLength );
+            return @gzwrite( $this->File, (string) $data, $uncompressedLength );
         else
-            return @gzwrite( $this->File, $data );
+            return @gzwrite( $this->File, (string) $data );
     }
 
     function doFlush()
@@ -129,7 +127,7 @@ class eZGZIPZLIBCompressionHandler extends eZCompressionHandler
 
     function compress( $source )
     {
-        return @gzcompress( $source, $this->Level );
+        return @gzcompress( (string) $source, $this->Level );
     }
 
     function decompress( $source )
@@ -149,9 +147,9 @@ class eZGZIPZLIBCompressionHandler extends eZCompressionHandler
 
     /// \privatesection
     /// File pointer, returned by gzopen
-    public $File;
+    public $File = false;
     /// The compression level
-    public $Level;
+    public $Level = false;
 }
 
 ?>

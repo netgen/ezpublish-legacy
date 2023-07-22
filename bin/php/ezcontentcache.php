@@ -12,27 +12,23 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Content Cache Handler\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Content Cache Handler\n" .
                                                         "Allows for easy clearing of Content Caches\n" .
                                                         "\n" .
                                                         "Clearing node for content and users tree\n" .
                                                         "./bin/ezcontentcache.php --clear-node=/,5\n" .
                                                         "Clearing subtree for content tree\n" .
-                                                        "./bin/ezcontentcache.php --clear-subtree=/" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+                                                        "./bin/ezcontentcache.php --clear-subtree=/" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[clear-node:][clear-subtree:]",
                                 "",
-                                array( 'clear-node' => ( "Clears all content caches related to a given node,\n" .
+                                ['clear-node' => ( "Clears all content caches related to a given node,\n" .
                                                          "pass either node ID or nice url of node.\n" .
-                                                         "Separate multiple nodes with a comma." ),
-                                       'clear-subtree' => ( "Clears all content caches related to a given node subtree,\n" .
-                                                            "subtree expects a nice url as input.\n" .
-                                                            "Separate multiple subtrees with a comma" ) ) );
+                                                         "Separate multiple nodes with a comma." ), 'clear-subtree' => ( "Clears all content caches related to a given node subtree,\n" .
+                                                     "subtree expects a nice url as input.\n" .
+                                                     "Separate multiple subtrees with a comma" )] );
 $sys = eZSys::instance();
 
 $script->initialize();
@@ -42,7 +38,7 @@ $limit = 50;
 
 if ( $options['clear-node'] )
 {
-    $idList = explode( ',', $options['clear-node'] );
+    $idList = explode( ',', (string) $options['clear-node'] );
     foreach ( $idList as $nodeID )
     {
         if ( is_numeric( $nodeID ) )
@@ -79,7 +75,7 @@ if ( $options['clear-node'] )
 }
 else if ( $options['clear-subtree'] )
 {
-    $subtreeList = explode( ',', $options['clear-subtree'] );
+    $subtreeList = explode( ',', (string) $options['clear-subtree'] );
     foreach ( $subtreeList as $nodeSubtree )
     {
         if ( is_numeric( $nodeSubtree ) )
@@ -112,9 +108,7 @@ else if ( $options['clear-subtree'] )
         $cli->output( "Clearing cache for subtree $nodeName ($nodeSubtree)" );
         $objectID = $node->attribute( 'contentobject_id' );
         $offset = 0;
-        $params = array( 'AsObject' => false,
-                         'Depth' => false,
-                         'Limitation' => array() ); // Empty array means no permission checking
+        $params = ['AsObject' => false, 'Depth' => false, 'Limitation' => []]; // Empty array means no permission checking
 
         $subtreeCount = $node->subTreeCount( $params );
         $script->resetIteration( $subtreeCount / $limit );
@@ -123,13 +117,13 @@ else if ( $options['clear-subtree'] )
             $params['Offset'] = $offset;
             $params['Limit']  = $limit;
             $subtree          = $node->subTree( $params );
-            $offset          += count( $subtree );
-            if ( count( $subtree ) == 0 )
+            $offset          += is_countable($subtree) ? count( $subtree ) : 0;
+            if ( (is_countable($subtree) ? count( $subtree ) : 0) == 0 )
             {
                 break;
             }
 
-            $objectIDList = array();
+            $objectIDList = [];
             foreach ( $subtree as $subtreeNode )
             {
                 $objectIDList[] = $subtreeNode['contentobject_id'];

@@ -145,7 +145,7 @@ class eZFileHandler
     static function linkCopy( $sourceFilename, $destinationFilename, $symbolicLink = true )
     {
         if ( in_array( eZSys::osType(),
-                       array( 'unix', 'linux', 'mac' ) ) )
+                       ['unix', 'linux', 'mac'] ) )
         {
             if ( $symbolicLink )
                 $result = eZFileHandler::symlink( $sourceFilename, $destinationFilename );
@@ -180,35 +180,35 @@ class eZFileHandler
         if ( is_dir( $destinationFilename ) )
         {
             $isDir = true;
-            $dirPosition = strrpos( $sourceFilename, '/' );
+            $dirPosition = strrpos( (string) $sourceFilename, '/' );
             $filePosition = 0;
             if ( $dirPosition !== false )
                 $filePosition = $dirPosition + 1;
-            if ( strlen( $destinationFilename ) > 0 and
-                 $destinationFilename[strlen( $destinationFilename ) - 1] == '/' )
-                $destinationFilename .= substr( $sourceFilename, $filePosition );
+            if ( strlen( (string) $destinationFilename ) > 0 and
+                 $destinationFilename[strlen( (string) $destinationFilename ) - 1] == '/' )
+                $destinationFilename .= substr( (string) $sourceFilename, $filePosition );
             else
-                $destinationFilename .= '/' . substr( $sourceFilename, $filePosition );
+                $destinationFilename .= '/' . substr( (string) $sourceFilename, $filePosition );
         }
-        $destinationFilename = preg_replace( "#/+#", '/', $destinationFilename );
+        $destinationFilename = preg_replace( "#/+#", '/', (string) $destinationFilename );
         $sourceDir = $sourceFilename;
         $sourceName = false;
-        $sourceDirPos = strrpos( $sourceDir, '/' );
+        $sourceDirPos = strrpos( (string) $sourceDir, '/' );
         if ( $sourceDirPos !== false )
         {
-            $sourceName = substr( $sourceDir, $sourceDirPos + 1 );
-            $sourceDir = substr( $sourceDir, 0, $sourceDirPos );
+            $sourceName = substr( (string) $sourceDir, $sourceDirPos + 1 );
+            $sourceDir = substr( (string) $sourceDir, 0, $sourceDirPos );
         }
         $commonOffset = 0;
-        for ( $i = 0; $i < strlen( $sourceFilename ) and $i < strlen( $sourceDir ); ++$i )
+        for ( $i = 0; $i < strlen( (string) $sourceFilename ) and $i < strlen( (string) $sourceDir ); ++$i )
         {
             if ( $sourceFilename[$i] != $sourceDir[$i] )
                 break;
             $commonOffset = $i;
         }
         if ( $commonOffset > 0 )
-            $sourceDir = substr( $sourceDir, $commonOffset + 1 );
-        $directoryCount = substr_count( $sourceDir, '/' );
+            $sourceDir = substr( (string) $sourceDir, $commonOffset + 1 );
+        $directoryCount = substr_count( (string) $sourceDir, '/' );
         $cdupText = str_repeat( '../', $directoryCount );
         if ( file_exists( $destinationFilename ) and
              !is_dir( $destinationFilename ) )
@@ -250,17 +250,17 @@ class eZFileHandler
         if ( is_dir( $destinationFilename ) )
         {
             $isDir = true;
-            $dirPosition = strrpos( $sourceFilename, '/' );
+            $dirPosition = strrpos( (string) $sourceFilename, '/' );
             $filePosition = 0;
             if ( $dirPosition !== false )
                 $filePosition = $dirPosition + 1;
-            if ( strlen( $destinationFilename ) > 0 and
-                 $destinationFilename[strlen( $destinationFilename ) - 1] == '/' )
-                $destinationFilename .= substr( $sourceFilename, $filePosition );
+            if ( strlen( (string) $destinationFilename ) > 0 and
+                 $destinationFilename[strlen( (string) $destinationFilename ) - 1] == '/' )
+                $destinationFilename .= substr( (string) $sourceFilename, $filePosition );
             else
-                $destinationFilename .= '/' . substr( $sourceFilename, $filePosition );
+                $destinationFilename .= '/' . substr( (string) $sourceFilename, $filePosition );
         }
-        $destinationFilename = preg_replace( "#/+#", '/', $destinationFilename );
+        $destinationFilename = preg_replace( "#/+#", '/', (string) $destinationFilename );
         if ( file_exists( $destinationFilename ) and
              !is_dir( $destinationFilename ) )
         {
@@ -296,15 +296,15 @@ class eZFileHandler
         if ( is_dir( $destinationFilename ) )
         {
             $isDir = true;
-            $dirPosition = strrpos( $sourceFilename, '/' );
+            $dirPosition = strrpos( (string) $sourceFilename, '/' );
             $filePosition = 0;
             if ( $dirPosition !== false )
                 $filePosition = $dirPosition + 1;
-            if ( strlen( $destinationFilename ) > 0 and
-                 $destinationFilename[strlen( $destinationFilename ) - 1] == '/' )
-                $destinationFilename .= substr( $sourceFilename, $filePosition );
+            if ( strlen( (string) $destinationFilename ) > 0 and
+                 $destinationFilename[strlen( (string) $destinationFilename ) - 1] == '/' )
+                $destinationFilename .= substr( (string) $sourceFilename, $filePosition );
             else
-                $destinationFilename .= '/' . substr( $sourceFilename, $filePosition );
+                $destinationFilename .= '/' . substr( (string) $sourceFilename, $filePosition );
         }
 
 
@@ -366,15 +366,15 @@ class eZFileHandler
         }
         if ( is_dir( $destinationFilename ) )
         {
-            $dirPosition = strrpos( $sourceFilename, '/' );
+            $dirPosition = strrpos( (string) $sourceFilename, '/' );
             $filePosition = 0;
             if ( $dirPosition !== false )
                 $filePosition = $dirPosition + 1;
-            if ( strlen( $destinationFilename ) > 0 and
-                 $destinationFilename[strlen( $destinationFilename ) - 1] == '/' )
-                $destinationFilename .= substr( $sourceFilename, $filePosition );
+            if ( strlen( (string) $destinationFilename ) > 0 and
+                 $destinationFilename[strlen( (string) $destinationFilename ) - 1] == '/' )
+                $destinationFilename .= substr( (string) $sourceFilename, $filePosition );
             else
-                $destinationFilename .= '/' . substr( $sourceFilename, $filePosition );
+                $destinationFilename .= '/' . substr( (string) $sourceFilename, $filePosition );
         }
 
         // If source and destination are the same files we just return true
@@ -385,7 +385,7 @@ class eZFileHandler
         }
 
         $destinationFD = fopen( $destinationFilename, 'wb' );
-        chmod( $destinationFilename, octdec( eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) ) );
+        chmod( $destinationFilename, octdec( (string) eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) ) );
         if ( !$destinationFD )
         {
             @fclose( $sourceFD );
@@ -415,7 +415,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doExists( $filename );
+        return static::doExists($filename);
     }
 
     /*!
@@ -425,7 +425,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsDirectory( $filename );
+        return static::doIsDirectory($filename);
     }
 
     /*!
@@ -435,7 +435,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsExecutable( $filename );
+        return static::doIsExecutable($filename);
     }
 
     /*!
@@ -445,7 +445,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsFile( $filename );
+        return static::doIsFile($filename);
     }
 
     /*!
@@ -455,7 +455,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsLink( $filename );
+        return static::doIsLink($filename);
     }
 
     /*!
@@ -465,7 +465,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsReadable( $filename );
+        return static::doIsReadable($filename);
     }
 
     /*!
@@ -475,7 +475,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doIsWriteable( $filename );
+        return static::doIsWriteable($filename);
     }
 
     /*!
@@ -485,7 +485,7 @@ class eZFileHandler
     {
         if ( !$filename )
             $filename = $this->FileName;
-        return $this->doStatistics( $filename );
+        return static::doStatistics($filename);
     }
 
     /*!
@@ -515,9 +515,9 @@ class eZFileHandler
             $filename = $this->FileName;
         if ( !$mode )
             $mode = 'r';
-        if ( strpos( $mode, 'b' ) !== false )
+        if ( str_contains( (string) $mode, 'b' ) )
             $binaryFile = true;
-        $mode = str_replace( 'b', '', $mode );
+        $mode = str_replace( 'b', '', (string) $mode );
         if ( $binaryFile )
             $mode .= 'b';
         $this->IsBinary = $binaryFile;
@@ -587,13 +587,13 @@ class eZFileHandler
             $wasOpen = $this->isOpen();
             if ( $wasOpen )
                 $this->close();
-            $result = $this->doRename( $destinationFilename, $this->filename() );
+            $result = static::doRename($destinationFilename, $this->filename());
             if ( $wasOpen and
                  $result )
                 $this->open( $destinationFilename, $this->mode() );
         }
         else
-            $result = $this->doRename( $destinationFilename, $sourceFilename );
+            $result = static::doRename($destinationFilename, $sourceFilename);
         return $result;
     }
 
@@ -930,9 +930,9 @@ class eZFileHandler
     function doWrite( $data, $length = false )
     {
         if ( $length === false )
-            return @fwrite( $this->FileHandler, $data );
+            return @fwrite( $this->FileHandler, (string) $data );
         else
-            return @fwrite( $this->FileHandler, $data, $length );
+            return @fwrite( $this->FileHandler, (string) $data, $length );
     }
 
     /*!
@@ -963,8 +963,7 @@ class eZFileHandler
     */
     function error()
     {
-        return array( 'string' => $this->errorString(),
-                      'number' => $this->errorNumber() );
+        return ['string' => $this->errorString(), 'number' => $this->errorNumber()];
     }
 
     /*!

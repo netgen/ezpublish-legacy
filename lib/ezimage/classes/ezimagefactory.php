@@ -22,11 +22,13 @@ class eZImageFactory
     /**
      * Initializes the factory with the name $name.
      *
-     * @param string $name
+     * @param string $Name
      */
-    public function __construct( $name )
+    public function __construct(
+        /// \privatesection
+        public $Name
+    )
     {
-        $this->Name = $name;
     }
 
     /*!
@@ -47,9 +49,6 @@ class eZImageFactory
         $imageHandler = null;
         return $imageHandler;
     }
-
-    /// \privatesection
-    public $Name;
 }
 
 ?>

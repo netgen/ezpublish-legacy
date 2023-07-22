@@ -17,23 +17,22 @@ $limit = 20;
 
 do
 {
-    $deleteParams = array();
-    $markInvalidParams = array();
-    $fileContentCache = array();
+    $deleteParams = [];
+    $markInvalidParams = [];
+    $fileContentCache = [];
 
     $rows = $db->arrayQuery( "SELECT DISTINCT param FROM ezpending_actions WHERE action = 'static_store'",
-                                array( 'limit' => $limit,
-                                       'offset' => $offset ) );
+                                ['limit' => $limit, 'offset' => $offset] );
     if ( !$rows || ( empty( $rows ) ) )
         break;
 
     foreach ( $rows as $row )
     {
         $param = $row['param'];
-        $paramList = explode( ',', $param );
+        $paramList = explode( ',', (string) $param );
         $source = $paramList[1];
         $destination = $paramList[0];
-        $invalid = isset( $paramList[2] ) ? $paramList[2] : null;
+        $invalid = $paramList[2] ?? null;
 
         if ( !isset( $fileContentCache[$source] ) )
         {
@@ -66,7 +65,7 @@ do
     if ( !empty( $markInvalidParams ) )
     {
         $db->begin();
-        $db->query( "UPDATE ezpending_actions SET param=( " . $db->concatString( array( "param", "',invalid'" ) ) . " ) WHERE param IN ( '" . implode( "','", $markInvalidParams ) . "' )" );
+        $db->query( "UPDATE ezpending_actions SET param=( " . $db->concatString( ["param", "',invalid'"] ) . " ) WHERE param IN ( '" . implode( "','", $markInvalidParams ) . "' )" );
         $db->commit();
     }
 

@@ -28,23 +28,7 @@ class eZISBNGroup extends eZPersistentObject
     */
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'description' => array( 'name' => 'Description',
-                                                         'datatype' => 'string',
-                                                         'default' => '',
-                                                         'required' => false ),
-                                         'group_number' => array( 'name' => 'GroupNumber',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true ),
-                                         ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZISBNGroup',
-                      'name' => 'ezisbn_group' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'description' => ['name' => 'Description', 'datatype' => 'string', 'default' => '', 'required' => false], 'group_number' => ['name' => 'GroupNumber', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZISBNGroup', 'name' => 'ezisbn_group'];
     }
 
     /*!
@@ -56,9 +40,7 @@ class eZISBNGroup extends eZPersistentObject
     */
     static function create( $groupNumber, $description = "" )
     {
-        $row = array( 'id' => null,
-                      'description' => $description,
-                      'group_number' => $groupNumber );
+        $row = ['id' => null, 'description' => $description, 'group_number' => $groupNumber];
         return new eZISBNGroup( $row );
     }
 
@@ -71,7 +53,7 @@ class eZISBNGroup extends eZPersistentObject
     static function removeByID( $id )
     {
         eZPersistentObject::removeObject( eZISBNGroup::definition(),
-                                          array( 'id' => $id ) );
+                                          ['id' => $id] );
     }
 
     /*!
@@ -81,7 +63,7 @@ class eZISBNGroup extends eZPersistentObject
     */
     static function fetchList( $asObject = true )
     {
-        $sortArray = array( 'id' => 'asc' );
+        $sortArray = ['id' => 'asc'];
         return eZPersistentObject::fetchObjectList( eZISBNGroup::definition(),
                                                     null, null, $sortArray, null,
                                                     $asObject );
@@ -95,12 +77,12 @@ class eZISBNGroup extends eZPersistentObject
     */
     static function fetchByGroup( $groupNumber, $asObject = true )
     {
-        $conditions = array( 'group_number' => $groupNumber );
+        $conditions = ['group_number' => $groupNumber];
         $group = false;
         $groupArray = eZPersistentObject::fetchObjectList( eZISBNGroup::definition(),
                                                            null, $conditions, null, null,
                                                            $asObject );
-        if ( count( $groupArray ) == 1 )
+        if ( count( (array) $groupArray ) == 1 )
         {
             $group = $groupArray[0];
         }

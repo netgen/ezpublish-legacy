@@ -11,12 +11,11 @@ $ViewMode = $Params['ViewMode'];
 
 if( eZPreferences::value( 'admin_url_list_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_url_list_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_url_list_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -48,38 +47,27 @@ else if ( $Module->isCurrentAction( 'SetInvalid' ) )
 
 if( $ViewMode == 'all' )
 {
-    $listParameters = array( 'is_valid'       => null,
-                             'offset'         => $offset,
-                             'limit'          => $limit,
-                             'only_published' => true );
+    $listParameters = ['is_valid'       => null, 'offset'         => $offset, 'limit'          => $limit, 'only_published' => true];
 
-    $countParameters = array( 'only_published' => true );
+    $countParameters = ['only_published' => true];
 }
 elseif( $ViewMode == 'valid' )
 {
-    $listParameters = array( 'is_valid'       => true,
-                             'offset'         => $offset,
-                             'limit'          => $limit,
-                             'only_published' => true );
+    $listParameters = ['is_valid'       => true, 'offset'         => $offset, 'limit'          => $limit, 'only_published' => true];
 
-    $countParameters = array( 'is_valid' => true,
-                              'only_published' => true );
+    $countParameters = ['is_valid' => true, 'only_published' => true];
 }
 elseif( $ViewMode == 'invalid' )
 {
-    $listParameters = array( 'is_valid'       => false,
-                             'offset'         => $offset,
-                             'limit'          => $limit,
-                             'only_published' => true );
+    $listParameters = ['is_valid'       => false, 'offset'         => $offset, 'limit'          => $limit, 'only_published' => true];
 
-    $countParameters = array( 'is_valid' => false,
-                              'only_published' => true );
+    $countParameters = ['is_valid' => false, 'only_published' => true];
 }
 
 $list = eZURL::fetchList( $listParameters );
 $listCount = eZURL::fetchListCount( $countParameters );
 
-$viewParameters = array( 'offset' => $offset, 'limit'  => $limit );
+$viewParameters = ['offset' => $offset, 'limit'  => $limit];
 
 
 $tpl = eZTemplate::factory();
@@ -89,10 +77,7 @@ $tpl->setVariable( 'url_list', $list );
 $tpl->setVariable( 'url_list_count', $listCount );
 $tpl->setVariable( 'view_mode', $ViewMode );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:url/list.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/url', 'URL' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/url', 'List' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/url', 'URL' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/url', 'List' )]];
 ?>

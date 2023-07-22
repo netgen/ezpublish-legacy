@@ -10,7 +10,7 @@
 
 $cli->output( "Starting processing pending search engine modifications" );
 
-$contentObjects = array();
+$contentObjects = [];
 $db = eZDB::instance();
 
 $offset = 0;
@@ -30,7 +30,7 @@ while( true )
 {
     $entries = $db->arrayQuery(
         "SELECT param, action FROM ezpending_actions WHERE action = 'index_object' OR action = 'index_moved_node' GROUP BY param, action ORDER BY min(created)",
-        array( 'limit' => $limit, 'offset' => $offset )
+        ['limit' => $limit, 'offset' => $offset]
     );
 
     if ( is_array( $entries ) && count( $entries ) != 0 )
@@ -70,17 +70,14 @@ while( true )
                     $subtreeOffset = 0;
                     $subtreeLimit = 50;
 
-                    $params = array( 'Limitation' => array(), 'MainNodeOnly' => true );
+                    $params = ['Limitation' => [], 'MainNodeOnly' => true];
 
                     $subtreeCount = $node->subTreeCount( $params );
 
                     while ( $subtreeOffset < $subtreeCount )
                     {
                         $subTree = $node->subTree(
-                            array_merge(
-                                $params,
-                                array( 'Offset' => $subtreeOffset, 'Limit' => $subtreeLimit, 'SortBy' => array() )
-                            )
+                            [...$params, 'Offset' => $subtreeOffset, 'Limit' => $subtreeLimit, 'SortBy' => []]
                         );
 
                         if ( !empty( $subTree ) )

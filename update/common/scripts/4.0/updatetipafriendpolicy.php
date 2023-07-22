@@ -11,23 +11,19 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => "\nThis script is optional for upgrading to 3.10.\n" .
+$script = eZScript::instance( ['description' => "\nThis script is optional for upgrading to 3.10.\n" .
                                                        "The script adds a role which contains a policy 'content/tipafriend' and" .
                                                        "\nassigns this role to all user groups except anonymous. That will give " .
                                                        "\npossibility to use tipafriend view for all users except anonymous." .
                                                        "\n\nNote: siteacces, login and password options are required and" .
                                                        "\nmust to be set to admin siteaccess and admin login/passsword accordingly" .
-                                                       "\n\n(See doc/feature/(3.8|3.9|3.10)/content_tipafriend_policy.txt for more information).",
-                                      'use-session' => false,
-                                      'use-modules' => false,
-                                      'use-extensions' => true ) );
+                                                       "\n\n(See doc/feature/(3.8|3.9|3.10)/content_tipafriend_policy.txt for more information).", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 $options = $script->getOptions( '', '', false, false,
-                                array( 'siteaccess' => true,
-                                       'user' => true ) );
+                                ['siteaccess' => true, 'user' => true] );
 
-$siteAccess = $options['siteaccess'] ? $options['siteaccess'] : false;
+$siteAccess = $options['siteaccess'] ?: false;
 $script->setUseSiteAccess( $siteAccess );
 $script->initialize();
 
@@ -39,16 +35,16 @@ $userRootNodeID = $contentIni->variable( 'NodeSettings', 'UserRootNode' );
 $siteIni = eZINI::instance( 'site.ini' );
 $anonymousUserID = $siteIni->variable( 'UserSettings', 'AnonymousUserID' );
 $anonymousUser = eZUser::fetch( $anonymousUserID );
-$anonymousUsers = array();
+$anonymousUsers = [];
 if ( is_object( $anonymousUser ) )
 {
     $anonymousUsers = $anonymousUser->groups();
     $anonymousUsers[] = $anonymousUserID;
 }
 
-$topUserNodes = eZContentObjectTreeNode::subTreeByNodeID( array( 'Depth' => 1 ), $userRootNodeID );
+$topUserNodes = eZContentObjectTreeNode::subTreeByNodeID( ['Depth' => 1], $userRootNodeID );
 
-if ( count( $topUserNodes ) == 0 )
+if ( count( (array) $topUserNodes ) == 0 )
 {
     $cli->warning( "Unable to retrieve the user root node. Please make sure\n" .
                    "you log in to the system with the administrator's user\n" .
@@ -67,7 +63,7 @@ if ( is_object( $role ) )
 else
 {
     $userInput = '';
-    $usersToAssign = array();
+    $usersToAssign = [];
     $stdin = fopen( "php://stdin", "r+" );
     foreach ( $topUserNodes as $userNode )
     {

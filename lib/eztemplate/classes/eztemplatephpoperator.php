@@ -36,7 +36,7 @@ class eZTemplatePHPOperator
     public function __construct( $php_names )
     {
         if ( !is_array( $php_names ) )
-            $php_names = array( $php_names );
+            $php_names = [$php_names];
         $this->PHPNames = $php_names;
         reset( $php_names );
         foreach ( $php_names as $key => $val )
@@ -55,16 +55,10 @@ class eZTemplatePHPOperator
 
     function operatorTemplateHints()
     {
-        $hints = array();
+        $hints = [];
         foreach ( array_keys( $this->PHPNames ) as $name )
         {
-            $hints[$name] = array( 'input' => true,
-                                   'output' => true,
-                                   'parameters' => false,
-                                   'element-transformation' => true,
-                                   'transform-parameters' => true,
-                                   'input-as-parameter' => true,
-                                   'element-transformation-func' => 'phpOperatorTransformation');
+            $hints[$name] = ['input' => true, 'output' => true, 'parameters' => false, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'phpOperatorTransformation'];
         }
         return $hints;
     }
@@ -72,14 +66,14 @@ class eZTemplatePHPOperator
     function phpOperatorTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                         $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $function = $operatorName;
 
         if ( !isset( $parameters[0] ) )
         {
             return false;
         }
-        $newElements = array();
+        $newElements = [];
         $phpname = $this->PHPNames[$operatorName];
 
         $values[] = $parameters[0];

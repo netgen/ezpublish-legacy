@@ -19,7 +19,7 @@ if ( file_exists( "config.php" ) )
 
 $platformVendorDir = getcwd() . "/../vendor";
 $legacyVendorDir = getcwd() . "/vendor";
-if ( class_exists( 'Composer\Autoload\ClassLoader', false ) )
+if ( class_exists( \Composer\Autoload\ClassLoader::class, false ) )
 {
     // Do nothing, composer autoload already loaded
 }
@@ -134,11 +134,11 @@ if ( $helpOption->value === true )
 
 if ( $excludeDirsOption->value !== false )
 {
-    $excludeDirs = explode( ',', $excludeDirsOption->value );
+    $excludeDirs = explode( ',', (string) $excludeDirsOption->value );
 }
 else
 {
-    $excludeDirs = array();
+    $excludeDirs = [];
 }
 
 $autoloadOptions = new ezpAutoloadGeneratorOptions();
@@ -170,7 +170,7 @@ else
 }
 
 $autoloadGenerator->setOutputObject( $autoloadCliOutput );
-$autoloadGenerator->setOutputCallback( array( $autoloadCliOutput, 'outputCli') );
+$autoloadGenerator->setOutputCallback( [$autoloadCliOutput, 'outputCli'] );
 
 try
 {

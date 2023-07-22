@@ -15,20 +15,20 @@
 */
 class eZStepInstaller
 {
-    const DB_ERROR_EMPTY_PASSWORD = 1;
-    const DB_ERROR_NONMATCH_PASSWORD = 2;
-    const DB_ERROR_CONNECTION_FAILED = 3;
-    const DB_ERROR_NOT_EMPTY = 4;
-    const DB_ERROR_NO_DATABASES = 5;
-    const DB_ERROR_NO_DIGEST_PROC = 6;
-    const DB_ERROR_VERSION_INVALID = 7;
-    const DB_ERROR_CHARSET_DIFFERS = 8;
-    const DB_ERROR_ALREADY_CHOSEN = 10;
+    public const DB_ERROR_EMPTY_PASSWORD = 1;
+    public const DB_ERROR_NONMATCH_PASSWORD = 2;
+    public const DB_ERROR_CONNECTION_FAILED = 3;
+    public const DB_ERROR_NOT_EMPTY = 4;
+    public const DB_ERROR_NO_DATABASES = 5;
+    public const DB_ERROR_NO_DIGEST_PROC = 6;
+    public const DB_ERROR_VERSION_INVALID = 7;
+    public const DB_ERROR_CHARSET_DIFFERS = 8;
+    public const DB_ERROR_ALREADY_CHOSEN = 10;
 
-    const DB_DATA_APPEND = 1;
-    const DB_DATA_REMOVE = 2;
-    const DB_DATA_KEEP = 3;
-    const DB_DATA_CHOOSE = 4;
+    public const DB_DATA_APPEND = 1;
+    public const DB_DATA_REMOVE = 2;
+    public const DB_DATA_KEEP = 3;
+    public const DB_DATA_CHOOSE = 4;
 
     /**
      * Default constructor for eZ Publish installer classes
@@ -37,34 +37,33 @@ class eZStepInstaller
      * @param \eZHTTPTool $http
      * @param \eZINI $ini
      * @param array $persistenceList
-     * @param string $identifier
-     * @param string $name
+     * @param string $Identifier
+     * @param string $Name
      */
     public function __construct( eZTemplate $tpl, eZHTTPTool $http, eZINI $ini, array &$persistenceList,
-                              $identifier, $name )
+                              // The identifier of the current step
+                              public $Identifier, // The name of the current step
+                              public $Name )
     {
         $this->Tpl = $tpl;
         $this->Http = $http;
         $this->Ini = $ini;
         $this->PersistenceList =& $persistenceList;
-        $this->Identifier = $identifier;
-        $this->Name = $name;
         $this->INI = eZINI::instance( 'kickstart.ini', '.' );
-        $this->KickstartData = false;
 
-        $this->PersistenceList['use_kickstart'][$identifier] = true;
+        $this->PersistenceList['use_kickstart'][$Identifier] = true;
 
         // If we have read data for this step earlier we do not use kickstart
-        if ( isset( $this->PersistenceList['kickstart'][$identifier] ) and
-             $this->PersistenceList['kickstart'][$identifier] )
+        if ( isset( $this->PersistenceList['kickstart'][$Identifier] ) and
+             $this->PersistenceList['kickstart'][$Identifier] )
         {
-            $this->PersistenceList['use_kickstart'][$identifier] = false;
+            $this->PersistenceList['use_kickstart'][$Identifier] = false;
         }
 
         if ( $this->INI->hasGroup( $this->Identifier ) )
         {
             $this->KickstartData = $this->INI->group( $this->Identifier );
-            $this->PersistenceList['kickstart'][$identifier] = true;
+            $this->PersistenceList['kickstart'][$Identifier] = true;
         }
     }
 
@@ -103,7 +102,7 @@ class eZStepInstaller
      */
     function display()
     {
-        $result = array();
+        $result = [];
         return $result;
     }
 
@@ -115,7 +114,7 @@ class eZStepInstaller
      */
     function findAppropriateCharset( $primaryLanguage, $allLanguages, $canUseUnicode )
     {
-        $commonCharsets = array();
+        $commonCharsets = [];
 
         if ( is_array( $allLanguages ) and count( $allLanguages ) > 0 )
         {
@@ -132,7 +131,7 @@ class eZStepInstaller
             {
                 $language = $allLanguages[$i];
                 $charsets = $language->allowedCharsets();
-                $realCharsets = array();
+                $realCharsets = [];
                 foreach ( $charsets as $charset )
                 {
                     $realCharsets[] = eZCharsetInfo::realCharsetCode( $charset );
@@ -173,7 +172,7 @@ class eZStepInstaller
      */
     function findAppropriateCharsetsList( $primaryLanguage, $allLanguages, $canUseUnicode )
     {
-        $commonCharsets = array();
+        $commonCharsets = [];
 
         if ( is_array( $allLanguages ) and count( $allLanguages ) > 0 )
         {
@@ -190,7 +189,7 @@ class eZStepInstaller
             {
                 $language = $allLanguages[$i];
                 $charsets = $language->allowedCharsets();
-                $realCharsets = array();
+                $realCharsets = [];
                 foreach ( $charsets as $charset )
                 {
                     $realCharsets[] = eZCharsetInfo::realCharsetCode( $charset );
@@ -225,7 +224,7 @@ class eZStepInstaller
      */
     function availableSitePackages()
     {
-        $packageList = eZPackage::fetchPackages( array(), array( 'type' => 'site' ) );
+        $packageList = eZPackage::fetchPackages( [], ['type' => 'site'] );
 
         return $packageList;
     }
@@ -235,9 +234,7 @@ class eZStepInstaller
      */
     function extraDataList()
     {
-        return array( 'title', 'url', 'database',
-                      'access_type', 'access_type_value', 'admin_access_type_value',
-                      'existing_database' );
+        return ['title', 'url', 'database', 'access_type', 'access_type_value', 'admin_access_type_value', 'existing_database'];
     }
 
     /**
@@ -258,6 +255,7 @@ class eZStepInstaller
      */
     function chosenSiteType()
     {
+        $chosenSiteType = [];
         if ( isset( $this->PersistenceList['chosen_site_package']['0'] ) )
         {
             $siteTypeIdentifier = $this->PersistenceList['chosen_site_package']['0'];
@@ -324,7 +322,7 @@ class eZStepInstaller
     function storeExtraSiteData( $siteIdentifier, $dataIdentifier, $value )
     {
         if ( !isset( $this->PersistenceList['site_extra_data_' . $dataIdentifier] ) )
-            $this->PersistenceList['site_extra_data_' . $dataIdentifier] = array();
+            $this->PersistenceList['site_extra_data_' . $dataIdentifier] = [];
         $this->PersistenceList['site_extra_data_' . $dataIdentifier][$siteIdentifier] = $value;
     }
 
@@ -334,9 +332,7 @@ class eZStepInstaller
      */
     function extraData( $dataIdentifier )
     {
-        if ( isset( $this->PersistenceList['site_extra_data_' . $dataIdentifier] ) )
-            return $this->PersistenceList['site_extra_data_' . $dataIdentifier];
-        return false;
+        return $this->PersistenceList['site_extra_data_' . $dataIdentifier] ?? false;
     }
 
     /**
@@ -346,9 +342,7 @@ class eZStepInstaller
      */
     function extraSiteData( $siteIdentifier, $dataIdentifier )
     {
-        if ( isset( $this->PersistenceList['site_extra_data_' . $dataIdentifier][$siteIdentifier] ) )
-            return $this->PersistenceList['site_extra_data_' . $dataIdentifier][$siteIdentifier];
-        return false;
+        return $this->PersistenceList['site_extra_data_' . $dataIdentifier][$siteIdentifier] ?? false;
     }
 
     /**
@@ -356,14 +350,9 @@ class eZStepInstaller
      * @param array $overrideDBParameters
      * @return array
      */
-    function checkDatabaseRequirements( $dbCharset = false, $overrideDBParameters = array() )
+    function checkDatabaseRequirements( $dbCharset = false, $overrideDBParameters = [] )
     {
-        $result = array( 'error_code' => false,
-                         'use_unicode' => false,
-                         'db_version' => false,
-                         'db_require_version' => false,
-                         'site_charset' => false,
-                         'status' => false );
+        $result = ['error_code' => false, 'use_unicode' => false, 'db_version' => false, 'db_require_version' => false, 'site_charset' => false, 'status' => false];
 
         $databaseMap = eZSetupDatabaseMap();
         $databaseInfo = $this->PersistenceList['database_info'];
@@ -373,13 +362,7 @@ class eZStepInstaller
 
         if ( $dbCharset === false )
             $dbCharset = 'iso-8859-1';
-        $dbParameters = array( 'server' => $databaseInfo['server'],
-                               'port' => $databaseInfo['port'],
-                               'user' => $databaseInfo['user'],
-                               'password' => $databaseInfo['password'],
-                               'socket' => trim( $databaseInfo['socket'] ) == '' ? false : $databaseInfo['socket'],
-                               'database' => $databaseInfo['database'],
-                               'charset' => $dbCharset );
+        $dbParameters = ['server' => $databaseInfo['server'], 'port' => $databaseInfo['port'], 'user' => $databaseInfo['user'], 'password' => $databaseInfo['password'], 'socket' => trim( (string) $databaseInfo['socket'] ) == '' ? false : $databaseInfo['socket'], 'database' => $databaseInfo['database'], 'charset' => $dbCharset];
         $dbParameters = array_merge( $dbParameters, $overrideDBParameters );
 
         // PostgreSQL requires us to specify database name.
@@ -394,7 +377,7 @@ class eZStepInstaller
             $result['connected'] = $db->isConnected();
         }
 
-        catch( eZDBNoConnectionException $e )
+        catch( eZDBNoConnectionException )
         {
             $result['error_code'] = self::DB_ERROR_CONNECTION_FAILED;
             return $result;
@@ -438,20 +421,20 @@ class eZStepInstaller
         if ( isset( $this->PersistenceList['regional_info'] ) )
         {
             if ( isset( $this->PersistenceList['regional_info']['site_charset'] ) and
-                 strlen( $this->PersistenceList['regional_info']['site_charset'] ) > 0 )
+                 strlen( (string) $this->PersistenceList['regional_info']['site_charset'] ) > 0 )
             {
-                $charsetsList = array( $this->PersistenceList['regional_info']['site_charset'] );
+                $charsetsList = [$this->PersistenceList['regional_info']['site_charset']];
             }
             else
             {
                 // Figure out charset automatically if it is not set yet
                 $primaryLanguage     = null;
-                $allLanguages        = array();
-                $allLanguageCodes    = array();
-                $variationsLanguages = array();
+                $allLanguages        = [];
+                $allLanguageCodes    = [];
+                $variationsLanguages = [];
                 $primaryLanguageCode = $this->PersistenceList['regional_info']['primary_language'];
-                $extraLanguageCodes  = isset( $this->PersistenceList['regional_info']['languages'] ) ? $this->PersistenceList['regional_info']['languages'] : array();
-                $extraLanguageCodes  = array_diff( $extraLanguageCodes, array( $primaryLanguageCode ) );
+                $extraLanguageCodes  = $this->PersistenceList['regional_info']['languages'] ?? [];
+                $extraLanguageCodes  = array_diff( $extraLanguageCodes, [$primaryLanguageCode] );
 
                 /*
                 if ( isset( $this->PersistenceList['regional_info']['variations'] ) )
@@ -491,7 +474,7 @@ class eZStepInstaller
             {
                 // If the current charset is utf-8 or utf8mb4 we use that instead
                 // since they can represent any character possible in the chosen languages
-                if ( in_array( $currentCharset, array( 'utf-8', 'utf8mb4' ) ) )
+                if ( in_array( $currentCharset, ['utf-8', 'utf8mb4'] ) )
                 {
                     $result['site_charset'] = 'utf-8';
                 }
@@ -533,85 +516,63 @@ class eZStepInstaller
             {
                 if ( $errorInfo['database_info']['type'] == 'pgsql' )
                 {
-                    $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
+                    $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
                                                         'Please make sure that the username and the password is correct. Verify that your PostgreSQL database is configured correctly.'
                                                         .'<br>See the PHP documentation for more information about this.'
                                                         .'<br>Remember to start postmaster with the -i option.'
-                                                        .'<br>Note that PostgreSQL 7.2 is not supported.' ),
-                                      'url' => array( 'href' => 'http://www.php.net/manual/en/ref.pgsql.php',
-                                                      'text' => 'PHP documentation' ),
-                                      'number' => self::DB_ERROR_CONNECTION_FAILED );
+                                                        .'<br>Note that PostgreSQL 7.2 is not supported.' ), 'url' => ['href' => 'http://www.php.net/manual/en/ref.pgsql.php', 'text' => 'PHP documentation'], 'number' => self::DB_ERROR_CONNECTION_FAILED];
                 }
                 else
                 {
-                    $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                        'The database would not accept the connection, please review your settings and try again.' ),
-                                  'url' => false,
-                                      'number' => self::DB_ERROR_CONNECTION_FAILED );
+                    $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                        'The database would not accept the connection, please review your settings and try again.' ), 'url' => false, 'number' => self::DB_ERROR_CONNECTION_FAILED];
                 }
 
                 break;
             }
             case self::DB_ERROR_NONMATCH_PASSWORD:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                    'Password entries did not match.' ),
-                                  'url' => false,
-                                  'number' => self::DB_ERROR_NONMATCH_PASSWORD );
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                    'Password entries did not match.' ), 'url' => false, 'number' => self::DB_ERROR_NONMATCH_PASSWORD];
                 break;
             }
             case self::DB_ERROR_NOT_EMPTY:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                    'The selected database was not empty, please choose from the alternatives below.' ),
-                                  'url' => false,
-                                  'number' => self::DB_ERROR_NOT_EMPTY );
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                    'The selected database was not empty, please choose from the alternatives below.' ), 'url' => false, 'number' => self::DB_ERROR_NOT_EMPTY];
                 $dbNotEmpty = 1;
                 break;
             }
             case self::DB_ERROR_NO_DATABASES:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                    'The selected user has not got access to any databases. Change user or create a database for the user.' ),
-                                  'url' => false,
-                                  'number' => self::DB_ERROR_NO_DATABASES );
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                    'The selected user has not got access to any databases. Change user or create a database for the user.' ), 'url' => false, 'number' => self::DB_ERROR_NO_DATABASES];
                 break;
             }
 
             case self::DB_ERROR_NO_DIGEST_PROC:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                    "The 'digest' function is not available in your database, you cannot run eZ Publish without this. See the documentation for more information." ),
-                                  'url' => array( 'href' => 'http://ez.no/doc/ez_publish/technical_manual/current/installation/normal_installation/requirements_for_doing_a_normal_installation#digest_function',
-                                                  'text' => 'PostgreSQL digest FAQ' ),
-                                  'number' => self::DB_ERROR_NO_DATABASES );
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                    "The 'digest' function is not available in your database, you cannot run eZ Publish without this. See the documentation for more information." ), 'url' => ['href' => 'http://ez.no/doc/ez_publish/technical_manual/current/installation/normal_installation/requirements_for_doing_a_normal_installation#digest_function', 'text' => 'PostgreSQL digest FAQ'], 'number' => self::DB_ERROR_NO_DATABASES];
                 break;
             }
 
             case self::DB_ERROR_VERSION_INVALID:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
                                                     "Your database version %version does not fit the minimum requirement which is %req_version.
 See the requirements page for more information.",
                                                     null,
-                                                    array( '%version' => $errorInfo['database_info']['version'],
-                                                           '%req_version' => $errorInfo['database_info']['required_version'] ) ),
-                                  'url' => array( 'href' => 'http://ez.no/ez_publish/documentation/general_information/what_is_ez_publish/ez_publish_requirements',
-                                                  'text' => 'eZ Publish requirements' ),
-                                  'number' => self::DB_ERROR_NO_DATABASES );
+                                                    ['%version' => $errorInfo['database_info']['version'], '%req_version' => $errorInfo['database_info']['required_version']] ), 'url' => ['href' => 'http://ez.no/ez_publish/documentation/general_information/what_is_ez_publish/ez_publish_requirements', 'text' => 'eZ Publish requirements'], 'number' => self::DB_ERROR_NO_DATABASES];
                 break;
             }
 
             case self::DB_ERROR_CHARSET_DIFFERS:
             {
-                $dbError = array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
+                $dbError = ['text' => ezpI18n::tr( 'design/standard/setup/init',
                                                     "The database [%database_name] cannot be used, the setup wizard wants to create the site in [%req_charset] but the database has been created using character set [%charset]. You will have to choose a database having support for [%req_charset] or modify [%database_name] .",
                                                     null,
-                                                    array( '%database_name' => $errorInfo['site_type']['database'],
-                                                           '%charset' => $errorInfo['database_info']['current_charset'],
-                                                           '%req_charset' => $errorInfo['database_info']['requested_charset'] ) ),
-                                  'url' => false,
-                                  'number' => self::DB_ERROR_CHARSET_DIFFERS );
+                                                    ['%database_name' => $errorInfo['site_type']['database'], '%charset' => $errorInfo['database_info']['current_charset'], '%req_charset' => $errorInfo['database_info']['requested_charset']] ), 'url' => false, 'number' => self::DB_ERROR_CHARSET_DIFFERS];
                 break;
             }
         }
@@ -647,10 +608,7 @@ See the requirements page for more information.",
              !$this->PersistenceList['use_kickstart'][$identifier] )
             return false;
 
-        if ( isset( $GLOBALS['eZStepAllowKickstart'] ) )
-            return $GLOBALS['eZStepAllowKickstart'];
-
-        return true;
+        return $GLOBALS['eZStepAllowKickstart'] ?? true;
     }
 
     /**
@@ -680,7 +638,7 @@ See the requirements page for more information.",
         $siteType = $this->chosenSiteType();
 
         $url = $siteType['url'];
-        if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", $url ) )
+        if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", (string) $url ) )
         {
             $url = 'http://' . $url;
         }
@@ -702,11 +660,11 @@ See the requirements page for more information.",
         {
             $url = $siteType['access_type_value'];
             $adminURL = $siteType['admin_access_type_value'];
-            if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", $url ) )
+            if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", (string) $url ) )
             {
                 $url = 'http://' . $url;
             }
-            if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", $adminURL ) )
+            if ( !preg_match( "#^[a-zA-Z0-9]+://(.*)$#", (string) $adminURL ) )
             {
                 $adminURL = 'http://' . $adminURL;
             }
@@ -715,12 +673,11 @@ See the requirements page for more information.",
         }
         else if ( $siteType['access_type'] == 'port' )
         {
-            $url = eZHTTPTool::createRedirectURL( $currentURL, array( 'override_port' => $siteType['access_type_value'] ) );
-            $adminURL = eZHTTPTool::createRedirectURL( $currentURL, array( 'override_port' => $siteType['admin_access_type_value'] ) );
+            $url = eZHTTPTool::createRedirectURL( $currentURL, ['override_port' => $siteType['access_type_value']] );
+            $adminURL = eZHTTPTool::createRedirectURL( $currentURL, ['override_port' => $siteType['admin_access_type_value']] );
         }
 
-        $siteaccessURL = array( 'url' => $url,
-                                'admin_url' => $adminURL );
+        $siteaccessURL = ['url' => $url, 'admin_url' => $adminURL];
 
         return $siteaccessURL;
     }
@@ -729,14 +686,10 @@ See the requirements page for more information.",
     public $Http;
     public $Ini;
     public $PersistenceList;
-    // The identifier of the current step
-    public $Identifier;
-    // The name of the current step
-    public $Name;
     /// Kickstart INI file, if one is found
     public $INI;
     /// The kickstart data as an associative array or \c false if no data available
-    public $KickstartData;
+    public $KickstartData = false;
 }
 
 ?>

@@ -36,7 +36,7 @@ class eZContentClassOperations
             eZContentObjectOperations::remove( $contentObject->attribute( 'id' ) );
         }
 
-        if ( count( $contentObjects ) == 0 )
+        if ( count( (array) $contentObjects ) == 0 )
             eZContentObject::expireAllViewCache();
 
         eZContentClassClassGroup::removeClassMembers( $classID, 0 );

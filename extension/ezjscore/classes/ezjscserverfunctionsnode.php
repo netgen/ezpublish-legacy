@@ -44,14 +44,14 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
      * @param mixed $args
      * @return array
      */
-    public static function subTree( $args )
+    public static function subTree( mixed $args )
     {
-        $parentNodeID = isset( $args[0] ) ? $args[0] : null;
-        $limit = isset( $args[1] ) ? $args[1] : 25;
-        $offset = isset( $args[2] ) ? $args[2] : 0;
+        $parentNodeID = $args[0] ?? null;
+        $limit = $args[1] ?? 25;
+        $offset = $args[2] ?? 0;
         $sort = isset( $args[3] ) ? self::sortMap( $args[3] ) : 'published';
-        $order = isset( $args[4] ) ? $args[4] : false;
-        $objectNameFilter = isset( $args[5] ) ? $args[5] : '';
+        $order = $args[4] ?? false;
+        $objectNameFilter = $args[5] ?? '';
 
         if ( !$parentNodeID )
         {
@@ -72,13 +72,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
             $limit = $hardLimit;
         }
 
-        $params = array( 'Depth' => 1,
-                         'Limit' => $limit,
-                         'Offset' => $offset,
-                         'SortBy' => array( array( $sort, $order ) ),
-                         'DepthOperator' => 'eq',
-                         'ObjectNameFilter' => $objectNameFilter,
-                         'AsObject' => true );
+        $params = ['Depth' => 1, 'Limit' => $limit, 'Offset' => $offset, 'SortBy' => [[$sort, $order]], 'DepthOperator' => 'eq', 'ObjectNameFilter' => $objectNameFilter, 'AsObject' => true];
 
        // fetch nodes and total node count
         $count = $node->subTreeCount( $params );
@@ -88,32 +82,21 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
         }
         else
         {
-            $nodeArray = array();
+            $nodeArray = [];
         }
         unset( $node );// We have on purpose not checked permission on $node itself, so it should not be used
 
         // generate json response from node list
         if ( $nodeArray )
         {
-            $list = ezjscAjaxContent::nodeEncode( $nodeArray, array( 'formatDate' => 'shortdatetime',
-                                                                     'fetchThumbPreview' => true,
-                                                                     'fetchSection' => true,
-                                                                     'fetchCreator' => true,
-                                                                     'fetchClassIcon' => true ), 'raw' );
+            $list = ezjscAjaxContent::nodeEncode( $nodeArray, ['formatDate' => 'shortdatetime', 'fetchThumbPreview' => true, 'fetchSection' => true, 'fetchCreator' => true, 'fetchClassIcon' => true], 'raw' );
         }
         else
         {
-            $list = array();
+            $list = [];
         }
 
-        return array( 'parent_node_id' => $parentNodeID,
-                      'count' => count( $nodeArray ),
-                      'total_count' => (int)$count,
-                      'list' => $list,
-                      'limit' => $limit,
-                      'offset' => $offset,
-                      'sort' => $sort,
-                      'order' => $order );
+        return ['parent_node_id' => $parentNodeID, 'count' => count( (array) $nodeArray ), 'total_count' => (int)$count, 'list' => $list, 'limit' => $limit, 'offset' => $offset, 'sort' => $sort, 'order' => $order];
     }
 
     /**
@@ -131,7 +114,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
      * @throws InvalidArgumentException
      * @return array
      */
-    public static function load( $args )
+    public static function load( mixed $args )
     {
         $embedObject = false;
         if ( isset( $args[0] ) && $args[0] )
@@ -140,7 +123,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
             if (  is_numeric( $args[0] ) )
                 $embedId = $args[0];
             else
-                list($embedType, $embedId) = explode('_', $args[0]);
+                [$embedType, $embedId] = explode('_', (string) $args[0]);
 
             if ( $embedType === 'eznode' || strcasecmp( $embedType  , 'eznode'  ) === 0 )
                 $embedObject = eZContentObject::fetchByNodeID( $embedId );
@@ -158,12 +141,12 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
         }
 
         // Params for node to json encoder
-        $params    = array('loadImages' => true);
-        $params['imagePreGenerateSizes'] = array('small', 'original');
+        $params    = ['loadImages' => true];
+        $params['imagePreGenerateSizes'] = ['small', 'original'];
 
         // look for attribute parameter ( what attribute we should load )
         if ( isset( $args[1] ) && $args[1] )
-            $params['dataMap'] = array( $args[1] );
+            $params['dataMap'] = [$args[1]];
 
         // what image sizes we want returned with full data ( url++ )
         if ( isset( $args[2] ) && $args[2] )
@@ -177,10 +160,9 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
      * Updating priority sorting for given node
      *
      * @since 1.2
-     * @param mixed $args
      * @return array
      */
-    public static function updatePriority( $args )
+    public static function updatePriority( mixed $args )
     {
         $http = eZHTTPTool::instance();
 
@@ -188,7 +170,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
                 || !$http->hasPostVariable('PriorityID')
                     || !$http->hasPostVariable('Priority') )
         {
-            return array();
+            return [];
         }
 
         $contentNodeID = $http->postVariable('ContentNodeID');
@@ -208,9 +190,7 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
         if ( eZOperationHandler::operationIsAvailable( 'content_updatepriority' ) )
         {
             $operationResult = eZOperationHandler::execute( 'content', 'updatepriority',
-                                                             array( 'node_id' => $contentNodeID,
-                                                                    'priority' => $priorityArray,
-                                                                    'priority_id' => $priorityIDArray ), null, true );
+                                                             ['node_id' => $contentNodeID, 'priority' => $priorityArray, 'priority_id' => $priorityIDArray], null, true );
         }
         else
         {
@@ -234,20 +214,12 @@ class ezjscServerFunctionsNode extends ezjscServerFunctions
      */
     protected static function sortMap( $sort )
     {
-        switch ( $sort )
-        {
-            case 'modified_date':
-                $sortKey = 'modified';
-                break;
-            case 'published_date':
-                $sortKey = 'published';
-                break;
-            case 'hidden_status_string':
-                $sortKey = 'visibility';
-                break;
-            default:
-                $sortKey = $sort;
-        }
+        $sortKey = match ($sort) {
+            'modified_date' => 'modified',
+            'published_date' => 'published',
+            'hidden_status_string' => 'visibility',
+            default => $sort,
+        };
 
         return $sortKey;
     }

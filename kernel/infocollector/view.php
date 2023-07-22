@@ -37,13 +37,8 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( 'module', $Module );
 $tpl->setVariable( 'collection', $collection );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:infocollector/view.tpl' );
-$Result['path'] = array( array( 'url' => '/infocollector/overview',
-                                'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' ) ),
-                         array( 'url' => '/infocollector/collectionlist/' . $objectID,
-                                'text' => $objectName ),
-                         array( 'url' => false,
-                                'text' => $collectionID ) );
+$Result['path'] = [['url' => '/infocollector/overview', 'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' )], ['url' => '/infocollector/collectionlist/' . $objectID, 'text' => $objectName], ['url' => false, 'text' => $collectionID]];
 
 ?>

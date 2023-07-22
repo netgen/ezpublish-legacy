@@ -10,12 +10,9 @@
 
 class eZURIRegression extends ezpTestCase
 {
-    /**
-     * @var eZSys
-     */
-    private $oldSysInstance;
+    private ?\eZSys $oldSysInstance = null;
 
-    private $queryString;
+    private ?string $queryString = null;
 
     public function setUp()
     {
@@ -49,7 +46,7 @@ class eZURIRegression extends ezpTestCase
      */
     public function testUserParameters()
     {
-        self::assertEquals( array( "ole" => "a", "dull" => "boy" ), eZURI::instance()->userParameters() );
+        self::assertEquals( ["ole" => "a", "dull" => "boy"], eZURI::instance()->userParameters() );
     }
 
     /**
@@ -72,54 +69,15 @@ class eZURIRegression extends ezpTestCase
     public function testKeepSlashesUserParameters( $url, $userParameters )
     {
         $uri = new eZURI( $url );
-        $this->assertEmpty(
-            array_diff(
-                $uri->userParameters(),
-                $userParameters
-            )
-        );
+        static::assertEmpty(array_diff(
+            $uri->userParameters(),
+            $userParameters
+        ));
     }
 
     public function providerKeepSlashesUserParameters()
     {
-        return array(
-            array(
-                '/(url)/ez.no/(other)/share.ez.no',
-                array(
-                    'url' => 'ez.no',
-                    'other' => 'share.ez.no',
-                )
-            ),
-            array(
-                '/(url)/http://ez.no/(other)/http://share.ez.no',
-                array(
-                    'url' => 'http://ez.no',
-                    'other' => 'http://share.ez.no',
-                )
-            ),
-            array(
-                '/(redirect)/http://ez.no',
-                array( 'redirect' => 'http://ez.no' )
-            ),
-            array(
-                '/(param)/segment1////test2',
-                array( 'param' => 'segment1////test2' )
-            ),
-            array(
-                '/(p)/segment1/test2/(r)/http://ez.no',
-                array(
-                    'p' => 'segment1/test2',
-                    'r' => 'http://ez.no'
-                )
-            ),
-            array(
-                '/(p)/segment1////test2/(r)/http://ez.no',
-                array(
-                    'p' => 'segment1////test2',
-                    'r' => 'http://ez.no'
-                )
-            )
-        );
+        return [['/(url)/ez.no/(other)/share.ez.no', ['url' => 'ez.no', 'other' => 'share.ez.no']], ['/(url)/http://ez.no/(other)/http://share.ez.no', ['url' => 'http://ez.no', 'other' => 'http://share.ez.no']], ['/(redirect)/http://ez.no', ['redirect' => 'http://ez.no']], ['/(param)/segment1////test2', ['param' => 'segment1////test2']], ['/(p)/segment1/test2/(r)/http://ez.no', ['p' => 'segment1/test2', 'r' => 'http://ez.no']], ['/(p)/segment1////test2/(r)/http://ez.no', ['p' => 'segment1////test2', 'r' => 'http://ez.no']]];
     }
 }
 

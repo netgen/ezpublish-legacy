@@ -30,32 +30,12 @@ class eZXMLInputParserRegression extends ezpTestCase
      */
     public function testIssue18186( $string, $expected )
     {
-        $this->assertEquals(
-            $expected,
-            $this->parser->parseAttributes( $string )
-        );
+        static::assertEquals($expected, $this->parser->parseAttributes( $string ));
     }
 
     public static function providerForIssue18186()
     {
-        return array(
-            array(
-                'attribute=" ; =x"',
-                array( 'attribute' => '; =x' ),
-            ),
-            array(
-                'attribute=" x =x"',
-                array( 'attribute' => 'x =x' ),
-            ),
-            array(
-                'attribute="x x=x"',
-                array( 'attribute' => 'x x=x' ),
-            ),
-            array(
-                'attribute="x x =x"',
-                array( 'attribute' => 'x x =x' ),
-            ),
-        );
+        return [['attribute=" ; =x"', ['attribute' => '; =x']], ['attribute=" x =x"', ['attribute' => 'x =x']], ['attribute="x x=x"', ['attribute' => 'x x=x']], ['attribute="x x =x"', ['attribute' => 'x x =x']]];
     }
 
     /**
@@ -66,24 +46,12 @@ class eZXMLInputParserRegression extends ezpTestCase
      */
     public function testIssue18737( $string, $expected )
     {
-        $this->assertEquals(
-            $expected,
-            $this->parser->parseAttributes( $string )
-        );
+        static::assertEquals($expected, $this->parser->parseAttributes( $string ));
     }
 
     public static function providerForIssue18737()
     {
-        return array(
-            array(
-                'attribute="0"',
-                array( 'attribute' => '0' ),
-            ),
-            array(
-                'attribute=""',
-                array(),
-            ),
-        );
+        return [['attribute="0"', ['attribute' => '0']], ['attribute=""', []]];
     }
 }
 

@@ -55,7 +55,7 @@ class eZMediaTypeRegression extends ezpDatabaseTestCase
         foreach ( $files as $file )
         {
             // Read stored path, move to trash, and read stored path again
-            $this->assertNotEquals( $file, null );
+            static::assertNotEquals($file, null);
 
             $storedFileInfo = $file->storedFileInfo();
             $storedFilePath = $storedFileInfo['filepath'];
@@ -68,7 +68,7 @@ class eZMediaTypeRegression extends ezpDatabaseTestCase
             $storedFileInfo = $file->storedFileInfo();
             $storedFilePathAfterTrash = $storedFileInfo['filepath'];
 
-            $this->assertNotEquals( $storedFilePath, $storedFilePathAfterTrash, 'The stored file should be renamed when trashed' );
+            static::assertNotEquals($storedFilePath, $storedFilePathAfterTrash, 'The stored file should be renamed when trashed');
         }
     }
 
@@ -108,10 +108,10 @@ class eZMediaTypeRegression extends ezpDatabaseTestCase
         //verify fetchByContentObjectID
         $mediaObject = eZMedia::fetch( $fileAttribute->attribute( 'id' ), 1 );
         $medias = eZMedia::fetchByContentObjectID( $object->object->attribute( 'id' ) );
-        $this->assertEquals( $mediaObject->attribute( 'filename' ), $medias[0]->attribute( 'filename' ) );
+        static::assertEquals($mediaObject->attribute( 'filename' ), $medias[0]->attribute( 'filename' ));
         $medias = eZMedia::fetchByContentObjectID( $object->object->attribute( 'id' ),
                                                     $fileAttribute->attribute( 'language_code' ) );
-        $this->assertEquals( $mediaObject->attribute( 'filename' ), $medias[0]->attribute( 'filename' ) );
+        static::assertEquals($mediaObject->attribute( 'filename' ), $medias[0]->attribute( 'filename' ));
 
         //2. test issue
         // create translation
@@ -127,7 +127,7 @@ class eZMediaTypeRegression extends ezpDatabaseTestCase
         //verify the file is deleted
         $storedFilePath = $dir . '/original/video/' . $storedFileName;
         $file = eZClusterFileHandler::instance( $storedFilePath );
-        $this->assertTrue( $file->exists( $storedFilePath ) );
+        static::assertTrue($file->exists( $storedFilePath ));
         if ( $file->exists( $storedFilePath ) )
             unlink( $storedFilePath );
     }

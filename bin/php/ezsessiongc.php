@@ -14,19 +14,16 @@ set_time_limit( 0 );
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Session Garbage Collector\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Session Garbage Collector\n\n" .
                                                         "Allows manual cleaning up expired sessions as defined by site.ini[Session]SessionTimeout\n" .
                                                         "\n" .
-                                                        "./bin/php/ezsessiongc.php" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+                                                        "./bin/php/ezsessiongc.php" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "",
                                 "[]",
-                                array() );
+                                [] );
 $script->initialize();
 
 $cli->output( "Cleaning up expired sessions." );

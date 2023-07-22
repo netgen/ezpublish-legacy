@@ -18,33 +18,7 @@ class eZDiscountSubRule extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "discountrule_id" => array( 'name' => "DiscountRuleID",
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZDiscountRule',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         "discount_percent" => array( 'name' => "DiscountPercent",
-                                                                      'datatype' => 'float',
-                                                                      'default' => 0,
-                                                                      'required' => true ),
-                                         "limitation" => array( 'name' => "Limitation",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZDiscountSubRule",
-                      "name" => "ezdiscountsubrule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true], "discountrule_id" => ['name' => "DiscountRuleID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZDiscountRule', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "discount_percent" => ['name' => "DiscountPercent", 'datatype' => 'float', 'default' => 0, 'required' => true], "limitation" => ['name' => "Limitation", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZDiscountSubRule", "name" => "ezdiscountsubrule"];
     }
 
     function setAttribute( $attr, $val )
@@ -74,7 +48,7 @@ class eZDiscountSubRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZDiscountSubRule::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -89,7 +63,7 @@ class eZDiscountSubRule extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZDiscountSubRule::definition(),
                                                     null,
-                                                    array( "discountrule_id" => $discountRuleID ),
+                                                    ["discountrule_id" => $discountRuleID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -97,12 +71,7 @@ class eZDiscountSubRule extends eZPersistentObject
 
     static function create( $discountRuleID )
     {
-        $row = array(
-            "id" => null,
-            "name" => ezpI18n::tr( 'kernel/shop/discountgroup', "New Discount Rule" ),
-            "discountrule_id" => $discountRuleID,
-            "discount_percent" => "",
-            "limitation" => "*" );
+        $row = ["id" => null, "name" => ezpI18n::tr( 'kernel/shop/discountgroup', "New Discount Rule" ), "discountrule_id" => $discountRuleID, "discount_percent" => "", "limitation" => "*"];
         return new eZDiscountSubRule( $row );
     }
 
@@ -113,7 +82,7 @@ class eZDiscountSubRule extends eZPersistentObject
     function remove ( $id = null, $dumb = null )
     {
         eZPersistentObject::removeObject( eZDiscountSubRule::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
     }
 }
 ?>

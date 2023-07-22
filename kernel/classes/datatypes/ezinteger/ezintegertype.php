@@ -22,24 +22,23 @@
 
 class eZIntegerType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezinteger";
-    const MIN_VALUE_FIELD = "data_int1";
-    const MIN_VALUE_VARIABLE = "_ezinteger_min_integer_value_";
-    const MAX_VALUE_FIELD = "data_int2";
-    const MAX_VALUE_VARIABLE = "_ezinteger_max_integer_value_";
-    const DEFAULT_VALUE_FIELD = "data_int3";
-    const DEFAULT_VALUE_VARIABLE = "_ezinteger_default_value_";
-    const INPUT_STATE_FIELD = "data_int4";
-    const NO_MIN_MAX_VALUE = 0;
-    const HAS_MIN_VALUE = 1;
-    const HAS_MAX_VALUE = 2;
-    const HAS_MIN_MAX_VALUE = 3;
+    final public const DATA_TYPE_STRING = "ezinteger";
+    final public const MIN_VALUE_FIELD = "data_int1";
+    final public const MIN_VALUE_VARIABLE = "_ezinteger_min_integer_value_";
+    final public const MAX_VALUE_FIELD = "data_int2";
+    final public const MAX_VALUE_VARIABLE = "_ezinteger_max_integer_value_";
+    final public const DEFAULT_VALUE_FIELD = "data_int3";
+    final public const DEFAULT_VALUE_VARIABLE = "_ezinteger_default_value_";
+    final public const INPUT_STATE_FIELD = "data_int4";
+    final public const NO_MIN_MAX_VALUE = 0;
+    final public const HAS_MIN_VALUE = 1;
+    final public const HAS_MAX_VALUE = 2;
+    final public const HAS_MIN_MAX_VALUE = 3;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Integer", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_int' => 'value' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_int' => 'value']] );
         $this->IntegerValidator = new eZIntegerValidator();
     }
 
@@ -120,7 +119,7 @@ class eZIntegerType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) );
-            $data = str_replace(" ", "", $data );
+            $data = str_replace(" ", "", (string) $data );
 
             if ( $data == "" )
             {
@@ -184,8 +183,8 @@ class eZIntegerType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) );
-            $data = trim( $data ) != '' ? $data : null;
-            $data = str_replace(" ", "", $data);
+            $data = trim( (string) $data ) != '' ? $data : null;
+            $data = str_replace(" ", "", (string) $data);
             $contentObjectAttribute->setAttribute( "data_int", $data );
             return true;
         }
@@ -197,7 +196,7 @@ class eZIntegerType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) );
-            $data = str_replace(" ", "", $data );
+            $data = str_replace(" ", "", (string) $data );
             $classAttribute = $contentObjectAttribute->contentClassAttribute();
 
             if ( $data == "" )
@@ -228,8 +227,8 @@ class eZIntegerType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_integer_" . $contentObjectAttribute->attribute( "id" ) );
-            $data = trim( $data ) != '' ? $data : null;
-            $data = str_replace(" ", "", $data);
+            $data = trim( (string) $data ) != '' ? $data : null;
+            $data = str_replace(" ", "", (string) $data);
             $collectionAttribute->setAttribute( "data_int", $data );
             return true;
         }
@@ -258,11 +257,11 @@ class eZIntegerType extends eZDataType
              $http->hasPostVariable( $defaultValueName ) )
         {
             $minValueValue = $http->postVariable( $minValueName );
-            $minValueValue = str_replace(" ", "", $minValueValue );
+            $minValueValue = str_replace(" ", "", (string) $minValueValue );
             $maxValueValue = $http->postVariable( $maxValueName );
-            $maxValueValue = str_replace(" ", "", $maxValueValue );
+            $maxValueValue = str_replace(" ", "", (string) $maxValueValue );
             $defaultValueValue = $http->postVariable( $defaultValueName );
-            $defaultValueValue = str_replace(" ", "", $defaultValueValue );
+            $defaultValueValue = str_replace(" ", "", (string) $defaultValueValue );
 
             if ( ( $minValueValue == "" ) && ( $maxValueValue == "") ){
                 return  eZInputValidator::STATE_ACCEPTED;
@@ -339,11 +338,11 @@ class eZIntegerType extends eZDataType
              $http->hasPostVariable( $defaultValueName ) )
         {
             $minValueValue = $http->postVariable( $minValueName );
-            $minValueValue = str_replace(" ", "", $minValueValue );
+            $minValueValue = str_replace(" ", "", (string) $minValueValue );
             $maxValueValue = $http->postVariable( $maxValueName );
-            $maxValueValue = str_replace(" ", "", $maxValueValue );
+            $maxValueValue = str_replace(" ", "", (string) $maxValueValue );
             $defaultValueValue = $http->postVariable( $defaultValueName );
-            $defaultValueValue = str_replace(" ", "", $defaultValueValue );
+            $defaultValueValue = str_replace(" ", "", (string) $defaultValueValue );
 
             $classAttribute->setAttribute( self::MIN_VALUE_FIELD, $minValueValue );
             $classAttribute->setAttribute( self::MAX_VALUE_FIELD, $maxValueValue );
@@ -470,11 +469,11 @@ class eZIntegerType extends eZDataType
         $minValue = $attributeParametersNode->getElementsByTagName( 'min-value' )->item( 0 )->textContent;
         $maxValue = $attributeParametersNode->getElementsByTagName( 'max-value' )->item( 0 )->textContent;
 
-        if ( strlen( $minValue ) > 0 and strlen( $maxValue ) > 0 )
+        if ( strlen( (string) $minValue ) > 0 and strlen( (string) $maxValue ) > 0 )
             $minMaxState = self::HAS_MIN_MAX_VALUE;
-        else if ( strlen( $minValue ) > 0 )
+        else if ( strlen( (string) $minValue ) > 0 )
             $minMaxState = self::HAS_MIN_VALUE;
-        else if ( strlen( $maxValue ) > 0 )
+        else if ( strlen( (string) $maxValue ) > 0 )
             $minMaxState = self::HAS_MAX_VALUE;
         else
             $minMaxState = self::NO_MIN_MAX_VALUE;
@@ -490,12 +489,11 @@ class eZIntegerType extends eZDataType
         $default = $classAttribute->attribute( "data_int3" );
         if ( $default === 0 )
         {
-            return array();
+            return [];
         }
         else
         {
-            return array( 'data_int'     => $default,
-                          'sort_key_int' => $default );
+            return ['data_int'     => $default, 'sort_key_int' => $default];
         }
     }
 

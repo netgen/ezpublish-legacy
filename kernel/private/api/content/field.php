@@ -13,7 +13,7 @@
  * A content field currently wraps around an eZContentObjectAttribute
  * @package API
  */
-class ezpContentField
+class ezpContentField implements \Stringable
 {
     public function __construct()
     {
@@ -22,7 +22,6 @@ class ezpContentField
 
     /**
      * Initializes an ezpContentField using an eZContentObjectAttribute
-     * @param eZContentObjectAttribute $attribute
      * @return ezpContentField
      */
     public static function fromContentObjectAttribute( eZContentObjectAttribute $attribute )
@@ -36,10 +35,10 @@ class ezpContentField
      * String representation of the attribute.
      * Uses {eZContentObjectAttribute::toString()}
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ( $this->attribute instanceof eZContentObjectAttribute )
-            return $this->attribute->toString();
+            return (string) $this->attribute->toString();
         else
             return '';
     }
@@ -47,7 +46,7 @@ class ezpContentField
     public function __call( $method, $arguments )
     {
         if ( method_exists( $this->attribute, $method ) )
-            return call_user_func_array( array( $this->attribute, $method ), $arguments );
+            return call_user_func_array( [$this->attribute, $method], $arguments );
         else
             throw new ezcBasePropertyNotFoundException( $method );
     }

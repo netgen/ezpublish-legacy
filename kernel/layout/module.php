@@ -6,14 +6,10 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZLayout',
-                 'variable_params' => true );
+$Module = ['name' => 'eZLayout', 'variable_params' => true];
 
-$ViewList = array();
-$ViewList['set'] = array(
-    'script' => 'set.php',
-    'params' => array( 'LayoutStyle' ),
-    );
+$ViewList = [];
+$ViewList['set'] = ['script' => 'set.php', 'params' => ['LayoutStyle']];
 
 
 ?>

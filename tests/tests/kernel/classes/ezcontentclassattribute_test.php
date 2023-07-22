@@ -25,10 +25,10 @@ class eZContentClassAttributeTest extends ezpDatabaseTestCase
     public function testAttributeIsTranslatable()
     {
         $stringAttribute = eZContentClassAttribute::create( 0, 'ezstring' );
-        $this->assertEquals( 1, $stringAttribute->attribute('can_translate'), 'ezstring class attribute should have been translatable by default' );
+        static::assertEquals(1, $stringAttribute->attribute('can_translate'), 'ezstring class attribute should have been translatable by default');
 
         $stringAttribute = eZContentClassAttribute::create( 0, 'ezuser' );
-        $this->assertEquals( 0, $stringAttribute->attribute('can_translate'), 'ezuser class attribute should NOT have been translatable by default' );
+        static::assertEquals(0, $stringAttribute->attribute('can_translate'), 'ezuser class attribute should NOT have been translatable by default');
     }
 }
 

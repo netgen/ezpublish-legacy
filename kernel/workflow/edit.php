@@ -8,7 +8,7 @@
 
 $Module = $Params['Module'];
 
-$WorkflowID = ( isset( $Params["WorkflowID"] ) ) ? $Params["WorkflowID"] : false;
+$WorkflowID = $Params["WorkflowID"] ?? false;
 
 switch ( $Params["FunctionName"] )
 {
@@ -24,7 +24,7 @@ case "down":
                     $Params["EventID"],
                     true,
                     1,
-                    array( "workflow_id", "version", "placement" )
+                    ["workflow_id", "version", "placement"]
                 );
 
                 if ( $event instanceof eZWorkflowEvent )
@@ -60,8 +60,8 @@ default:
     }
 }
 
-$GroupID = ( isset( $Params["GroupID"] ) ) ? $Params["GroupID"] : false;
-$GroupName = ( isset( $Params["GroupName"] ) ) ? $Params["GroupName"] : false;
+$GroupID = $Params["GroupID"] ?? false;
+$GroupName = $Params["GroupName"] ?? false;
 
 if ( is_numeric( $WorkflowID ) )
 {
@@ -131,20 +131,17 @@ if ( $http->hasPostVariable( "DiscardButton" ) )
 
     $workflowGroups= eZWorkflowGroupLink::fetchGroupList( $WorkflowID, 0, true );
     $groupID = false;
-    if ( count( $workflowGroups ) > 0 )
+    if ( (is_countable($workflowGroups) ? count( $workflowGroups ) : 0) > 0 )
         $groupID = $workflowGroups[0]->attribute( 'group_id' );
     if ( !$groupID )
         $groupID = $GroupID;
     if ( $groupID )
-        return $Module->redirectToView( 'workflowlist', array( $groupID ) );
+        return $Module->redirectToView( 'workflowlist', [$groupID] );
     else
         return $Module->redirectToView( 'grouplist' );
 }
 
-$validation = array( 'processed' => false,
-                     'groups' => array(),
-                     'attributes' => array(),
-                     'events' => array() );
+$validation = ['processed' => false, 'groups' => [], 'attributes' => [], 'events' => []];
 
 if ( $http->hasPostVariable( "AddGroupButton" ) && $http->hasPostVariable( "Workflow_group") )
 {
@@ -157,7 +154,7 @@ if ( $http->hasPostVariable( "DeleteGroupButton" ) && $http->hasPostVariable( "g
     $selectedGroup = $http->postVariable( "group_id_checked" );
     if ( !eZWorkflowFunctions::removeGroup( $WorkflowID, $WorkflowVersion, $selectedGroup ) )
     {
-        $validation['groups'][] = array( 'text' => ezpI18n::tr( 'kernel/workflow', 'You have to have at least one group that the workflow belongs to!' ) );
+        $validation['groups'][] = ['text' => ezpI18n::tr( 'kernel/workflow', 'You have to have at least one group that the workflow belongs to!' )];
         $validation['processed'] = true;
     }
 }
@@ -247,7 +244,7 @@ if ( $http->hasPostVariable( "CustomActionButton" ) )
     $customActionArray = $http->postVariable( "CustomActionButton" );
     $customActionString = key( $customActionArray );
 
-    $customActionAttributeID = preg_match( "#^([0-9]+)_(.*)$#", $customActionString, $matchArray );
+    $customActionAttributeID = preg_match( "#^([0-9]+)_(.*)$#", (string) $customActionString, $matchArray );
     $customActionAttributeID = $matchArray[1];
     $customAction = $matchArray[2];
 }
@@ -303,10 +300,10 @@ if ( $http->hasPostVariable( "StoreButton" ) and $canStore )
 
     $workflowGroups= eZWorkflowGroupLink::fetchGroupList( $WorkflowID, 0, true );
     $groupID = false;
-    if ( count( $workflowGroups ) > 0 )
+    if ( (is_countable($workflowGroups) ? count( $workflowGroups ) : 0) > 0 )
         $groupID = $workflowGroups[0]->attribute( 'group_id' );
     if ( $groupID )
-        return $Module->redirectToView( 'workflowlist', array( $groupID ) );
+        return $Module->redirectToView( 'workflowlist', [$groupID] );
     else
         return $Module->redirectToView( 'grouplist' );
 }
@@ -346,7 +343,7 @@ $tpl = eZTemplate::factory();
 
 $res = eZTemplateDesignResource::instance();
 
-$res->setKeys( array( array( "workflow", $workflow->attribute( "id" ) ) ) );
+$res->setKeys( [["workflow", $workflow->attribute( "id" )]] );
 
 if ( isset( $GLOBALS['eZWaitUntilDateSelectedClass'] ) )
     $tpl->setVariable( "selectedClass", $GLOBALS['eZWaitUntilDateSelectedClass'] );
@@ -365,11 +362,8 @@ if ( isset( $GroupID ) )
     $tpl->setVariable( "group_id", $GroupID );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:workflow/edit.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Edit' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/workflow', 'Edit' ), 'url' => false]];
 
 ?>

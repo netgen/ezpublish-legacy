@@ -25,8 +25,8 @@ function getLicense()
 function getContributors( $pathToDir )
 {
     $contribFiles = eZDir::recursiveFind( $pathToDir, "php" );
-    $contributors = array();
-    if ( count( $contribFiles ) )
+    $contributors = [];
+    if ( is_countable($contribFiles) ? count( $contribFiles ) : 0 )
     {
         foreach ( $contribFiles as $contribFile )
         {
@@ -34,12 +34,12 @@ function getContributors( $pathToDir )
             if ( !isset( $contributorSettings ) )
                 continue;
 
-            $tmpFiles = explode( ',', $contributorSettings['files'] );
-            $updatedFiles = array();
+            $tmpFiles = explode( ',', (string) $contributorSettings['files'] );
+            $updatedFiles = [];
             foreach ( $tmpFiles as $file )
             {
-                if ( trim( $file ) )
-                    $updatedFiles[] = trim( $file,"\n\r" );
+                if ( trim( (string) $file ) )
+                    $updatedFiles[] = trim( (string) $file,"\n\r" );
             }
             $files = implode( ', ', $updatedFiles );
             $contributorSettings['files'] = $files;
@@ -55,11 +55,11 @@ function getContributors( $pathToDir )
 function getThirdPartySoftware( $pathToFile )
 {
     if ( !file_exists( $pathToFile ) )
-        return array();
+        return [];
 
     include_once( $pathToFile );
     if ( !isset( $thirdPartySoftware ) )
-        return array();
+        return [];
 
     $thirdPartySoftware = array_unique( $thirdPartySoftware );
     return $thirdPartySoftware;
@@ -76,7 +76,7 @@ function getExtensionsInfo()
     $selectedAccessExtensionArray = $siteINI->variable( 'ExtensionSettings', "ActiveAccessExtensions" );
     $selectedExtensions           = array_merge( $selectedExtensionArray, $selectedAccessExtensionArray );
     $selectedExtensions           = array_unique( $selectedExtensions );
-    $result = array();
+    $result = [];
     foreach ( $selectedExtensions as $extension )
     {
         $extensionInfo = eZExtension::extensionInfo( $extension );
@@ -92,9 +92,9 @@ function getExtensionsInfo()
 
   Returns array with replacements
 */
-function strReplaceByArray( $searches = array(), $subjects = array() )
+function strReplaceByArray( $searches = [], $subjects = [] )
 {
-    $retArray = array();
+    $retArray = [];
     foreach( $subjects as $key => $subject )
     {
         if ( is_array( $subject ) )
@@ -103,7 +103,7 @@ function strReplaceByArray( $searches = array(), $subjects = array() )
         }
         else
         {
-            $retArray[$key] = str_replace( array_keys( $searches ), $searches, $subject );
+            $retArray[$key] = str_replace( array_keys( $searches ), $searches, (string) $subject );
         }
     }
     return $retArray;
@@ -129,16 +129,8 @@ $contributors = getContributors( EZ_ABOUT_CONTRIBUTORS_DIR );
 $thirdPartySoftware = getThirdPartySoftware( EZ_ABOUT_THIRDPARTY_SOFTWARE_FILE );
 $extensions = getExtensionsInfo();
 
-list( $whatIsEzPublish,
-      $contributors,
-      $thirdPartySoftware,
-      $extensions ) = strReplaceByArray( array( 'eZ Systems AS' => '<a href="http://ez.no/">eZ Systems AS</a>',
-                                                'eZ Systems as' => '<a href="http://ez.no/">eZ Systems AS</a>',
-                                                'eZ systems AS' => '<a href="http://ez.no/">eZ Systems AS</a>',
-                                                'eZ systems as' => '<a href="http://ez.no/">eZ Systems AS</a>',
-                                                'eZ Publish' => '<a href="http://ez.no/ezpublish">eZ Publish</a>',
-                                                'eZ publish' => '<a href="http://ez.no/ezpublish">eZ Publish</a>' ),
-                                         array( $whatIsEzPublish, $contributors, $thirdPartySoftware, $extensions ) );
+[$whatIsEzPublish, $contributors, $thirdPartySoftware, $extensions] = strReplaceByArray( ['eZ Systems AS' => '<a href="http://ez.no/">eZ Systems AS</a>', 'eZ Systems as' => '<a href="http://ez.no/">eZ Systems AS</a>', 'eZ systems AS' => '<a href="http://ez.no/">eZ Systems AS</a>', 'eZ systems as' => '<a href="http://ez.no/">eZ Systems AS</a>', 'eZ Publish' => '<a href="http://ez.no/ezpublish">eZ Publish</a>', 'eZ publish' => '<a href="http://ez.no/ezpublish">eZ Publish</a>'],
+                                         [$whatIsEzPublish, $contributors, $thirdPartySoftware, $extensions] );
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'ezinfo', $ezinfo );
@@ -148,11 +140,8 @@ $tpl->setVariable( 'contributors', $contributors );
 $tpl->setVariable( 'third_party_software', $thirdPartySoftware );
 $tpl->setVariable( 'extensions', $extensions );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:ezinfo/about.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/ezinfo', 'Info' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/ezinfo', 'About' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/ezinfo', 'Info' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/ezinfo', 'About' )]];
 
 ?>

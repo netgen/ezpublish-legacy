@@ -32,179 +32,41 @@ class eZCache
         {
             $ini = eZINI::instance();
             $textToImageIni = eZINI::instance( 'texttoimage.ini' );
-            $cacheList = array( array( 'name' => ezpI18n::tr( 'kernel/cache', 'Content view cache' ),
-                                       'id' => 'content',
-                                       'is-clustered' => true,
-                                       'tag' => array( 'content' ),
-                                       'expiry-key' => 'content-view-cache',
-                                       'enabled' => $ini->variable( 'ContentSettings', 'ViewCaching' ) == 'enabled',
-                                       'path' => $ini->variable( 'ContentSettings', 'CacheDir' ),
-                                       'function' => array( 'eZCache', 'clearContentCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Global INI cache' ),
-                                       'id' => 'global_ini',
-                                       'tag' => array( 'ini' ),
-                                       'enabled' => true,
-                                       'path' => 'var/cache/ini',
-                                       'function' => array( 'eZCache', 'clearGlobalINICache' ),
-                                       'purge-function' => array( 'eZCache', 'clearGlobalINICache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'INI cache' ),
-                                       'id' => 'ini',
-                                       'tag' => array( 'ini' ),
-                                       'enabled' => true,
-                                       'path' => 'ini' ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Codepage cache' ),
-                                       'id' => 'codepage',
-                                       'tag' => array( 'codepage' ),
-                                       'enabled' => true,
-                                       'path' => 'codepages' ),
-/* Entry is disabled since it does not make sense to remove it, it is not a cache file.
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Expiry cache' ),
-                                       'id' => 'expiry',
-                                       'tag' => array( 'content', 'template' ),
-                                       'enabled' => true,
-                                       'path' => 'expiry.php',
-                                       'function' => array( 'eZCache', 'clearExpiry' ) ),*/
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Class identifier cache' ),
-                                       'id' => 'classid',
-                                       'tag' => array( 'content' ),
-                                       'expiry-key' => 'class-identifier-cache',
-                                       'enabled' => true,
-                                       'path' => false,
-                                       'is-clustered' => true,
-                                       'function' => array( 'eZCache', 'clearClassID' ),
-                                       'purge-function' => array( 'eZCache', 'clearClassID' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Sort key cache' ),
-                                       'id' => 'sortkey',
-                                       'tag' => array( 'content' ),
-                                       'expiry-key' => 'sort-key-cache',
-                                       'enabled' => true,
-                                       'path' => false,
-                                       'function' => array( 'eZCache', 'clearSortKey' ),
-                                       'purge-function' => array( 'eZCache', 'clearSortKey' ),
-                                       'is-clustered' => true ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'URL alias cache' ),
-                                       'id' => 'urlalias',
-                                       'is-clustered' => true,
-                                       'tag' => array( 'content' ),
-                                       'enabled' => true,
-                                       'path' => 'wildcard' ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Character transformation cache' ),
-                                       'id' => 'chartrans',
-                                       'tag' => array( 'i18n' ),
-                                       'enabled' => true,
-                                       'path' => 'trans' ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Image alias' ),
-                                       'id' => 'imagealias',
-                                       'tag' => array( 'image' ),
-                                       'path' => false,
-                                       'enabled' => true,
-                                       'function' => array( 'eZCache', 'clearImageAlias' ),
-                                       'purge-function' => array( 'eZCache', 'purgeImageAlias' ),
-                                       'is-clustered' => true ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Template cache' ),
-                                       'id' => 'template',
-                                       'tag' => array( 'template' ),
-                                       'enabled' => $ini->variable( 'TemplateSettings', 'TemplateCompile' ) == 'enabled',
-                                       'path' => 'template',
-                                       'function' => array( 'eZCache', 'clearTemplateCompileCache' ),
-                                       'purge-function' => array( 'eZCache', 'clearTemplateCompileCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Template block cache' ),
-                                       'id' => 'template-block',
-                                       'is-clustered' => true,
-                                       'tag' => array( 'template', 'content' ),
-                                       'expiry-key' => 'global-template-block-cache',
-                                       'enabled' => $ini->variable( 'TemplateSettings', 'TemplateCache' ) == 'enabled',
-                                       'path' => 'template-block',
-                                       'function' => array( 'eZCache', 'clearTemplateBlockCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Template override cache' ),
-                                       'id' => 'template-override',
-                                       'tag' => array( 'template' ),
-                                       'enabled' => true,
-                                       'path' => 'override',
-                                       'function' => array( 'eZCache', 'clearTemplateOverrideCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Text to image cache' ),
-                                       'id' => 'texttoimage',
-                                       'tag' => array( 'template' ),
-                                       'enabled' => $textToImageIni->variable( 'ImageSettings', 'UseCache' ) == 'enabled',
-                                       'path' => $textToImageIni->variable( 'PathSettings', 'CacheDir' ),
-                                       'function' => array( 'eZCache', 'clearTextToImageCache' ),
-                                       'purge-function' => array( 'eZCache', 'purgeTextToImageCache' ),
-                                       'is-clustered' => true ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'RSS cache' ),
-                                       'id' => 'rss_cache',
-                                       'is-clustered' => true,
-                                       'tag' => array( 'content' ),
-                                       'enabled' => true,
-                                       'path' => 'rss' ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'User info cache' ),
-                                       'id' => 'user_info_cache',
-                                       'is-clustered' => true,
-                                       'tag' => array( 'user' ),
-                                       'expiry-key' => 'user-info-cache',
-                                       'enabled' => true,
-                                       'path' => 'user-info',
-                                       'function' => array( 'eZCache', 'clearUserInfoCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Content tree menu (browser cache)' ),
-                                       'id' => 'content_tree_menu',
-                                       'tag' => array( 'content' ),
-                                       'path' => false,
-                                       'enabled' => true,
-                                       'function' => array( 'eZCache', 'clearContentTreeMenu' ),
-                                       'purge-function' => array( 'eZCache', 'clearContentTreeMenu' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'State limitations cache' ),
-                                       'is-clustered' => true,
-                                       'id' => 'state_limitations',
-                                       'tag' => array( 'content' ),
-                                       'expiry-key' => 'state-limitations',
-                                       'enabled' => true,
-                                       'path' => false,
-                                       'function' => array( 'eZCache', 'clearStateLimitations' ),
-                                       'purge-function' => array( 'eZCache', 'clearStateLimitations' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Content Language cache' ),
-                                       'is-clustered' => true,
-                                       'id' => 'content_language',
-                                       'tag' => array( 'content' ),
-                                       'enabled' => true,
-                                       'path' => false,
-                                       'function' => array( 'eZContentLanguage', 'expireCache' ),
-                                       'purge-function' => array( 'eZContentLanguage', 'expireCache' ) ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Design base cache' ),
-                                       'id' => 'design_base',
-                                       'tag' => array( 'template' ),
-                                       'enabled' => $ini->variable( 'DesignSettings', 'DesignLocationCache' ) == 'enabled',
-                                       'path' => false,
-                                       'function' => array( 'eZCache', 'clearDesignBaseCache' ),
-                                       'purge-function' => array( 'eZCache', 'clearDesignBaseCache' ) ),
-                                /**
-                                 * caches the list of active extensions (per siteaccess and global)
-                                 * @see eZExtension::activeExtensions()
-                                 */
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'Active extensions cache' ),
-                                       'id' => 'active_extensions',
-                                       'tag' => array( 'ini' ),
-                                       'expiry-key' => 'active-extensions-cache',
-                                       'enabled' => true,
-                                       'path' => false,
-                                       'function' => array( 'eZCache', 'clearActiveExtensions' ),
-                                       'purge-function' => array( 'eZCache', 'clearActiveExtensions' ) ),
-
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'TS Translation cache' ),
-                                       'id' => 'translation',
-                                       'tag' => array( 'i18n' ),
-                                       'enabled' => true,
-                                       'expiry-key' => 'ts-translation-cache',
-                                       'path' => 'translation',
-                                       'function' => array( 'eZCache', 'clearTSTranslationCache' )
-                                ),
-                                array( 'name' => ezpI18n::tr( 'kernel/cache', 'SSL Zones cache' ),
-                                       'id' => 'sslzones',
-                                       'tag' => array( 'ini' ),
-                                       'enabled' => eZSSLZone::enabled(),
-                                       'path' => false,
-                                       'function' => array( 'eZSSLZone', 'clearCache' ),
-                                       'purge-function' => array( 'eZSSLZone', 'clearCache' )
-                                ),
-            );
+            $cacheList = [
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Content view cache' ), 'id' => 'content', 'is-clustered' => true, 'tag' => ['content'], 'expiry-key' => 'content-view-cache', 'enabled' => $ini->variable( 'ContentSettings', 'ViewCaching' ) == 'enabled', 'path' => $ini->variable( 'ContentSettings', 'CacheDir' ), 'function' => ['eZCache', 'clearContentCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Global INI cache' ), 'id' => 'global_ini', 'tag' => ['ini'], 'enabled' => true, 'path' => 'var/cache/ini', 'function' => ['eZCache', 'clearGlobalINICache'], 'purge-function' => ['eZCache', 'clearGlobalINICache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'INI cache' ), 'id' => 'ini', 'tag' => ['ini'], 'enabled' => true, 'path' => 'ini'],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Codepage cache' ), 'id' => 'codepage', 'tag' => ['codepage'], 'enabled' => true, 'path' => 'codepages'],
+                /* Entry is disabled since it does not make sense to remove it, it is not a cache file.
+                   array( 'name' => ezpI18n::tr( 'kernel/cache', 'Expiry cache' ),
+                          'id' => 'expiry',
+                          'tag' => array( 'content', 'template' ),
+                          'enabled' => true,
+                          'path' => 'expiry.php',
+                          'function' => array( 'eZCache', 'clearExpiry' ) ),*/
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Class identifier cache' ), 'id' => 'classid', 'tag' => ['content'], 'expiry-key' => 'class-identifier-cache', 'enabled' => true, 'path' => false, 'is-clustered' => true, 'function' => ['eZCache', 'clearClassID'], 'purge-function' => ['eZCache', 'clearClassID']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Sort key cache' ), 'id' => 'sortkey', 'tag' => ['content'], 'expiry-key' => 'sort-key-cache', 'enabled' => true, 'path' => false, 'function' => ['eZCache', 'clearSortKey'], 'purge-function' => ['eZCache', 'clearSortKey'], 'is-clustered' => true],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'URL alias cache' ), 'id' => 'urlalias', 'is-clustered' => true, 'tag' => ['content'], 'enabled' => true, 'path' => 'wildcard'],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Character transformation cache' ), 'id' => 'chartrans', 'tag' => ['i18n'], 'enabled' => true, 'path' => 'trans'],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Image alias' ), 'id' => 'imagealias', 'tag' => ['image'], 'path' => false, 'enabled' => true, 'function' => ['eZCache', 'clearImageAlias'], 'purge-function' => ['eZCache', 'purgeImageAlias'], 'is-clustered' => true],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Template cache' ), 'id' => 'template', 'tag' => ['template'], 'enabled' => $ini->variable( 'TemplateSettings', 'TemplateCompile' ) == 'enabled', 'path' => 'template', 'function' => ['eZCache', 'clearTemplateCompileCache'], 'purge-function' => ['eZCache', 'clearTemplateCompileCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Template block cache' ), 'id' => 'template-block', 'is-clustered' => true, 'tag' => ['template', 'content'], 'expiry-key' => 'global-template-block-cache', 'enabled' => $ini->variable( 'TemplateSettings', 'TemplateCache' ) == 'enabled', 'path' => 'template-block', 'function' => ['eZCache', 'clearTemplateBlockCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Template override cache' ), 'id' => 'template-override', 'tag' => ['template'], 'enabled' => true, 'path' => 'override', 'function' => ['eZCache', 'clearTemplateOverrideCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Text to image cache' ), 'id' => 'texttoimage', 'tag' => ['template'], 'enabled' => $textToImageIni->variable( 'ImageSettings', 'UseCache' ) == 'enabled', 'path' => $textToImageIni->variable( 'PathSettings', 'CacheDir' ), 'function' => ['eZCache', 'clearTextToImageCache'], 'purge-function' => ['eZCache', 'purgeTextToImageCache'], 'is-clustered' => true],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'RSS cache' ), 'id' => 'rss_cache', 'is-clustered' => true, 'tag' => ['content'], 'enabled' => true, 'path' => 'rss'],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'User info cache' ), 'id' => 'user_info_cache', 'is-clustered' => true, 'tag' => ['user'], 'expiry-key' => 'user-info-cache', 'enabled' => true, 'path' => 'user-info', 'function' => ['eZCache', 'clearUserInfoCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Content tree menu (browser cache)' ), 'id' => 'content_tree_menu', 'tag' => ['content'], 'path' => false, 'enabled' => true, 'function' => ['eZCache', 'clearContentTreeMenu'], 'purge-function' => ['eZCache', 'clearContentTreeMenu']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'State limitations cache' ), 'is-clustered' => true, 'id' => 'state_limitations', 'tag' => ['content'], 'expiry-key' => 'state-limitations', 'enabled' => true, 'path' => false, 'function' => ['eZCache', 'clearStateLimitations'], 'purge-function' => ['eZCache', 'clearStateLimitations']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Content Language cache' ), 'is-clustered' => true, 'id' => 'content_language', 'tag' => ['content'], 'enabled' => true, 'path' => false, 'function' => ['eZContentLanguage', 'expireCache'], 'purge-function' => ['eZContentLanguage', 'expireCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Design base cache' ), 'id' => 'design_base', 'tag' => ['template'], 'enabled' => $ini->variable( 'DesignSettings', 'DesignLocationCache' ) == 'enabled', 'path' => false, 'function' => ['eZCache', 'clearDesignBaseCache'], 'purge-function' => ['eZCache', 'clearDesignBaseCache']],
+                /**
+                 * caches the list of active extensions (per siteaccess and global)
+                 * @see eZExtension::activeExtensions()
+                 */
+                ['name' => ezpI18n::tr( 'kernel/cache', 'Active extensions cache' ), 'id' => 'active_extensions', 'tag' => ['ini'], 'expiry-key' => 'active-extensions-cache', 'enabled' => true, 'path' => false, 'function' => ['eZCache', 'clearActiveExtensions'], 'purge-function' => ['eZCache', 'clearActiveExtensions']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'TS Translation cache' ), 'id' => 'translation', 'tag' => ['i18n'], 'enabled' => true, 'expiry-key' => 'ts-translation-cache', 'path' => 'translation', 'function' => ['eZCache', 'clearTSTranslationCache']],
+                ['name' => ezpI18n::tr( 'kernel/cache', 'SSL Zones cache' ), 'id' => 'sslzones', 'tag' => ['ini'], 'enabled' => eZSSLZone::enabled(), 'path' => false, 'function' => ['eZSSLZone', 'clearCache'], 'purge-function' => ['eZSSLZone', 'clearCache']],
+            ];
 
             // Append cache items defined (in ini) by extensions, see site.ini[Cache] for details
             foreach ( $ini->variable( 'Cache', 'CacheItems' ) as $cacheItemKey )
@@ -216,11 +78,11 @@ class eZCache
                     continue;
                 }
 
-                $cacheItem = array();
+                $cacheItem = [];
                 if ( $ini->hasVariable( $name, 'name' ) )
                     $cacheItem['name'] = $ini->variable( $name, 'name' );
                 else
-                    $cacheItem['name'] = ucwords( $cacheItemKey );
+                    $cacheItem['name'] = ucwords( (string) $cacheItemKey );
 
                 if ( $ini->hasVariable( $name, 'id' ) )
                     $cacheItem['id'] = $ini->variable( $name, 'id' );
@@ -235,7 +97,7 @@ class eZCache
                 if ( $ini->hasVariable( $name, 'tags' ) )
                     $cacheItem['tag'] = $ini->variable( $name, 'tags' );
                 else
-                    $cacheItem['tag'] = array();
+                    $cacheItem['tag'] = [];
 
                 if ( $ini->hasVariable( $name, 'expiryKey' ) )
                     $cacheItem['expiry-key'] = $ini->variable( $name, 'expiryKey' );
@@ -251,10 +113,10 @@ class eZCache
                     $cacheItem['path'] = false;
 
                 if ( $ini->hasVariable( $name, 'class' ) )
-                    $cacheItem['function'] = array( $ini->variable( $name, 'class' ), 'clearCache' );
+                    $cacheItem['function'] = [$ini->variable( $name, 'class' ), 'clearCache'];
 
                 if ( $ini->hasVariable( $name, 'purgeClass' ) )
-                    $cacheItem['purge-function'] = array( $ini->variable( $name, 'purgeClass' ), 'purgeCache' );
+                    $cacheItem['purge-function'] = [$ini->variable( $name, 'purgeClass' ), 'purgeCache'];
 
                 $cacheList[] = $cacheItem;
             }
@@ -275,7 +137,7 @@ class eZCache
         if ( !$cacheInfoList )
             $cacheInfoList = eZCache::fetchList();
 
-        $tagEntries = array();
+        $tagEntries = [];
         foreach ( $cacheInfoList as $cacheInfo )
         {
             $tagList = $cacheInfo['tag'];
@@ -298,7 +160,7 @@ class eZCache
         if ( !$cacheInfoList )
             $cacheInfoList = eZCache::fetchList();
 
-        $idList = array();
+        $idList = [];
         foreach ( $cacheInfoList as $cacheInfo )
         {
             $idList[] = $cacheInfo['id'];
@@ -318,7 +180,7 @@ class eZCache
         if ( !$cacheInfoList )
             $cacheInfoList = eZCache::fetchList();
 
-        $cacheEntries = array();
+        $cacheEntries = [];
         $tagList = explode( ',', $tagName );
         foreach ( $cacheInfoList as $cacheInfo )
         {
@@ -365,7 +227,7 @@ class eZCache
         if ( !$cacheInfoList )
             $cacheInfoList = eZCache::fetchList();
 
-        $cacheList = array();
+        $cacheList = [];
         foreach ( $cacheInfoList as $cacheInfo )
         {
             if ( in_array( $cacheInfo['id'], $idList ) )
@@ -403,7 +265,7 @@ class eZCache
         if ( !$cacheList )
             $cacheList = eZCache::fetchList();
 
-        $cacheItems = array();
+        $cacheItems = [];
         foreach ( $cacheList as $cacheItem )
         {
             if ( in_array( $tagName, $cacheItem['tag'] ) )
@@ -428,9 +290,9 @@ class eZCache
         if ( !$cacheList )
             $cacheList = eZCache::fetchList();
 
-        $cacheItems = array();
+        $cacheItems = [];
         if ( !is_array( $idList ) )
-            $idList = array( $idList );
+            $idList = [$idList];
         foreach ( $cacheList as $cacheItem )
         {
             if ( in_array( $cacheItem['id'], $idList ) )
@@ -490,13 +352,13 @@ class eZCache
         {
             $function = $cacheItem[$functionName];
             if ( is_callable( $function ) )
-                call_user_func_array( $function, array( $cacheItem ) );
+                call_user_func_array( $function, [$cacheItem] );
             else
                 eZDebug::writeError("Could not call cache item $functionName for id '$cacheItem[id]', is it a static public function?", __METHOD__ );
         }
         else
         {
-            if ( !isset( $cacheItem['path'] ) || strlen( $cacheItem['path'] ) < 1 )
+            if ( !isset( $cacheItem['path'] ) || strlen( (string) $cacheItem['path'] ) < 1 )
             {
                 eZDebug::writeError( "No path specified for cache item '$cacheItem[name]', can not clear cache.", __METHOD__ );
                 return;
@@ -563,35 +425,24 @@ class eZCache
 
         $imageContentClassAttributes = eZContentClassAttribute::fetchList(
             true,
-            array(
-                'data_type' => 'ezimage',
-                'version' => eZContentClass::VERSION_STATUS_DEFINED
-            )
+            ['data_type' => 'ezimage', 'version' => eZContentClass::VERSION_STATUS_DEFINED]
         );
-        $classIds = array();
-        $attributeIdentifiersByClass = array();
+        $classIds = [];
+        $attributeIdentifiersByClass = [];
         foreach ( $imageContentClassAttributes as $ccAttr )
         {
             $identifier = $ccAttr->attribute( 'identifier' );
             $ccId = $ccAttr->attribute( 'contentclass_id' );
             if ( !isset( $attributeIdentifiersByClass[$ccId] ) )
             {
-                $attributeIdentifiersByClass[$ccId] = array();
+                $attributeIdentifiersByClass[$ccId] = [];
             }
             $attributeIdentifiersByClass[$ccId][] = $identifier;
             $classIds[] = $ccId;
 
         }
 
-        $subTreeParams = array(
-            'ClassFilterType' => 'include',
-            'ClassFilterArray' => $classIds,
-            'MainNodeOnly' => true,
-            'IgnoreVisibility' => true,
-            'LoadDataMap' => false,
-            'Limit' => 100,
-            'Offset' => 0
-        );
+        $subTreeParams = ['ClassFilterType' => 'include', 'ClassFilterArray' => $classIds, 'MainNodeOnly' => true, 'IgnoreVisibility' => true, 'LoadDataMap' => false, 'Limit' => 100, 'Offset' => 0];
         $count = 0;
         while ( true )
         {
@@ -618,8 +469,6 @@ class eZCache
     /**
      * The purge the image aliases in all versions of the content object.
      *
-     * @param array $cacheItem
-     * @param eZContentObject $object
      * @param array $imageIdentifiers array of ezimage attribute identifiers
      */
     private static function purgeImageAliasForObject( array $cacheItem, eZContentObject $object, array $imageIdentifiers )

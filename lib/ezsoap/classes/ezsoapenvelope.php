@@ -19,18 +19,18 @@
 
 class eZSOAPEnvelope
 {
-    const ENV = "http://schemas.xmlsoap.org/soap/envelope/";
-    const ENC = "http://schemas.xmlsoap.org/soap/encoding/";
-    const SCHEMA_INSTANCE = "http://www.w3.org/2001/XMLSchema-instance";
-    const SCHEMA_DATA = "http://www.w3.org/2001/XMLSchema";
+    final public const ENV = "http://schemas.xmlsoap.org/soap/envelope/";
+    final public const ENC = "http://schemas.xmlsoap.org/soap/encoding/";
+    final public const SCHEMA_INSTANCE = "http://www.w3.org/2001/XMLSchema-instance";
+    final public const SCHEMA_DATA = "http://www.w3.org/2001/XMLSchema";
 
-    const ENV_PREFIX = "SOAP-ENV";
-    const ENC_PREFIX = "SOAP-ENC";
-    const XSI_PREFIX = "xsi";
-    const XSD_PREFIX = "xsd";
+    final public const ENV_PREFIX = "SOAP-ENV";
+    final public const ENC_PREFIX = "SOAP-ENC";
+    final public const XSI_PREFIX = "xsi";
+    final public const XSD_PREFIX = "xsd";
 
-    const INT = 1;
-    const STRING = 2;
+    final public const INT = 1;
+    final public const STRING = 2;
 
     /**
      * Constructs a new SOAP envelope object.

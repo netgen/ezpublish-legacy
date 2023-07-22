@@ -97,7 +97,7 @@ class eZExecution
      Sets the clean exit flag and exits the page.
      Use this if you want premature exits instead of the \c exit function.
     */
-    static function cleanExit()
+    static function cleanExit(): never
     {
         eZExecution::cleanup();
         eZExecution::setCleanExit();
@@ -147,15 +147,15 @@ class eZExecution
     {
         if ( !self::$shutdownHandle )
         {
-            register_shutdown_function( array('eZExecution', 'uncleanShutdownHandler') );
+            register_shutdown_function( ['eZExecution', 'uncleanShutdownHandler'] );
             /*
                 see:
                 - http://www.php.net/manual/en/function.session-set-save-handler.php
                 - http://bugs.php.net/bug.php?id=33635
                 - http://bugs.php.net/bug.php?id=33772
             */
-            register_shutdown_function( array('eZSession', 'stop') );
-            set_exception_handler( array('eZExecution', 'defaultExceptionHandler') );
+            register_shutdown_function( ['eZSession', 'stop'] );
+            set_exception_handler( ['eZExecution', 'defaultExceptionHandler'] );
             self::$shutdownHandle = true;
         }
 
@@ -210,10 +210,10 @@ class eZExecution
     }
 
     static private $eZDocumentRoot = null;
-    static private $hasCleanExit = false;
-    static private $shutdownHandle = false;
-    static private $fatalErrorHandlers = array();
-    static private $cleanupHandlers = array();
+    static private bool $hasCleanExit = false;
+    static private bool $shutdownHandle = false;
+    static private array $fatalErrorHandlers = [];
+    static private array $cleanupHandlers = [];
 }
 
 

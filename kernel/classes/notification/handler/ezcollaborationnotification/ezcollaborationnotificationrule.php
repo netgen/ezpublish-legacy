@@ -17,27 +17,7 @@ class eZCollaborationNotificationRule extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => "UserID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "collab_identifier" => array( 'name' => "CollaborationIdentifier",
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'user' => 'user' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZCollaborationNotificationRule",
-                      "name" => "ezcollab_notification_rule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => "UserID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "collab_identifier" => ['name' => "CollaborationIdentifier", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ['user' => 'user'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZCollaborationNotificationRule", "name" => "ezcollab_notification_rule"];
     }
 
     function user()
@@ -49,8 +29,7 @@ class eZCollaborationNotificationRule extends eZPersistentObject
     {
         if ( !$userID )
             $userID = eZUser::currentUserID();
-        return new eZCollaborationNotificationRule( array( 'user_id' => $userID,
-                                                           'collab_identifier' => $collaborationIdentifier ) );
+        return new eZCollaborationNotificationRule( ['user_id' => $userID, 'collab_identifier' => $collaborationIdentifier] );
     }
 
     static function fetchList( $userID = false, $asObject = true )
@@ -58,17 +37,16 @@ class eZCollaborationNotificationRule extends eZPersistentObject
         if ( !$userID )
             $userID = eZUser::currentUserID();
         return eZPersistentObject::fetchObjectList( eZCollaborationNotificationRule::definition(),
-                                                    null, array( 'user_id' => $userID ),
+                                                    null, ['user_id' => $userID],
                                                     null, null, $asObject );
     }
 
     static function fetchItemTypeList( $collaborationIdentifier, $userIDList, $asObject = true )
     {
         if ( is_array( $collaborationIdentifier ) )
-            $collaborationIdentifier = array( $collaborationIdentifier );
+            $collaborationIdentifier = [$collaborationIdentifier];
         return eZPersistentObject::fetchObjectList( eZCollaborationNotificationRule::definition(),
-                                                    null, array( 'user_id' => array( $userIDList ),
-                                                                 'collab_identifier' => $collaborationIdentifier ),
+                                                    null, ['user_id' => [$userIDList], 'collab_identifier' => $collaborationIdentifier],
                                                     null, null, $asObject );
     }
 
@@ -77,8 +55,7 @@ class eZCollaborationNotificationRule extends eZPersistentObject
         if ( !$userID )
             $userID = eZUser::currentUserID();
         eZPersistentObject::removeObject( eZCollaborationNotificationRule::definition(),
-                                          array( 'collab_identifier' => $collaborationIdentifier,
-                                                 'user_id' => $userID ) );
+                                          ['collab_identifier' => $collaborationIdentifier, 'user_id' => $userID] );
     }
 
     /*!
@@ -90,7 +67,7 @@ class eZCollaborationNotificationRule extends eZPersistentObject
     */
     static function removeByUserID( $userID )
     {
-        eZPersistentObject::removeObject( eZCollaborationNotificationRule::definition(), array( 'user_id' => $userID ) );
+        eZPersistentObject::removeObject( eZCollaborationNotificationRule::definition(), ['user_id' => $userID] );
     }
 
     /*!

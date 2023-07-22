@@ -51,45 +51,39 @@ $php->close();
 
 class eZPHPCreator
 {
-    const VARIABLE = 1;
-    const SPACE = 2;
-    const TEXT = 3;
-    const METHOD_CALL = 4;
-    const CODE_PIECE = 5;
-    const EOL_COMMENT = 6;
-    const INCLUDE_STATEMENT = 7;
-    const VARIABLE_UNSET = 8;
-    const DEFINE = 9;
-    const VARIABLE_UNSET_LIST = 10;
-    const RAW_VARIABLE = 11;
+    final public const VARIABLE = 1;
+    final public const SPACE = 2;
+    final public const TEXT = 3;
+    final public const METHOD_CALL = 4;
+    final public const CODE_PIECE = 5;
+    final public const EOL_COMMENT = 6;
+    final public const INCLUDE_STATEMENT = 7;
+    final public const VARIABLE_UNSET = 8;
+    final public const DEFINE = 9;
+    final public const VARIABLE_UNSET_LIST = 10;
+    final public const RAW_VARIABLE = 11;
 
-    const VARIABLE_ASSIGNMENT = 1;
-    const VARIABLE_APPEND_TEXT = 2;
-    const VARIABLE_APPEND_ELEMENT = 3;
+    final public const VARIABLE_ASSIGNMENT = 1;
+    final public const VARIABLE_APPEND_TEXT = 2;
+    final public const VARIABLE_APPEND_ELEMENT = 3;
 
-    const INCLUDE_ONCE_STATEMENT = 1;
-    const INCLUDE_ALWAYS_STATEMENT = 2;
+    final public const INCLUDE_ONCE_STATEMENT = 1;
+    final public const INCLUDE_ALWAYS_STATEMENT = 2;
 
-    const METHOD_CALL_PARAMETER_VALUE = 1;
-    const METHOD_CALL_PARAMETER_VARIABLE = 2;
+    final public const METHOD_CALL_PARAMETER_VALUE = 1;
+    final public const METHOD_CALL_PARAMETER_VARIABLE = 2;
 
     /**
      * Initializes the creator with the directory path $dir and filename $file.
      *
-     * @param string $dir
-     * @param string $file
-     * @param string $prefix
+     * @param string $PHPDir
+     * @param string $PHPFile
+     * @param string $FilePrefix
      * @param array $options
      */
-    public function __construct( $dir, $file, $prefix = '', $options = array() )
+    public function __construct( /// \privatesection
+    public $PHPDir, public $PHPFile, public $FilePrefix = '', $options = [] )
     {
-        $this->PHPDir = $dir;
-        $this->PHPFile = $file;
-        $this->FilePrefix = $prefix;
-        $this->FileResource = false;
-        $this->Elements = array();
-        $this->TextChunks = array();
-        $this->TemporaryCounter = 0;
         if ( isset( $options['spacing'] ) and ( $options['spacing'] == 'disabled') )
         {
             $this->Spacing = false;
@@ -135,13 +129,9 @@ define( 'MY_CONSTANT', 5 );
            See http://php.net/manual/en/language.constants.php for more information.
      \sa http://php.net/manual/en/function.define.php
     */
-    function addDefine( $name, $value, $caseSensitive = true, $parameters = array() )
+    function addDefine( $name, $value, $caseSensitive = true, $parameters = [] )
     {
-        $element = array( eZPHPCreator::DEFINE,
-                          $name,
-                          $value,
-                          $caseSensitive,
-                          $parameters );
+        $element = [eZPHPCreator::DEFINE, $name, $value, $caseSensitive, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -158,7 +148,7 @@ $php->addVariable( 'TransLationRoot', $cache['root'] );
     */
     function addRawVariable( $name, $value )
     {
-        $element = array( eZPHPCreator::RAW_VARIABLE, $name, $value );
+        $element = [eZPHPCreator::RAW_VARIABLE, $name, $value];
         $this->Elements[] = $element;
     }
 
@@ -191,13 +181,9 @@ $array[] = 42;
 
     */
     function addVariable( $name, $value, $assignmentType = eZPHPCreator::VARIABLE_ASSIGNMENT,
-                          $parameters = array() )
+                          $parameters = [] )
     {
-        $element = array( eZPHPCreator::VARIABLE,
-                          $name,
-                          $value,
-                          $assignmentType,
-                          $parameters );
+        $element = [eZPHPCreator::VARIABLE, $name, $value, $assignmentType, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -221,11 +207,9 @@ unset( $offset );
      \sa http://php.net/manual/en/function.unset.php
     */
     function addVariableUnset( $name,
-                               $parameters = array() )
+                               $parameters = [] )
     {
-        $element = array( eZPHPCreator::VARIABLE_UNSET,
-                          $name,
-                          $parameters );
+        $element = [eZPHPCreator::VARIABLE_UNSET, $name, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -249,11 +233,9 @@ unset( $var1, $var2 );
      \sa http://php.net/manual/en/function.unset.php
     */
     function addVariableUnsetList( $list,
-                               $parameters = array() )
+                               $parameters = [] )
     {
-        $element = array( eZPHPCreator::VARIABLE_UNSET_LIST,
-                          $list,
-                          $parameters );
+        $element = [eZPHPCreator::VARIABLE_UNSET_LIST, $list, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -269,8 +251,7 @@ $php->addSpace( 1 );
     */
     function addSpace( $lines = 1 )
     {
-        $element = array( eZPHPCreator::SPACE,
-                          $lines );
+        $element = [eZPHPCreator::SPACE, $lines];
         $this->Elements[] = $element;
     }
 
@@ -286,8 +267,7 @@ $php->addText( 'Print me!' );
     */
     function addText( $text )
     {
-        $element = array( eZPHPCreator::TEXT,
-                          $text );
+        $element = [eZPHPCreator::TEXT, $text];
         $this->Elements[] = $element;
     }
 
@@ -322,14 +302,9 @@ $name = $node->name();
 $php->addMethodCall( 'node', 'name' );
      \endcode
     */
-    function addMethodCall( $objectName, $methodName, $methodParameters, $returnValue = false, $parameters = array() )
+    function addMethodCall( $objectName, $methodName, $methodParameters, $returnValue = false, $parameters = [] )
     {
-        $element = array( eZPHPCreator::METHOD_CALL,
-                          $objectName,
-                          $methodName,
-                          $methodParameters,
-                          $returnValue,
-                          $parameters );
+        $element = [eZPHPCreator::METHOD_CALL, $objectName, $methodName, $methodParameters, $returnValue, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -357,11 +332,9 @@ if ( $value > 2 )
      \endcode
 
     */
-    function addCodePiece( $code, $parameters = array() )
+    function addCodePiece( $code, $parameters = [] )
     {
-        $element = array( eZPHPCreator::CODE_PIECE,
-                          $code,
-                          $parameters );
+        $element = [eZPHPCreator::CODE_PIECE, $code, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -387,13 +360,10 @@ $php->addComment( "This file is auto generated\nDo not edit!" );
      \endcode
 
     */
-    function addComment( $comment, $eol = true, $whitespaceHandling = true, $parameters = array() )
+    function addComment( $comment, $eol = true, $whitespaceHandling = true, $parameters = [] )
     {
-        $element = array( eZPHPCreator::EOL_COMMENT,
-                          $comment,
-                          array_merge( $parameters,
-                                       array( 'eol' => $eol,
-                                              'whitespace-handling' => $whitespaceHandling ) ) );
+        $element = [eZPHPCreator::EOL_COMMENT, $comment, array_merge( $parameters,
+                     ['eol' => $eol, 'whitespace-handling' => $whitespaceHandling] )];
         $this->Elements[] = $element;
     }
 
@@ -418,12 +388,9 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
      \endcode
 
     */
-    function addInclude( $file, $type = eZPHPCreator::INCLUDE_ONCE_STATEMENT, $parameters = array() )
+    function addInclude( $file, $type = eZPHPCreator::INCLUDE_ONCE_STATEMENT, $parameters = [] )
     {
-        $element = array( eZPHPCreator::INCLUDE_STATEMENT,
-                          $file,
-                          $type,
-                          $parameters );
+        $element = [eZPHPCreator::INCLUDE_STATEMENT, $file, $type, $parameters];
         $this->Elements[] = $element;
     }
 
@@ -439,7 +406,7 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
                             - \b eZPHPCreator::VARIABLE_APPEND_ELEMENT, append to array using \c []
      \param $variableParameters Optional parameters for the statement
     */
-    static function variableNameText( $variableName, $assignmentType, $variableParameters = array() )
+    static function variableNameText( $variableName, $assignmentType, $variableParameters = [] )
     {
         $text = '$' . $variableName;
         if ( $assignmentType == eZPHPCreator::VARIABLE_ASSIGNMENT )
@@ -493,14 +460,8 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
             $text = 'null';
         else if ( is_string( $value ) )
         {
-            $valueText = str_replace( array( "\\",
-                                             "\"",
-                                             "\$",
-                                             "\n" ),
-                                      array( "\\\\",
-                                             "\\\"",
-                                             "\\$",
-                                             "\\n" ),
+            $valueText = str_replace( ["\\", "\"", "\$", "\n"],
+                                      ["\\\\", "\\\"", "\\$", "\\n"],
                                       $value );
             $text = "\"$valueText\"";
         }
@@ -587,12 +548,8 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
                         if ( is_int( $key ) )
                             $keyText = $key;
                         else
-                            $keyText = "\"" . str_replace( array( "\\",
-                                                                  "\"",
-                                                                  "\n" ),
-                                                           array( "\\\\",
-                                                                  "\\\"",
-                                                                  "\\n" ),
+                            $keyText = "\"" . str_replace( ["\\", "\"", "\n"],
+                                                           ["\\\\", "\\\"", "\\n"],
                                                            $key ) . "\"";
                         $keyText = " $keyText => ";
                     }
@@ -624,14 +581,8 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
             $text = 'null';
         else if ( is_string( $value ) )
         {
-            $valueText = str_replace( array( "\\",
-                                             "\"",
-                                             "\$",
-                                             "\n" ),
-                                      array( "\\\\",
-                                             "\\\"",
-                                             "\\$",
-                                             "\\n" ),
+            $valueText = str_replace( ["\\", "\"", "\$", "\n"],
+                                      ["\\\\", "\\\"", "\\$", "\\n"],
                                       $value );
             $text = "\"$valueText\"";
         }
@@ -698,12 +649,8 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
                     if ( is_int( $key ) )
                         $keyText = $key;
                     else
-                        $keyText = "\"" . str_replace( array( "\\",
-                                                              "\"",
-                                                              "\n" ),
-                                                       array( "\\\\",
-                                                              "\\\"",
-                                                              "\\n" ),
+                        $keyText = "\"" . str_replace( ["\\", "\"", "\n"],
+                                                       ["\\\\", "\\\"", "\\n"],
                                                        $key ) . "\"";
                     $keyText = " $keyText => ";
                 }
@@ -735,12 +682,12 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
     {
         if ( $spacing == 0 )
             return $text;
-        $textArray = explode( $splitString, $text );
-        $newTextArray = array();
+        $textArray = explode( $splitString, (string) $text );
+        $newTextArray = [];
         foreach ( $textArray as $text )
         {
             if ( trim( $text ) != '' )
-                $textLine = str_repeat( $spacingString, $spacing ) . $text;
+                $textLine = str_repeat( (string) $spacingString, $spacing ) . $text;
             else
                 $textLine = $text;
             $newTextArray[] = $textLine;
@@ -779,7 +726,7 @@ $php->addInclude( 'lib/ezutils/classes/ezphpcreator.php' );
                 $this->tmpFilename = $path;
             }
             $ini = eZINI::instance();
-            $perm = octdec( $ini->variable( 'FileSettings', 'StorageFilePermissions' ) );
+            $perm = octdec( (string) $ini->variable( 'FileSettings', 'StorageFilePermissions' ) );
             $this->FileResource = @fopen( $this->FilePrefix . $path, "w" );
             if ( !$this->FileResource )
                 eZDebug::writeError( "Could not open file '$path' for writing, perhaps wrong permissions" );
@@ -883,7 +830,7 @@ print( $values['MyValue'] );
     */
     function restore( $variableDefinitions )
     {
-        $returnVariables = array();
+        $returnVariables = [];
         $path = $this->PHPDir . '/' . $this->PHPFile;
 
         if ( !$this->ClusteringEnabled )
@@ -896,7 +843,7 @@ print( $values['MyValue'] );
             {
                 $this->ClusterHandler = eZClusterFileHandler::instance( $path );
             }
-            $returnVariables = $this->ClusterHandler->processFile( array( $this, '_restoreCall' ), null, $variableDefinitions );
+            $returnVariables = $this->ClusterHandler->processFile( $this->_restoreCall(...), null, $variableDefinitions );
         }
         return $returnVariables;
     }
@@ -907,7 +854,7 @@ print( $values['MyValue'] );
      */
     function _restoreCall( $path, $mtime, $variableDefinitions )
     {
-        $returnVariables = array();
+        $returnVariables = [];
         include( $path );
         foreach ( $variableDefinitions as $variableReturnName => $variableName )
         {
@@ -921,9 +868,9 @@ print( $values['MyValue'] );
                 if ( isset( $variableDefinition['default'] ) )
                     $variableDefault = $variableDefinition['default'];
             }
-            if ( isset( $$variableName ) )
+            if ( isset( ${$variableName} ) )
             {
-                $returnVariables[$variableReturnName] = $$variableName;
+                $returnVariables[$variableReturnName] = ${$variableName};
             }
             else if ( $variableRequired )
             {
@@ -956,8 +903,8 @@ print( $values['MyValue'] );
 
             if ( !$this->ClusteringEnabled )
             {
-                $perm = octdec( eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) );
-                chmod( eZDir::path( array( $this->PHPDir, $this->PHPFile ) ), $perm );
+                $perm = octdec( (string) eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' ) );
+                chmod( eZDir::path( [$this->PHPDir, $this->PHPFile] ), $perm );
             }
 
             // Write log message to storage.log
@@ -997,7 +944,7 @@ print( $values['MyValue'] );
     */
     function writeChunks()
     {
-        $count = count( $this->TextChunks );
+        $count = is_countable($this->TextChunks) ? count( $this->TextChunks ) : 0;
 
         if ( $this->ClusteringEnabled )
         {
@@ -1019,7 +966,7 @@ print( $values['MyValue'] );
         for ( $i = 0; $i < $count; ++$i )
         {
             $text = $this->TextChunks[$i];
-            fwrite( $this->FileResource, $text );
+            fwrite( $this->FileResource, (string) $text );
         }
     }
 
@@ -1028,7 +975,7 @@ print( $values['MyValue'] );
     */
     function flushChunks()
     {
-        $this->TextChunks = array();
+        $this->TextChunks = [];
     }
 
     /*!
@@ -1124,6 +1071,7 @@ print( $values['MyValue'] );
     */
     function writeInclude( $element )
     {
+        $includeName = null;
         $includeFile = $element[1];
         $includeType = $element[2];
         $parameters = $element[3];
@@ -1154,8 +1102,8 @@ print( $values['MyValue'] );
             $spacing = $elementAttributes['spacing'];
         $whitespaceHandling = $elementAttributes['whitespace-handling'];
         $eol = $elementAttributes['eol'];
-        $newCommentArray = array();
-        $commentArray = preg_split( "/\r\n|\r|\n/", $element[1] );
+        $newCommentArray = [];
+        $commentArray = preg_split( "/\r\n|\r|\n/", (string) $element[1] );
         foreach ( $commentArray as $comment )
         {
             $textLine = '// ' . $comment;
@@ -1212,6 +1160,7 @@ print( $values['MyValue'] );
     */
     function writeMethodCall( $element )
     {
+        $variableValue = [];
         $objectName = $element[1];
         $methodName = $element[2];
         $methodParameters = $element[3];
@@ -1275,7 +1224,7 @@ print( $values['MyValue'] );
     {
         $variableNames = $element[1];
 
-        if ( count( $variableNames ) )
+        if ( is_countable($variableNames) ? count( $variableNames ) : 0 )
         {
             $parameters = $element[2];
             $spacing = 0;
@@ -1306,10 +1255,9 @@ print( $values['MyValue'] );
      \private
     */
     function writeVariable( $variableName, $variableValue, $assignmentType = eZPHPCreator::VARIABLE_ASSIGNMENT,
-                            $variableParameters = array() )
+                            $variableParameters = [] )
     {
-        $variableParameters = array_merge( array( 'full-tree' => false,
-                                                  'spacing' => 0 ),
+        $variableParameters = array_merge( ['full-tree' => false, 'spacing' => 0],
                                            $variableParameters );
         $fullTree = $variableParameters['full-tree'];
         $spacing = $this->Spacing ? $variableParameters['spacing'] : 0;
@@ -1317,7 +1265,7 @@ print( $values['MyValue'] );
         $maxIterations = 2;
         if ( $fullTree )
             $maxIterations = false;
-        $text .= $this->thisVariableText( $variableValue, strlen( $text ), 0, $maxIterations );
+        $text .= $this->thisVariableText( $variableValue, strlen( (string) $text ), 0, $maxIterations );
         $text .= ";\n";
         $text = eZPHPCreator::prependSpacing( $text, $spacing );
         $this->write( $text );
@@ -1332,16 +1280,11 @@ print( $values['MyValue'] );
         ++$this->TemporaryCounter;
         return $variableName;
     }
-
-    /// \privatesection
-    public $PHPDir;
-    public $PHPFile;
-    public $FilePrefix;
-    public $FileResource;
-    public $Elements;
-    public $TextChunks;
+    public $FileResource = false;
+    public $Elements = [];
+    public $TextChunks = [];
     public $isAtomic;
-    public $TemporaryCounter;
+    public $TemporaryCounter = 0;
     public $tmpFilename;
     public $requestedFilename;
     public $Spacing = true;

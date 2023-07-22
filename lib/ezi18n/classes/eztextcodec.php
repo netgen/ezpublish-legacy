@@ -22,24 +22,17 @@
 class eZTextCodec
 {
     /**
-     * @param string $inputCharsetCode
-     * @param string $outputCharsetCode
-     * @param string $realInputCharsetCode
-     * @param string $realOutputCharsetCode
-     * @param string $inputEncoding
-     * @param string $outputEncoding
+     * @param string $RequestedInputCharsetCode
+     * @param string $RequestedOutputCharsetCode
+     * @param string $InputCharsetCode
+     * @param string $OutputCharsetCode
+     * @param string $InputCharacterEncodingScheme
+     * @param string $OutputCharacterEncodingScheme
      */
-    public function __construct( $inputCharsetCode, $outputCharsetCode,
-                          $realInputCharsetCode, $realOutputCharsetCode,
-                          $inputEncoding, $outputEncoding )
+    public function __construct( public $RequestedInputCharsetCode, public $RequestedOutputCharsetCode,
+                          public $InputCharsetCode, public $OutputCharsetCode,
+                          public $InputCharacterEncodingScheme, public $OutputCharacterEncodingScheme )
     {
-        $this->RequestedInputCharsetCode = $inputCharsetCode;
-        $this->RequestedOutputCharsetCode = $outputCharsetCode;
-        $this->InputCharsetCode = $realInputCharsetCode;
-        $this->OutputCharsetCode = $realOutputCharsetCode;
-        $this->InputCharacterEncodingScheme = $inputEncoding;
-        $this->OutputCharacterEncodingScheme = $outputEncoding;
-
         $useMBStringExtension = true;
         if ( isset( $GLOBALS['eZTextCodecMBStringExtension'] ) )
             $useMBStringExtension = $GLOBALS['eZTextCodecMBStringExtension'];
@@ -61,9 +54,9 @@ class eZTextCodec
                          $hasMBString );
 
         // Map for conversion functions using encoding functions
-        $encodingConvertMap = array();
-        $encodingConvertInitMap = array();
-        $encodingStrlenMap = array();
+        $encodingConvertMap = [];
+        $encodingConvertInitMap = [];
+        $encodingStrlenMap = [];
 
         $encodingStrlenMap['unicode'] = 'strlenUnicode';
         $encodingStrlenMap['utf-8'] = 'strlenUTF8';
@@ -124,12 +117,8 @@ class eZTextCodec
         if ( $useMBString and
              !is_array( $mbStringCharsets ) )
         {
-            $charsetList = array( "ucs-4", "ucs-4be", "ucs-4le", "ucs-2", "ucs-2be", "ucs-2le", "utf-32", "utf-32be", "utf-32le", "utf-16",
-                                  "utf-16be", "utf-16le", "utf-8", "utf-7", "ascii", "euc-jp", "sjis", "eucjp-win", "sjis-win", "iso-2022-jp", "jis",
-                                  "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
-                                  "iso-8859-9", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "byte2be", "byte2le", "byte4be",
-                                  "byte4le", "base64", "7bit", "8bit", "utf7-imap" );
-            $mbStringCharsets = array();
+            $charsetList = ["ucs-4", "ucs-4be", "ucs-4le", "ucs-2", "ucs-2be", "ucs-2le", "utf-32", "utf-32be", "utf-32le", "utf-16", "utf-16be", "utf-16le", "utf-8", "utf-7", "ascii", "euc-jp", "sjis", "eucjp-win", "sjis-win", "iso-2022-jp", "jis", "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8", "iso-8859-9", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "byte2be", "byte2le", "byte4be", "byte4le", "base64", "7bit", "8bit", "utf7-imap"];
+            $mbStringCharsets = [];
             foreach ( $charsetList as $charset )
             {
                 $mbStringCharsets[$charset] = $charset;
@@ -317,7 +306,7 @@ class eZTextCodec
     */
     function convertNoneToUnicode( $str )
     {
-        return array();
+        return [];
     }
 
     function convertCodepageToUnicode( $str )
@@ -387,19 +376,19 @@ class eZTextCodec
 //        $tmp = $this->MBStringMapper->convertString( $str );
         // NOTE:
         // Uses the mbstring function directly instead of going trough the class
-        $tmp = mb_convert_encoding( $str, $this->OutputCharsetCode, $this->InputCharsetCode );
+        $tmp = mb_convert_encoding( (string) $str, $this->OutputCharsetCode, $this->InputCharsetCode );
         eZDebug::accumulatorStop( 'textcodec_mbstring' );
         return $tmp;
     }
 
     function strlenNone( $str )
     {
-        return strlen( $str );
+        return strlen( (string) $str );
     }
 
     function strlenUnicode( $unicodeValues )
     {
-        return count( $unicodeValues );
+        return is_countable($unicodeValues) ? count( $unicodeValues ) : 0;
     }
 
     function strlenCodepage( $str )
@@ -428,7 +417,7 @@ class eZTextCodec
 //        return $this->MBStringMapper->strlen( $str );
         // NOTE:
         // Uses the mbstring function directly instead of going trough the class
-        return mb_strlen( $str, $this->InputCharsetCode );
+        return mb_strlen( (string) $str, $this->InputCharsetCode );
     }
 
     /**
@@ -443,6 +432,7 @@ class eZTextCodec
      */
     static function instance( $inputCharsetCode, $outputCharsetCode = false, $alwaysReturn = true )
     {
+        $internalCharset = null;
         if ( $inputCharsetCode === false or $outputCharsetCode === false )
         {
             if ( isset( $GLOBALS['eZTextCodecInternalCharsetReal'] ) )
@@ -585,13 +575,6 @@ class eZTextCodec
         }
         return $realCharset;
     }
-
-    public $RequestedInputCharsetCode;
-    public $RequestedOutputCharsetCode;
-    public $InputCharsetCode;
-    public $OutputCharsetCode;
-    public $InputCharacterEncodingScheme;
-    public $OutputCharacterEncodingScheme;
     public $ConversionFunction;
     public $StrlenFunction;
     public $RequireConversion;

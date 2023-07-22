@@ -16,22 +16,17 @@
 class eZWaitUntilDate
 {
     /**
-     * @param int $eventID
-     * @param int $eventVersion
+     * @param int $WorkflowEventID
+     * @param int $WorkflowEventVersion
      */
-    public function __construct( $eventID, $eventVersion )
+    public function __construct( public $WorkflowEventID, public $WorkflowEventVersion )
     {
-        $this->WorkflowEventID = $eventID;
-        $this->WorkflowEventVersion = $eventVersion;
-        $this->Entries = eZWaitUntilDateValue::fetchAllElements( $eventID, $eventVersion );
+        $this->Entries = eZWaitUntilDateValue::fetchAllElements( $WorkflowEventID, $WorkflowEventVersion );
     }
 
     function attributes()
     {
-        return array( 'workflow_event_id',
-                      'workflow_event_version',
-                      'entry_list',
-                      'classattribute_id_list' );
+        return ['workflow_event_id', 'workflow_event_version', 'entry_list', 'classattribute_id_list'];
     }
 
     function hasAttribute( $attr )
@@ -104,7 +99,7 @@ class eZWaitUntilDate
 
     function classAttributeIDList()
     {
-        $attributeIDList = array();
+        $attributeIDList = [];
         foreach ( $this->Entries as $entry )
         {
             $attributeIDList[] = $entry->attribute( 'contentclass_attribute_id' );
@@ -114,7 +109,7 @@ class eZWaitUntilDate
 
     function setVersion( $version )
     {
-        if ( $version == 1 && count( $this->Entries ) == 0 )
+        if ( $version == 1 && (is_countable($this->Entries) ? count( $this->Entries ) : 0) == 0 )
         {
             $this->Entries = eZWaitUntilDateValue::fetchAllElements( $this->WorkflowEventID, 0 );
             foreach( $this->Entries as $entry )
@@ -143,10 +138,6 @@ class eZWaitUntilDate
             }
         }
     }
-
-
-    public $WorkflowEventID;
-    public $WorkflowEventVersion;
     public $Entries;
 
 }

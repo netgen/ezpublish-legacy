@@ -23,20 +23,19 @@ class eZShopFunctionCollection
 
         $basketList = eZPersistentObject::fetchObjectList( eZBasket::definition(),
                                                             null,
-                                                            array( "session_id" => $sessionID ),
+                                                            ["session_id" => $sessionID],
                                                             null,
                                                             null,
                                                             true );
 
         $currentBasket = false;
-        if ( count( $basketList ) == 0 )
+        if ( count( (array) $basketList ) == 0 )
         {
             // If we don't have a stored basket we create a temporary
             // one which can be returned.
             $collection = eZProductCollection::create();
 
-            $currentBasket = new eZBasket( array( "session_id" => $sessionID,
-                                                  "productcollection_id" => 0 ) );
+            $currentBasket = new eZBasket( ["session_id" => $sessionID, "productcollection_id" => 0] );
         }
         else
         {
@@ -45,12 +44,11 @@ class eZShopFunctionCollection
 
         if ( $currentBasket === null )
         {
-            $result = array( 'error' => array( 'error_type' => 'kernel',
-                                               'error_code' => eZError::KERNEL_NOT_FOUND ) );
+            $result = ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
         }
         else
         {
-            $result = array( 'result' => $currentBasket );
+            $result = ['result' => $currentBasket];
         }
 
         return $result;
@@ -60,7 +58,7 @@ class eZShopFunctionCollection
     {
         $node = eZContentObjectTreeNode::fetch( $topParentNodeID , false, false);
         if ( !is_array( $node ) )
-            return array( 'result' => null );
+            return ['result' => null];
 
         $nodePath = $node['path_string'];
         $currentTime = time();
@@ -111,7 +109,7 @@ class eZShopFunctionCollection
 
 
         $db = eZDB::instance();
-        $topList = $db->arrayQuery( $query, array( 'limit' => $limit, 'offset' => $offset ) );
+        $topList = $db->arrayQuery( $query, ['limit' => $limit, 'offset' => $offset] );
 
         if ( $extended )
         {
@@ -119,25 +117,23 @@ class eZShopFunctionCollection
             {
                 $contentObject = eZContentObject::fetch( $topList[ $key ][ 'contentobject_id' ] );
                 if ( $contentObject === null )
-                    return array( 'error' => array( 'error_type' => 'kernel',
-                                                    'error_code' => eZError::KERNEL_NOT_FOUND ) );
+                    return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
                 $topList[$key]['object'] = $contentObject;
             }
-            return array( 'result' => $topList );
+            return ['result' => $topList];
         }
         else
         {
-            $contentObjectList = array();
+            $contentObjectList = [];
             foreach ( array_keys ( $topList ) as $key )
             {
                 $objectID = $topList[$key]['contentobject_id'];
                 $contentObject = eZContentObject::fetch( $objectID );
                 if ( $contentObject === null )
-                    return array( 'error' => array( 'error_type' => 'kernel',
-                                                    'error_code' => eZError::KERNEL_NOT_FOUND ) );
+                    return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
                 $contentObjectList[] = $contentObject;
             }
-            return array( 'result' => $contentObjectList );
+            return ['result' => $contentObjectList];
         }
     }
 
@@ -159,34 +155,33 @@ class eZShopFunctionCollection
               GROUP BY ezproductcollection_item.contentobject_id
               ORDER BY count desc";
 
-        $objectList = $db->arrayQuery( $query, array( 'limit' => $limit ), eZDBInterface::SERVER_SLAVE );
+        $objectList = $db->arrayQuery( $query, ['limit' => $limit], eZDBInterface::SERVER_SLAVE );
 
         $db->dropTempTable( "DROP TABLE $tmpTableName" );
-        $contentObjectList = array();
+        $contentObjectList = [];
         foreach ( array_keys ( $objectList ) as $key )
         {
             $objectID = $objectList[$key]['contentobject_id'];
             $contentObject = eZContentObject::fetch( $objectID );
             if ( $contentObject === null )
-                return array( 'error' => array( 'error_type' => 'kernel',
-                                                'error_code' => eZError::KERNEL_NOT_FOUND ) );
+                return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
             $contentObjectList[] = $contentObject;
         }
-        return array( 'result' => $contentObjectList );
+        return ['result' => $contentObjectList];
     }
 
     function fetchWishList( $production_id, $offset = false, $limit = false )
     {
         $wishList = new eZWishList();
         $wishListItems = $wishList->items( true, $production_id, $offset, $limit );
-        return array ( 'result' => $wishListItems );
+        return ['result' => $wishListItems];
     }
 
     function fetchWishListCount( $production_id )
     {
         $wishList = new eZWishList();
         $count = $wishList->itemCount( $production_id );
-        return array ( 'result' => $count );
+        return ['result' => $count];
     }
 
     /**
@@ -197,7 +192,7 @@ class eZShopFunctionCollection
     function fetchCurrentWishList()
     {
         $wishList = eZWishList::currentWishList();
-        return array( 'result' => $wishList );
+        return ['result' => $wishList];
     }
 
     /*!
@@ -206,7 +201,7 @@ class eZShopFunctionCollection
     function fetchOrder( $orderID )
     {
         $order = eZOrder::fetch( $orderID );
-        return array( 'result' => $order );
+        return ['result' => $order];
     }
 
     /*!
@@ -215,7 +210,7 @@ class eZShopFunctionCollection
     function fetchOrderStatusHistoryCount( $orderID )
     {
         $count = eZOrderStatusHistory::fetchCount( $orderID );
-        return array( 'result' => $count );
+        return ['result' => $count];
     }
 
     /*!
@@ -224,7 +219,7 @@ class eZShopFunctionCollection
     function fetchOrderStatusHistory( $orderID )
     {
         $list = eZOrderStatusHistory::fetchListByOrder( $orderID );
-        return array( 'result' => $list );
+        return ['result' => $list];
     }
 
     /*!
@@ -236,12 +231,12 @@ class eZShopFunctionCollection
         $status = eZCurrencyData::statusStringToNumeric( $status );
         if ( $status !== false )
         {
-            $conditions = array( 'status' => $status );
+            $conditions = ['status' => $status];
         }
 
         $currencyList = eZCurrencyData::fetchList( $conditions );
 
-        $result = array( 'result' => $currencyList );
+        $result = ['result' => $currencyList];
 
         return $result;
     }
@@ -253,9 +248,9 @@ class eZShopFunctionCollection
     {
         $currency = eZCurrencyData::fetch( $code );
         if ( is_object( $currency ) )
-            $result = array( 'result' => $currency );
+            $result = ['result' => $currency];
         else
-            $result = array( 'result' => false );
+            $result = ['result' => false];
 
         return $result;
     }
@@ -263,7 +258,7 @@ class eZShopFunctionCollection
     function fetchPreferredCurrencyCode()
     {
         $currency = eZShopFunctions::preferredCurrencyCode();
-        $result = array( 'result' => $currency );
+        $result = ['result' => $currency];
 
         return $result;
     }
@@ -281,18 +276,18 @@ class eZShopFunctionCollection
                 eZShopFunctions::setPreferredUserCountry( $country );
         }
 
-        return array( 'result' => $country );
+        return ['result' => $country];
     }
 
     function fetchProductCategory( $categoryID )
     {
-        return array( 'result' => eZProductCategory::fetch( $categoryID ) );
+        return ['result' => eZProductCategory::fetch( $categoryID )];
     }
 
 
     function fetchProductCategoryList()
     {
-        return array( 'result' => eZProductCategory::fetchList() );
+        return ['result' => eZProductCategory::fetchList()];
     }
 }
 

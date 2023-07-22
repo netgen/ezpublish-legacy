@@ -12,24 +12,15 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Template Compiler\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Template Compiler\n" .
                                                          "\n" .
-                                                         "./bin/php/eztc.php -snews --www-dir='/mypath' --index-file='/index.php' --access-path='news'" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+                                                         "./bin/php/eztc.php -snews --www-dir='/mypath' --index-file='/index.php' --access-path='news'" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[compile-directory:][www-dir:][index-file:][access-path:][force][full-url][no-full-url]",
                                 "",
-                                array( 'force' => "Force compilation of template whether it has changed or not",
-                                       'compile-directory' => "Where to place compiled files,\ndefault is template/compiled in current cache directory",
-                                       'full-url' => "Makes sure generated urls have http:// in them (i.e. global), used mainly by sites that include the eZ Publish HTML (e.g payment gateways)",
-                                       'no-full-url' => "Makes sure generated urls are relative to the site. (default)",
-                                       'www-dir' => "The part before the index.php in your URL, you should supply this if you are running in non-virtualhost mode",
-                                       'index-file' => "The name of your index.php if you are running in non-virtualhost mode",
-                                       'access-path' => "Extra access path" ) );
+                                ['force' => "Force compilation of template whether it has changed or not", 'compile-directory' => "Where to place compiled files,\ndefault is template/compiled in current cache directory", 'full-url' => "Makes sure generated urls have http:// in them (i.e. global), used mainly by sites that include the eZ Publish HTML (e.g payment gateways)", 'no-full-url' => "Makes sure generated urls are relative to the site. (default)", 'www-dir' => "The part before the index.php in your URL, you should supply this if you are running in non-virtualhost mode", 'index-file' => "The name of your index.php if you are running in non-virtualhost mode", 'access-path' => "Extra access path"] );
 $sys = eZSys::instance();
 
 $forceCompile = false;
@@ -45,7 +36,7 @@ if ( $options['index-file'] )
 }
 if ( $options['access-path'] )
 {
-    $sys->setAccessPath( array( $options['access-path'] ) );
+    $sys->setAccessPath( [$options['access-path']] );
 }
 if ( $options['force'] )
 {
@@ -66,7 +57,7 @@ $http = eZHTTPTool::instance();
 $http->UseFullUrl = $useFullURL;
 
 
-if ( count( $options['arguments'] ) > 0 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) > 0 )
 {
     $ini = eZINI::instance();
     $tpl = eZTemplate::factory();
@@ -76,12 +67,12 @@ if ( count( $options['arguments'] ) > 0 )
     $script->setIterationData( '.', '~' );
     $script->setShowVerboseOutput( true );
     if ( $forceCompile )
-        eZTemplateCompiler::setSettings( array( 'generate' => true ) );
+        eZTemplateCompiler::setSettings( ['generate' => true] );
 
-    $files = array();
+    $files = [];
     foreach ( $fileList as $file )
     {
-        $filename = basename( $file );
+        $filename = basename( (string) $file );
         if ( preg_match( "!^.+~$|^/?#.+#$|^\..+$!", $filename ) )
             continue;
         $files[] = $file;
@@ -113,13 +104,13 @@ else
     $siteDesign = $ini->variable( "DesignSettings", "SiteDesign" );
     $additionalSiteDesignList = $ini->variable( "DesignSettings", "AdditionalSiteDesignList" );
 
-    $designList = array_merge( array( $standardDesign ), $additionalSiteDesignList, array( $siteDesign ) );
+    $designList = array_merge( [$standardDesign], $additionalSiteDesignList, [$siteDesign] );
 
     $tpl = eZTemplate::factory();
 
     $script->setIterationData( '.', '~' );
     if ( $forceCompile )
-        eZTemplateCompiler::setSettings( array( 'generate' => true ) );
+        eZTemplateCompiler::setSettings( ['generate' => true] );
 
     $extensionDirectory = eZExtension::baseDirectory();
     $designINI = eZINI::instance( 'design.ini' );

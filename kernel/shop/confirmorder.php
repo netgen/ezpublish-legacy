@@ -47,7 +47,7 @@ if ( $order instanceof eZOrder )
 $basket = eZBasket::currentBasket();
 $basket->updatePrices();
 
-$operationResult = eZOperationHandler::execute( 'shop', 'confirmorder', array( 'order_id' => $order->attribute( 'id' ) ) );
+$operationResult = eZOperationHandler::execute( 'shop', 'confirmorder', ['order_id' => $order->attribute( 'id' )] );
 
 switch( $operationResult['status'] )
 {
@@ -60,10 +60,9 @@ switch( $operationResult['status'] )
             $order = eZOrder::fetch( $order->attribute( 'id' ) );
             $tpl->setVariable( "order", $order );
 
-            $Result = array();
+            $Result = [];
             $Result['content'] = $tpl->fetch( "design:shop/confirmorder.tpl" );
-            $Result['path'] = array( array( 'url' => false,
-                                            'text' => ezpI18n::tr( 'kernel/shop', 'Confirm order' ) ) );
+            $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Confirm order' )]];
         }
     }break;
 
@@ -99,14 +98,13 @@ switch( $operationResult['status'] )
     }break;
     case eZModuleOperationInfo::STATUS_CANCELLED:
     {
-        $Result = array();
+        $Result = [];
         if ( isset( $operationResult['result']['content'] ) )
             $Result['content'] = $operationResult['result']['content'];
         else
             $Result['content'] = ezpI18n::tr( 'kernel/shop', "The confirm order operation was canceled. Try to checkout again." );
 
-        $Result['path'] = array( array( 'url' => false,
-                                        'text' => ezpI18n::tr( 'kernel/shop', 'Confirm order' ) ) );
+        $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Confirm order' )]];
     }
 
 }

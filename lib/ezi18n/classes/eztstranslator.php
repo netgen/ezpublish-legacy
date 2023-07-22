@@ -17,13 +17,12 @@ class eZTSTranslator extends eZTranslatorHandler
 {
     /**
      * Constructs the translator and loads the translation file $file if it is set and exists.
-     * @param string $locale
-     * @param string $filename
-     * @param bool $useCache
+     * @param string $Locale
+     * @param string $File
+     * @param bool $UseCache
      */
-    public function __construct( $locale, $filename = null, $useCache = true )
+    public function __construct( public $Locale, public $File = null, public $UseCache = true )
     {
-        $this->UseCache = $useCache;
         if ( isset( $GLOBALS['eZSiteBasics'] ) )
         {
             $siteBasics = $GLOBALS['eZSiteBasics'];
@@ -32,11 +31,8 @@ class eZTSTranslator extends eZTranslatorHandler
         }
         $this->BuildCache = false;
         parent::__construct( true );
-
-        $this->Locale = $locale;
-        $this->File = $filename;
-        $this->Messages = array();
-        $this->CachedMessages = array();
+        $this->Messages = [];
+        $this->CachedMessages = [];
         $this->HasRestoredCache = false;
         $this->RootCache = false;
     }
@@ -122,7 +118,7 @@ class eZTSTranslator extends eZTranslatorHandler
 
         if ( !$this->RootCache )
         {
-            $roots = array( $ini->variable( 'RegionalSettings', 'TranslationRepository' ) );
+            $roots = [$ini->variable( 'RegionalSettings', 'TranslationRepository' )];
             $extensionBase = eZExtension::baseDirectory();
             $translationExtensions = $ini->variable( 'RegionalSettings', 'TranslationExtensions' );
             foreach ( $translationExtensions as $translationExtension )
@@ -133,7 +129,7 @@ class eZTSTranslator extends eZTranslatorHandler
                     $roots[] = $extensionPath;
                 }
             }
-            $this->RootCache = array( 'roots' => $roots );
+            $this->RootCache = ['roots' => $roots];
         }
         else
         {
@@ -158,7 +154,7 @@ class eZTSTranslator extends eZTranslatorHandler
                     // this value will be used to check for cache validity
                     foreach ( $roots as $root )
                     {
-                        $path = eZDir::path( array( $root, $locale, $charset, $filename ) );
+                        $path = eZDir::path( [$root, $locale, $charset, $filename] );
                         if ( file_exists( $path ) )
                         {
                             $timestamp = filemtime( $path );
@@ -167,7 +163,7 @@ class eZTSTranslator extends eZTranslatorHandler
                         }
                         else
                         {
-                            $path = eZDir::path( array( $root, $locale, $filename ) );
+                            $path = eZDir::path( [$root, $locale, $filename] );
                             if ( file_exists( $path ) )
                             {
                                 $timestamp = filemtime( $path );
@@ -193,7 +189,7 @@ class eZTSTranslator extends eZTranslatorHandler
                     }
                     $contexts = eZTranslationCache::contextCache( $key );
                     if ( !is_array( $contexts ) )
-                        $contexts = array();
+                        $contexts = [];
                     $this->HasRestoredCache = $contexts;
                 }
                 else
@@ -240,8 +236,8 @@ class eZTSTranslator extends eZTranslatorHandler
         // then process country variation translation files
         $localeParts = explode( '@', $locale );
 
-        $triedPaths = array();
-        $loadedPaths = array();
+        $triedPaths = [];
+        $loadedPaths = [];
 
         $ini = eZINI::instance( "i18n.ini" );
         $fallbacks = $ini->variable( 'TranslationSettings', 'FallbackLanguages' );
@@ -251,10 +247,7 @@ class eZTSTranslator extends eZTranslatorHandler
             $localeCodeToProcess = isset( $localeCodeToProcess ) ? $localeCodeToProcess . '@' . $localePart: $localePart;
 
             // array with alternative subdirs to check
-            $alternatives = array(
-                array( $localeCodeToProcess, $charset, $filename ),
-                array( $localeCodeToProcess, $filename ),
-            );
+            $alternatives = [[$localeCodeToProcess, $charset, $filename], [$localeCodeToProcess, $filename]];
 
             if ( isset( $fallbacks[$localeCodeToProcess] ) && $fallbacks[$localeCodeToProcess] )
             {
@@ -262,8 +255,8 @@ class eZTSTranslator extends eZTranslatorHandler
                 {
                     $fallbacks[$localeCodeToProcess] = 'untranslated';
                 }
-                $alternatives[] = array( $fallbacks[$localeCodeToProcess], $charset, $filename );
-                $alternatives[] = array( $fallbacks[$localeCodeToProcess], $filename );
+                $alternatives[] = [$fallbacks[$localeCodeToProcess], $charset, $filename];
+                $alternatives[] = [$fallbacks[$localeCodeToProcess], $filename];
             }
 
             foreach ( $roots as $root )
@@ -305,7 +298,7 @@ class eZTSTranslator extends eZTranslatorHandler
                     continue;
                 }
 
-                if ( !$this->validateDOMTree( $doc ) )
+                if ( !static::validateDOMTree($doc) )
                 {
                     eZDebug::writeWarning( "XML text for file $path did not validate", __METHOD__ );
                     continue;
@@ -386,7 +379,7 @@ class eZTSTranslator extends eZTranslatorHandler
     function handleContextNode( $context )
     {
         $contextName = null;
-        $messages = array();
+        $messages = [];
         $context_children = $context->childNodes;
 
         for( $i = 0; $i < $context_children->length; $i++ )
@@ -435,7 +428,7 @@ class eZTSTranslator extends eZTranslatorHandler
             return false;
         }
         if ( !isset( $this->CachedMessages[$contextName] ) )
-            $this->CachedMessages[$contextName] = array();
+            $this->CachedMessages[$contextName] = [];
 
         return true;
     }
@@ -631,7 +624,7 @@ class eZTSTranslator extends eZTranslatorHandler
         if ( $this->UseCache == true && $this->BuildCache == true )
         {
             if ( !isset( $this->CachedMessages[$context] ) )
-                $this->CachedMessages[$context] = array();
+                $this->CachedMessages[$context] = [];
             $this->CachedMessages[$context][$key] = $msg;
         }
         return $key;
@@ -678,17 +671,17 @@ class eZTSTranslator extends eZTranslatorHandler
      *
      * @return array( eZTSTranslator ) list of eZTranslator objects representing available translations
     */
-    static function fetchList( $localeList = array() )
+    static function fetchList( $localeList = [] )
     {
         $ini = eZINI::instance();
 
         $dir = $ini->variable( 'RegionalSettings', 'TranslationRepository' );
 
-        $fileInfoList = array();
-        $translationList = array();
+        $fileInfoList = [];
+        $translationList = [];
         $locale = '';
 
-        if ( count( $localeList ) == 0 )
+        if ( (is_countable($localeList) ? count( $localeList ) : 0) == 0 )
         {
             $localeList = eZDir::findSubdirs( $dir );
         }
@@ -749,18 +742,15 @@ class eZTSTranslator extends eZTranslatorHandler
      * @var array
      */
     public $Messages;
-    public $File;
-    public $UseCache;
     public $BuildCache;
     public $CachedMessages;
-    public $Locale;
     public $HasRestoredCache;
     public $RootCache;
 
     /**
      * Translation expiry key used by eZExpiryHandler to manage translation caches
      */
-    const EXPIRY_KEY = 'ts-translation-cache';
+    final public const EXPIRY_KEY = 'ts-translation-cache';
 }
 
 ?>

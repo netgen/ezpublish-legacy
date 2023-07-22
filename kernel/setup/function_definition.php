@@ -6,70 +6,17 @@
  * @package kernel
  */
 
-$FunctionList = array();
+$FunctionList = [];
 
-$FunctionList['version'] = array( 'name' => 'version',
-                                  'operation_types' => array( 'read' ),
-                                  'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                          'method' => 'fetchFullVersionString' ),
-                                  'parameter_type' => 'standard',
-                                  'parameters' => array( ) );
-$FunctionList['alias'] = array( 'name' => 'alias',
-                                'operation_types' => array( 'read' ),
-                                'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                        'method' => 'fetchVersionAlias' ),
-                                'parameter_type' => 'standard',
-                                'parameters' => array( ) );
-$FunctionList['major_version'] = array( 'name' => 'major_version',
-                                        'operation_types' => array( 'read' ),
-                                        'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                                'method' => 'fetchMajorVersion' ),
-                                        'parameter_type' => 'standard',
-                                        'parameters' => array( ) );
-$FunctionList['minor_version'] = array( 'name' => 'minor_version',
-                                        'operation_types' => array( 'read' ),
-                                        'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                                'method' => 'fetchMinorVersion' ),
-                                        'parameter_type' => 'standard',
-                                        'parameters' => array( ) );
-$FunctionList['release'] = array( 'name' => 'release',
-                                  'operation_types' => array( 'read' ),
-                                  'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                          'method' => 'fetchRelease' ),
-                                  'parameter_type' => 'standard',
-                                  'parameters' => array( ) );
-$FunctionList['state'] = array( 'name' => 'state',
-                                'operation_types' => array( 'read' ),
-                                'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                        'method' => 'fetchState' ),
-                                'parameter_type' => 'standard',
-                                'parameters' => array( ) );
-$FunctionList['is_development'] = array( 'name' => 'is_development',
-                                         'operation_types' => array( 'read' ),
-                                         'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                                 'method' => 'fetchIsDevelopment' ),
-                                         'parameter_type' => 'standard',
-                                         'parameters' => array( ) );
-$FunctionList['database_version'] = array( 'name' => 'database_version',
-                                           'operation_types' => array( 'read' ),
-                                           'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                                   'method' => 'fetchDatabaseVersion' ),
-                                           'parameter_type' => 'standard',
-                                           'parameters' => array( array( 'name' => 'with_release',
-                                                                         'type' => 'bool',
-                                                                         'required' => false,
-                                                                         'default' => true ) ) );
-$FunctionList['database_release'] = array( 'name' => 'database_release',
-                                           'operation_types' => array( 'read' ),
-                                           'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                                   'method' => 'fetchDatabaseRelease' ),
-                                           'parameter_type' => 'standard',
-                                           'parameters' => array( ) );
+$FunctionList['version'] = ['name' => 'version', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchFullVersionString'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['alias'] = ['name' => 'alias', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchVersionAlias'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['major_version'] = ['name' => 'major_version', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchMajorVersion'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['minor_version'] = ['name' => 'minor_version', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchMinorVersion'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['release'] = ['name' => 'release', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchRelease'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['state'] = ['name' => 'state', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchState'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['is_development'] = ['name' => 'is_development', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchIsDevelopment'], 'parameter_type' => 'standard', 'parameters' => []];
+$FunctionList['database_version'] = ['name' => 'database_version', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchDatabaseVersion'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'with_release', 'type' => 'bool', 'required' => false, 'default' => true]]];
+$FunctionList['database_release'] = ['name' => 'database_release', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchDatabaseRelease'], 'parameter_type' => 'standard', 'parameters' => []];
 
-$FunctionList['edition'] = array( 'name' => 'edition',
-                                  'operation_types' => array( 'read' ),
-                                  'call_method' => array( 'class' => 'eZSetupFunctionCollection',
-                                                          'method' => 'fetchEdition' ),
-                                  'parameter_type' => 'standard',
-                                  'parameters' => array( ) );
+$FunctionList['edition'] = ['name' => 'edition', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZSetupFunctionCollection', 'method' => 'fetchEdition'], 'parameter_type' => 'standard', 'parameters' => []];
 ?>

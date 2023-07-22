@@ -21,7 +21,7 @@ class ezpDatabaseTestSuite extends ezpTestSuite
      *
      * @var array( array( string => string ) )
      */
-    protected $sqlFiles = array();
+    protected $sqlFiles = [];
 
     /**
      * Controls if the database should be initialized with default data

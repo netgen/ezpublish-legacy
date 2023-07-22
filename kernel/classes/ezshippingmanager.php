@@ -116,6 +116,7 @@ class eZShippingManager
      */
     static function loadShippingHandler()
     {
+        $includeFile = null;
         $shopINI = eZINI::instance( 'shop.ini' );
 
         if ( !$shopINI->hasVariable( 'ShippingSettings', 'Handler' ) )
@@ -176,6 +177,7 @@ class eZShippingManager
      */
     static function loadBasketInfoHandler()
     {
+        $includeFile = null;
         $shopINI = eZINI::instance( 'shop.ini' );
 
         if ( !$shopINI->hasVariable( 'BasketInfoSettings', 'Handler' ) )
@@ -273,12 +275,13 @@ class eZShippingManager
      */
     static function vatPriceInfo( $shippingInfo )
     {
+        $subShippingVat = [];
         $totalShippingExVat = 0;
         $totalShippingIncVat = 0;
         $totalShippingVat = 0;
-        $subShippingExVat = array();
-        $subShippingIncVat = array();
-        $shippingVatList = array();
+        $subShippingExVat = [];
+        $subShippingIncVat = [];
+        $shippingVatList = [];
         if ( isset( $shippingInfo['shipping_items'] ) )
         {
             foreach ( $shippingInfo['shipping_items'] as $shippingItem )
@@ -366,13 +369,7 @@ class eZShippingManager
             $totalShippingIncVat = $subShippingIncVat[$vatValue];
             $totalShippingVat = $subShippingVat[$vatValue];
         }
-        $returnArray = array( 'vat_shipping_list_ex_vat' => $subShippingExVat,
-                              'vat_shipping_list_inc_vat' => $subShippingIncVat,
-                              'vat_shipping_list_vat' => $subShippingVat,
-                              'shipping_vat_list' => $shippingVatList,
-                              'total_shipping_ex_vat' => $totalShippingExVat,
-                              'total_shipping_inc_vat' => $totalShippingIncVat,
-                              'total_shipping_vat' => $totalShippingVat );
+        $returnArray = ['vat_shipping_list_ex_vat' => $subShippingExVat, 'vat_shipping_list_inc_vat' => $subShippingIncVat, 'vat_shipping_list_vat' => $subShippingVat, 'shipping_vat_list' => $shippingVatList, 'total_shipping_ex_vat' => $totalShippingExVat, 'total_shipping_inc_vat' => $totalShippingIncVat, 'total_shipping_vat' => $totalShippingVat];
         return $returnArray;
     }
 

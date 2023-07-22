@@ -10,20 +10,8 @@
 
 class eZCacheHelper
 {
-    /**
-     * @var eZCLI
-     */
-    private $cli;
-
-    /**
-     * @var eZScript
-     */
-    private $script;
-
-    public function __construct( eZCLI $cli, eZScript $script )
+    public function __construct(private readonly eZCLI $cli, private readonly eZScript $script)
     {
-        $this->cli = $cli;
-        $this->script = $script;
     }
 
     public function clearItems( $cacheEntries, $name )
@@ -38,11 +26,14 @@ class eZCacheHelper
 
     private function internalClear( $purge, $cacheEntries, $name, $purgeSleep = null, $purgeMax = null, $purgeExpiry = null )
     {
+        $query = null;
+        $prompt = null;
+        $acceptValues = null;
         $this->cli->output(
-            ( $purge ? 'Purging ' : 'Clearing ' ) . $this->cli->stylize( 'emphasize', $name ? $name : 'All cache' ) . ': '
+            ( $purge ? 'Purging ' : 'Clearing ' ) . $this->cli->stylize( 'emphasize', $name ?: 'All cache' ) . ': '
         );
 
-        $warnPaths = array();
+        $warnPaths = [];
         foreach ( $cacheEntries as $cacheEntry )
         {
             $absPath = realpath( eZSys::cacheDirectory() . DIRECTORY_SEPARATOR . $cacheEntry['path'] );
@@ -63,7 +54,7 @@ class eZCacheHelper
                 && !isset( $cacheEntry['function'] )
                 // 3 => since two path elements ('/foo/bar') produce three exploded elements
                 && $absPathElementCount < 3
-                && strpos( dirname( $absPath ) . DIRECTORY_SEPARATOR, realpath( eZSys::rootDir() ) . DIRECTORY_SEPARATOR ) === false
+                && !str_contains( dirname( $absPath ) . DIRECTORY_SEPARATOR, realpath( eZSys::rootDir() ) . DIRECTORY_SEPARATOR )
             )
             {
                 $warnPaths[] = $absPath;
@@ -84,7 +75,7 @@ class eZCacheHelper
 
             if ( function_exists( "getUserInput" ) )
             {
-                $input = getUserInput( ( $purge ? 'Purge' : 'Clear' ) . '? yes/no:', array( 'yes', 'no' ) );
+                $input = getUserInput( ( $purge ? 'Purge' : 'Clear' ) . '? yes/no:', ['yes', 'no'] );
             }
             else
             {
@@ -126,7 +117,7 @@ class eZCacheHelper
             $this->cli->output( $this->cli->stylize( 'emphasize', $cacheEntry['name'] ), false );
 
             if ( $purge )
-                eZCache::clearItem( $cacheEntry, true, array( $this, 'reportProgress'), $purgeSleep, $purgeMax, $purgeExpiry );
+                eZCache::clearItem( $cacheEntry, true, $this->reportProgress(...), $purgeSleep, $purgeMax, $purgeExpiry );
             else
                 eZCache::clearItem( $cacheEntry );
         }
@@ -135,7 +126,7 @@ class eZCacheHelper
 
     public function reportProgress( $filename, $count )
     {
-        static $progress = array( '|', '/', '-', '\\' );
+        static $progress = ['|', '/', '-', '\\'];
 
         if ( $count == 0 )
         {

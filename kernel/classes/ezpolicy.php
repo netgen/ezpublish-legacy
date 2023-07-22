@@ -25,39 +25,7 @@ class eZPolicy extends eZPersistentObject
 
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'role_id' => array( 'name' => 'RoleID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZRole',
-                                                             'foreign_attribute' => 'id',
-                                                             'multiplicity' => '1..*' ),
-                                         'module_name' => array( 'name' => 'ModuleName',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'function_name' => array( 'name' => 'FunctionName',
-                                                                   'datatype' => 'string',
-                                                                   'default' => '',
-                                                                   'required' => true ),
-                                         'original_id' => array( 'name' => 'OriginalID',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => null,
-                                                                 'required' => false ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'limitations' => 'limitationList',
-                                                      'role' => 'role',
-                                                      'limit_identifier' => 'limitIdentifier',
-                                                      'limit_value' => 'limitValue',
-                                                      'user_role_id' => 'userRoleID' ),
-                      'increment_key' => 'id',
-                      'sort' => array( 'id' => 'asc' ),
-                      'class_name' => 'eZPolicy',
-                      'name' => 'ezpolicy' );
+        static $definition = ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'role_id' => ['name' => 'RoleID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZRole', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'module_name' => ['name' => 'ModuleName', 'datatype' => 'string', 'default' => '', 'required' => true], 'function_name' => ['name' => 'FunctionName', 'datatype' => 'string', 'default' => '', 'required' => true], 'original_id' => ['name' => 'OriginalID', 'datatype' => 'integer', 'default' => null, 'required' => false]], 'keys' => ['id'], 'function_attributes' => ['limitations' => 'limitationList', 'role' => 'role', 'limit_identifier' => 'limitIdentifier', 'limit_value' => 'limitValue', 'user_role_id' => 'userRoleID'], 'increment_key' => 'id', 'sort' => ['id' => 'asc'], 'class_name' => 'eZPolicy', 'name' => 'ezpolicy'];
         return $definition;
     }
 
@@ -114,9 +82,9 @@ class eZPolicy extends eZPersistentObject
      \note Transaction unsafe. If you call several transaction unsafe methods you must enclose
      the calls within a db transaction; thus within db->begin and db->commit.
      */
-    static function createNew( $roleID , $params = array() )
+    static function createNew( $roleID , $params = [] )
     {
-        $policy = new eZPolicy( array( 'id' => null ) );
+        $policy = new eZPolicy( ['id' => null] );
         $policy->setAttribute( 'role_id', $roleID );
         if ( array_key_exists( 'ModuleName', $params ))
         {
@@ -145,10 +113,7 @@ class eZPolicy extends eZPersistentObject
             $module = '*';
         if ( $function === true )
             $function = '*';
-        $row = array( 'id' => null,
-                      'role_id' => $roleID,
-                      'module_name' => $module,
-                      'function_name' => $function );
+        $row = ['id' => null, 'role_id' => $roleID, 'module_name' => $module, 'function_name' => $function];
         $policy = new eZPolicy( $row );
         return $policy;
     }
@@ -169,7 +134,7 @@ class eZPolicy extends eZPersistentObject
         $db->begin();
         $limitation->store();
         $limitationID = $limitation->attribute( 'id' );
-        $limitations = array();
+        $limitations = [];
         foreach ( $values as $value )
         {
             $limitationValue = eZPolicyLimitationValue::create( $limitationID, $value );
@@ -196,7 +161,7 @@ class eZPolicy extends eZPersistentObject
      */
     function copy( $roleID )
     {
-        $params = array();
+        $params = [];
         $params['ModuleName'] = $this->attribute( 'module_name' );
         $params['FunctionName'] = $this->attribute( 'function_name' );
 
@@ -252,15 +217,15 @@ class eZPolicy extends eZPersistentObject
         $limitations = $this->limitationList( true, $ignoreLimitIdentifier );
         if ( $this->Disabled === true )
         {
-            return array();
+            return [];
         }
 
         if ( !$limitations )
         {
-            return array( $this->attribute( 'module_name' ) => array ( $this->attribute( 'function_name' ) => array( '*' => '*' ) ) );
+            return [$this->attribute( 'module_name' ) => [$this->attribute( 'function_name' ) => ['*' => '*']]];
         }
 
-        $limitArray = array();
+        $limitArray = [];
 
         foreach( array_keys( $limitations ) as $limitKey )
         {
@@ -269,7 +234,7 @@ class eZPolicy extends eZPersistentObject
 
         $policyName = 'p_' . $this->attribute( 'id' ) . ( isset($this->UserRoleID) ? ( '_' . $this->UserRoleID ) : '' );
 
-        return array( $this->attribute( 'module_name' ) => array ( $this->attribute( 'function_name' ) => array( $policyName => $limitArray ) ) );
+        return [$this->attribute( 'module_name' ) => [$this->attribute( 'function_name' ) => [$policyName => $limitArray]]];
     }
 
     /*!
@@ -283,7 +248,7 @@ class eZPolicy extends eZPersistentObject
         {
 
             $limitations = eZPersistentObject::fetchObjectList( eZPolicyLimitation::definition(),
-                                                                 null, array( 'policy_id' => $this->attribute( 'id') ), null, null,
+                                                                 null, ['policy_id' => $this->attribute( 'id')], null, null,
                                                                  true );
 
             eZDebugSetting::writeDebug( 'kernel-policy-limitation', $limitations, "before policy limitations " . $this->ID );
@@ -308,13 +273,13 @@ class eZPolicy extends eZPersistentObject
                             foreach ( $values as $limitationValue )
                             {
                                 $value = $limitationValue->attribute( 'value' );
-                                if ( strpos( $value, $limitValue ) === 0 )
+                                if ( str_starts_with((string) $value, (string) $limitValue) )
                                 {
                                     $checkEmptyLimitation = false;
                                     eZDebugSetting::writeDebug( 'kernel-policy-limitation', $value,
                                                                 "Limitationvalue has been left in the limitation [limitValue=$limitValue]" );
                                 }
-                                else if ( strpos( $limitValue, $value ) === 0 )
+                                else if ( str_starts_with((string) $limitValue, (string) $value) )
                                 {
                                     $checkEmptyLimitation = false;
                                     $limitationValue->setAttribute( 'value', $limitValue );
@@ -334,7 +299,7 @@ class eZPolicy extends eZPersistentObject
                             {
                                 eZDebugSetting::writeDebug( 'kernel-policy-limitation', $this, 'The policy has been disabled' );
                                 $this->Disabled = true;
-                                $this->Limitations = array();
+                                $this->Limitations = [];
                                 return $this->Limitations;
                             }
                         }
@@ -343,9 +308,7 @@ class eZPolicy extends eZPersistentObject
 
                 if ( !$limitationTouched )
                 {
-                    $policyLimitation = new eZPolicyLimitation( array ( 'id' => -1,
-                                                                        'policy_id' => $this->attribute( 'id' ),
-                                                                        'identifier' => $this->attribute( 'limit_identifier' ) ) );
+                    $policyLimitation = new eZPolicyLimitation( ['id' => -1, 'policy_id' => $this->attribute( 'id' ), 'identifier' => $this->attribute( 'limit_identifier' )] );
                     $policyLimitation->setAttribute( 'limit_value', $this->attribute( 'limit_value' ) );
 
                     $limitations[] = $policyLimitation;
@@ -363,7 +326,7 @@ class eZPolicy extends eZPersistentObject
         if ( $this->ID )
         {
             return eZPersistentObject::fetchObject( eZRole::definition(),
-                                                    null, array( 'id' => $this->RoleID ), true );
+                                                    null, ['id' => $this->RoleID], true );
         }
 
         return false;
@@ -377,7 +340,7 @@ class eZPolicy extends eZPersistentObject
     static function fetch( $policyID )
     {
         return eZPersistentObject::fetchObject( self::definition(),
-            null, array( 'id' => $policyID ), true );
+            null, ['id' => $policyID], true );
     }
 
     /**
@@ -388,7 +351,7 @@ class eZPolicy extends eZPersistentObject
     public static function fetchTemporaryCopy( $policyID )
     {
         $policy = eZPersistentObject::fetchObject( self::definition(),
-            null, array( 'original_id' => $policyID ), true );
+            null, ['original_id' => $policyID], true );
 
         if ( $policy instanceof eZPolicy )
         {

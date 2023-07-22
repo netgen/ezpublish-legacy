@@ -18,57 +18,7 @@ class eZCollaborationGroup extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'parent_group_id' => array( 'name' => 'ParentGroupID',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZCollaborationGroup',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         'depth' => array( 'name' => 'Depth',
-                                                           'datatype' => 'integer',
-                                                           'default' => 0,
-                                                           'required' => true ),
-                                         'path_string' => array( 'name' => 'PathString',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'is_open' => array( 'name' => 'IsOpen',
-                                                             'datatype' => 'integer',
-                                                             'default' => '1',
-                                                             'required' => true ),
-                                         'user_id' => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => '0',
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         'title' => array( 'name' => 'Title',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => '0',
-                                                             'required' => true ),
-                                         'modified' =>  array( 'name' => 'Modified',
-                                                               'datatype' => 'integer',
-                                                               'default' => '0',
-                                                               'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      "function_attributes" => array( 'user' => 'user',
-                                                      'parent_group' => 'parentGroup',
-                                                      'item_list' => 'itemList',
-                                                      'item_count' => 'itemCount' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZCollaborationGroup',
-                      'sort' => array( 'title' => 'asc' ),
-                      'name' => 'ezcollab_group' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'parent_group_id' => ['name' => 'ParentGroupID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationGroup', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'depth' => ['name' => 'Depth', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'path_string' => ['name' => 'PathString', 'datatype' => 'string', 'default' => '', 'required' => true], 'is_open' => ['name' => 'IsOpen', 'datatype' => 'integer', 'default' => '1', 'required' => true], 'user_id' => ['name' => 'UserID', 'datatype' => 'integer', 'default' => '0', 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'title' => ['name' => 'Title', 'datatype' => 'string', 'default' => '', 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => '0', 'required' => true], 'modified' =>  ['name' => 'Modified', 'datatype' => 'integer', 'default' => '0', 'required' => true]], 'keys' => ['id'], "function_attributes" => ['user' => 'user', 'parent_group' => 'parentGroup', 'item_list' => 'itemList', 'item_count' => 'itemCount'], 'increment_key' => 'id', 'class_name' => 'eZCollaborationGroup', 'sort' => ['title' => 'asc'], 'name' => 'ezcollab_group'];
     }
 
     /*!
@@ -124,22 +74,13 @@ class eZCollaborationGroup extends eZPersistentObject
     static function create( $userID, $title, $pathString = '', $depth = 0, $parentGroupID = 0, $isOpen = true )
     {
         $date_time = time();
-        $row = array(
-            'id' => null,
-            'parent_group_id' => $parentGroupID,
-            'path_string' => $pathString,
-            'depth' => $depth,
-            'is_open' => $isOpen,
-            'user_id' => $userID,
-            'title' => $title,
-            'created' => $date_time,
-            'modified' => $date_time );
+        $row = ['id' => null, 'parent_group_id' => $parentGroupID, 'path_string' => $pathString, 'depth' => $depth, 'is_open' => $isOpen, 'user_id' => $userID, 'title' => $title, 'created' => $date_time, 'modified' => $date_time];
         return new eZCollaborationGroup( $row );
     }
 
     static function fetch( $id, $userID = false, $asObject = true )
     {
-        $conditions = array( "id" => $id );
+        $conditions = ["id" => $id];
         if ( $userID !== false )
             $conditions['user_id'] = $userID;
         return eZPersistentObject::fetchObject( eZCollaborationGroup::definition(),
@@ -151,20 +92,16 @@ class eZCollaborationGroup extends eZPersistentObject
     /*!
      \return an array with collaboration items which are in this group.
     */
-    function itemList( $parameters = array() )
+    function itemList( $parameters = [] )
     {
-        return eZCollaborationItem::fetchList( array_merge( array( 'parent_group_id' => $this->ID ),
+        return eZCollaborationItem::fetchList( array_merge( ['parent_group_id' => $this->ID],
                                                                  $parameters ) );
     }
 
-    static function subTree( $parameters = array() )
+    static function subTree( $parameters = [] )
     {
-        $parameters = array_merge( array( 'parent_group_id' => false,
-                                          'depth' => false,
-                                          'sort_by' => false,
-                                          'as_object' => true,
-                                          'offset' => false,
-                                          'limit' => false ),
+        $sortingFields = null;
+        $parameters = array_merge( ['parent_group_id' => false, 'depth' => false, 'sort_by' => false, 'as_object' => true, 'offset' => false, 'limit' => false],
                                    $parameters );
         $parentGroupID = $parameters['parent_group_id'];
         $depth = $parameters['depth'];
@@ -184,7 +121,7 @@ class eZCollaborationGroup extends eZPersistentObject
             if ( count( $sortList ) > 1 and
                  !is_array( $sortList[0] ) )
             {
-                $sortList = array( $sortList );
+                $sortList = [$sortList];
             }
         }
         if ( $sortList !== false )
@@ -267,7 +204,7 @@ class eZCollaborationGroup extends eZPersistentObject
                 ORDER BY $sortingFields";
 
         $db = eZDB::instance();
-        $sqlParameters = array();
+        $sqlParameters = [];
         if ( $offset !== false and $limit !== false )
         {
             $sqlParameters['offset'] = $offset;
@@ -279,9 +216,9 @@ class eZCollaborationGroup extends eZPersistentObject
         return $returnGroupList;
     }
 
-    function itemCount( $parameters = array() )
+    function itemCount( $parameters = [] )
     {
-        $parameters = array_merge( array( 'as_object' => true ),
+        $parameters = array_merge( ['as_object' => true],
                                    $parameters );
         $asObject = $parameters['as_object'];
 

@@ -8,7 +8,7 @@
 
 $module = $Params['Module'];
 $http = eZHTTPTool::instance();
-$messages = array();
+$messages = [];
 
 if ( $http->hasPostVariable( "SaveOrderStatusButton" ) or
      $http->hasPostVariable( "AddOrderStatusButton" ) or
@@ -37,17 +37,17 @@ if ( $http->hasPostVariable( "AddOrderStatusButton" ) )
 {
     $orderStatus = eZOrderStatus::create();
     $orderStatus->storeCustom();
-    $messages[] = array( 'description' => ezpI18n::tr( 'kernel/shop', 'New order status was successfully added.' ) );
+    $messages[] = ['description' => ezpI18n::tr( 'kernel/shop', 'New order status was successfully added.' )];
 }
 
 if ( $http->hasPostVariable( "SaveOrderStatusButton" ) )
 {
-    $messages[] = array( 'description' => ezpI18n::tr( 'kernel/shop', 'Changes to order status were successfully stored.' ) );
+    $messages[] = ['description' => ezpI18n::tr( 'kernel/shop', 'Changes to order status were successfully stored.' )];
 }
 
 if ( $http->hasPostVariable( "RemoveOrderStatusButton" ) )
 {
-    $orderStatusIDList = array();
+    $orderStatusIDList = [];
     if ( $http->hasPostVariable( 'orderStatusIDList' ) )
         $orderStatusIDList = $http->postVariable( "orderStatusIDList" );
 
@@ -66,9 +66,9 @@ if ( $http->hasPostVariable( "RemoveOrderStatusButton" ) )
         $hasRemoved = true;
     }
     if ( $hasRemoved )
-        $messages[] = array( 'description' => ezpI18n::tr( 'kernel/shop', 'Selected order statuses were successfully removed.' ) );
+        $messages[] = ['description' => ezpI18n::tr( 'kernel/shop', 'Selected order statuses were successfully removed.' )];
     if ( $triedRemoveInternal )
-        $messages[] = array( 'description' => ezpI18n::tr( 'kernel/shop', 'Internal orders cannot be removed.' ) );
+        $messages[] = ['description' => ezpI18n::tr( 'kernel/shop', 'Internal orders cannot be removed.' )];
 }
 
 $orderStatusArray = eZOrderStatus::fetchList( true, true );
@@ -78,13 +78,11 @@ $tpl->setVariable( "orderstatus_array", $orderStatusArray );
 $tpl->setVariable( "module", $module );
 $tpl->setVariable( "messages", $messages );
 
-$path = array();
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' ),
-                 'url' => 'shop/orderlist' );
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop', 'Status' ),
-                 'url' => false );
+$path = [];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop', 'Order list' ), 'url' => 'shop/orderlist'];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop', 'Status' ), 'url' => false];
 
-$Result = array();
+$Result = [];
 $Result['path'] = $path;
 $Result['content'] = $tpl->fetch( "design:shop/status.tpl" );
 

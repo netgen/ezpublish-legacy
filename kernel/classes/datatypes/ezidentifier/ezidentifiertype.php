@@ -17,22 +17,22 @@
 
 class eZIdentifierType extends eZDataType
 {
-    const PRETEXT_FIELD = "data_text1";
-    const PRETEXT_VARIABLE = "_ezidentifier_pretext_value_";
+    final public const PRETEXT_FIELD = "data_text1";
+    final public const PRETEXT_VARIABLE = "_ezidentifier_pretext_value_";
 
-    const POSTTEXT_FIELD = "data_text2";
-    const POSTTEXT_VARIABLE = "_ezidentifier_posttext_value_";
+    final public const POSTTEXT_FIELD = "data_text2";
+    final public const POSTTEXT_VARIABLE = "_ezidentifier_posttext_value_";
 
-    const START_VALUE_FIELD = "data_int1";
-    const START_VALUE_VARIABLE = "_ezidentifier_start_integer_value_";
+    final public const START_VALUE_FIELD = "data_int1";
+    final public const START_VALUE_VARIABLE = "_ezidentifier_start_integer_value_";
 
-    const DIGITS_FIELD = "data_int2";
-    const DIGITS_VARIABLE = "_ezidentifier_digits_integer_value_";
+    final public const DIGITS_FIELD = "data_int2";
+    final public const DIGITS_VARIABLE = "_ezidentifier_digits_integer_value_";
 
-    const IDENTIFIER_FIELD = "data_int3";
-    const IDENTIFIER_VARIABLE = "_ezidentifier_identifier_value_";
+    final public const IDENTIFIER_FIELD = "data_int3";
+    final public const IDENTIFIER_VARIABLE = "_ezidentifier_identifier_value_";
 
-    const DATA_TYPE_STRING = "ezidentifier";
+    final public const DATA_TYPE_STRING = "ezidentifier";
 
     /**
      * Constructor
@@ -41,9 +41,7 @@ class eZIdentifierType extends eZDataType
     {
         parent::__construct( self::DATA_TYPE_STRING,
                            ezpI18n::tr( 'kernel/classes/datatypes', "Identifier", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_text' => 'identifier',
-                                                                   'data_int' => 'number' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_text' => 'identifier', 'data_int' => 'number']] );
         $this->IntegerValidator = new eZIntegerValidator( 1 );
     }
 
@@ -73,10 +71,10 @@ class eZIdentifierType extends eZDataType
     function objectAttributeContent( $contentObjectAttribute )
     {
         $content = $contentObjectAttribute->attribute( "data_text" );
-        if ( trim( $content ) == '' )
+        if ( trim( (string) $content ) == '' )
         {
             $contentClassAttribute = $contentObjectAttribute->contentClassAttribute();
-            $content = eZIdentifierType::generateIdentifierString( $contentClassAttribute, false );
+            $content = (new eZIdentifierType())->generateIdentifierString($contentClassAttribute, false);
         }
         return $content;
     }
@@ -97,7 +95,7 @@ class eZIdentifierType extends eZDataType
     function hasObjectAttributeContent( $contentObjectAttribute )
     {
         $content = $contentObjectAttribute->attribute( "data_text" );
-        return ( trim( $content ) != '' );
+        return ( trim( (string) $content ) != '' );
     }
 
     function initializeClassAttribute( $classAttribute )
@@ -124,8 +122,8 @@ class eZIdentifierType extends eZDataType
         if ( $http->hasPostVariable( $startValueName ) and
              $http->hasPostVariable( $digitsName ) )
         {
-            $startValueValue = str_replace( " ", "", $http->postVariable( $startValueName ) );
-            $digitsValue = str_replace( " ", "", $http->postVariable( $digitsName ) );
+            $startValueValue = str_replace( " ", "", (string) $http->postVariable( $startValueName ) );
+            $digitsValue = str_replace( " ", "", (string) $http->postVariable( $digitsName ) );
 
             $startValueValueState = $this->IntegerValidator->validate( $startValueValue );
             $digitsValueState = $this->IntegerValidator->validate( $digitsValue );
@@ -152,13 +150,13 @@ class eZIdentifierType extends eZDataType
              $http->hasPostVariable( $preTextName ) and
              $http->hasPostVariable( $postTextName ) )
         {
-            $startValueValue = str_replace( " ", "", $http->postVariable( $startValueName ) );
+            $startValueValue = str_replace( " ", "", (string) $http->postVariable( $startValueName ) );
             $startValueValue = ( int ) $startValueValue;
             if ( $startValueValue < 1 )
             {
                 $startValueValue = 1;
             }
-            $digitsValue = str_replace( " ", "", $http->postVariable( $digitsName ) );
+            $digitsValue = str_replace( " ", "", (string) $http->postVariable( $digitsName ) );
             $digitsValue = ( int ) $digitsValue;
             if ( $digitsValue < 1 )
             {
@@ -223,7 +221,7 @@ class eZIdentifierType extends eZDataType
             // If this is not a copy we need to see if a unique ID must be
             // assigned. This is handled in assignValue().
             $contentClassAttribute = $contentObjectAttribute->attribute( 'contentclass_attribute' );
-            $ret = eZIdentifierType::assignValue( $contentClassAttribute, $contentObjectAttribute );
+            $ret = (new eZIdentifierType())->assignValue($contentClassAttribute, $contentObjectAttribute);
         }
     }
 
@@ -234,7 +232,7 @@ class eZIdentifierType extends eZDataType
     function onPublish( $contentObjectAttribute, $contentObject, $publishedNodes )
     {
         $contentClassAttribute = $contentObjectAttribute->attribute( 'contentclass_attribute' );
-        $ret = eZIdentifierType::assignValue( $contentClassAttribute, $contentObjectAttribute );
+        $ret = (new eZIdentifierType())->assignValue($contentClassAttribute, $contentObjectAttribute);
 
         return $ret;
     }
@@ -247,7 +245,7 @@ class eZIdentifierType extends eZDataType
     {
 
         $retValue = false;
-        $ret = array();
+        $ret = [];
         $version = $contentObjectAttribute->attribute( 'version' );
         $contentClassAttributeID = $contentClassAttribute->attribute( 'id' );
         $objectID = (int)$contentObjectAttribute->attribute( 'contentobject_id' );
@@ -264,14 +262,14 @@ class eZIdentifierType extends eZDataType
         if ( count( $existingIDs ) > 0 )
         {
             $identifierValue = $existingIDs[0]['data_int'];
-            $ret[] = eZIdentifierType::storeIdentifierValue( $contentClassAttribute, $contentObjectAttribute, $identifierValue );
+            $ret[] = (new eZIdentifierType())->storeIdentifierValue($contentClassAttribute, $contentObjectAttribute, $identifierValue);
         }
         else
         {
             $db->begin();
 
             // Ensure that we don't get another identifier with the same id, so lock ezcontentclass_attribute
-            $db->lock( array( array( 'table' => 'ezcontentclass_attribute' ) ) );
+            $db->lock( [['table' => 'ezcontentclass_attribute']] );
 
             $selectQuery = "SELECT data_int3 FROM ezcontentclass_attribute WHERE " .
                  "id=$contentClassAttributeID AND version=0";
@@ -287,7 +285,7 @@ class eZIdentifierType extends eZDataType
             $db->unlock();
             // unlock before we start to update the ezcontentobject_attribute table
 
-            $ret[] = eZIdentifierType::storeIdentifierValue( $contentClassAttribute, $contentObjectAttribute, $identifierValue );
+            $ret[] = (new eZIdentifierType())->storeIdentifierValue($contentClassAttribute, $contentObjectAttribute, $identifierValue);
 
             if ( !in_array( false, $ret ) )
             {
@@ -335,7 +333,7 @@ class eZIdentifierType extends eZDataType
     */
     function storeIdentifierValue( $contentClassAttribute, $contentObjectAttribute, $identifierValue )
     {
-        $value = eZIdentifierType::generateIdentifierString( $contentClassAttribute, $identifierValue );
+        $value = (new eZIdentifierType())->generateIdentifierString($contentClassAttribute, $identifierValue);
         $contentObjectAttribute->setAttribute( 'data_text', $value );
         $contentObjectAttribute->setAttribute( 'data_int', $identifierValue );
         return true;
@@ -348,7 +346,7 @@ class eZIdentifierType extends eZDataType
         $digits = $contentClassAttribute->attribute( self::DIGITS_FIELD );
 
         if ( $identifierValue !== false )
-            $midText = str_pad( $identifierValue, $digits, '0', STR_PAD_LEFT );
+            $midText = str_pad( (string) $identifierValue, $digits, '0', STR_PAD_LEFT );
         else
             $midText = str_repeat( 'x', $digits );
 

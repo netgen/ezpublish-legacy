@@ -18,43 +18,43 @@
  */
 class eZDBInterface
 {
-    const BINDING_NO = 0;
-    const BINDING_NAME = 1;
-    const BINDING_ORDERED = 2;
+    public const BINDING_NO = 0;
+    public const BINDING_NAME = 1;
+    public const BINDING_ORDERED = 2;
 
-    const RELATION_TABLE = 0;
-    const RELATION_SEQUENCE = 1;
-    const RELATION_TRIGGER = 2;
-    const RELATION_VIEW = 3;
-    const RELATION_INDEX = 4;
+    public const RELATION_TABLE = 0;
+    public const RELATION_SEQUENCE = 1;
+    public const RELATION_TRIGGER = 2;
+    public const RELATION_VIEW = 3;
+    public const RELATION_INDEX = 4;
 
-    const RELATION_TABLE_BIT = 1;
-    const RELATION_SEQUENCE_BIT = 2;
-    const RELATION_TRIGGER_BIT = 4;
-    const RELATION_VIEW_BIT = 8;
-    const RELATION_INDEX_BIT = 16;
+    public const RELATION_TABLE_BIT = 1;
+    public const RELATION_SEQUENCE_BIT = 2;
+    public const RELATION_TRIGGER_BIT = 4;
+    public const RELATION_VIEW_BIT = 8;
+    public const RELATION_INDEX_BIT = 16;
 
-    const RELATION_NONE = 0;
-    const RELATION_MASK = 31;
+    public const RELATION_NONE = 0;
+    public const RELATION_MASK = 31;
 
-    const ERROR_MISSING_EXTENSION = 1;
+    public const ERROR_MISSING_EXTENSION = 1;
 
-    const SERVER_MASTER = 1;
-    const SERVER_SLAVE = 2;
+    public const SERVER_MASTER = 1;
+    public const SERVER_SLAVE = 2;
 
     /**
      * Maximal value for int columns
      *
      * @var int
      */
-    const MAX_INT = 2147483647;
+    public const MAX_INT = 2_147_483_647;
 
     /**
      * Minimal value for int columns
      *
      * @var int
      */
-    const MIN_INT = -2147483648;
+    public const MIN_INT = -2_147_483_648;
 
     /**
      * Creates a new eZDBInterface object and connects to the database backend.
@@ -139,7 +139,7 @@ class eZDBInterface
         if ( $ini->variable( "DatabaseSettings", "DebugTransactions" ) == "enabled" )
         {
             // Setting it to an array turns on the debugging
-            $this->TransactionStackTree = array();
+            $this->TransactionStackTree = [];
         }
 
         $this->QueryAnalysisOutput = false;
@@ -155,21 +155,7 @@ class eZDBInterface
         $this->TimeTaken = false;
 
         $this->AttributeVariableMap =
-        array(
-            'database_name' => 'DB',
-            'database_server' => 'Server',
-            'database_port' => 'Port',
-            'database_socket_path' => 'SocketPath',
-            'database_user' => 'User',
-            'use_slave_server' => 'UseSlaveServer',
-            'slave_database_name' => 'SlaveDB',
-            'slave_database_server' => 'SlaveServer',
-            'slave_database_port' => 'SlavePort',
-            'slave_database_user' => 'SlaveUser',
-            'charset' => 'Charset',
-            'is_internal_charset' => 'IsInternalCharset',
-            'use_builting_encoding' => 'UseBuiltinEncoding',
-            'retry_count' => 'ConnectRetries' );
+        ['database_name' => 'DB', 'database_server' => 'Server', 'database_port' => 'Port', 'database_socket_path' => 'SocketPath', 'database_user' => 'User', 'use_slave_server' => 'UseSlaveServer', 'slave_database_name' => 'SlaveDB', 'slave_database_server' => 'SlaveServer', 'slave_database_port' => 'SlavePort', 'slave_database_user' => 'SlaveUser', 'charset' => 'Charset', 'is_internal_charset' => 'IsInternalCharset', 'use_builting_encoding' => 'UseBuiltinEncoding', 'retry_count' => 'ConnectRetries'];
     }
 
     /**
@@ -242,36 +228,30 @@ class eZDBInterface
     function prepareSqlQuery( &$fd, &$buffer )
     {
 
-        $sqlQueryArray = array();
-        while( count( $sqlQueryArray ) == 0 && !feof( $fd ) )
+        $sqlQueryArray = [];
+        while( (is_countable($sqlQueryArray) ? count( $sqlQueryArray ) : 0) == 0 && !feof( $fd ) )
         {
             $buffer  .= fread( $fd, 4096 );
             if ( $buffer )
             {
                 // Fix SQL file by deleting all comments and newlines
                 // eZDebug::writeDebug( $buffer, "read data" );
-                $sqlQuery = preg_replace( array( "/^#.*\n" . "/m",
-                                                 "#^/\*.*\*/\n" . "#m",
-                                                 "/^--.*\n" . "/m",
-                                                 "/\n|\r\n|\r/m" ),
-                                          array( "",
-                                                 "",
-                                                 "",
-                                                 "\n" ),
+                $sqlQuery = preg_replace( ["/^#.*\n" . "/m", "#^/\*.*\*/\n" . "#m", "/^--.*\n" . "/m", "/\n|\r\n|\r/m"],
+                                          ["", "", "", "\n"],
                                           $buffer );
 //            eZDebug::writeDebug( $sqlQuery, "read data" );
 
                 // Split the query into an array
                 $sqlQueryArray = preg_split( "/;\n/m", $sqlQuery );
 
-                if ( preg_match( '/;\n/m', $sqlQueryArray[ count( $sqlQueryArray ) -1 ] ) )
+                if ( preg_match( '/;\n/m', $sqlQueryArray[ (is_countable($sqlQueryArray) ? count( $sqlQueryArray ) : 0) -1 ] ) )
                 {
                     $buffer = '';
                 }
                 else
                 {
-                    $buffer = $sqlQueryArray[ count( $sqlQueryArray ) -1 ];
-                    array_splice( $sqlQueryArray, count( $sqlQueryArray ) -1 , 1 );
+                    $buffer = $sqlQueryArray[ (is_countable($sqlQueryArray) ? count( $sqlQueryArray ) : 0) -1 ];
+                    array_splice( $sqlQueryArray, (is_countable($sqlQueryArray) ? count( $sqlQueryArray ) : 0) -1 , 1 );
                 }
             }
             else
@@ -296,9 +276,9 @@ class eZDBInterface
         $type = $this->databaseName();
 
         if ( $usePathType )
-            $sqlFileName = eZDir::path( array( $path, $type, $sqlFile ) );
+            $sqlFileName = eZDir::path( [$path, $type, $sqlFile] );
         else
-            $sqlFileName = eZDir::path( array( $path, $sqlFile ) );
+            $sqlFileName = eZDir::path( [$path, $sqlFile] );
         if ( !file_exists( $sqlFileName ) )
         {
             eZDebug::writeError( "File not found: $sqlFileName", __METHOD__ );
@@ -317,7 +297,7 @@ class eZDBInterface
                 $done = true;
                 foreach( $sqlArray as $singleQuery )
                 {
-                    $singleQuery = preg_replace( "/\n|\r\n|\r/", " ", $singleQuery );
+                    $singleQuery = preg_replace( "/\n|\r\n|\r/", " ", (string) $singleQuery );
                     if ( preg_match( "#^ */(.+)$#", $singleQuery, $matches ) )
                     {
                         $singleQuery = $matches[1];
@@ -496,7 +476,7 @@ class eZDBInterface
      */
     function supportedRelationTypes()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -518,7 +498,7 @@ class eZDBInterface
      * @param array $strings
      * @return string
      */
-    function concatString( $strings = array() )
+    function concatString( $strings = [] )
     {
         return '';
     }
@@ -642,11 +622,9 @@ class eZDBInterface
     /**
      * Binds variable.
      *
-     * @param mixed $value
-     * @param mixed $fieldDef
      * @return mixed
      */
-    function bindVariable( $value, $fieldDef = false )
+    function bindVariable( mixed $value, mixed $fieldDef = false )
     {
     }
 
@@ -678,7 +656,7 @@ class eZDBInterface
      * @param int|bool $server Which server to execute the query on, either eZDBInterface::SERVER_MASTER or eZDBInterface::SERVER_SLAVE
      * @return array
      */
-    function arrayQuery( $sql, $params = array(), $server = false )
+    function arrayQuery( $sql, $params = [], $server = false )
     {
     }
 
@@ -721,12 +699,10 @@ class eZDBInterface
                     $subLevels =& $this->TransactionStackTree['sub_levels'];
                     for ( $i = 1; $i < $this->TransactionCounter; ++$i )
                     {
-                        $subLevels =& $subLevels[count( $subLevels ) - 1]['sub_levels'];
+                        $subLevels =& $subLevels[(is_countable($subLevels) ? count( $subLevels ) : 0) - 1]['sub_levels'];
                     }
                     // Next entry will be at the end
-                    $subLevels[count( $subLevels )] = array( 'level' => $this->TransactionCounter,
-                                                             'trace' => $bt,
-                                                             'sub_levels' => array() );
+                    $subLevels[is_countable($subLevels) ? count( $subLevels ) : 0] = ['level' => $this->TransactionCounter, 'trace' => $bt, 'sub_levels' => []];
                 }
                 ++$this->TransactionCounter;
                 return false;
@@ -737,9 +713,7 @@ class eZDBInterface
                 {
                     // Start new stack tree for debugging
                     $bt = debug_backtrace();
-                    $this->TransactionStackTree = array( 'level' => $this->TransactionCounter,
-                                                         'trace' => $bt,
-                                                         'sub_levels' => array() );
+                    $this->TransactionStackTree = ['level' => $this->TransactionCounter, 'trace' => $bt, 'sub_levels' => []];
                 }
             }
             $this->TransactionIsValid = true;
@@ -799,7 +773,7 @@ class eZDBInterface
                 if ( is_array( $this->TransactionStackTree ) )
                 {
                     // Reset the stack debug tree since the top commit was done
-                    $this->TransactionStackTree = array();
+                    $this->TransactionStackTree = [];
                 }
                 if ( $this->isConnected() )
                 {
@@ -834,10 +808,10 @@ class eZDBInterface
                     $subLevels =& $this->TransactionStackTree['sub_levels'];
                     for ( $i = 1; $i < $this->TransactionCounter; ++$i )
                     {
-                        $subLevels =& $subLevels[count( $subLevels ) - 1]['sub_levels'];
+                        $subLevels =& $subLevels[(is_countable($subLevels) ? count( $subLevels ) : 0) - 1]['sub_levels'];
                     }
                     // Find last entry and add the commit trace
-                    $subLevels[count( $subLevels ) - 1]['commit_trace'] = $bt;
+                    $subLevels[(is_countable($subLevels) ? count( $subLevels ) : 0) - 1]['commit_trace'] = $bt;
                 }
             }
         }
@@ -866,7 +840,7 @@ class eZDBInterface
         if ( is_array( $this->TransactionStackTree ) )
         {
             // All transactions were rollbacked, reset the tree.
-            $this->TransactionStackTree = array();
+            $this->TransactionStackTree = [];
         }
         $ini = eZINI::instance();
         if ($ini->variable( "DatabaseSettings", "Transactions" ) == "enabled")
@@ -926,7 +900,7 @@ class eZDBInterface
         }
         $stackText .= $indent . "Level " . $stack['level'] . "\n" . $indent . "{" . $indent . "\n";
         $stackText .= $indent . "  Began at:\n";
-        for ( $i = 0; $i < 2 && $i < count( $stack['trace'] ); ++$i )
+        for ( $i = 0; $i < 2 && $i < (is_countable($stack['trace']) ? count( $stack['trace'] ) : 0); ++$i )
         {
             $indent2 = str_repeat( "  ", $i + 1 );
             if ( $i > 0 )
@@ -943,7 +917,7 @@ class eZDBInterface
         if ( isset( $stack['commit_trace'] ) )
         {
             $stackText .= $indent . "  And commited at:\n";
-            for ( $i = 0; $i < 2 && $i < count( $stack['commit_trace'] ); ++$i )
+            for ( $i = 0; $i < 2 && $i < (is_countable($stack['commit_trace']) ? count( $stack['commit_trace'] ) : 0); ++$i )
             {
                 $indent2 = str_repeat( "  ", $i + 1 );
                 if ( $i > 0 )
@@ -1048,7 +1022,7 @@ class eZDBInterface
             $this->invalidateTransaction();
 
             // This is the unique ID for this incidence which will also be placed in the error logs.
-            $transID = 'TRANSID-' . md5( time() . mt_rand() );
+            $transID = 'TRANSID-' . md5( time() . random_int(0, mt_getrandmax()) );
 
             eZDebug::writeError( 'Transaction in progress failed due to DB error, transaction was rollbacked. Transaction ID is ' . $transID . '.', 'eZDBInterface::commit ' . $transID );
 
@@ -1075,8 +1049,8 @@ class eZDBInterface
                     {
                         header("HTTP/1.1 500 Internal Server Error");
                     }
-                    $site = htmlentities(eZSys::serverVariable( 'HTTP_HOST' ), ENT_QUOTES);
-                    $uri = htmlentities(eZSys::serverVariable( 'REQUEST_URI' ), ENT_QUOTES);
+                    $site = htmlentities((string) eZSys::serverVariable( 'HTTP_HOST' ), ENT_QUOTES);
+                    $uri = htmlentities((string) eZSys::serverVariable( 'REQUEST_URI' ), ENT_QUOTES);
 
                     print( "<div class=\"fatal-error\" style=\"" );
                     print( 'margin: 0.5em 0 1em 0; ' .
@@ -1109,7 +1083,7 @@ class eZDBInterface
                            "Please include the transaction ID and the name of the current script when contacting the system administrator.\n" );
                     fputs( STDERR, "\n" );
 
-                    fputs( STDERR, eZDebug::printReport( false, false, true ) );
+                    fputs( STDERR, (string) eZDebug::printReport( false, false, true ) );
                 }
 
                 // PHP execution stops here
@@ -1205,11 +1179,7 @@ class eZDBInterface
      */
     function relationName( $relationType )
     {
-        $names = array( eZDBInterface::RELATION_TABLE => 'TABLE',
-                        eZDBInterface::RELATION_SEQUENCE => 'SEQUENCE',
-                        eZDBInterface::RELATION_TRIGGER => 'TRIGGER',
-                        eZDBInterface::RELATION_VIEW => 'VIEW',
-                        eZDBInterface::RELATION_INDEX => 'INDEX' );
+        $names = [eZDBInterface::RELATION_TABLE => 'TABLE', eZDBInterface::RELATION_SEQUENCE => 'SEQUENCE', eZDBInterface::RELATION_TRIGGER => 'TRIGGER', eZDBInterface::RELATION_VIEW => 'VIEW', eZDBInterface::RELATION_INDEX => 'INDEX'];
         if ( !isset( $names[$relationType] ) )
             return false;
         return $names[$relationType];
@@ -1422,7 +1392,7 @@ class eZDBInterface
         $tableList = array_keys( $this->eZTableList( $server ) );
         if ( $randomizeIndex === false )
         {
-            $randomizeIndex = mt_rand( 10, 1000 );
+            $randomizeIndex = random_int( 10, 1000 );
         }
         do
         {
@@ -1485,7 +1455,7 @@ class eZDBInterface
 
         if ( !is_array( $elements ) )
         {
-            $elements = array( $elements );
+            $elements = [$elements];
         }
 
         $impString = $type ? $this->implodeWithTypeCast( ', ', $elements, $type ) : implode( ', ', $elements );
@@ -1536,14 +1506,14 @@ class eZDBInterface
      */
     public function truncateString( $string, $maxLength, $fieldName, $truncationSuffix = '' )
     {
-        if ( mb_strlen( $string, "utf-8" ) <= $maxLength )
+        if ( mb_strlen( (string) $string, "utf-8" ) <= $maxLength )
         {
             return $string;
         }
 
         eZDebug::writeDebug( $string, "truncation of $fieldName to max_length=". $maxLength );
 
-        return mb_substr(  $string , 0, $maxLength - mb_strlen( $truncationSuffix, "utf-8" ), "utf-8" );
+        return mb_substr(  (string) $string , 0, $maxLength - mb_strlen( (string) $truncationSuffix, "utf-8" ), "utf-8" );
     }
 
     /**

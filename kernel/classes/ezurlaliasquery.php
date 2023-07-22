@@ -102,21 +102,11 @@ class eZURLAliasQuery
 
     function attribute( $name )
     {
-        switch ( $name )
-        {
-            case 'count':
-            {
-                return $this->count();
-            } break;
-            case 'items':
-            {
-                return $this->fetchAll();
-            } break;
-            default:
-            {
-                return $this->$name;
-            } break;
-        }
+        return match ($name) {
+            'count' => $this->count(),
+            'items' => $this->fetchAll(),
+            default => $this->$name,
+        };
     }
 
     function setAttribute( $name, $value )
@@ -180,14 +170,13 @@ class eZURLAliasQuery
             $this->query = $this->generateSQL();
         }
         if ( $this->query === false )
-            return array();
+            return [];
         $query = "SELECT * {$this->query} ORDER BY {$this->order}";
-        $params = array( 'offset' => $this->offset,
-                         'limit'  => $this->limit );
+        $params = ['offset' => $this->offset, 'limit'  => $this->limit];
         $db = eZDB::instance();
         $rows = $db->arrayQuery( $query, $params );
         if ( count( $rows ) == 0 )
-            $this->items = array();
+            $this->items = [];
         else
             $this->items = eZURLAliasQuery::makeList( $rows );
         return $this->items;
@@ -199,7 +188,8 @@ class eZURLAliasQuery
      */
     protected function generateSQL()
     {
-        if ( !in_array( $this->type, array( 'name', 'alias', 'all' ) ) )
+        $conds = [];
+        if ( !in_array( $this->type, ['name', 'alias', 'all'] ) )
         {
             eZDebug::writeError( "Parameter \$type must be one of name, alias or all. The value which was used was '{$this->type}'." );
             return null;
@@ -208,7 +198,7 @@ class eZURLAliasQuery
         $db = eZDB::instance();
         if ( $this->languages === true )
         {
-            $langMask = trim( eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
+            $langMask = trim( (string) eZContentLanguage::languagesSQLFilter( 'ezurlalias_ml', 'lang_mask' ) );
             $conds[] = "($langMask)";
         }
 
@@ -225,10 +215,10 @@ class eZURLAliasQuery
         if ( $this->actions !== null )
         {
             // Check for conditions which will return no rows.
-            if ( count( $this->actions ) == 0 )
+            if ( (is_countable($this->actions) ? count( $this->actions ) : 0) == 0 )
                 return false;
 
-            if ( count( $this->actions ) == 1 )
+            if ( (is_countable($this->actions) ? count( $this->actions ) : 0) == 1 )
             {
                 $action = $this->actions[0];
                 $actionStr = $db->escapeString( $action );
@@ -236,7 +226,7 @@ class eZURLAliasQuery
             }
             else
             {
-                $actions = array();
+                $actions = [];
                 foreach ( $this->actions as $action )
                 {
                     $actions[] = "'" . $db->escapeString( $action ) . "'";
@@ -254,7 +244,7 @@ class eZURLAliasQuery
             if ( $actionTypes == null )
             {
                 $rows = $db->arrayQuery( "SELECT DISTINCT action_type FROM ezurlalias_ml" );
-                $actionTypes = array();
+                $actionTypes = [];
                 foreach ( $rows as $row )
                 {
                     $actionTypes[] = $row['action_type'];
@@ -265,10 +255,10 @@ class eZURLAliasQuery
         if ( $actionTypes !== null )
         {
             // Check for conditions which will return no rows.
-            if ( count( $actionTypes ) == 0 )
+            if ( (is_countable($actionTypes) ? count( $actionTypes ) : 0) == 0 )
                 return false;
 
-            if ( count( $actionTypes ) == 1 )
+            if ( (is_countable($actionTypes) ? count( $actionTypes ) : 0) == 1 )
             {
                 $action = $actionTypes[0];
                 $actionStr = $db->escapeString( $action );
@@ -276,7 +266,7 @@ class eZURLAliasQuery
             }
             else
             {
-                $actions = array();
+                $actions = [];
                 foreach ( $actionTypes as $action )
                 {
                     $actions[] = "'" . $db->escapeString( $action ) . "'";
@@ -309,8 +299,8 @@ class eZURLAliasQuery
     static public function makeList( $rows )
     {
         if ( !is_array( $rows ) || count( $rows ) == 0 )
-            return array();
-        $list = array();
+            return [];
+        $list = [];
         $maxNumberOfLanguages = eZContentLanguage::maxCount();
         foreach ( $rows as $row )
         {

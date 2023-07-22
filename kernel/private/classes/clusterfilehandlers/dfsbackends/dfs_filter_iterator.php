@@ -14,14 +14,11 @@
 class eZDFSFileHandlerDFSBackendFilterIterator extends FilterIterator
 {
     /**
-     * @var string
+     * @param string $prefix
      */
-    private $prefix;
-
-    public function __construct( Iterator $iterator, $prefix )
+    public function __construct( Iterator $iterator, private $prefix )
     {
         parent::__construct( $iterator );
-        $this->prefix = $prefix;
     }
 
     /**

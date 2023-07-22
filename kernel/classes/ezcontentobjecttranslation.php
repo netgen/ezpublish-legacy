@@ -21,15 +21,15 @@ class eZContentObjectTranslation
     /**
      * Constructor
      *
-     * @param int $contentObjectID
-     * @param int $version
-     * @param string $languageCode
+     * @param int $ContentObjectID
+     * @param int $Version
+     * @param string $LanguageCode
      */
-    public function __construct( $contentObjectID, $version, $languageCode )
+    public function __construct( /// The content object identifier
+    public $ContentObjectID, /// Contains the content object
+    public $Version, /// Contains the language code for the current translation
+    public $LanguageCode )
     {
-        $this->ContentObjectID = $contentObjectID;
-        $this->Version = $version;
-        $this->LanguageCode = $languageCode;
         $this->Locale = null;
     }
 
@@ -40,10 +40,7 @@ class eZContentObjectTranslation
 
     function attributes()
     {
-        return array( 'contentobject_id',
-                      'version',
-                      'language_code',
-                      'locale' );
+        return ['contentobject_id', 'version', 'language_code', 'locale'];
     }
 
     function hasAttribute( $attribute )
@@ -83,13 +80,5 @@ class eZContentObjectTranslation
     {
         return eZContentObjectVersion::fetchAttributes( $this->Version, $this->ContentObjectID, $this->LanguageCode, $asObject );
     }
-
-    /// The content object identifier
-    public $ContentObjectID;
-    /// Contains the content object
-    public $Version;
-
-    /// Contains the language code for the current translation
-    public $LanguageCode;
 }
 ?>

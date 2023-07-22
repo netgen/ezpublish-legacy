@@ -21,10 +21,10 @@ if ( $http->hasSessionVariable( 'eZPackageInstallerData' ) )
 }
 else
 {
-    $persistentData = array();
+    $persistentData = [];
     $persistentData['currentItem'] = $currentItem;
-    $persistentData['error'] = array();
-    $persistentData['error_default_actions'] = array();
+    $persistentData['error'] = [];
+    $persistentData['error_default_actions'] = [];
 }
 
 if ( !eZPackage::canUsePolicyFunction( 'install' ) )
@@ -37,7 +37,7 @@ if ( !$package )
 if ( $module->isCurrentAction( 'SkipPackage' ) )
 {
     $http->removeSessionVariable( 'eZPackageInstallerData' );
-    return $module->redirectToView( 'view', array( 'full', $package->attribute( 'name' ) ) );
+    return $module->redirectToView( 'view', ['full', $package->attribute( 'name' )] );
 }
 
 $tpl = eZTemplate::factory();
@@ -57,7 +57,7 @@ if ( $module->isCurrentAction( 'HandleError' ) )
             $errorCode = $persistentData['error']['error_code'];
             $itemType = $uninstallItems[$currentItem]['type'];
             if ( !isset( $persistentData['error_default_actions'][$itemType] ) )
-                $persistentData['error_default_actions'][$itemType] = array();
+                $persistentData['error_default_actions'][$itemType] = [];
             $persistentData['error_default_actions'][$itemType][$errorCode] = $choosenAction;
         }
     }
@@ -74,7 +74,7 @@ elseif ( $module->isCurrentAction( 'UninstallPackage' ) )
 }
 else
 {
-    $uninstallElements = array();
+    $uninstallElements = [];
     foreach ( $uninstallItems as $uninstallItem )
     {
         $handler = eZPackage::packageHandler( $uninstallItem['type'] );
@@ -110,7 +110,7 @@ if ( $doItemInstall )
         }
         else
         {
-            $persistentData['error'] = array();
+            $persistentData['error'] = [];
             $currentItem++;
         }
     }
@@ -120,7 +120,7 @@ if ( $currentItem >= count( $uninstallItems ) )
 {
     $package->setInstalled( false );
     $http->removeSessionVariable( 'eZPackageInstallerData' );
-    return $module->redirectToView( 'view', array( 'full', $package->attribute( 'name' ) ) );
+    return $module->redirectToView( 'view', ['full', $package->attribute( 'name' )] );
 }
 
 $persistentData['currentItem'] = $currentItem;
@@ -128,11 +128,8 @@ $http->setSessionVariable( 'eZPackageInstallerData', $persistentData );
 $tpl->setVariable( 'persistent_data', $persistentData );
 $tpl->setVariable( 'package', $package );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( $templateName );
-$Result['path'] = array( array( 'url' => 'package/list',
-                                'text' => ezpI18n::tr( 'kernel/package', 'Packages' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/package', 'Uninstall' ) ) );
+$Result['path'] = [['url' => 'package/list', 'text' => ezpI18n::tr( 'kernel/package', 'Packages' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/package', 'Uninstall' )]];
 
 ?>

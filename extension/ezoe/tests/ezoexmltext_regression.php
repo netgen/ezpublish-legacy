@@ -25,23 +25,10 @@ class eZOEXMLTextRegression extends ezpDatabaseTestCase
 
     public function providerParsingGreaterThanAttribute()
     {
-        return array(
-            array(
-                '<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|This > is > a > fact > attribute_separationalign|right"><p>This is a fact</p></div>',
-                '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="This &gt; is &gt; a &gt; fact &gt; "><paragraph>This is a fact</paragraph></custom></paragraph></section>',
-            ),
-            array(
-                '<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div>',
-                '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph></section>',
-            ),
-            array(
-                '<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div><p>Text between</p><div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div>',
-                '<?xml version="1.0" encoding="utf-8"?>
-<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph><paragraph>Text between</paragraph><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph></section>',
-            ),
-        );
+        return [['<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|This > is > a > fact > attribute_separationalign|right"><p>This is a fact</p></div>', '<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="This &gt; is &gt; a &gt; fact &gt; "><paragraph>This is a fact</paragraph></custom></paragraph></section>'], ['<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div>', '<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph></section>'], ['<div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div><p>Text between</p><div type="custom" class="ezoeItemCustomTag factbox" customattributes="title|<a href=&quot;#test&quot;>Test</a>attribute_separationalign|right"><p>This is a fact</p></div>', '<?xml version="1.0" encoding="utf-8"?>
+<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph><paragraph>Text between</paragraph><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><custom name="factbox" custom:title="&lt;a href=&quot;#test&quot;&gt;Test&lt;/a&gt;"><paragraph>This is a fact</paragraph></custom></paragraph></section>']];
     }
 
     /**
@@ -297,11 +284,11 @@ class eZOEXMLTextRegression extends ezpDatabaseTestCase
     {
         ezpINIHelper::setINISetting(
             'content.ini', 'CustomTagSettings',
-            'AvailableCustomTags', array( 'underline' )
+            'AvailableCustomTags', ['underline']
         );
         ezpINIHelper::setINISetting(
             'content.ini', 'CustomTagSettings',
-            'IsInline', array( 'underline' => 'true' )
+            'IsInline', ['underline' => 'true']
         );
         unset( $GLOBALS["eZXMLSchemaGlobalInstance"] );
 
@@ -331,11 +318,11 @@ class eZOEXMLTextRegression extends ezpDatabaseTestCase
     {
         ezpINIHelper::setINISetting(
             'content.ini', 'CustomTagSettings',
-            'AvailableCustomTags', array( 'underline' )
+            'AvailableCustomTags', ['underline']
         );
         ezpINIHelper::setINISetting(
             'content.ini', 'CustomTagSettings',
-            'IsInline', array( 'underline' => 'true' )
+            'IsInline', ['underline' => 'true']
         );
 
         $xmlData = '<?xml version="1.0" encoding="utf-8"?>';
@@ -375,32 +362,7 @@ class eZOEXMLTextRegression extends ezpDatabaseTestCase
 
     public function providerMixedCaseStyleToAttribute()
     {
-        return array(
-            array(
-                '<table style="width: 100%"><tr><td>1</td><td>2</td></tr></table>',
-                "//table[1]",
-                "width",
-                "100%"
-            ),
-            array(
-                '<table style="WIDTH: 100%"><tr><td>1</td><td>2</td></tr></table>',
-                "//table[1]",
-                "width",
-                "100%"
-            ),
-            array(
-                '<table style="width: 42px"><tr><td>1</td><td>2</td></tr></table>',
-                "//table[1]",
-                "width",
-                "42px"
-            ),
-            array(
-                '<table style="WIDTH: 42px"><tr><td>1</td><td>2</td></tr></table>',
-                "//table[1]",
-                "width",
-                "42px"
-            ),
-        );
+        return [['<table style="width: 100%"><tr><td>1</td><td>2</td></tr></table>', "//table[1]", "width", "100%"], ['<table style="WIDTH: 100%"><tr><td>1</td><td>2</td></tr></table>', "//table[1]", "width", "100%"], ['<table style="width: 42px"><tr><td>1</td><td>2</td></tr></table>', "//table[1]", "width", "42px"], ['<table style="WIDTH: 42px"><tr><td>1</td><td>2</td></tr></table>', "//table[1]", "width", "42px"]];
     }
 
 
@@ -423,29 +385,7 @@ class eZOEXMLTextRegression extends ezpDatabaseTestCase
 
     public function providerMixedCaseAttributes()
     {
-        return array(
-            array(
-                '<table><tr><td colSpan="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>',
-                "//td[1]",
-                "http://ez.no/namespaces/ezpublish3/xhtml/",
-                "colspan",
-                "2"
-            ),
-            array(
-                '<table><tr><td colspan="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>',
-                "//td[1]",
-                "http://ez.no/namespaces/ezpublish3/xhtml/",
-                "colspan",
-                "2"
-            ),
-            array(
-                '<table><tr><td COlSpAN="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>',
-                "//td[1]",
-                "http://ez.no/namespaces/ezpublish3/xhtml/",
-                "colspan",
-                "2"
-            )
-        );
+        return [['<table><tr><td colSpan="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>', "//td[1]", "http://ez.no/namespaces/ezpublish3/xhtml/", "colspan", "2"], ['<table><tr><td colspan="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>', "//td[1]", "http://ez.no/namespaces/ezpublish3/xhtml/", "colspan", "2"], ['<table><tr><td COlSpAN="2">Merged!</td></tr><td>1</td><td>2</td></tr></table>', "//td[1]", "http://ez.no/namespaces/ezpublish3/xhtml/", "colspan", "2"]];
     }
 }
 

@@ -22,10 +22,7 @@ class eZHTTPToolRegression extends ezpTestCase
         self::markTestSkipped( "Test disabled pending update." );
         $url = 'http://php-og.mgdm.net/';
 
-        $this->assertInternalType(
-            PHPUnit_Framework_Constraint_IsType::TYPE_STRING,
-            eZHTTPTool::sendHTTPRequest( $url, 80, false, 'eZ Publish', false )
-        );
+        static::assertInternalType(PHPUnit_Framework_Constraint_IsType::TYPE_STRING, eZHTTPTool::sendHTTPRequest( $url, 80, false, 'eZ Publish', false ));
     }
 
     /**
@@ -38,10 +35,10 @@ class eZHTTPToolRegression extends ezpTestCase
     public function test_createRedirectUrl()
     {
         $path = '/a/root/rel/ative';
-        self::assertEquals( 'http://example.com' . $path, eZHTTPTool::createRedirectUrl( $path, array() ) );
+        self::assertEquals( 'http://example.com' . $path, eZHTTPTool::createRedirectUrl( $path, [] ) );
 
         $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
-        self::assertEquals( 'https://example.com' . $path, eZHTTPTool::createRedirectUrl( $path, array() ) );
+        self::assertEquals( 'https://example.com' . $path, eZHTTPTool::createRedirectUrl( $path, [] ) );
         unset( $_SERVER['HTTP_X_FORWARDED_PROTO'] );
     }
 }

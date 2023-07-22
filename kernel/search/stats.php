@@ -8,12 +8,11 @@
 
 if ( eZPreferences::value( 'admin_search_stats_limit' ) )
 {
-    switch ( eZPreferences::value( 'admin_search_stats_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_search_stats_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -34,7 +33,7 @@ if ( $module->isCurrentAction( 'ResetSearchStats' ) )
     eZSearchLog::removeStatistics();
 }
 
-$viewParameters = array( 'offset' => $offset, 'limit'  => $limit );
+$viewParameters = ['offset' => $offset, 'limit'  => $limit];
 $tpl = eZTemplate::factory();
 
 $db = eZDB::instance();
@@ -47,9 +46,8 @@ $tpl->setVariable( "view_parameters", $viewParameters );
 $tpl->setVariable( "most_frequent_phrase_array", $mostFrequentPhraseArray );
 $tpl->setVariable( "search_list_count", $searchListCount[0]['count'] );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:search/stats.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/search', 'Search stats' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/search', 'Search stats' ), 'url' => false]];
 
 ?>

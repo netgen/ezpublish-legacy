@@ -19,8 +19,8 @@
 
 class eZMySQLiDB extends eZDBInterface
 {
-    const RELATION_FOREIGN_KEY = 5;
-    const RELATION_FOREIGN_KEY_BIT = 32;
+    final public const RELATION_FOREIGN_KEY = 5;
+    final public const RELATION_FOREIGN_KEY_BIT = 32;
 
     /**
      * Create a new eZMySQLiDB object and connects to the database backend.
@@ -35,9 +35,7 @@ class eZMySQLiDB extends eZDBInterface
         {
             if ( function_exists( 'eZAppendWarningItem' ) )
             {
-                eZAppendWarningItem( array( 'error' => array( 'type' => 'ezdb',
-                                                              'number' => eZDBInterface::ERROR_MISSING_EXTENSION ),
-                                            'text' => 'MySQLi extension was not found, the DB handler will not be initialized.' ) );
+                eZAppendWarningItem( ['error' => ['type' => 'ezdb', 'number' => eZDBInterface::ERROR_MISSING_EXTENSION], 'text' => 'MySQLi extension was not found, the DB handler will not be initialized.'] );
                 $this->IsConnected = false;
             }
             eZDebug::writeWarning( 'MySQLi extension was not found, the DB handler will not be initialized.', 'eZMySQLiDB' );
@@ -76,7 +74,7 @@ class eZMySQLiDB extends eZDBInterface
         }
 
         // Initialize TempTableList
-        $this->TempTableList = array();
+        $this->TempTableList = [];
     }
 
     /*!
@@ -105,7 +103,7 @@ class eZMySQLiDB extends eZDBInterface
         eZDebug::accumulatorStart( 'mysqli_connection', 'mysqli_total', 'Database connection' );
         try {
             $connection = mysqli_connect( $server, $user, $password, null, (int)$port, $socketPath );
-        } catch( ErrorException $e ) {}
+        } catch( ErrorException ) {}
         eZDebug::accumulatorStop( 'mysqli_connection' );
         eZDebug::setHandleType( $oldHandling );
 
@@ -120,7 +118,7 @@ class eZMySQLiDB extends eZDBInterface
             eZDebug::accumulatorStart( 'mysqli_connection', 'mysqli_total', 'Database connection' );
             try {
                 $connection = mysqli_connect( $server, $user, $password, null, (int)$port, $socketPath );
-            } catch( ErrorException $e ) {}
+            } catch( ErrorException ) {}
             eZDebug::accumulatorStop( 'mysqli_connection' );
             eZDebug::setHandleType( $oldHandling );
 
@@ -132,7 +130,7 @@ class eZMySQLiDB extends eZDBInterface
 
         if ( !$connection )
         {
-            eZDebug::writeError( "Connection error: Couldn't connect to database server. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", __CLASS__ );
+            eZDebug::writeError( "Connection error: Couldn't connect to database server. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", self::class );
             $this->IsConnected = false;
             throw new eZDBNoConnectionException( $server, $this->ErrorMessage, $this->ErrorNumber );
         }
@@ -143,7 +141,7 @@ class eZMySQLiDB extends eZDBInterface
             if ( !$ret )
             {
                 $this->setError( $connection );
-                eZDebug::writeError( "Connection error: Couldn't select the database. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", __CLASS__ );
+                eZDebug::writeError( "Connection error: Couldn't select the database. Please try again later or inform the system administrator.\n{$this->ErrorMessage}", self::class );
                 $this->IsConnected = false;
             }
         }
@@ -200,7 +198,7 @@ class eZMySQLiDB extends eZDBInterface
 
         if ( is_array( $charset ) )
         {
-            $realCharset = array();
+            $realCharset = [];
             foreach ( $charset as $charsetItem )
                 $realCharset[] = eZCharsetInfo::realCharsetCode( $charsetItem );
         }
@@ -217,7 +215,7 @@ class eZMySQLiDB extends eZDBInterface
     {
         $query = "SHOW CREATE DATABASE `{$this->DB}`";
         $status = mysqli_query( $this->DBConnection, $query );
-        $this->reportQuery( __CLASS__, $query, false, false );
+        $this->reportQuery( self::class, $query, false, false );
         if ( !$status )
         {
             $this->setError();
@@ -235,7 +233,7 @@ class eZMySQLiDB extends eZDBInterface
             if ( $tmpRow['Database'] == $this->DB )
             {
                 $createText = $tmpRow['Create Database'];
-                if ( preg_match( '#DEFAULT CHARACTER SET ([a-zA-Z0-9_-]+)#', $createText, $matches ) )
+                if ( preg_match( '#DEFAULT CHARACTER SET ([a-zA-Z0-9_-]+)#', (string) $createText, $matches ) )
                 {
                     $currentCharset = $matches[1];
                     $currentCharset = eZCharsetInfo::realCharsetCode( $currentCharset );
@@ -280,7 +278,7 @@ class eZMySQLiDB extends eZDBInterface
                 $this->startTimer();
             }
 
-            $sql = trim( $sql );
+            $sql = trim( (string) $sql );
 
             // Check if we need to use the master or slave server by default
             if ( $server === false )
@@ -301,7 +299,7 @@ class eZMySQLiDB extends eZDBInterface
                 if ( $analysisResult )
                 {
                     $numRows = mysqli_num_rows( $analysisResult );
-                    $rows = array();
+                    $rows = [];
                     if ( $numRows > 0 )
                     {
                         for ( $i = 0; $i < $numRows; ++$i )
@@ -309,7 +307,7 @@ class eZMySQLiDB extends eZDBInterface
                             if ( $this->InputTextCodec )
                             {
                                 $tmpRow = mysqli_fetch_array( $analysisResult, MYSQLI_ASSOC );
-                                $convRow = array();
+                                $convRow = [];
                                 foreach( $tmpRow as $key => $row )
                                 {
                                     $convRow[$key] = $this->OutputTextCodec->convertString( $row );
@@ -322,20 +320,19 @@ class eZMySQLiDB extends eZDBInterface
                     }
 
                     // Figure out all columns and their maximum display size
-                    $columns = array();
+                    $columns = [];
                     foreach ( $rows as $row )
                     {
                         foreach ( $row as $col => $data )
                         {
                             if ( !isset( $columns[$col] ) )
-                                $columns[$col] = array( 'name' => $col,
-                                                        'size' => strlen( $col ) );
-                            $columns[$col]['size'] = max( $columns[$col]['size'], strlen( $data ) );
+                                $columns[$col] = ['name' => $col, 'size' => strlen( $col )];
+                            $columns[$col]['size'] = max( $columns[$col]['size'], strlen( (string) $data ) );
                         }
                     }
 
-                    $delimiterLine = array();
-                    $colLine = array();
+                    $delimiterLine = [];
+                    $colLine = [];
                     // Generate the column line and the vertical delimiter
                     // The look of the table is taken from the MySQL CLI client
                     // It looks like this:
@@ -357,14 +354,14 @@ class eZMySQLiDB extends eZDBInterface
                     // Go trough all data and pad them to create the table correctly
                     foreach ( $rows as $row )
                     {
-                        $rowLine = array();
+                        $rowLine = [];
                         foreach ( $columns as $col )
                         {
                             $name = $col['name'];
                             $size = $col['size'];
-                            $data = isset( $row[$name] ) ? $row[$name] : '';
+                            $data = $row[$name] ?? '';
                             // Align numerical values to the right (ie. pad left)
-                            $rowLine[] = ' ' . str_pad( $data, $size, ' ',
+                            $rowLine[] = ' ' . str_pad( (string) $data, $size, ' ',
                                                         is_numeric( $data ) ? STR_PAD_LEFT : STR_PAD_RIGHT ) . ' ';
                         }
                         $analysisText .= '|' . join( '|', $rowLine ) . "|\n";
@@ -394,7 +391,7 @@ class eZMySQLiDB extends eZDBInterface
                     if ( $analysisText !== false )
                         $text = "EXPLAIN\n" . $text . "\n\nANALYSIS:\n" . $analysisText;
 
-                    $this->reportQuery( __CLASS__ . '[' . $connection->host_info . ( $server == eZDBInterface::SERVER_MASTER ? ', on master' : '' ) . ']', $text, $num_rows, $this->timeTaken() );
+                    $this->reportQuery( self::class . '[' . $connection->host_info . ( $server == eZDBInterface::SERVER_MASTER ? ', on master' : '' ) . ']', $text, $num_rows, $this->timeTaken() );
                 }
             }
             eZDebug::accumulatorStop( 'mysqli_query' );
@@ -406,7 +403,7 @@ class eZMySQLiDB extends eZDBInterface
             {
                 $this->setError();
                 $errorMessage = 'Query error (' . $this->ErrorNumber . '): ' . $this->ErrorMessage . '. Query: ' . $sql;
-                eZDebug::writeError( $errorMessage, __CLASS__  );
+                eZDebug::writeError( $errorMessage, self::class  );
                 $oldRecordError = $this->RecordError;
                 // Turn off error handling while we unlock
                 $this->RecordError = false;
@@ -431,15 +428,15 @@ class eZMySQLiDB extends eZDBInterface
         }
         else
         {
-            eZDebug::writeError( "Trying to do a query without being connected to a database!", __CLASS__ );
+            eZDebug::writeError( "Trying to do a query without being connected to a database!", self::class );
         }
 
 
     }
 
-    function arrayQuery( $sql, $params = array(), $server = false )
+    function arrayQuery( $sql, $params = [], $server = false )
     {
-        $retArray = array();
+        $retArray = [];
         if ( $this->IsConnected )
         {
             $limit = false;
@@ -470,7 +467,7 @@ class eZMySQLiDB extends eZDBInterface
 
             if ( $result == false )
             {
-                $this->reportQuery( __CLASS__, $sql, false, false );
+                $this->reportQuery( self::class, $sql, false, false );
                 return false;
             }
 
@@ -485,7 +482,7 @@ class eZMySQLiDB extends eZDBInterface
                         if ( $this->InputTextCodec )
                         {
                             $tmpRow = mysqli_fetch_array( $result, MYSQLI_ASSOC );
-                            $convRow = array();
+                            $convRow = [];
                             foreach( $tmpRow as $key => $row )
                             {
                                 eZDebug::accumulatorStart( 'mysqli_conversion', 'mysqli_total', 'String conversion in mysqli' );
@@ -533,7 +530,7 @@ class eZMySQLiDB extends eZDBInterface
         }
     }
 
-    function concatString( $strings = array() )
+    function concatString( $strings = [] )
     {
         $str = implode( "," , $strings );
         return " concat( $str  ) ";
@@ -561,7 +558,7 @@ class eZMySQLiDB extends eZDBInterface
 
     function supportedRelationTypes()
     {
-        return array( self::RELATION_FOREIGN_KEY, eZDBInterface::RELATION_TABLE );
+        return [self::RELATION_FOREIGN_KEY, eZDBInterface::RELATION_TABLE];
     }
 
     function relationCounts( $relationMask )
@@ -588,7 +585,7 @@ class eZMySQLiDB extends eZDBInterface
                 {
                     $query = 'SHOW TABLES from `' . $this->DB .'`';
                     $result = mysqli_query( $this->DBConnection, $query );
-                    $this->reportQuery( __CLASS__, $query, false, false );
+                    $this->reportQuery( self::class, $query, false, false );
                     $count = mysqli_num_rows( $result );
                     mysqli_free_result( $result );
                 } break;
@@ -615,10 +612,10 @@ class eZMySQLiDB extends eZDBInterface
             {
                 case eZDBInterface::RELATION_TABLE:
                 {
-                    $tables = array();
+                    $tables = [];
                     $query = 'SHOW TABLES from `' . $this->DB .'`';
                     $result = mysqli_query( $this->DBConnection, $query );
-                    $this->reportQuery( __CLASS__, $query, false, false );
+                    $this->reportQuery( self::class, $query, false, false );
                     while( $row = mysqli_fetch_row( $result ) )
                     {
                         $tables[] = $row[0];
@@ -652,23 +649,23 @@ class eZMySQLiDB extends eZDBInterface
                      * The only way out right now is to parse SHOW CREATE TABLE for each table and extract CONSTRAINT lines
                      */
 
-                    $foreignKeys = array();
+                    $foreignKeys = [];
                     foreach( $this->relationList( eZDBInterface::RELATION_TABLE ) as $table )
                     {
                         $query = "SHOW CREATE TABLE $table";
                         $result = mysqli_query( $this->DBConnection, $query );
-                        $this->reportQuery( __CLASS__, $query, false, false );
+                        $this->reportQuery( self::class, $query, false, false );
                         if ( mysqli_num_rows( $result ) === 1 )
                         {
                             $row = mysqli_fetch_row( $result );
-                            if ( strpos( $row[1], "CONSTRAINT" ) !== false )
+                            if ( str_contains( (string) $row[1], "CONSTRAINT" ) )
                             {
-                                if ( preg_match_all( '#CONSTRAINT [`"]([^`"]+)[`"] FOREIGN KEY \([`"].*[`"]\) REFERENCES [`"]([^`"]+)[`"] \([`"].*[`"]\)#', $row[1], $matches, PREG_PATTERN_ORDER ) )
+                                if ( preg_match_all( '#CONSTRAINT [`"]([^`"]+)[`"] FOREIGN KEY \([`"].*[`"]\) REFERENCES [`"]([^`"]+)[`"] \([`"].*[`"]\)#', (string) $row[1], $matches, PREG_PATTERN_ORDER ) )
                                 {
                                     // $foreignKeys[] = array( 'table' => $table, 'keys' => $matches[1] );
                                     foreach( $matches[1] as $fkMatch )
                                     {
-                                        $foreignKeys[] = array( 'table' => $table, 'fk' => $fkMatch );
+                                        $foreignKeys[] = ['table' => $table, 'fk' => $fkMatch];
                                     }
                                 }
                             }
@@ -682,7 +679,7 @@ class eZMySQLiDB extends eZDBInterface
 
     function eZTableList( $server = eZDBInterface::SERVER_MASTER )
     {
-        $tables = array();
+        $tables = [];
         if ( $this->IsConnected )
         {
             if ( $this->UseSlaveServer && $server == eZDBInterface::SERVER_SLAVE )
@@ -698,11 +695,11 @@ class eZMySQLiDB extends eZDBInterface
 
             $query = 'SHOW TABLES from `' . $db .'`';
             $result = mysqli_query( $connection, $query );
-            $this->reportQuery( __CLASS__, $query, false, false );
+            $this->reportQuery( self::class, $query, false, false );
             while( $row = mysqli_fetch_row( $result ) )
             {
                 $tableName = $row[0];
-                if ( substr( $tableName, 0, 2 ) == 'ez' )
+                if ( str_starts_with((string) $tableName, 'ez') )
                 {
                     $tables[$tableName] = eZDBInterface::RELATION_TABLE;
                 }
@@ -909,7 +906,7 @@ class eZMySQLiDB extends eZDBInterface
             return null;
         }
 
-        $databases = array();
+        $databases = [];
 
         $numRows = mysqli_num_rows( $databaseArray );
         if ( $numRows == 0 )
@@ -921,7 +918,7 @@ class eZMySQLiDB extends eZDBInterface
         {
             // we don't allow "mysql" or "information_schema" database to be shown anywhere
             $curDB = $row[0];
-            if ( strcasecmp( $curDB, 'mysql' ) != 0 && strcasecmp( $curDB, 'information_schema' ) != 0 )
+            if ( strcasecmp( (string) $curDB, 'mysql' ) != 0 && strcasecmp( (string) $curDB, 'information_schema' ) != 0 )
             {
                 $databases[] = $curDB;
             }
@@ -937,8 +934,7 @@ class eZMySQLiDB extends eZDBInterface
 
             $versionArray = explode( '.', $versionInfo );
 
-            return array( 'string' => $versionInfo,
-                          'values' => $versionArray );
+            return ['string' => $versionInfo, 'values' => $versionArray];
         }
 
         return false;
@@ -950,8 +946,7 @@ class eZMySQLiDB extends eZDBInterface
 
         $versionArray = explode( '.', $versionInfo );
 
-        return array( 'string' => $versionInfo,
-                      'values' => $versionArray );
+        return ['string' => $versionInfo, 'values' => $versionArray];
     }
 
     function isCharsetSupported( $charset )

@@ -21,7 +21,7 @@ class eZTOCOperator
     */
     function operatorList()
     {
-        return array( 'eztoc' );
+        return ['eztoc'];
     }
 
     /*!
@@ -38,15 +38,14 @@ class eZTOCOperator
     */
     function namedParameterList()
     {
-        return array( 'eztoc' => array( 'dom' => array( 'type' => 'object',
-                                                        'required' => true,
-                                                        'default' => 0 ) ) );
+        return ['eztoc' => ['dom' => ['type' => 'object', 'required' => true, 'default' => 0]]];
     }
     /*!
      Executes the PHP function for the operator cleanup and modifies \a $operatorValue.
     */
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
     {
+        $tocText = null;
         $dom = $namedParameters['dom'];
         if ( $dom instanceof eZContentObjectAttribute )
         {
@@ -61,7 +60,7 @@ class eZTOCOperator
             $tocText = '';
             if ( $success )
             {
-                $this->HeaderCounter = array();
+                $this->HeaderCounter = [];
                 $this->LastHeaderLevel = 0;
 
                 $rootNode = $domTree->documentElement;
@@ -138,7 +137,7 @@ class eZTOCOperator
         return $tocText;
     }
 
-    public $HeaderCounter = array();
+    public $HeaderCounter = [];
     public $LastHeaderLevel = 0;
 
     public $ObjectAttributeId;

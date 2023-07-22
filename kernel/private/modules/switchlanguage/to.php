@@ -19,7 +19,7 @@ if ( isset( $_SERVER['QUERY_STRING'] ) && $_SERVER['QUERY_STRING'] )
 }
 
 // 0. Module params are sent to constructor to process the request.
-$handlerOptions->handlerParams = array( $Params );
+$handlerOptions->handlerParams = [$Params];
 
 $langSwitch = eZExtension::getHandlerClass( $handlerOptions );
 

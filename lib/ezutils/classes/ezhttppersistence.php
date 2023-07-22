@@ -43,7 +43,7 @@ class eZHTTPPersistence
     {
         if ( $is_array )
         {
-            for ( $i = 0, $iMax = count( $objects ); $i < $iMax; ++$i )
+            for ( $i = 0, $iMax = is_countable($objects) ? count( $objects ) : 0; $i < $iMax; ++$i )
             {
                 $object = $objects[$i];
                 $index = is_string( $indexField ) ? $indexField : $i;
@@ -62,7 +62,6 @@ class eZHTTPPersistence
      * @param string $base_name
      * @param array $def Definition for $object, uses the same syntax as {@link eZPersistentObject}
      * @param object $object
-     * @param eZHTTPTool $http
      * @param int|string|false $index Index in HTTP POST data corresponding to $object.
      *                                Set as string will make use of corresponding field in $def
      *                                Set to false if posted data is not an array.
@@ -87,9 +86,9 @@ class eZHTTPPersistence
                              $field_member['datatype'] === 'string'            &&
                              array_key_exists( 'max_length', $field_member )   &&
                              $field_member['max_length'] > 0                   &&
-                             strlen( $post_value ) > $field_member['max_length'] )
+                             strlen( (string) $post_value ) > $field_member['max_length'] )
                         {
-                            $post_value = substr( $post_value, 0, $field_member['max_length'] );
+                            $post_value = substr( (string) $post_value, 0, $field_member['max_length'] );
                             eZDebug::writeDebug( $post_value, "truncation of $field_name to max_length=". $field_member['max_length'] );
                         }
                         $object->setAttribute( $field_name, $post_value );
@@ -116,7 +115,6 @@ class eZHTTPPersistence
      *
      * @param string $base_name
      * @param object[] $objects
-     * @param eZHTTPTool $http
      * @param $cond
      * @param $keepers
      * @param $rejects
@@ -124,8 +122,8 @@ class eZHTTPPersistence
      */
     static function splitSelected( $base_name, $objects, eZHTTPTool $http, $cond, &$keepers, &$rejects )
     {
-        $keepers = array();
-        $rejects = array();
+        $keepers = [];
+        $rejects = [];
         $post_var = $base_name . "_" . $cond . "_checked";
         if ( $http->hasPostVariable( $post_var ) )
         {

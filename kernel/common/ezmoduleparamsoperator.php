@@ -35,7 +35,7 @@ class eZModuleParamsOperator
     */
     function operatorList()
     {
-        return array( 'module_params' );
+        return ['module_params'];
     }
     /*!
      \return true to tell the template engine that the parameter list exists per operator type,
@@ -50,7 +50,7 @@ class eZModuleParamsOperator
     */
     function namedParameterList()
     {
-        return array( 'module_params' => array() );
+        return ['module_params' => []];
     }
     /*!
      Executes the PHP function for the operator cleanup and modifies \a $operatorValue.

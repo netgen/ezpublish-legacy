@@ -20,7 +20,6 @@ class eZTranslatorGroup extends eZTranslatorHandler
     public function __construct( $is_key_based )
     {
         parent::__construct( $is_key_based );
-        $this->Handlers = array();
     }
 
     /*!
@@ -32,7 +31,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
     function findKey( $key )
     {
         $num = $this->keyPick( $key );
-        if ( $num >=0 and $num <= count( $this->Handlers ) )
+        if ( $num >=0 and $num <= (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) )
         {
             $handler = $this->Handlers[$num];
             return $handler->findKey( $key );
@@ -52,7 +51,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
     function findMessage( $context, $source, $comment = null )
     {
         $num = $this->pick( $context, $source, $comment );
-        if ( $num >=0 and $num <= count( $this->Handlers ) )
+        if ( $num >=0 and $num <= (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) )
         {
             $handler = $this->Handlers[$num];
             return $handler->findMessage( $context, $source, $comment );
@@ -70,7 +69,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
     function translate( $context, $source, $comment = null )
     {
         $num = $this->pick( $context, $source, $comment );
-        if ( $num >=0 and $num <= count( $this->Handlers ) )
+        if ( $num >=0 and $num <= (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) )
         {
             $handler = $this->Handlers[$num];
             return $handler->translate( $context, $source, $comment );
@@ -88,7 +87,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
     function keyTranslate( $key )
     {
         $num = $this->keyPick( $key );
-        if ( $num >=0 and $num <= count( $this->Handlers ) )
+        if ( $num >=0 and $num <= (is_countable($this->Handlers) ? count( $this->Handlers ) : 0) )
         {
             $handler = $this->Handlers[$num];
             return $handler->keyTranslate( $key );
@@ -122,7 +121,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
     */
     function handlerCount()
     {
-        return count( $this->Handlers );
+        return is_countable($this->Handlers) ? count( $this->Handlers ) : 0;
     }
 
     /*!
@@ -141,7 +140,7 @@ class eZTranslatorGroup extends eZTranslatorHandler
 
     /// \privatesection
     /// The array of grouped handlers
-    public $Handlers;
+    public $Handlers = [];
 }
 
 ?>

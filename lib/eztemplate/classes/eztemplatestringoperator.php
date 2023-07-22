@@ -21,12 +21,6 @@ class eZTemplateStringOperator
 {
     public function __construct()
     {
-        $this->Operators = array( 'upcase', 'downcase',
-                                  'count_words', 'count_chars',
-                                  'trim', 'break', 'wrap', 'shorten', 'pad',
-                                  'upfirst', 'upword',
-                                  'simplify', 'wash',
-                                  'chr', 'ord');
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
@@ -34,40 +28,9 @@ class eZTemplateStringOperator
             $this->$name = $operator;
         }
 
-        $this->phpMap = array ('upcase' => 'mb_strtoupper,strtoupper',
-                               'downcase' => 'mb_strtolower,strtolower',
-                               'break' => 'nl2br',
-                               'count_chars' => 'mb_strlen,strlen');
-
-        $this->customMap = array ( 'count_words' => array( 'return' => 'int',
-                                                          'code' => '$result = preg_match_all( "#(\w+)#", $staticValues[0], $dummy );'
-                                                        ),
-                                   'chr' => array( 'return' => 'string',
-                                                   'code' => '$codec = eZTextCodec::instance( "unicode", false );' . "\n" .
-                                                             '$result = $codec->convertString( $staticValues[0] );'
-                                                 ),
-                                   'ord' => array( 'return' => 'string',
-                                                   'code' => '$codec = eZTextCodec::instance( false, "unicode" );' . "\n" .
-                                                             '$result = $codec->convertString( $staticValues[0] );'
-                                                 ),
-                                   'pad' => array( 'return' => 'string',
-                                                   'code' => '$result = $paramCount == 2 ? str_pad( $staticValues[0], $staticValues[1] ) : str_pad ( $staticValues[0], $staticValues[1], $staticValues[2] );',
-                                                   'code2' => '$result = str_pad( $staticValues[0], $staticValues[1] );',
-                                                   'code3' => '$result = str_pad( $staticValues[0], $staticValues[1], $staticValues[2] );',
-                                                 ),
-                                   'trim' => array( 'return' => 'string',
-                                                    'code' => '$result = $paramCount == 1 ? trim( $staticValues[0] ) : trim ( $staticValues[0], $staticValues[1] );',
-                                                    'code1' => '$result = trim( $staticValues[0] );',
-                                                    'code2' => '$result = trim( $staticValues[0], $staticValues[1] );',
-                                                 ),
-                                   'wrap' => array( 'return' => 'string',
-                                                    'code1' => '$result = wordwrap( $staticValues[0] );',
-                                                    'code2' => '$result = wordwrap( $staticValues[0], $staticValues[1] );',
-                                                    'code3' => '$result = wordwrap( $staticValues[0], $staticValues[1], $staticValues[2] );',
-                                                    'code4' => '$result = wordwrap( $staticValues[0], $staticValues[1], $staticValues[2], $staticValues[3] );',
-                                                 ),
-                                   'simplify' => array( 'return' => 'string',
-                                                        'code' => 'if ( $paramCount == 1 )
+        $this->customMap = ['count_words' => ['return' => 'int', 'code' => '$result = preg_match_all( "#(\w+)#", $staticValues[0], $dummy );'], 'chr' => ['return' => 'string', 'code' => '$codec = eZTextCodec::instance( "unicode", false );' . "\n" .
+                  '$result = $codec->convertString( $staticValues[0] );'], 'ord' => ['return' => 'string', 'code' => '$codec = eZTextCodec::instance( false, "unicode" );' . "\n" .
+                  '$result = $codec->convertString( $staticValues[0] );'], 'pad' => ['return' => 'string', 'code' => '$result = $paramCount == 2 ? str_pad( $staticValues[0], $staticValues[1] ) : str_pad ( $staticValues[0], $staticValues[1], $staticValues[2] );', 'code2' => '$result = str_pad( $staticValues[0], $staticValues[1] );', 'code3' => '$result = str_pad( $staticValues[0], $staticValues[1], $staticValues[2] );'], 'trim' => ['return' => 'string', 'code' => '$result = $paramCount == 1 ? trim( $staticValues[0] ) : trim ( $staticValues[0], $staticValues[1] );', 'code1' => '$result = trim( $staticValues[0] );', 'code2' => '$result = trim( $staticValues[0], $staticValues[1] );'], 'wrap' => ['return' => 'string', 'code1' => '$result = wordwrap( $staticValues[0] );', 'code2' => '$result = wordwrap( $staticValues[0], $staticValues[1] );', 'code3' => '$result = wordwrap( $staticValues[0], $staticValues[1], $staticValues[2] );', 'code4' => '$result = wordwrap( $staticValues[0], $staticValues[1], $staticValues[2], $staticValues[3] );'], 'simplify' => ['return' => 'string', 'code' => 'if ( $paramCount == 1 )
                                                                    {
                                                                        $replacer = " ";
                                                                    }
@@ -75,12 +38,7 @@ class eZTemplateStringOperator
                                                                    {
                                                                        $replacer = $staticValues[1];
                                                                    }
-                                                                   $result = preg_replace( "/".$replacer."{2,}/", $replacer, $staticValues[0] );',
-                                                        'code1' => '$result = preg_replace( "/ {2,}/", " ", $staticValues[0] );',
-                                                        'code2' => '$result = preg_replace( "/".$staticValues[1]."{2,}/", $staticValues[1], $staticValues[0] );',
-                                                      ),
-                                   'shorten' => array( 'return' => 'string',
-                                                       'code' => '$length = 80; $seq = "..."; $trimType = "right";
+                                                                   $result = preg_replace( "/".$replacer."{2,}/", $replacer, $staticValues[0] );', 'code1' => '$result = preg_replace( "/ {2,}/", " ", $staticValues[0] );', 'code2' => '$result = preg_replace( "/".$staticValues[1]."{2,}/", $staticValues[1], $staticValues[0] );'], 'shorten' => ['return' => 'string', 'code' => '$length = 80; $seq = "..."; $trimType = "right";
                                                                   if ( $paramCount > 1 )
                                                                   {
                                                                       $length = $staticValues[1];
@@ -121,10 +79,7 @@ class eZTemplateStringOperator
                                                                       {
                                                                           $result = $staticValues[0];
                                                                       }
-                                                                  }'
-                                                     ),
-                                   'upfirst' => array( 'return' => 'string',
-                                                       'code' => '$i18nIni = eZINI::instance( \'i18n.ini\' );
+                                                                  }'], 'upfirst' => ['return' => 'string', 'code' => '$i18nIni = eZINI::instance( \'i18n.ini\' );
                                                                   $hasMBString = ( $i18nIni->variable( \'CharacterSettings\', \'MBStringExtension\' ) == \'enabled\' and
                                                                   function_exists( "mb_strtoupper" ) and
                                                                   function_exists( "mb_substr" ) and
@@ -140,10 +95,7 @@ class eZTemplateStringOperator
                                                                   else
                                                                   {
                                                                      $result = ucfirst( $staticValues[0] );
-                                                                  }'
-                                                     ),
-                                   'upword' => array( 'return' => 'string',
-                                                      'code' => ' $i18nIni = eZINI::instance( \'i18n.ini\' );
+                                                                  }'], 'upword' => ['return' => 'string', 'code' => ' $i18nIni = eZINI::instance( \'i18n.ini\' );
                                                                   $hasMBString = ( $i18nIni->variable( \'CharacterSettings\', \'MBStringExtension\' ) == \'enabled\' and
                                                                                    function_exists( "mb_strtoupper" ) and
                                                                                    function_exists( "mb_substr" ) and
@@ -166,10 +118,7 @@ class eZTemplateStringOperator
                                                                   else
                                                                   {
                                                                      $result = ucwords( $staticValues[0] );
-                                                                  }'
-                                                    )
-
-                                 );
+                                                                  }']];
     }
 
     /*!
@@ -182,25 +131,7 @@ class eZTemplateStringOperator
 
     function operatorTemplateHints()
     {
-        $hints = array(
-            $this->BreakName        => array( 'parameters' => false, 'element-transformation-func' => 'phpMapTransformation' ),
-            $this->Count_charsName   => array( 'parameters' => false, 'element-transformation-func' => 'phpMapTransformation' ),
-            $this->DowncaseName     => array( 'parameters' => false, 'element-transformation-func' => 'phpMapTransformation' ),
-            $this->UpcaseName       => array( 'parameters' => false, 'element-transformation-func' => 'phpMapTransformation' ),
-            $this->UpfirstName      => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->UpwordName       => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-
-            $this->Count_wordsName   => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->ChrName          => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->OrdName          => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->PadName          => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->ShortenName      => array( 'parameters' => 3    , 'element-transformation-func' => 'customMapTransformation' ),
-            $this->SimplifyName     => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-            $this->TrimName         => array( 'parameters' => 1    , 'element-transformation-func' => 'customMapTransformation' ),
-            $this->WrapName         => array( 'parameters' => false, 'element-transformation-func' => 'customMapTransformation' ),
-
-            $this->WashName         => array( 'parameters' => 1, 'element-transformation-func' => 'washTransformation' ),
-        );
+        $hints = [$this->BreakName        => ['parameters' => false, 'element-transformation-func' => 'phpMapTransformation'], $this->Count_charsName   => ['parameters' => false, 'element-transformation-func' => 'phpMapTransformation'], $this->DowncaseName     => ['parameters' => false, 'element-transformation-func' => 'phpMapTransformation'], $this->UpcaseName       => ['parameters' => false, 'element-transformation-func' => 'phpMapTransformation'], $this->UpfirstName      => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->UpwordName       => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->Count_wordsName   => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->ChrName          => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->OrdName          => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->PadName          => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->ShortenName      => ['parameters' => 3, 'element-transformation-func' => 'customMapTransformation'], $this->SimplifyName     => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->TrimName         => ['parameters' => 1, 'element-transformation-func' => 'customMapTransformation'], $this->WrapName         => ['parameters' => false, 'element-transformation-func' => 'customMapTransformation'], $this->WashName         => ['parameters' => 1, 'element-transformation-func' => 'washTransformation']];
 
         foreach ( $this->Operators as $operator )
         {
@@ -227,46 +158,15 @@ class eZTemplateStringOperator
     */
     function namedParameterList()
     {
-        return array( $this->TrimName => array( 'chars_to_remove'  => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => false ) ),
-                      $this->WrapName => array( 'wrap_at_position' => array( "type" => "integer",
-                                                                             "required" => false,
-                                                                             "default" => false ),
-                                                'break_sequence'   => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => false ),
-                                                'cut'              => array( "type" => "boolean",
-                                                                             "required" => false,
-                                                                             "default" => false ) ),
-                      $this->WashName => array( 'type'             => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => "xhtml" ) ),
-                      $this->ShortenName => array( 'chars_to_keep' => array( "type" => "integer",
-                                                                             "required" => false,
-                                                                             "default" => 80 ),
-                                                   'str_to_append' => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => "..." ),
-                                                   'trim_type'     => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => "right" ) ),
-                      $this->PadName => array(  'desired_length'   => array( "type"     => "integer",
-                                                                             "required" => false,
-                                                                             "default"  => 80 ),
-                                                'pad_sequence'     => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => " " ) ),
-                      $this->SimplifyName => array ( 'char'        => array( "type" => "string",
-                                                                             "required" => false,
-                                                                             "default" => false ) ) );
+        return [$this->TrimName => ['chars_to_remove'  => ["type" => "string", "required" => false, "default" => false]], $this->WrapName => ['wrap_at_position' => ["type" => "integer", "required" => false, "default" => false], 'break_sequence'   => ["type" => "string", "required" => false, "default" => false], 'cut'              => ["type" => "boolean", "required" => false, "default" => false]], $this->WashName => ['type'             => ["type" => "string", "required" => false, "default" => "xhtml"]], $this->ShortenName => ['chars_to_keep' => ["type" => "integer", "required" => false, "default" => 80], 'str_to_append' => ["type" => "string", "required" => false, "default" => "..."], 'trim_type'     => ["type" => "string", "required" => false, "default" => "right"]], $this->PadName => ['desired_length'   => ["type"     => "integer", "required" => false, "default"  => 80], 'pad_sequence'     => ["type" => "string", "required" => false, "default" => " "]], $this->SimplifyName => ['char'        => ["type" => "string", "required" => false, "default" => false]]];
     }
 
     function phpMapTransformation( $operatorName, $node, $tpl, $resourceData,
                                    $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
-        $phpFunctionList = explode( ',', $this->phpMap[$operatorName] );
+        $phpFunction = null;
+        $values = [];
+        $phpFunctionList = explode( ',', (string) $this->phpMap[$operatorName] );
         foreach ( $phpFunctionList as $element )
         {
             if ( function_exists( $element ) )
@@ -275,9 +175,9 @@ class eZTemplateStringOperator
                 break;
             }
         }
-        $newElements = array();
+        $newElements = [];
 
-        if ( count ( $parameters ) != 1 )
+        if ( (is_countable($parameters) ? count ( $parameters ) : 0) != 1 )
         {
             return false;
         }
@@ -286,7 +186,7 @@ class eZTemplateStringOperator
         {
             $text = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
             $text = $phpFunction( $text );
-            $text = str_replace( array( "'" ), array( "\\'" ), $text );
+            $text = str_replace( ["'"], ["\\'"], (string) $text );
             $code = "%output% = '" . $text . "' ;\n";
         }
         else
@@ -302,10 +202,10 @@ class eZTemplateStringOperator
     function customMapTransformation( $operatorName, $node, $tpl, $resourceData,
                                        $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
-        $newElements = array();
+        $values = [];
+        $newElements = [];
         $mapEntry = $this->customMap[$operatorName];
-        $paramCount = count( $parameters );
+        $paramCount = is_countable($parameters) ? count( $parameters ) : 0;
         $strlenFunc = 'strlen';
         $substrFunc = 'substr';
         $code = "\$strlenFunc = 'strlen'; \$substrFunc = 'substr';\n";
@@ -322,9 +222,9 @@ class eZTemplateStringOperator
         }
 
         $allStatic = true;
-        $staticValues = array();
-        $replaceMap = array('$result');
-        $replacementMap = array('%output%');
+        $staticValues = [];
+        $replaceMap = ['$result'];
+        $replacementMap = ['%output%'];
         for ($i = 0; $i < $paramCount; $i++)
         {
             if ( eZTemplateNodeTool::isConstantElement( $parameters[$i] ) )
@@ -348,12 +248,12 @@ class eZTemplateStringOperator
             {
                 eval( $mapEntry['code'] );
             }
-            return array( eZTemplateNodeTool::createConstantElement( $result ) );
+            return [eZTemplateNodeTool::createConstantElement( $result )];
         }
         else
         {
-            $replaceMap = array( '$result', '$paramCount' );
-            $replacementMap = array( '%output%', $paramCount );
+            $replaceMap = ['$result', '$paramCount'];
+            $replacementMap = ['%output%', $paramCount];
             for ( $i = 0; $i < $paramCount; $i++ )
             {
                 $values[] = $parameters[$i];
@@ -362,11 +262,11 @@ class eZTemplateStringOperator
             }
             if ( isset( $mapEntry['code'. $paramCount] ) )
             {
-                $code .= str_replace( $replaceMap, $replacementMap, $mapEntry['code' . $paramCount] ) . "\n";
+                $code .= str_replace( $replaceMap, $replacementMap, (string) $mapEntry['code' . $paramCount] ) . "\n";
             }
             else
             {
-                $code .= str_replace( $replaceMap, $replacementMap, $mapEntry['code'] ) . "\n";
+                $code .= str_replace( $replaceMap, $replacementMap, (string) $mapEntry['code'] ) . "\n";
             }
         }
 
@@ -392,28 +292,29 @@ class eZTemplateStringOperator
                 $dotText = $ini->variable( 'WashSettings', 'EmailDotText' );
                 $atText = $ini->variable( 'WashSettings', 'EmailAtText' );
                 $operatorValue = str_replace(
-                    array( '.', '@' ),
-                    array( $dotText, $atText ),
-                    htmlspecialchars( $operatorValue )
+                    ['.', '@'],
+                    [$dotText, $atText],
+                    htmlspecialchars( (string) $operatorValue )
                 );
             } break;
 
             case 'pdf':
             {
-                $operatorValue = str_replace( array( ' ', // use default callback functions in ezpdf library
-                                                     "\r\n",
-                                                     "\t" ),
-                                              array( '<C:callSpace>',
-                                                     '<C:callNewLine>',
-                                                     '<C:callTab>' ),
-                                              $operatorValue );
+                $operatorValue = str_replace( [
+                    ' ',
+                    // use default callback functions in ezpdf library
+                    "\r\n",
+                    "\t",
+                ],
+                                              ['<C:callSpace>', '<C:callNewLine>', '<C:callTab>'],
+                                              (string) $operatorValue );
                 $operatorValue = str_replace( "\n", '<C:callNewLine>', $operatorValue );
             } break;
 
             case 'javascript':
             {
-                $operatorValue = str_replace( array( "\\", "\"", "'"),
-                                              array( "\\\\", "\\042", "\\047" ) , $operatorValue );
+                $operatorValue = str_replace( ["\\", "\"", "'"],
+                                              ["\\\\", "\\042", "\\047"] , (string) $operatorValue );
             } break;
         }
         return $operatorValue;
@@ -422,10 +323,10 @@ class eZTemplateStringOperator
     function washTransformation( $operatorName, $node, $tpl, $resourceData,
                                  $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $tmpVarCount = 0;
-        $newElements = array();
-        $paramCount = count( $parameters );
+        $newElements = [];
+        $paramCount = is_countable($parameters) ? count( $parameters ) : 0;
 
         if ( $paramCount > 2 )
         {
@@ -433,7 +334,7 @@ class eZTemplateStringOperator
         }
 
         $allStatic = true;
-        $staticValues = array();
+        $staticValues = [];
         for ($i = 0; $i < $paramCount; $i++)
         {
             if ( eZTemplateNodeTool::isConstantElement( $parameters[$i] ) )
@@ -456,7 +357,7 @@ class eZTemplateStringOperator
             {
                 $type = $staticValues[1];
             }
-            $code = "%output% = '" . addcslashes( $this->wash( $staticValues[0], $tpl, $type ), "'\\" ) . "' ;\n";
+            $code = "%output% = '" . addcslashes( (string) $this->wash( $staticValues[0], $tpl, $type ), "'\\" ) . "' ;\n";
         }
         /* XHTML: Type is static, input is not */
         else if ( ( $paramCount == 1 ) || ( ( $paramCount == 2 ) && isset( $staticValues[1] ) && ( $staticValues[1] == 'xhtml' ) ) )
@@ -476,8 +377,8 @@ class eZTemplateStringOperator
         else if ( ( $paramCount == 2 ) && isset( $staticValues[1] ) && ( $staticValues[1] == 'email' ) )
         {
             $ini = $tpl->ini();
-            $dotText = addcslashes( $ini->variable( 'WashSettings', 'EmailDotText' ), "'" );
-            $atText = addcslashes( $ini->variable( 'WashSettings', 'EmailAtText' ), "'" );
+            $dotText = addcslashes( (string) $ini->variable( 'WashSettings', 'EmailDotText' ), "'" );
+            $atText = addcslashes( (string) $ini->variable( 'WashSettings', 'EmailAtText' ), "'" );
 
             $values[] = $parameters[0];
             $code = "%output% = str_replace( array( '.', '@' ), array( '$dotText', '$atText' ), htmlspecialchars( %1% ) );\n";
@@ -532,7 +433,7 @@ class eZTemplateStringOperator
             // Count and return the number of words in operatorvalue.
             case $this->Count_wordsName:
             {
-                $operatorValue = preg_match_all( "#(\w+)#", $operatorValue, $dummy_match );
+                $operatorValue = preg_match_all( "#(\w+)#", (string) $operatorValue, $dummy_match );
             }break;
 
             // Count and return the number of chars in operatorvalue.
@@ -545,13 +446,13 @@ class eZTemplateStringOperator
             // Insert HTML line breaks before newlines.
             case $this->BreakName:
             {
-                $operatorValue = nl2br( $operatorValue );
+                $operatorValue = nl2br( (string) $operatorValue );
             }break;
 
             // Wrap line (insert newlines).
             case $this->WrapName:
             {
-                $parameters = array( $operatorValue );
+                $parameters = [$operatorValue];
                 if ( $namedParameters['wrap_at_position'] )
                 {
                     $parameters[] = $namedParameters['wrap_at_position'];
@@ -579,13 +480,13 @@ class eZTemplateStringOperator
                 if ( $hasMBString )
                 {
                     $encoding = eZTextCodec::internalCharset();
-                    $firstLetter = mb_strtoupper( mb_substr( $operatorValue, 0, 1, $encoding ), $encoding );
-                    $remainingText = mb_substr( $operatorValue, 1, mb_strlen( $operatorValue, $encoding ), $encoding );
+                    $firstLetter = mb_strtoupper( mb_substr( (string) $operatorValue, 0, 1, $encoding ), $encoding );
+                    $remainingText = mb_substr( (string) $operatorValue, 1, mb_strlen( (string) $operatorValue, $encoding ), $encoding );
                     $operatorValue = $firstLetter . $remainingText;
                 }
                 else
                 {
-                   $operatorValue = ucfirst( $operatorValue );
+                   $operatorValue = ucfirst( (string) $operatorValue );
                 }
 
             }break;
@@ -603,7 +504,7 @@ class eZTemplateStringOperator
                 {
                     $replace_this = "/". $simplifyCharacter ."{2,}/";
                 }
-                $operatorValue = preg_replace( $replace_this, $simplifyCharacter, $operatorValue );
+                $operatorValue = preg_replace( $replace_this, (string) $simplifyCharacter, (string) $operatorValue );
             }break;
             // Convert all first characters [in all words] to uppercase.
             case $this->UpwordName:
@@ -617,8 +518,8 @@ class eZTemplateStringOperator
                 if ( $hasMBString )
                 {
                     $encoding = eZTextCodec::internalCharset();
-                    $words = explode( " ", $operatorValue );
-                    $newString = array();
+                    $words = explode( " ", (string) $operatorValue );
+                    $newString = [];
                     foreach ( $words as $word )
                     {
                         $firstLetter = mb_strtoupper( mb_substr( $word, 0, 1, $encoding ), $encoding );
@@ -630,7 +531,7 @@ class eZTemplateStringOperator
                 }
                 else
                 {
-                   $operatorValue = ucwords( $operatorValue );
+                   $operatorValue = ucwords( (string) $operatorValue );
                 }
             }break;
 
@@ -646,9 +547,9 @@ class eZTemplateStringOperator
             // Pad...
             case $this->PadName:
             {
-                if (strlen( $operatorValue ) < $namedParameters['desired_length'])
+                if (strlen( (string) $operatorValue ) < $namedParameters['desired_length'])
                 {
-                    $operatorValue = str_pad( $operatorValue,
+                    $operatorValue = str_pad( (string) $operatorValue,
                                               $namedParameters['desired_length'],
                                               $namedParameters['pad_sequence'] );
                 }
@@ -727,7 +628,7 @@ class eZTemplateStringOperator
     }
 
     /// The array of operators, used for registering operators
-    public $Operators;
+    public $Operators = ['upcase', 'downcase', 'count_words', 'count_chars', 'trim', 'break', 'wrap', 'shorten', 'pad', 'upfirst', 'upword', 'simplify', 'wash', 'chr', 'ord'];
     public $UpcaseName;
     public $DowncaseName;
     public $Count_wordsName;
@@ -743,7 +644,7 @@ class eZTemplateStringOperator
     public $WashName;
     public $ChrName;
     public $OrdName;
-    public $phpMap;
+    public $phpMap = ['upcase' => 'mb_strtoupper,strtoupper', 'downcase' => 'mb_strtolower,strtolower', 'break' => 'nl2br', 'count_chars' => 'mb_strlen,strlen'];
     public $customMap;
 }
 

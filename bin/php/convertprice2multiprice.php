@@ -29,20 +29,16 @@ global $currencyList;
 $currencyList = false;
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "\n" .
+$script = eZScript::instance( ['description' => ( "\n" .
                                                          "This script will convert objects with 'price' datatype to\n" .
-                                                         "the objects with 'multiprice' datatype.\n" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true,
-                                      'user' => true ) );
+                                                         "the objects with 'multiprice' datatype.\n" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true, 'user' => true] );
 $script->startup();
 
 $scriptOptions = $script->getOptions( "",
                                       "",
-                                      array(),
+                                      [],
                                       false,
-                                      array( 'user' => true )
+                                      ['user' => true]
                                      );
 
 
@@ -94,7 +90,7 @@ foreach ( $classList as $class )
         while ( $offset < $objectListCount )
         {
             $objectList = eZContentObject::fetchSameClassList( $class->attribute( 'id' ), true, $offset, $limit );
-            $offset += count( $objectList );
+            $offset += count( (array) $objectList );
 
             foreach ( $objectList as $object )
             {

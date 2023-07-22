@@ -10,8 +10,8 @@
 
 class eZUserTypeRegression extends ezpDatabaseTestCase
 {
-    const USER_PASSWORD_HASH = 1234;
-    const USER_PASSWORD_HASH_ID = 'md5_password';
+    final public const USER_PASSWORD_HASH = 1234;
+    final public const USER_PASSWORD_HASH_ID = 'md5_password';
 
     protected $userObject;
     protected $userEmail;
@@ -21,7 +21,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
     public function __construct()
     {
         parent::__construct();
-        $this->setName( __CLASS__ . " tests" );
+        $this->setName( self::class . " tests" );
     }
 
     public function setUp()
@@ -32,16 +32,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
         $this->userEmail = "{$this->userLogin}@ez.no";
 
         $ini = eZINI::instance();
-        $params = array(
-            'creator_id' => 14,
-            'class_identifier' => 'user',
-            'parent_node_id' => $ini->variable( 'UserSettings', 'DefaultUserPlacement' ),
-            'attributes' => array(
-                'first_name' => 'foo',
-                'last_name' => 'bar',
-                'user_account' => "{$this->userLogin}|{$this->userEmail}|1234|md5_password|0",
-            ),
-        );
+        $params = ['creator_id' => 14, 'class_identifier' => 'user', 'parent_node_id' => $ini->variable( 'UserSettings', 'DefaultUserPlacement' ), 'attributes' => ['first_name' => 'foo', 'last_name' => 'bar', 'user_account' => "{$this->userLogin}|{$this->userEmail}|1234|md5_password|0"]];
 
         $contentObject = eZContentFunctions::createAndPublishObject( $params );
 
@@ -82,7 +73,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
         $userAccount = $dataMap['user_account']->toString();
 
         $this->assertEquals(
-            join( '|', array( $this->userLogin, $this->userEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 0 ) ),
+            join( '|', [$this->userLogin, $this->userEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 0] ),
             $userAccount
         );
     }
@@ -99,7 +90,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
         $userAccount = $dataMap['user_account']->toString();
 
         $this->assertEquals(
-            join( '|', array( $this->userLogin, $this->userEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 1 ) ),
+            join( '|', [$this->userLogin, $this->userEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 1] ),
             $userAccount
         );
     }
@@ -113,7 +104,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
         $tmpLogin = __METHOD__;
         $tmpEmail = "{$tmpLogin}@ez.no";
         $userAccount = $dataMap['user_account']->fromString(
-            join( '|', array( $tmpLogin, $tmpEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 0 ) )
+            join( '|', [$tmpLogin, $tmpEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 0] )
         );
 
         $dataMap['user_account']->setContent( $userAccount );
@@ -155,7 +146,7 @@ class eZUserTypeRegression extends ezpDatabaseTestCase
         $tmpLogin = __METHOD__;
         $tmpEmail = "{$tmpLogin}@ez.no";
         $userAccount = $dataMap['user_account']->fromString(
-            join( '|', array( $tmpLogin, $tmpEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 1 ) )
+            join( '|', [$tmpLogin, $tmpEmail, self::USER_PASSWORD_HASH, self::USER_PASSWORD_HASH_ID, 1] )
         );
 
         $dataMap['user_account']->setContent( $userAccount );

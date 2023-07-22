@@ -15,8 +15,6 @@
  */
 class ezpTopologicalSortNode
 {
-    public $name;
-
     protected $children;
     protected $parents;
 
@@ -25,9 +23,8 @@ class ezpTopologicalSortNode
      *
      * @param string $name Name used to define the node
      */
-    public function __construct( $name )
+    public function __construct( public $name )
     {
-        $this->name = $name;
         $this->children = new SplObjectStorage();
         $this->parents = new SplObjectStorage();
     }

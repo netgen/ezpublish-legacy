@@ -25,7 +25,7 @@
 
 class eZSSLZone
 {
-    const DEFAULT_SSL_PORT = 443;
+    final public const DEFAULT_SSL_PORT = 443;
 
     /*! \privatesection */
 
@@ -52,7 +52,7 @@ class eZSSLZone
      */
     static function cacheFileName()
     {
-        return eZDir::path( array( eZSys::cacheDirectory(), 'ssl_zones_cache.php' ) );
+        return eZDir::path( [eZSys::cacheDirectory(), 'ssl_zones_cache.php'] );
     }
 
     /**
@@ -90,6 +90,7 @@ class eZSSLZone
      */
     static function getSSLZones()
     {
+        $pathStringsArray = [];
         if ( !isset( $GLOBALS['eZSSLZonesCachedPathStrings'] ) ) // if in-memory cache does not exist
         {
             $cacheFileName = eZSSLZone::cacheFileName();
@@ -102,21 +103,21 @@ class eZSSLZone
                 $sslSubtrees = $ini->variable( 'SSLZoneSettings', 'SSLSubtrees' );
 
                 if ( !isset( $sslSubtrees ) || !$sslSubtrees )
-                    return array();
+                    return [];
 
                 // if there are some content SSL zones defined in the ini settings
                 // then let's calculate path strings for them
-                $pathStringsArray = array();
+                $pathStringsArray = [];
                 foreach ( $sslSubtrees as $uri )
                 {
                     $elements = eZURLAliasML::fetchByPath( $uri );
-                    if ( count( $elements ) == 0 )
+                    if ( (is_countable($elements) ? count( $elements ) : 0) == 0 )
                     {
                         eZDebug::writeError( "Cannot fetch URI '$uri'", __METHOD__ );
                         continue;
                     }
                     $action = $elements[0]->attribute( 'action' );
-                    if ( !preg_match( "#^eznode:(.+)#", $action, $matches ) )
+                    if ( !preg_match( "#^eznode:(.+)#", (string) $action, $matches ) )
                     {
                         eZDebug::writeError( "Cannot decode action '$action' for URI '$uri'", __METHOD__ );
                         continue;
@@ -145,7 +146,7 @@ class eZSSLZone
                     fclose( $fh );
 
                     $perm = eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' );
-                    chmod( $cacheFileName, octdec( $perm ) );
+                    chmod( $cacheFileName, octdec( (string) $perm ) );
                 }
 
                 return $GLOBALS['eZSSLZonesCachedPathStrings'] = $pathStringsArray;
@@ -244,7 +245,7 @@ class eZSSLZone
             $host = $ini->variable( 'SiteSettings', 'SiteURL' );
             $port = parse_url( "http://$host", PHP_URL_PORT );
             $host = eZSys::serverVariable( 'HTTP_HOST' );
-            $host = preg_replace( '/:\d+$/', '', $host );
+            $host = preg_replace( '/:\d+$/', '', (string) $host );
             if ( $port && $port != 80 )
                 $host .= ":$port";
             $sslZoneRedirectionURL = "http://" . $host . $indexDir . $requestURI . $getString;
@@ -253,7 +254,7 @@ class eZSSLZone
         {
             // switch to HTTPS
             $host = eZSys::serverVariable( 'HTTP_HOST' );
-            $host = preg_replace( '/:\d+$/', '', $host );
+            $host = preg_replace( '/:\d+$/', '', (string) $host );
 
             $ini = eZINI::instance();
             $sslPort = $ini->variable( 'SiteSettings', 'SSLPort' );
@@ -264,7 +265,7 @@ class eZSSLZone
         if ( $sslZoneRedirectionURL ) // if a redirection URL is found
         {
             eZDebugSetting::writeDebug( 'kernel-ssl-zone', "redirecting to [$sslZoneRedirectionURL]" );
-            eZHTTPTool::redirect( $sslZoneRedirectionURL, array(), false, false );
+            eZHTTPTool::redirect( $sslZoneRedirectionURL, [], false, false );
             eZExecution::cleanExit();
         }
     }
@@ -293,8 +294,8 @@ class eZSSLZone
         // Fetch path string for the given node.
         $pathStrings = eZPersistentObject::fetchObjectList(
             eZContentObjectTreeNode::definition(), // def
-            array( 'path_string' ),                // field_filters
-            array( 'node_id' => $nodeID ),         // conds
+            ['path_string'],                // field_filters
+            ['node_id' => $nodeID],         // conds
             null,                                  // sorts
             null,                                  // limit
             false                                  // asObject
@@ -354,7 +355,7 @@ class eZSSLZone
         $inSSLZone = false;
         foreach ( $sslZones as $sslZonePathString )
         {
-            if ( strpos( $pathString, $sslZonePathString ) === 0 )
+            if ( str_starts_with((string) $pathString, (string) $sslZonePathString) )
             {
                 $inSSLZone = true;
                 break;
@@ -390,8 +391,8 @@ class eZSSLZone
 
         $pathStringList = eZPersistentObject::fetchObjectList(
             eZContentObjectTreeNode::definition(),                     // def
-            array( 'path_string' ),                                    // field_filters
-            array( 'contentobject_id' => $object->attribute( 'id' ) ), // conds
+            ['path_string'],                                    // field_filters
+            ['contentobject_id' => $object->attribute( 'id' )], // conds
             null,                                                      // sorts
             null,                                                      // limit
             false                                                      // asObject
@@ -414,7 +415,7 @@ class eZSSLZone
              * If at least one of the parent nodes belongs to an SSL zone,
              * we switch to SSL.
              */
-            $pathStringList = array();
+            $pathStringList = [];
             $nodes = $object->parentNodes( $object->attribute( 'current' ) );
             if ( !is_array( $nodes ) )
             {

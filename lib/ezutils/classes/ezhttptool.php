@@ -149,7 +149,7 @@ class eZHTTPTool
     */
     function attributes()
     {
-        return array( "post", "get", "session" );
+        return ["post", "get", "session"];
     }
 
     /*!
@@ -207,7 +207,7 @@ class eZHTTPTool
      * @return string|false String if http request, or false if an error occurs.
      *         If $passthrough = true, program will end here and send result directly to client.
     */
-    static function sendHTTPRequest( $uri, $port = false, $postParameters = false, $userAgent = 'eZ Publish', $passthrough = true, array $cookies = array() )
+    static function sendHTTPRequest( $uri, $port = false, $postParameters = false, $userAgent = 'eZ Publish', $passthrough = true, array $cookies = [] )
     {
         preg_match( "/^((http[s]?:\/\/)([a-zA-Z0-9_.-]+)(\:(d+))?)?([\/]?[~]?(\.?[^.]+[~]?)*)/i", $uri, $matches );
         $protocol = $matches[2];
@@ -236,7 +236,7 @@ class eZHTTPTool
                 {
                     if ( $data !== '' )
                         $data .= '&';
-                    $data .= urlencode( $paramName ) . '=' . urlencode( $paramData );
+                    $data .= urlencode( $paramName ) . '=' . urlencode( (string) $paramData );
                 }
                 else
                 {
@@ -244,7 +244,7 @@ class eZHTTPTool
                     {
                         if ( $data !== '' )
                             $data .= '&';
-                        $data .= urlencode( $paramName ) . '[]=' . urlencode( $value );
+                        $data .= urlencode( $paramName ) . '[]=' . urlencode( (string) $value );
                     }
                 }
             }
@@ -280,7 +280,7 @@ class eZHTTPTool
         }
 
         // make sure we have a valid hostname or call to fsockopen() will fail
-        $parsedUrl = parse_url( $filename );
+        $parsedUrl = parse_url( (string) $filename );
         $ip = isset( $parsedUrl[ 'host' ] ) ? gethostbyname( $parsedUrl[ 'host' ] ) : '';
         $checkIP = ip2long( $ip );
         if ( $checkIP == -1 || $checkIP === false )
@@ -384,14 +384,14 @@ class eZHTTPTool
             $crlf = "\r\n";
 
             // split header and body
-            $pos = strpos( $response, $crlf . $crlf );
+            $pos = strpos( (string) $response, $crlf . $crlf );
             if ( $pos !== false )
             {
-                $headerBuf = substr( $response, 0, $pos );
-                $body = substr( $response, $pos + 2 * strlen( $crlf ) );
+                $headerBuf = substr( (string) $response, 0, $pos );
+                $body = substr( (string) $response, $pos + 2 * strlen( $crlf ) );
 
                 // parse headers
-                $header = array();
+                $header = [];
                 $lines = explode( $crlf, $headerBuf );
                 foreach ( $lines as $line )
                 {
@@ -418,16 +418,16 @@ class eZHTTPTool
     {
         $ini = eZINI::instance();
         $AUTHKey = $ini->variable( 'SiteSettings', 'HTTPAUTHServerVariable' );
-        $matches = array();
+        $matches = [];
         if ( array_key_exists( 'PHP_AUTH_USER', $_SERVER ) )
         {
             return $_SERVER['PHP_AUTH_USER'];
         }
-        elseif ( substr( php_sapi_name(), 0, 3 ) == 'cgi' and
+        elseif ( str_starts_with(php_sapi_name(), 'cgi') and
                  array_key_exists( $AUTHKey, $_SERVER ) and
-                 preg_match('/Basic\s+(.*)$/i', $_SERVER[$AUTHKey], $matches ) )
+                 preg_match('/Basic\s+(.*)$/i', (string) $_SERVER[$AUTHKey], $matches ) )
         {
-            list( $name, $password ) = explode( ':', base64_decode( $matches[1] ) );
+            [$name, $password] = explode( ':', base64_decode( $matches[1] ) );
             return $name;
         }
         return false;
@@ -443,16 +443,16 @@ class eZHTTPTool
     {
         $ini = eZINI::instance();
         $AUTHKey = $ini->variable( 'SiteSettings', 'HTTPAUTHServerVariable' );
-        $matches = array();
+        $matches = [];
         if ( array_key_exists( 'PHP_AUTH_PW', $_SERVER ) )
         {
             return $_SERVER['PHP_AUTH_PW'];
         }
-        elseif ( substr( php_sapi_name(), 0, 3 ) == 'cgi' and
+        elseif ( str_starts_with(php_sapi_name(), 'cgi') and
                  array_key_exists( $AUTHKey, $_SERVER ) and
-                 preg_match('/Basic\s+(.*)$/i', $_SERVER[$AUTHKey], $matches ) )
+                 preg_match('/Basic\s+(.*)$/i', (string) $_SERVER[$AUTHKey], $matches ) )
         {
-            list( $name, $password ) = explode( ':', base64_decode( $matches[1] ) );
+            [$name, $password] = explode( ':', base64_decode( $matches[1] ) );
             return $password;
         }
         return false;
@@ -481,33 +481,23 @@ class eZHTTPTool
 
      \note The redirection does not happen immedietaly and the script execution will continue.
     */
-    static function createRedirectUrl( $path, $parameters = array() )
+    static function createRedirectUrl( $path, $parameters = [] )
     {
-        $parameters = array_merge( array( 'host' => false,
-                                          'protocol' => false,
-                                          'port' => false,
-                                          'username' => false,
-                                          'password' => false,
-                                          'override_host' => false,
-                                          'override_protocol' => false,
-                                          'override_port' => false,
-                                          'override_username' => false,
-                                          'override_password' => false,
-                                          'pre_url' => true ),
+        $parameters = array_merge( ['host' => false, 'protocol' => false, 'port' => false, 'username' => false, 'password' => false, 'override_host' => false, 'override_protocol' => false, 'override_port' => false, 'override_username' => false, 'override_password' => false, 'pre_url' => true],
                                    $parameters );
         $host = $parameters['host'];
         $protocol = $parameters['protocol'];
         $port = $parameters['port'];
         $username = $parameters['username'];
         $password = $parameters['password'];
-        if ( preg_match( '#^([a-zA-Z0-9]+):(.+)$#', $path, $matches ) )
+        if ( preg_match( '#^([a-zA-Z0-9]+):(.+)$#', (string) $path, $matches ) )
         {
             if ( $matches[1] )
                 $protocol = $matches[1];
             $path = $matches[2];
 
         }
-        if ( preg_match( '#^//((([a-zA-Z0-9_.]+)(:([a-zA-Z0-9_.]+))?)@)?([^./:]+(\.[^./:]+)*)(:([0-9]+))?(.*)$#', $path, $matches ) )
+        if ( preg_match( '#^//((([a-zA-Z0-9_.]+)(:([a-zA-Z0-9_.]+))?)@)?([^./:]+(\.[^./:]+)*)(:([0-9]+))?(.*)$#', (string) $path, $matches ) )
         {
             if ( $matches[6] )
             {
@@ -524,12 +514,12 @@ class eZHTTPTool
         }
         if ( $parameters['pre_url'] )
         {
-            if ( strlen( $path ) > 0 and
+            if ( strlen( (string) $path ) > 0 and
                  $path[0] != '/' )
             {
                 $preURL = eZSys::serverVariable( 'SCRIPT_URL' );
-                if ( strlen( $preURL ) > 0 and
-                     $preURL[strlen($preURL) - 1] != '/' )
+                if ( strlen( (string) $preURL ) > 0 and
+                     $preURL[strlen((string) $preURL) - 1] != '/' )
                     $preURL .= '/';
                 $path = $preURL . $path;
             }
@@ -586,7 +576,7 @@ class eZHTTPTool
      *
      * @return null|ezpKernelRedirect
      */
-    static function redirect( $path, $parameters = array(), $status = false, $encodeURL = true, $returnRedirectObject = false )
+    static function redirect( $path, $parameters = [], $status = false, $encodeURL = true, $returnRedirectObject = false )
     {
         $url = eZHTTPTool::createRedirectUrl( $path, $parameters );
         if ( strlen( $status ) > 0 )
@@ -602,7 +592,7 @@ class eZHTTPTool
 
         eZHTTPTool::headerVariable( 'Location', $url );
         /* Fix for redirecting using workflows and apache 2 */
-        $escapedUrl = htmlspecialchars( $url );
+        $escapedUrl = htmlspecialchars( (string) $url );
         $content = <<<EOT
 <HTML><HEAD>
 <META HTTP-EQUIV="Refresh" Content="0;URL=$escapedUrl">
@@ -632,13 +622,13 @@ EOT;
     {
         foreach ( array_keys( $_POST ) as $key )
         {
-            if ( substr( $key, -2 ) == '_x' )
+            if ( str_ends_with($key, '_x') )
             {
                 $yKey = substr( $key, 0, -2 ) . '_y';
                 if ( array_key_exists( $yKey, $_POST ) )
                 {
                     $keyClean = substr( $key, 0, -2 );
-                    $matches = array();
+                    $matches = [];
                     if ( preg_match( "/_(\d+)$/", $keyClean, $matches ) )
                     {
                         $value = $matches[1];
@@ -660,9 +650,8 @@ EOT;
      * Sets the session variable $name to value $value.
      *
      * @param string $name
-     * @param mixed $value
-    */
-    function setSessionVariable( $name, $value )
+     */
+    function setSessionVariable( $name, mixed $value )
     {
         eZSession::set( $name, $value );
     }
@@ -698,7 +687,7 @@ EOT;
      *              if null(default), then force start session and return null if undefined.
      * @return mixed ByRef
      */
-    function &sessionVariable( $name, $fallbackValue = null )
+    function &sessionVariable( $name, mixed $fallbackValue = null )
     {
         return eZSession::get( $name, $fallbackValue );
     }
@@ -741,10 +730,7 @@ EOT;
             // Options used to perform in a similar way than PHP's fopen()
             curl_setopt_array(
                 $ch,
-                array(
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_FOLLOWLOCATION => true,
-                )
+                [CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => true]
             );
             $ini = eZINI::instance();
             if ( $justCheckURL )

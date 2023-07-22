@@ -16,19 +16,19 @@
  */
 class ezpContentPublishingProcess extends eZPersistentObject
 {
-    const STATUS_WORKING = 1;
-    const STATUS_FINISHED = 2;
-    const STATUS_PENDING = 3;
+    final public const STATUS_WORKING = 1;
+    final public const STATUS_FINISHED = 2;
+    final public const STATUS_PENDING = 3;
 
     /**
      * Set when an operation is deferred to crontab
      */
-    const STATUS_DEFERRED = 4;
+    final public const STATUS_DEFERRED = 4;
 
     /**
      * Joker status, used for non handling operation results
      */
-    const STATUS_UNKNOWN = 5;
+    final public const STATUS_UNKNOWN = 5;
 
     /**
      * eZPersistentObject definition
@@ -36,40 +36,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
      */
     public static function definition()
     {
-        static $definition = array(
-             'fields' => array( 'ezcontentobject_version_id' => array( 'name' => 'ContentObjectVersionID',
-                                                                       'datatype' => 'integer',
-                                                                       'default' => 0,
-                                                                       'required' => true,
-                                                                       'foreign_class' => 'eZContentObjectVersion',
-                                                                       'foreign_attribute' => 'id',
-                                                                       'multiplicity' => '1..*' ),
-                                'pid' => array( 'name' => 'PID',
-                                                'datatype' => 'integer',
-                                                'default' => 0,
-                                                'required' => false ),
-                                'status' => array( 'name' => 'Status',
-                                                   'datatype' => 'integer',
-                                                   'default' => 0,
-                                                   'required' => true ),
-                                'started' => array( 'name' => 'Started',
-                                                    'datatype' => 'integer',
-                                                    'default' => 0,
-                                                    'required' => true ),
-                                'created' => array( 'name' => 'Created',
-                                                    'datatype' => 'integer',
-                                                    'default' => 0,
-                                                    'required' => true ),
-                                'finished' => array( 'name' => 'Finished',
-                                                     'datatype' => 'integer',
-                                                     'default' => 0,
-                                                     'required' => true ) ),
-                      'keys' => array( 'ezcontentobject_version_id' ),
-                      'function_attributes' => array( 'version' => 'version' ),
-                      'class_name' => 'ezpContentPublishingProcess',
-                      'increment_key' => null,
-                      'sort' => array( 'created' => 'asc' ),
-                      'name' => 'ezpublishingqueueprocesses' );
+        static $definition = ['fields' => ['ezcontentobject_version_id' => ['name' => 'ContentObjectVersionID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectVersion', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'pid' => ['name' => 'PID', 'datatype' => 'integer', 'default' => 0, 'required' => false], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'started' => ['name' => 'Started', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'finished' => ['name' => 'Finished', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['ezcontentobject_version_id'], 'function_attributes' => ['version' => 'version'], 'class_name' => 'ezpContentPublishingProcess', 'increment_key' => null, 'sort' => ['created' => 'asc'], 'name' => 'ezpublishingqueueprocesses'];
         return $definition;
     }
 
@@ -95,7 +62,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
         return parent::fetchObject(
             self::definition(),
             false,
-            array( 'ezcontentobject_version_id' => $contentObjectVersionId )
+            ['ezcontentobject_version_id' => $contentObjectVersionId]
         );
     }
 
@@ -125,22 +92,18 @@ class ezpContentPublishingProcess extends eZPersistentObject
      */
     public static function currentWorkingProcessCount()
     {
-        return self::count( self::definition(), array( 'status' => self::STATUS_WORKING ) );
+        return self::count( self::definition(), ['status' => self::STATUS_WORKING] );
     }
 
     /**
      * Checks if an object is already being processed
-     * @param eZContentObjectVersion $versionObject
      * @return bool
      */
     public static function isProcessing( eZContentObjectVersion $versionObject )
     {
         $count = parent::count(
             self::definition(),
-            array(
-                'ezcontentobject_version_id' => $versionObject->attribute( 'id' ),
-                // 'status' => self::STATUS_WORKING // not used yet
-            )
+            ['ezcontentobject_version_id' => $versionObject->attribute( 'id' )]
         );
         return ( $count != 0 );
     }
@@ -212,7 +175,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
 
             $this->setAttribute( 'pid', $myPid );
             $this->setAttribute( 'started', time() );
-            $this->store( array( 'pid', 'started' ) );
+            $this->store( ['pid', 'started'] );
 
             // login the version's creator to make sure publishing happens as if ran synchronously
             $creatorId = $this->version()->attribute( 'creator_id' );
@@ -221,7 +184,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
             unset( $creator, $creatorId );
 
             $operationResult = eZOperationHandler::execute( 'content', 'publish',
-                array( 'object_id' => $contentObjectId, 'version' => $contentObjectVersion  )
+                ['object_id' => $contentObjectId, 'version' => $contentObjectVersion]
             );
 
             // Statuses other than CONTINUE require special handling
@@ -230,7 +193,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
                 if ( $operationResult['status'] == eZModuleOperationInfo::STATUS_HALTED )
                 {
                     // deferred to crontab
-                    if ( strpos( $operationResult['result']['content'], 'Deffered to cron' ) !== false )
+                    if ( str_contains( (string) $operationResult['result']['content'], 'Deffered to cron' ) )
                         $processStatus = self::STATUS_DEFERRED;
                     else
                         $processStatus = self::STATUS_UNKNOWN;
@@ -249,7 +212,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
             $this->setAttribute( 'pid', 0 );
             $this->setStatus( $processStatus, false, "publishing operation finished" );
             $this->setAttribute( 'finished', time() );
-            $this->store( array( 'status', 'finished', 'pid' ) );
+            $this->store( ['status', 'finished', 'pid'] );
 
             // Call the postProcessing hook
             ezpContentPublishingQueue::signals()->emit( 'postHandling', $contentObjectId, $contentObjectVersion, $processStatus );
@@ -273,16 +236,11 @@ class ezpContentPublishingProcess extends eZPersistentObject
 
     /**
      * Adds a version to the publishing queue
-     * @param eZContentObjectVersion $version
      * @return ezpContentPublishingProcess
      */
     public static function queue( eZContentObjectVersion $version )
     {
-        $row = array(
-            'ezcontentobject_version_id' => $version->attribute( 'id' ),
-            'created' => time(),
-            'status' => self::STATUS_PENDING,
-         );
+        $row = ['ezcontentobject_version_id' => $version->attribute( 'id' ), 'created' => time(), 'status' => self::STATUS_PENDING];
         $processObject = new self( $row );
         $processObject->store();
 
@@ -296,12 +254,12 @@ class ezpContentPublishingProcess extends eZPersistentObject
      */
     public static function fetchProcesses( $status )
     {
-        if ( !in_array( $status, array( self::STATUS_FINISHED, self::STATUS_PENDING, self::STATUS_WORKING ) ) )
-            throw new ezcBaseValueException( '$status', $status, array( self::STATUS_FINISHED, self::STATUS_PENDING, self::STATUS_WORKING ), 'parameter' );
+        if ( !in_array( $status, [self::STATUS_FINISHED, self::STATUS_PENDING, self::STATUS_WORKING] ) )
+            throw new ezcBaseValueException( '$status', $status, [self::STATUS_FINISHED, self::STATUS_PENDING, self::STATUS_WORKING], 'parameter' );
 
         return parent::fetchObjectList( self::definition(), false,
-            array( 'status' => $status ),
-            array( 'created' => 'asc' ) );
+            ['status' => $status],
+            ['created' => 'asc'] );
     }
 
     /**
@@ -331,7 +289,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
     {
         $this->setStatus( self::STATUS_PENDING, false, "::reset() with message '$message'" );
         $this->setAttribute( 'pid', 0 );
-        $this->store( array( 'status', 'pid' ) );
+        $this->store( ['status', 'pid'] );
     }
 
     /**
@@ -345,7 +303,7 @@ class ezpContentPublishingProcess extends eZPersistentObject
         $this->setAttribute( 'status', $status );
         if ( $store )
         {
-            $this->store( array( 'status' ) );
+            $this->store( ['status'] );
         }
     }
 
@@ -375,15 +333,9 @@ class ezpContentPublishingProcess extends eZPersistentObject
 
     private function getStatusString( $status )
     {
-        $statusMap = array(
-            self::STATUS_PENDING => 'pending',
-            self::STATUS_DEFERRED => 'deferred',
-            self::STATUS_FINISHED => 'finished',
-            self::STATUS_UNKNOWN => 'unknown',
-            self::STATUS_WORKING => 'working'
-        );
+        $statusMap = [self::STATUS_PENDING => 'pending', self::STATUS_DEFERRED => 'deferred', self::STATUS_FINISHED => 'finished', self::STATUS_UNKNOWN => 'unknown', self::STATUS_WORKING => 'working'];
 
-        return isset( $statusMap[$status] ) ? $statusMap[$status] : "<<invalid status>>";
+        return $statusMap[$status] ?? "<<invalid status>>";
     }
 
     private $versionObject = null;

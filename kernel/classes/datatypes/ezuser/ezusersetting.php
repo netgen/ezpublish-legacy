@@ -18,34 +18,13 @@ class eZUserSetting extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( 'fields' => array( 'user_id' => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '0..1' ),
-                                         'is_enabled' => array( 'name' => 'IsEnabled',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         'max_login' => array( 'name' => 'MaxLogin',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ) ),
-                      'keys' => array( 'user_id' ),
-                      'relations' => array( 'user_id' => array( 'class' => 'ezuser',
-                                                                'field' => 'contentobject_id' ) ),
-                      'class_name' => 'eZUserSetting',
-                      'name' => 'ezuser_setting' );
+        static $definition = ['fields' => ['user_id' => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '0..1'], 'is_enabled' => ['name' => 'IsEnabled', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'max_login' => ['name' => 'MaxLogin', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['user_id'], 'relations' => ['user_id' => ['class' => 'ezuser', 'field' => 'contentobject_id']], 'class_name' => 'eZUserSetting', 'name' => 'ezuser_setting'];
         return $definition;
     }
 
     static function create( $userID, $isEnabled )
     {
-        $row = array( 'user_id' => $userID,
-                      'is_enabled' => $isEnabled,
-                      'max_login' => null );
+        $row = ['user_id' => $userID, 'is_enabled' => $isEnabled, 'max_login' => null];
         return new eZUserSetting( $row );
     }
 
@@ -78,7 +57,7 @@ class eZUserSetting extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZUserSetting::definition(),
                                                     null,
-                                                    array('user_id' => $userID ),
+                                                    ['user_id' => $userID],
                                                     $asObject );
     }
 
@@ -98,7 +77,7 @@ class eZUserSetting extends eZPersistentObject
     static function removeByUserID( $userID )
     {
         eZPersistentObject::removeObject( eZUserSetting::definition(),
-                                          array( 'user_id' => $userID ) );
+                                          ['user_id' => $userID] );
     }
 
     /// \privatesection

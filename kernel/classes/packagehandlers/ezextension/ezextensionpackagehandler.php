@@ -16,20 +16,20 @@
 
 class eZExtensionPackageHandler extends eZPackageHandler
 {
-    const ERROR_EXISTS = 1;
+    final public const ERROR_EXISTS = 1;
 
-    const ACTION_REPLACE = 1;
-    const ACTION_SKIP = 2;
+    final public const ACTION_REPLACE = 1;
+    final public const ACTION_SKIP = 2;
 
     public function __construct()
     {
-        parent::__construct( 'ezextension', array( 'extract-install-content' => true ) );
+        parent::__construct( 'ezextension', ['extract-install-content' => true] );
     }
 
     /*!
      Returns an explanation for the extension install item.
     */
-    function explainInstallItem( $package, $installItem, $requestedInfo = array() )
+    function explainInstallItem( $package, $installItem, $requestedInfo = [] )
     {
         if ( $installItem['filename'] )
         {
@@ -47,8 +47,8 @@ class eZExtensionPackageHandler extends eZPackageHandler
             {
                 $root = $dom->documentElement;
                 $extensionName = $root->getAttribute( 'name' );
-                return array( 'description' => ezpI18n::tr( 'kernel/package', 'Extension \'%extensionname\'', false,
-                                                       array( '%extensionname' => $extensionName ) ) );
+                return ['description' => ezpI18n::tr( 'kernel/package', 'Extension \'%extensionname\'', false,
+                                                       ['%extensionname' => $extensionName] )];
             }
         }
     }
@@ -105,12 +105,10 @@ class eZExtensionPackageHandler extends eZPackageHandler
         $trans = eZCharTransform::instance();
         $name = $content->getAttribute( 'name' );
         $extensionName = $trans->transformByGroup( $name, 'urlalias' );
-        if ( strcmp( $name, $extensionName ) !== 0 )
+        if ( strcmp( (string) $name, (string) $extensionName ) !== 0 )
         {
-            $description = ezpI18n::tr( 'kernel/package', 'Package contains an invalid extension name: %extensionname', false, array( '%extensionname' => $name ) );
-            $installParameters['error'] = array( 'error_code' => false,
-                                                 'element_id' => $name,
-                                                 'description' => $description );
+            $description = ezpI18n::tr( 'kernel/package', 'Package contains an invalid extension name: %extensionname', false, ['%extensionname' => $name] );
+            $installParameters['error'] = ['error_code' => false, 'element_id' => $name, 'description' => $description];
             return false;
         }
 
@@ -123,9 +121,8 @@ class eZExtensionPackageHandler extends eZPackageHandler
         if ( file_exists( $extensionDir ) )
         {
             $description = ezpI18n::tr( 'kernel/package', "Extension '%extensionname' already exists.",
-                                   false, array( '%extensionname' => $extensionName ) );
-            $choosenAction = $this->errorChoosenAction( self::ERROR_EXISTS,
-                                                        $installParameters, $description, $this->HandlerType );
+                                   false, ['%extensionname' => $extensionName] );
+            $choosenAction = static::errorChoosenAction(self::ERROR_EXISTS, $installParameters, $description, $this->HandlerType);
             switch( $choosenAction )
             {
             case self::ACTION_SKIP:
@@ -137,11 +134,7 @@ class eZExtensionPackageHandler extends eZPackageHandler
                 break;
 
             default:
-                $installParameters['error'] = array( 'error_code' => self::ERROR_EXISTS,
-                                                     'element_id' => $extensionName,
-                                                     'description' => $description,
-                                                     'actions' => array( self::ACTION_REPLACE => ezpI18n::tr( 'kernel/package', "Replace extension" ),
-                                                                         self::ACTION_SKIP => ezpI18n::tr( 'kernel/package', 'Skip' ) ) );
+                $installParameters['error'] = ['error_code' => self::ERROR_EXISTS, 'element_id' => $extensionName, 'description' => $description, 'actions' => [self::ACTION_REPLACE => ezpI18n::tr( 'kernel/package', "Replace extension" ), self::ACTION_SKIP => ezpI18n::tr( 'kernel/package', 'Skip' )]];
                 return false;
             }
         }
@@ -161,7 +154,7 @@ class eZExtensionPackageHandler extends eZPackageHandler
         }
         else
         {
-            $selectedExtensions = array();
+            $selectedExtensions = [];
         }
 
         if ( !in_array( $extensionName, $selectedExtensions ) )
@@ -178,7 +171,7 @@ class eZExtensionPackageHandler extends eZPackageHandler
         foreach ( $parameters as $extensionName )
         {
             $cli->output( 'adding extension ' . $cli->stylize( 'dir', $extensionName ) );
-            $this->addExtension( $package, $extensionName );
+            static::addExtension($package, $extensionName);
         }
     }
 
@@ -187,7 +180,7 @@ class eZExtensionPackageHandler extends eZPackageHandler
         $siteINI = eZINI::instance();
         $extensionDir = $siteINI->variable( 'ExtensionSettings', 'ExtensionDirectory' );
 
-        $fileList = array();
+        $fileList = [];
         $sourceDir = $extensionDir . '/' . $extensionName;
         $targetDir = $package->path() . '/ezextension';
 
@@ -223,16 +216,16 @@ class eZExtensionPackageHandler extends eZPackageHandler
 
         $package->appendInstall( 'ezextension', false, false, true,
                                  $filename, 'ezextension',
-                                 array( 'content' => $packageRoot ) );
+                                 ['content' => $packageRoot] );
         $package->appendInstall( 'ezextension', false, false, false,
                                  $filename, 'ezextension',
-                                 array( 'content' => false ) );
+                                 ['content' => false] );
     }
 
     function handleAddParameters( $packageType, $package, $cli, $arguments )
     {
         $arguments = array_unique( $arguments );
-        $extensionsToAdd = array();
+        $extensionsToAdd = [];
 
         $extensionList = eZDir::findSubItems( eZExtension::baseDirectory(), 'dl' );
 

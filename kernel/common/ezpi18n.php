@@ -32,7 +32,7 @@ class ezpI18n
     {
         if ( is_array( $arguments ) )
         {
-            $replaceList = array();
+            $replaceList = [];
             foreach ( $arguments as $argumentKey => $argumentItem )
             {
                 if ( is_int( $argumentKey ) )

@@ -111,6 +111,7 @@ class eZVATManager
      */
     static function getUserCountry( $user = false, $considerPreferedCountry = true )
     {
+        $country = null;
         $requireUserCountry = eZVATManager::isUserCountryRequired();
 
         // If current user has set his/her preferred country via the toolbar

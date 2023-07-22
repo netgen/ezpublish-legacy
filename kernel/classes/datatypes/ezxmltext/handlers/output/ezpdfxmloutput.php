@@ -21,7 +21,7 @@ class eZPDFXMLOutput extends eZXHTMLXMLOutput
 
     function initHandlerTable( $element, &$attributes, &$sibilingParams, &$parentParams )
     {
-        $ret = array();
+        $ret = [];
 
         if( !isset( $attributes['width'] ) )
             $attributes['width'] = '100%';
@@ -39,8 +39,7 @@ class eZPDFXMLOutput extends eZXHTMLXMLOutput
         else
             $sibilingParams['list_count']++;
 
-        $ret = array( 'tpl_vars' => array( 'list_count' => $sibilingParams['list_count'],
-                                           'tag_name' => $element->parentNode->nodeName ) );
+        $ret = ['tpl_vars' => ['list_count' => $sibilingParams['list_count'], 'tag_name' => $element->parentNode->nodeName]];
         return $ret;
     }
 

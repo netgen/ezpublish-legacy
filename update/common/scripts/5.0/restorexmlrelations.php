@@ -13,12 +13,7 @@
 require "autoload.php";
 
 $script = eZScript::instance(
-    array(
-        "description" => "eZ Publish missing relations sanitizer script (#19174).",
-        "use-session" => false,
-        "use-modules" => false,
-        "use-extensions" => true,
-    )
+    ["description" => "eZ Publish missing relations sanitizer script (#19174).", "use-session" => false, "use-modules" => false, "use-extensions" => true]
 );
 
 $script->startup();
@@ -31,20 +26,20 @@ $cli = eZCLI::instance();
 
 $affectedClasses = getClassList();
 $languages = eZContentLanguage::fetchList();
-if ( count( $languages ) < 2 )
+if ( (is_countable($languages) ? count( $languages ) : 0) < 2 )
     $script->shutdown( 0, "This upgrade script is only required for installations that have more than one language" );
 
 $totalUpdatedRelations = 0;
 foreach( $affectedClasses as $affectedClassId => $classAttributeIdentifiers )
 {
-    $count = eZContentObject::fetchListCount( array( 'contentclass_id' => $affectedClassId ) );
+    $count = eZContentObject::fetchListCount( ['contentclass_id' => $affectedClassId] );
 
     if ( $count > 0 )
     {
         $done = 0;
         do
         {
-            $objects = eZContentObject::fetchList( true, array( 'contentclass_id' => $affectedClassId ), $done, 100 );
+            $objects = eZContentObject::fetchList( true, ['contentclass_id' => $affectedClassId], $done, 100 );
             foreach( $objects as $object )
             {
                 $updatedRelations = restoreXmlRelations( $object, $classAttributeIdentifiers );
@@ -52,7 +47,7 @@ foreach( $affectedClasses as $affectedClassId => $classAttributeIdentifiers )
                     $cli->output( str_repeat( '.', $updatedRelations ), false );
                 $totalUpdatedRelations += $updatedRelations;
             }
-            $done += count( $objects );
+            $done += count( (array) $objects );
         }
         while( $done < $count );
     }
@@ -73,14 +68,14 @@ $script->shutdown();
  */
 function getClassList()
 {
-    $affectedClasses = array();
-    $classAttributes = eZContentClassAttribute::fetchFilteredList( array( 'data_type_string' => 'ezxmltext', 'version' => eZContentClass::VERSION_STATUS_DEFINED ), false );
+    $affectedClasses = [];
+    $classAttributes = eZContentClassAttribute::fetchFilteredList( ['data_type_string' => 'ezxmltext', 'version' => eZContentClass::VERSION_STATUS_DEFINED], false );
     foreach( $classAttributes as $classAttribute )
     {
         $contentClassId = $classAttribute['contentclass_id'];
         if ( !isset( $affectedClasses[$contentClassId] ) )
         {
-            $affectedClasses[$contentClassId] = array();
+            $affectedClasses[$contentClassId] = [];
         }
         $affectedClasses[$contentClassId][] = $classAttribute['identifier'];
     }
@@ -89,8 +84,6 @@ function getClassList()
 
 /**
  * Parses the XML for the attributes in $classAttributeIdentifiers, and fixes the relations for $object
- * @param eZContentObject $object
- * @param array $classAttributeIdentifiers
  * @return int The number of created relations
  */
 function restoreXmlRelations( eZContentObject $object, array $classAttributeIdentifiers )
@@ -101,7 +94,7 @@ function restoreXmlRelations( eZContentObject $object, array $classAttributeIden
     $languageList = $languageList['language_list'];
 
     // nothing to do if the object isn't translated
-    if ( count( $languageList ) < 2 )
+    if ( (is_countable($languageList) ? count( $languageList ) : 0) < 2 )
         return 0;
 
     $attributeArray = $object->fetchAttributesByIdentifier(
@@ -110,10 +103,10 @@ function restoreXmlRelations( eZContentObject $object, array $classAttributeIden
         $languageList
     );
 
-    $embedRelationsCount = $object->relatedContentObjectCount( false, 0, array( 'AllRelations' => eZContentObject::RELATION_EMBED ) );
-    $linkRelationsCount = $object->relatedContentObjectCount( false, 0, array( 'AllRelations' => eZContentObject::RELATION_LINK ) );
+    $embedRelationsCount = $object->relatedContentObjectCount( false, 0, ['AllRelations' => eZContentObject::RELATION_EMBED] );
+    $linkRelationsCount = $object->relatedContentObjectCount( false, 0, ['AllRelations' => eZContentObject::RELATION_LINK] );
 
-    $embeddedObjectIdArray = $linkedObjectIdArray = array();
+    $embeddedObjectIdArray = $linkedObjectIdArray = [];
     foreach ( $attributeArray as $attribute )
     {
         $xmlText = eZXMLTextType::rawXMLText( $attribute );
@@ -160,12 +153,11 @@ function restoreXmlRelations( eZContentObject $object, array $classAttributeIden
 
 /**
  * Extracts ids of embedded/linked objects in an eZXML DOMNodeList
- * @param DOMNodeList $domNodeList
  * @return array
  */
 function getRelatedObjectList( DOMNodeList $domNodeList )
 {
-    $embeddedObjectIdArray = array();
+    $embeddedObjectIdArray = [];
     foreach( $domNodeList as $embed )
     {
         if ( $embed->hasAttribute( 'object_id' ) )

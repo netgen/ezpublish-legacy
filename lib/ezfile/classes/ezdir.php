@@ -15,9 +15,9 @@
 */
 class eZDir
 {
-    const SEPARATOR_LOCAL = 1;
-    const SEPARATOR_UNIX = 2;
-    const SEPARATOR_DOS = 3;
+    final public const SEPARATOR_LOCAL = 1;
+    final public const SEPARATOR_UNIX = 2;
+    final public const SEPARATOR_DOS = 3;
 
     /*!
      \return a multi-level path from a specific key. For example:
@@ -42,10 +42,10 @@ class eZDir
     {
         $ini = eZINI::instance();
         $dirDepth = $ini->variable( "FileSettings" , "DirDepth" );
-        $pathArray = array();
-        for ( $i = 0; $i < $dirDepth and $i < strlen( $filename ); $i++ )
+        $pathArray = [];
+        for ( $i = 0; $i < $dirDepth and $i < strlen( (string) $filename ); $i++ )
         {
-            $pathArray[] = substr( $filename, $i, 1 );
+            $pathArray[] = substr( (string) $filename, $i, 1 );
         }
         $path = implode( '/', $pathArray );
 
@@ -55,10 +55,10 @@ class eZDir
     static function filenamePath( $filename, $maxCharLen = 2 )
     {
         $path = '';
-        for ( $i = 0; $i < strlen( $filename ) and ( strlen( $filename ) - $i ) > $maxCharLen;
+        for ( $i = 0; $i < strlen( (string) $filename ) and ( strlen( (string) $filename ) - $i ) > $maxCharLen;
               $i++ )
         {
-            $path = $path . substr( $filename, $i, 1 ) . '/';
+            $path = $path . substr( (string) $filename, $i, 1 ) . '/';
         }
 
         return $path;
@@ -95,7 +95,7 @@ class eZDir
     static function cleanupEmptyDirectories( $dir )
     {
         $dir = self::cleanPath( $dir, self::SEPARATOR_UNIX );
-        $dirElements = explode( '/', $dir );
+        $dirElements = explode( '/', (string) $dir );
         if ( count( $dirElements ) == 0 )
             return true;
         $currentDir = $dirElements[0];
@@ -129,9 +129,9 @@ class eZDir
     static function dirpath( $filepath )
     {
         $filepath = eZDir::cleanPath( $filepath, self::SEPARATOR_UNIX );
-        $dirPosition = strrpos( $filepath, '/' );
+        $dirPosition = strrpos( (string) $filepath, '/' );
         if ( $dirPosition !== false )
-            return substr( $filepath, 0, $dirPosition );
+            return substr( (string) $filepath, 0, $dirPosition );
         return $filepath;
     }
 
@@ -141,7 +141,7 @@ class eZDir
     */
     static function directoryPermission()
     {
-        return octdec( eZINI::instance()->variable( 'FileSettings', 'StorageDirPermissions' ) );
+        return octdec( (string) eZINI::instance()->variable( 'FileSettings', 'StorageDirPermissions' ) );
     }
 
     /*!
@@ -166,18 +166,14 @@ class eZDir
      - self::SEPARATOR_UNIX  - Returns a /
      - self::SEPARATOR_DOS   - Returns a \
     */
-    static function separator( $type )
+    static function separator($type)
     {
-        switch ( $type )
-        {
-            case self::SEPARATOR_LOCAL:
-                return eZSys::fileSeparator();
-            case self::SEPARATOR_UNIX:
-                return '/';
-            case self::SEPARATOR_DOS:
-                return "\\";
-        }
-        return null;
+        return match ($type) {
+            self::SEPARATOR_LOCAL => eZSys::fileSeparator(),
+            self::SEPARATOR_UNIX => '/',
+            self::SEPARATOR_DOS => "\\",
+            default => null,
+        };
     }
 
     /*!
@@ -188,7 +184,7 @@ class eZDir
     static function convertSeparators( $path, $toType = self::SEPARATOR_UNIX )
     {
         $separator = eZDir::separator( $toType );
-        return str_replace( array( '/', '\\' ), $separator, $path );
+        return str_replace( ['/', '\\'], $separator, (string) $path );
     }
 
     /*!
@@ -203,12 +199,12 @@ class eZDir
     {
         $path = eZDir::convertSeparators( $path, $toType );
         $separator = eZDir::separator( $toType );
-        if ( strpos( $path, $separator . $separator ) !== false )
+        if ( str_contains( (string) $path, $separator . $separator ) )
         {
-            $path = preg_replace( "#$separator{2,}#", $separator, $path );
+            $path = preg_replace( "#$separator{2,}#", (string) $separator, (string) $path );
         }
-        $pathElements = explode( $separator, $path );
-        $newPathElements = array();
+        $pathElements = explode( $separator, (string) $path );
+        $newPathElements = [];
         foreach ( $pathElements as $pathElement )
         {
             if ( $pathElement === '.' )
@@ -239,7 +235,7 @@ class eZDir
         $separator = eZDir::separator( $type );
         $path = implode( $separator, $names );
         $path = eZDir::cleanPath( $path, $type );
-        $pathLen = strlen( $path );
+        $pathLen = strlen( (string) $path );
         $hasEndSeparator = ( $pathLen > 0 and
                          $path[$pathLen - 1] == $separator );
         if ( $includeEndSeparator and
@@ -248,7 +244,7 @@ class eZDir
         else if ( !$includeEndSeparator &&
                   $hasEndSeparator &&
                   $pathLen > 1 )
-            $path = substr( $path, 0, $pathLen - 1 );
+            $path = substr( (string) $path, 0, $pathLen - 1 );
         return $path;
     }
 
@@ -283,7 +279,7 @@ class eZDir
             $canDelete = false;
             foreach ( $allowedDirs as $allowedDir )
             {
-                if ( strpos( $dirRealPath, realpath( $allowedDir ) ) === 0 )
+                if ( str_starts_with($dirRealPath, realpath( $allowedDir )) )
                 {
                     $canDelete = true;
                     break;
@@ -341,12 +337,12 @@ class eZDir
                 }
                 if ( is_dir( $dir . '/' . $file ) )
                 {
-                    $fileList[] = array( 'path' => $path, 'name' => $file, 'type' => 'dir' );
+                    $fileList[] = ['path' => $path, 'name' => $file, 'type' => 'dir'];
                     eZDir::recursiveList( $dir . '/' . $file, $path . '/' . $file, $fileList );
                 }
                 else
                 {
-                    $fileList[] = array( 'path' => $path, 'name' => $file, 'type' => 'file'  );
+                    $fileList[] = ['path' => $path, 'name' => $file, 'type' => 'file'];
                 }
             }
             @closedir( $handle );
@@ -360,7 +356,7 @@ class eZDir
     */
     static function recursiveFind( $dir, $suffix )
     {
-        $returnFiles = array();
+        $returnFiles = [];
         if ( $handle = @opendir( $dir ) )
         {
             while ( ( $file = readdir( $handle ) ) !== false )
@@ -394,7 +390,7 @@ class eZDir
     */
     static function unlinkWildcard( $dir, $pattern )
     {
-        $availableFiles = array();
+        $availableFiles = [];
         if ( $handle = @opendir( $dir ) )
         {
             while ( ( $file = readdir( $handle ) ) !== false )
@@ -406,10 +402,10 @@ class eZDir
             }
             @closedir( $handle );
 
-            if( strpos( $pattern, "." ) )
+            if( strpos( (string) $pattern, "." ) )
             {
-                $baseexp = substr( $pattern, 0, strpos( $pattern, "." ) );
-                $typeexp = substr( $pattern, ( strpos( $pattern, "." ) + 1 ), strlen( $pattern ) );
+                $baseexp = substr( (string) $pattern, 0, strpos( (string) $pattern, "." ) );
+                $typeexp = substr( (string) $pattern, ( strpos( (string) $pattern, "." ) + 1 ), strlen( (string) $pattern ) );
             }
             else
             {
@@ -417,14 +413,14 @@ class eZDir
                 $typeexp = "";
             }
 
-            $baseexp=preg_quote( $baseexp );
+            $baseexp=preg_quote( (string) $baseexp );
             $typeexp=preg_quote( $typeexp );
 
-            $baseexp = str_replace( array( "\*", "\?" ), array( ".*", "." ), $baseexp );
-            $typeexp = str_replace(array( "\*", "\?" ), array( ".*", "." ), $typeexp );
+            $baseexp = str_replace( ["\*", "\?"], [".*", "."], $baseexp );
+            $typeexp = str_replace(["\*", "\?"], [".*", "."], $typeexp );
 
             $i=0;
-            $matchedFileArray = array();
+            $matchedFileArray = [];
             foreach( $availableFiles as $file )
             {
                 $fileName = basename( $file );
@@ -450,7 +446,7 @@ class eZDir
             foreach ( array_keys( $matchedFileArray ) as $key )
             {
                 $matchedFile =& $matchedFileArray[$key];
-                if ( substr( $dir,-1 ) == "/")
+                if ( str_ends_with((string) $dir, "/"))
                 {
                     unlink( $dir.$matchedFile );
                 }
@@ -481,10 +477,10 @@ class eZDir
 
         if ( !is_dir( $dir ) )
         {
-            return array();
+            return [];
         }
 
-        $returnFiles = array();
+        $returnFiles = [];
         if ( $handle = @opendir( $dir ) )
         {
             while ( ( $file = readdir( $handle ) ) !== false )
@@ -529,7 +525,7 @@ class eZDir
     {
         if ( !$types )
             $types = 'dfl';
-        $dirArray = array();
+        $dirArray = [];
         if ( $handle = @opendir( $dir ) )
         {
             while ( ( $element = readdir( $handle ) ) !== false )
@@ -540,11 +536,11 @@ class eZDir
                     continue;
                 if ( $excludeItems && preg_match( $excludeItems, $element ) )
                     continue;
-                if ( strpos( $types, 'd' ) === false && is_dir( $dir . '/' . $element ) )
+                if ( !str_contains( (string) $types, 'd' ) && is_dir( $dir . '/' . $element ) )
                     continue;
-                if ( strpos( $types, 'l' ) === false && is_link( $dir . '/' . $element ) )
+                if ( !str_contains( (string) $types, 'l' ) && is_link( $dir . '/' . $element ) )
                     continue;
-                if ( strpos( $types, 'f' ) === false && is_file( $dir . '/' . $element ))
+                if ( !str_contains( (string) $types, 'f' ) && is_file( $dir . '/' . $element ))
                     continue;
                 if ( $fullPath )
                 {
@@ -589,7 +585,7 @@ class eZDir
         }
         if ( $asChild )
         {
-            if ( preg_match( "#^.+/([^/]+)$#", $sourceDirectory, $matches ) )
+            if ( preg_match( "#^.+/([^/]+)$#", (string) $sourceDirectory, $matches ) )
             {
                 eZDir::mkdir( $destinationDirectory . '/' . $matches[1], eZDir::directoryPermission(), false );
                 $destinationDirectory .= '/' . $matches[1];
@@ -597,10 +593,10 @@ class eZDir
         }
         $items = eZDir::findSubitems( $sourceDirectory, 'df', false, $includeHidden, $excludeItems );
         $totalItems = $items;
-        while ( count( $items ) > 0 )
+        while ( (is_countable($items) ? count( $items ) : 0) > 0 )
         {
             $currentItems = $items;
-            $items = array();
+            $items = [];
             foreach ( $currentItems as $item )
             {
                 $fullPath = $sourceDirectory . '/' . $item;

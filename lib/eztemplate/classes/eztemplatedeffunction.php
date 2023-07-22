@@ -36,15 +36,15 @@
 
 class eZTemplateDefFunction
 {
-    const DEF_FUNCTION_NAME = 'def';
-    const UNDEF_FUNCTION_NAME = 'undef';
+    final public const DEF_FUNCTION_NAME = 'def';
+    final public const UNDEF_FUNCTION_NAME = 'undef';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions.
      */
     function functionList()
     {
-        $functionList = array( eZTemplateDefFunction::DEF_FUNCTION_NAME, eZTemplateDefFunction::UNDEF_FUNCTION_NAME );
+        $functionList = [eZTemplateDefFunction::DEF_FUNCTION_NAME, eZTemplateDefFunction::UNDEF_FUNCTION_NAME];
         return $functionList;
     }
 
@@ -55,7 +55,7 @@ class eZTemplateDefFunction
      */
     function attributeList()
     {
-        return array();
+        return [];
     }
 
 
@@ -64,14 +64,7 @@ class eZTemplateDefFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateDefFunction::DEF_FUNCTION_NAME   => array( 'parameters' => true,
-                                                                'static' => false,
-                                                                'transform-parameters' => true,
-                                                                'tree-transformation' => true ),
-                      eZTemplateDefFunction::UNDEF_FUNCTION_NAME => array( 'parameters' => true,
-                                                                'static' => false,
-                                                                'transform-parameters' => true,
-                                                                'tree-transformation' => true ) );
+        return [eZTemplateDefFunction::DEF_FUNCTION_NAME   => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true], eZTemplateDefFunction::UNDEF_FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -81,13 +74,13 @@ class eZTemplateDefFunction
                                          $tpl, &$parameters, $privateData )
     {
         $undef = ( $functionName == 'undef' );
-        $newNodes = array();
+        $newNodes = [];
 
         if ( !$parameters )
         {
             if ( !$undef )
                 // prevent execution of the function in processed mode
-                return array( eZTemplateNodeTool::createCodePieceNode( "// an error occured in $functionName" ) );
+                return [eZTemplateNodeTool::createCodePieceNode( "// an error occured in $functionName" )];
 
             // {undef} called w/o arguments => destroy all local variables
             $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "// undef all" );
@@ -103,17 +96,15 @@ class eZTemplateDefFunction
             {
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "// undef \$$parameterName" );
                 // generates "$tpl->unsetLocalVariable();"
-                $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( array( $namespaceValue = false,
-                                                                                  $scope = eZTemplate::NAMESPACE_SCOPE_LOCAL,
-                                                                                  $parameterName ),
-                                                                           array( 'remember_set' => false, 'local-variable' => true ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( [$namespaceValue = false, $scope = eZTemplate::NAMESPACE_SCOPE_LOCAL, $parameterName],
+                                                                           ['remember_set' => false, 'local-variable' => true] );
             }
             else
             {
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "// def \$$parameterName" );
                 // generates "$tpl->setLocalVariable();"
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, $nodePlacement, array( 'local-variable' => true ),
-                                                                      array( $namespaceValue = false, $scope = eZTemplate::NAMESPACE_SCOPE_LOCAL, $parameterName ),
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, $nodePlacement, ['local-variable' => true],
+                                                                      [$namespaceValue = false, $scope = eZTemplate::NAMESPACE_SCOPE_LOCAL, $parameterName],
                                                                       $onlyExisting = false, $overwrite = true, false, $rememberSet = false );
             }
         }
@@ -128,7 +119,7 @@ class eZTemplateDefFunction
     {
         $undef = ( $functionName == eZTemplateDefFunction::UNDEF_FUNCTION_NAME ) ? true : false;
 
-        if ( $undef && !count( $functionParameters ) ) // if {undef} called w/o arguments
+        if ( $undef && !(is_countable($functionParameters) ? count( $functionParameters ) : 0) ) // if {undef} called w/o arguments
         {
             // destroy all variables defined in the current template using {def}
             $tpl->unsetLocalVariables();

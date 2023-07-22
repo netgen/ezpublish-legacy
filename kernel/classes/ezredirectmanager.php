@@ -63,7 +63,7 @@ class eZRedirectManager
         {
             $moduleURI = $module->functionURI( $module->currentView() );
             // Check for correct module/view
-            if ( substr( $uri, 0, strlen( $moduleURI ) ) == $moduleURI )
+            if ( str_starts_with((string) $uri, (string) $moduleURI) )
             {
                 // Check parameters
                 $moduleURI = $module->currentRedirectionURI();

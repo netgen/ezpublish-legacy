@@ -19,13 +19,8 @@ class eZContentClassPackageCreator extends eZPackageCreationHandler
 {
     public function __construct( $id )
     {
-        $steps = array();
-        $steps[] = array( 'id' => 'class',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Content classes to include' ),
-                          'methods' => array( 'initialize' => 'initializeClassData',
-                                              'validate' => 'validateClassData',
-                                              'commit' => 'commitClassData' ),
-                          'template' => 'class.tpl' );
+        $steps = [];
+        $steps[] = ['id' => 'class', 'name' => ezpI18n::tr( 'kernel/package', 'Content classes to include' ), 'methods' => ['initialize' => 'initializeClassData', 'validate' => 'validateClassData', 'commit' => 'commitClassData'], 'template' => 'class.tpl'];
         $steps[] = $this->packageInformationStep();
         $steps[] = $this->packageMaintainerStep();
         $steps[] = $this->packageChangelogStep();
@@ -74,17 +69,16 @@ class eZContentClassPackageCreator extends eZPackageCreationHandler
     */
     function validateClassData( $package, $http, $currentStepID, &$stepMap, &$persistentData, &$errorList )
     {
-        $classList = array();
+        $classList = [];
         if ( $http->hasPostVariable( 'ClassList' ) )
             $classList = $http->postVariable( 'ClassList' );
 
         $persistentData['classlist'] = $classList;
 
         $result = true;
-        if ( count( $classList ) == 0 )
+        if ( (is_countable($classList) ? count( $classList ) : 0) == 0 )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Class list' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must select at least one class for inclusion' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Class list' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must select at least one class for inclusion' )];
             $result = false;
         }
         return $result;
@@ -101,7 +95,7 @@ class eZContentClassPackageCreator extends eZPackageCreationHandler
     {
         $classList = $persistentData['classlist'];
 
-        if ( count( $classList ) == 1 )
+        if ( (is_countable($classList) ? count( $classList ) : 0) == 1 )
         {
             $classID = $classList[0];
             $class = eZContentClass::fetch( $classID );
@@ -112,9 +106,9 @@ class eZContentClassPackageCreator extends eZPackageCreationHandler
                 $packageInformation['description'] = 'This package contains an exported definition of the content class ' . $class->attribute( 'name' ) . ' which can be imported to another eZ Publish site';
             }
         }
-        else if ( count( $classList ) > 1 )
+        else if ( (is_countable($classList) ? count( $classList ) : 0) > 1 )
         {
-            $classNames = array();
+            $classNames = [];
             foreach ( $classList as $classID )
             {
                 $class = eZContentClass::fetch( $classID );
@@ -123,8 +117,8 @@ class eZContentClassPackageCreator extends eZPackageCreationHandler
                     $classNames[] = $class->attribute( 'name' );
                 }
             }
-            $packageInformation['name'] = count( $classList ) . ' Classes';
-            $packageInformation['summary'] = 'Export of ' . count( $classList ) . ' content classes';
+            $packageInformation['name'] = (is_countable($classList) ? count( $classList ) : 0) . ' Classes';
+            $packageInformation['summary'] = 'Export of ' . (is_countable($classList) ? count( $classList ) : 0) . ' content classes';
             $description = 'This package contains exported definitions of the following content classes:' . "\n";
             foreach ( $classNames as $className )
             {

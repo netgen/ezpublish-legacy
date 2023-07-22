@@ -22,7 +22,6 @@ class eZImageLayer extends eZImageInterface
     {
         parent::__construct( $imageObjectRef, $imageObject, $width, $height );
         $this->setFont( $font );
-        $this->TemplateURI = 'design:image/layer.tpl';
     }
 
     /*!
@@ -31,9 +30,7 @@ class eZImageLayer extends eZImageInterface
     */
     function templateData()
     {
-        return array( 'type' => 'template',
-                      'template_variable_name' => 'layer',
-                      'uri' => $this->TemplateURI );
+        return ['type' => 'template', 'template_variable_name' => 'layer', 'uri' => $this->TemplateURI];
     }
 
     /*!
@@ -94,7 +91,7 @@ class eZImageLayer extends eZImageInterface
     }
 
     /// \privatesection
-    public $TemplateURI;
+    public $TemplateURI = 'design:image/layer.tpl';
 }
 
 ?>

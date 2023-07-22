@@ -55,17 +55,10 @@ function filesystemCleanup( $directory )
  */
 function databaseCleanup( $directory )
 {
-    list( $host, $user, $pass, $db, $port, $socket ) = eZINI::instance( "file.ini" )
+    [$host, $user, $pass, $db, $port, $socket] = eZINI::instance( "file.ini" )
         ->variableMulti(
             "ClusteringSettings",
-            array(
-                "DBHost",
-                "DBUser",
-                "DBPassword",
-                "DBName",
-                "DBPort",
-                "DBSocket",
-            )
+            ["DBHost", "DBUser", "DBPassword", "DBName", "DBPort", "DBSocket"]
         );
 
     $db = new mysqli( $host, $user, $pass, $db, $port, $socket );
@@ -81,7 +74,7 @@ function databaseCleanup( $directory )
 
     // Replacing \ and / by a regex equivalent matching both.
     $imagesDirectory = str_replace(
-        array( "\\", "/" ),
+        ["\\", "/"],
         "[\\\\/]",
         // Removing trailing \ and /
         rtrim(
@@ -118,25 +111,17 @@ function databaseCleanup( $directory )
  */
 function dfsCleanup( $directory )
 {
-    list( $host, $user, $pass, $db, $port, $socket, $mountPoint ) = eZINI::instance( "file.ini" )
+    [$host, $user, $pass, $db, $port, $socket, $mountPoint] = eZINI::instance( "file.ini" )
         ->variableMulti(
             "eZDFSClusteringSettings",
-            array(
-                "DBHost",
-                "DBUser",
-                "DBPassword",
-                "DBName",
-                "DBPort",
-                "DBSocket",
-                "MountPointPath",
-            )
+            ["DBHost", "DBUser", "DBPassword", "DBName", "DBPort", "DBSocket", "MountPointPath"]
         );
 
     $db = new mysqli( $host, $user, $pass, $db, $port, $socket );
 
     // Replacing \ and / by a regex equivalent matching both.
     $imagesDirectory = str_replace(
-        array( "\\", "/" ),
+        ["\\", "/"],
         "[\\\\/]",
         // Removing trailing \ and /
         rtrim(
@@ -159,22 +144,14 @@ function dfsCleanup( $directory )
 require "autoload.php";
 
 $script = eZScript::instance(
-    array(
-        "description" => "eZ Publish trashed images sanitizer script (#017781).",
-        "use-session" => false,
-        "use-modules" => false,
-        "use-extensions" => true,
-    )
+    ["description" => "eZ Publish trashed images sanitizer script (#017781).", "use-session" => false, "use-modules" => false, "use-extensions" => true]
 );
 
 $script->startup();
 $options = $script->getOptions(
     "[n]",
     "",
-    array(
-        "-q" => "Quiet mode",
-        "n" => "Do not wait"
-    )
+    ["-q" => "Quiet mode", "n" => "Do not wait"]
 );
 
 $script->initialize();
@@ -196,24 +173,12 @@ $fileHandler = eZINI::instance( "file.ini" )->variable( "ClusteringSettings", "F
 
 $directory = eZSys::varDirectory() . "/storage/images";
 
-switch ( strtolower( $fileHandler ) )
-{
-    case "ezfsfilehandler":
-    case "ezfs2filehandler":
-        array_map( "filesystemCleanup", glob( "$directory/*" ) );
-        break;
-
-    case "ezdbfilehandler":
-        databaseCleanup( $directory );
-        break;
-
-    case "ezdfsfilehandler":
-        dfsCleanup( $directory );
-        break;
-
-    default:
-        $cli->error( "Unsupported '$fileHandler' FileHandler." );
-}
+match (strtolower( (string) $fileHandler )) {
+    "ezfsfilehandler", "ezfs2filehandler" => array_map( "filesystemCleanup", glob( "$directory/*" ) ),
+    "ezdbfilehandler" => databaseCleanup( $directory ),
+    "ezdfsfilehandler" => dfsCleanup( $directory ),
+    default => $cli->error( "Unsupported '$fileHandler' FileHandler." ),
+};
 
 $script->shutdown();
 ?>

@@ -16,27 +16,24 @@
 
 class eZNotificationEventHandler
 {
-    const EVENT_HANDLED = 0;
-    const EVENT_SKIPPED = 1;
-    const EVENT_UNKNOWN = 2;
-    const EVENT_ERROR = 3;
+    final public const EVENT_HANDLED = 0;
+    final public const EVENT_SKIPPED = 1;
+    final public const EVENT_UNKNOWN = 2;
+    final public const EVENT_ERROR = 3;
     
     /**
      * Constructor
      *
-     * @param string $idString
-     * @param string $name
+     * @param string $IDString
+     * @param string $Name
      */
-    public function __construct( $idString, $name )
+    public function __construct(public $IDString, public $Name)
     {
-        $this->IDString = $idString;
-        $this->Name = $name;
     }
 
     function attributes()
     {
-        return array( 'id_string',
-                      'name' );
+        return ['id_string', 'name'];
     }
 
     function hasAttribute( $attr )
@@ -80,9 +77,6 @@ class eZNotificationEventHandler
     {
         return true;
     }
-
-    public $IDString = false;
-    public $Name = false;
 }
 
 ?>

@@ -33,9 +33,7 @@ class eZPostgreSQLDB extends eZDBInterface
         {
             if ( function_exists( 'eZAppendWarningItem' ) )
             {
-                eZAppendWarningItem( array( 'error' => array( 'type' => 'ezdb',
-                                                              'number' => eZDBInterface::ERROR_MISSING_EXTENSION ),
-                                            'text' => 'PostgreSQL extension was not found, the DB handler will not be initialized.' ) );
+                eZAppendWarningItem( ['error' => ['type' => 'ezdb', 'number' => eZDBInterface::ERROR_MISSING_EXTENSION], 'text' => 'PostgreSQL extension was not found, the DB handler will not be initialized.'] );
                 $this->IsConnected = false;
             }
             eZDebug::writeWarning( 'PostgreSQL extension was not found, the DB handler will not be initialized.', 'eZPostgreSQLDB' );
@@ -63,7 +61,7 @@ class eZPostgreSQLDB extends eZDBInterface
             eZDebug::accumulatorStart( 'postgresql_connection', 'postgresql_total', 'Database connection'  );
             try {
                 $this->DBConnection = pg_pconnect( $connectString );
-            } catch( ErrorException $e ) {}
+            } catch( ErrorException ) {}
             eZDebug::accumulatorStop( 'postgresql_connection' );
             eZDebug::setHandleType( $oldHandling );
 
@@ -77,7 +75,7 @@ class eZPostgreSQLDB extends eZDBInterface
                 eZDebug::accumulatorStart( 'postgresql_connection', 'postgresql_total', 'Database connection'  );
                 try {
                     $this->DBConnection = pg_pconnect( $connectString );
-                } catch( ErrorException $e ) {}
+                } catch( ErrorException ) {}
                 eZDebug::accumulatorStop( 'postgresql_connection' );
                 eZDebug::setHandleType( $oldHandling );
                 $numAttempts++;
@@ -99,7 +97,7 @@ class eZPostgreSQLDB extends eZDBInterface
             eZDebug::accumulatorStart( 'postgresql_connection', 'postgresql_total', 'Database connection'  );
             try {
                 $this->DBConnection = pg_connect( $connectString );
-            } catch( ErrorException $e ) {}
+            } catch( ErrorException ) {}
             eZDebug::accumulatorStop( 'postgresql_connection' );
             eZDebug::setHandleType( $oldHandling );
 
@@ -113,7 +111,7 @@ class eZPostgreSQLDB extends eZDBInterface
                 eZDebug::accumulatorStart( 'postgresql_connection', 'postgresql_total', 'Database connection'  );
                 try {
                     $this->DBConnection = pg_connect( $connectString );
-                } catch( ErrorException $e ) {}
+                } catch( ErrorException ) {}
                 eZDebug::accumulatorStop( 'postgresql_connection' );
                 eZDebug::setHandleType( $oldHandling );
                 $numAttempts++;
@@ -138,7 +136,7 @@ class eZPostgreSQLDB extends eZDBInterface
 
     public static function connectString( $server = null, $port = null, $db = null, $user = null, $password = null )
     {
-        $connectParams = array();
+        $connectParams = [];
         if ( $server !== false and $server !== null )
             $connectParams[] = "host='$server'";
         if ( $db !== false and $db !== null )
@@ -158,7 +156,7 @@ class eZPostgreSQLDB extends eZDBInterface
         $query = "SELECT datname FROM pg_database";
         $result = $this->query( $query );
 
-        $databases = array();
+        $databases = [];
         $counter = pg_num_rows( $result ) - 1;
 
         while ( $counter > 0 )
@@ -204,7 +202,7 @@ class eZPostgreSQLDB extends eZDBInterface
                 $oldHandling = eZDebug::setHandleType( eZDebug::HANDLE_EXCEPTION );
                 try {
                     $result = pg_query( $this->DBConnection, $sql );
-                } catch( ErrorException $e ) {
+                } catch( ErrorException ) {
                     $result = false;
                 }
                 eZDebug::setHandleType( $oldHandling );
@@ -241,9 +239,9 @@ class eZPostgreSQLDB extends eZDBInterface
     }
 
 
-    function arrayQuery( $sql, $params = array(), $server = false )
+    function arrayQuery( $sql, $params = [], $server = false )
     {
-        $retArray = array();
+        $retArray = [];
         if ( $this->isConnected() )
         {
             $limit = -1;
@@ -292,19 +290,19 @@ class eZPostgreSQLDB extends eZDBInterface
                 return false;
             }
 
-            if ( pg_numrows( $result ) > 0 )
+            if ( pg_num_rows( $result ) > 0 )
             {
                 eZDebug::accumulatorStart( 'postgresql_loop', 'postgresql_total', 'Looping result' );
                 if ( !is_string( $column ) )
                 {
-                    for($i = 0; $i < pg_numrows($result); $i++)
+                    for($i = 0; $i < pg_num_rows($result); $i++)
                     {
                         $retArray[$i + $offset] = pg_fetch_array( $result, $i, PGSQL_ASSOC );
                     }
                 }
                 else
                 {
-                    for ($i = 0; $i < pg_numrows( $result ); $i++ )
+                    for ($i = 0; $i < pg_num_rows( $result ); $i++ )
                     {
                         $tmp_row = pg_fetch_array( $result, $i, PGSQL_ASSOC );
                         $retArray[$i + $offset] =& $tmp_row[$column];
@@ -332,7 +330,7 @@ class eZPostgreSQLDB extends eZDBInterface
 
     }
 
-    function concatString( $strings = array() )
+    function concatString( $strings = [] )
     {
         $str = implode( " || " , $strings );
         return "  $str   ";
@@ -354,11 +352,7 @@ class eZPostgreSQLDB extends eZDBInterface
 
     function supportedRelationTypes()
     {
-        return array( eZDBInterface::RELATION_TABLE,
-                      eZDBInterface::RELATION_SEQUENCE,
-                      eZDBInterface::RELATION_TRIGGER,
-                      eZDBInterface::RELATION_VIEW,
-                      eZDBInterface::RELATION_INDEX );
+        return [eZDBInterface::RELATION_TABLE, eZDBInterface::RELATION_SEQUENCE, eZDBInterface::RELATION_TRIGGER, eZDBInterface::RELATION_VIEW, eZDBInterface::RELATION_INDEX];
     }
 
     /*!
@@ -366,11 +360,7 @@ class eZPostgreSQLDB extends eZDBInterface
     */
     function relationKind( $relationType )
     {
-        $kind = array( eZDBInterface::RELATION_TABLE => 'r',
-                       eZDBInterface::RELATION_SEQUENCE => 'S',
-                       eZDBInterface::RELATION_TRIGGER => 't',
-                       eZDBInterface::RELATION_VIEW => 'v',
-                       eZDBInterface::RELATION_INDEX => 'i' );
+        $kind = [eZDBInterface::RELATION_TABLE => 'r', eZDBInterface::RELATION_SEQUENCE => 'S', eZDBInterface::RELATION_TRIGGER => 't', eZDBInterface::RELATION_VIEW => 'v', eZDBInterface::RELATION_INDEX => 'i'];
         if ( !isset( $kind[$relationType] ) )
             return false;
         return $kind[$relationType];
@@ -379,7 +369,7 @@ class eZPostgreSQLDB extends eZDBInterface
     function relationCounts( $relationMask )
     {
         $relationTypes = $this->supportedRelationTypes();
-        $relationKinds = array();
+        $relationKinds = [];
         foreach ( $relationTypes as $relationType )
         {
             $relationBit = ( 1 << $relationType );
@@ -410,7 +400,7 @@ class eZPostgreSQLDB extends eZDBInterface
                     WHERE ( $relkindText )
                           AND c.relname !~ '^pg_'
                           AND pg_catalog.pg_table_is_visible(c.oid)";
-            $array = $this->arrayQuery( $sql, array( 'column' => 'count' ) );
+            $array = $this->arrayQuery( $sql, ['column' => 'count'] );
             $count = $array[0];
         }
         return $count;
@@ -434,7 +424,7 @@ class eZPostgreSQLDB extends eZDBInterface
                     WHERE c.relkind = '$relationKind'
                           AND c.relname !~ '^pg_'
                           AND pg_catalog.pg_table_is_visible(c.oid)";
-            $array = $this->arrayQuery( $sql, array( 'column' => 'count' ) );
+            $array = $this->arrayQuery( $sql, ['column' => 'count'] );
             $count = $array[0];
         }
         return $count;
@@ -450,7 +440,7 @@ class eZPostgreSQLDB extends eZDBInterface
             return false;
         }
 
-        $array = array();
+        $array = [];
         if ( $this->isConnected() )
         {
             $sql = "SELECT relname
@@ -459,20 +449,20 @@ class eZPostgreSQLDB extends eZDBInterface
                     WHERE c.relkind = '$relationKind'
                           AND c.relname !~ '^pg_'
                           AND pg_catalog.pg_table_is_visible( c.oid )";
-            $array = $this->arrayQuery( $sql, array( 'column' => 'relname' ) );
+            $array = $this->arrayQuery( $sql, ['column' => 'relname'] );
         }
         return $array;
     }
 
     function eZTableList( $server = eZDBInterface::SERVER_MASTER )
     {
-        $array = array();
+        $array = [];
         if ( $this->isConnected() )
         {
-            foreach ( array( eZDBInterface::RELATION_TABLE, eZDBInterface::RELATION_SEQUENCE ) as $relationType )
+            foreach ( [eZDBInterface::RELATION_TABLE, eZDBInterface::RELATION_SEQUENCE] as $relationType )
             {
                 $sql = "SELECT relname FROM pg_class WHERE relkind='" . $this->relationKind( $relationType ) . "' AND relname like 'ez%'";
-                foreach ( $this->arrayQuery( $sql, array( 'column' => 'relname' ) ) as $result )
+                foreach ( $this->arrayQuery( $sql, ['column' => 'relname'] ) as $result )
                 {
                     $array[$result] = $relationType;
                 }
@@ -646,6 +636,7 @@ class eZPostgreSQLDB extends eZDBInterface
 
     function databaseServerVersion()
     {
+        $versionText = null;
         if ( $this->isConnected() )
         {
             $sql = "SELECT version()";
@@ -660,10 +651,9 @@ class eZPostgreSQLDB extends eZDBInterface
                 $array = pg_fetch_row( $result, 0 );
                 $versionText = $array[0];
             }
-            list( $dbType, $versionInfo ) = explode( ' ', $versionText );
+            [$dbType, $versionInfo] = explode( ' ', (string) $versionText );
             $versionArray = explode( '.', $versionInfo );
-            return array( 'string' => $versionInfo,
-                          'values' => $versionArray );
+            return ['string' => $versionInfo, 'values' => $versionArray];
         }
         return false;
     }

@@ -31,6 +31,7 @@ class eZStepDatabaseInit extends eZStepInstaller
 
     function processPostData()
     {
+        $password = null;
         $databaseMap = eZSetupDatabaseMap();
 
         // Get database parameters from input form.
@@ -100,7 +101,7 @@ class eZStepDatabaseInit extends eZStepInstaller
         {
             return true;
         }
-        else if ( count( $availDatabases ) > 0 ) // login succeeded, and at least one database available
+        else if ( (is_countable($availDatabases) ? count( $availDatabases ) : 0) > 0 ) // login succeeded, and at least one database available
         {
             $this->PersistenceList['database_info_available'] = $availDatabases;
             return true;
@@ -194,8 +195,7 @@ class eZStepDatabaseInit extends eZStepInstaller
         $dbNotEmpty = 0;
         if ( $this->Error )
         {
-            $dbError = $this->databaseErrorInfo( array( 'error_code' => $this->Error,
-                                                        'database_info' => $this->PersistenceList['database_info'] ) );
+            $dbError = $this->databaseErrorInfo( ['error_code' => $this->Error, 'database_info' => $this->PersistenceList['database_info']] );
         }
 
         $databaseInfo = $this->PersistenceList['database_info'];
@@ -215,12 +215,11 @@ class eZStepDatabaseInit extends eZStepInstaller
         $this->Tpl->setVariable( 'regional_info', $regionalInfo );
         $this->Tpl->setVariable( 'db_not_empty', $dbNotEmpty );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/database_init.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Database initialization' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Database initialization' ), 'url' => false]];
         return $result;
     }
 

@@ -32,16 +32,12 @@ class eZTemplateMenuFunction
     */
     function functionList()
     {
-        return array( $this->BlockName );
+        return [$this->BlockName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->BlockName => array( 'parameters' => true,
-                                                 'static' => false,
-                                                 'transform-children' => false,
-                                                 'tree-transformation' => true,
-                                                 'transform-parameters' => true ) );
+        return [$this->BlockName => ['parameters' => true, 'static' => false, 'transform-children' => false, 'tree-transformation' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -56,7 +52,7 @@ class eZTemplateMenuFunction
             return false;
 
         $namespaceValue = false;
-        $newNodes = array();
+        $newNodes = [];
         if ( isset( $parameters["name"] ) )
         {
             $menuIni = eZINI::instance( "menu.ini" );
@@ -83,14 +79,14 @@ class eZTemplateMenuFunction
                     if ( $includeNodes === false )
                         return false;
 
-                    $variableList = array();
+                    $variableList = [];
                     foreach ( array_keys( $parameters ) as $parameterName )
                     {
                         if ( $parameterName == 'name' )
                             continue;
                         $parameterData =& $parameters[$parameterName];
-                        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, array(),
-                                                                              array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName ) );
+                        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, [],
+                                                                              [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName] );
                         $variableList[] = $parameterName;
                     }
 
@@ -98,7 +94,7 @@ class eZTemplateMenuFunction
 
                     foreach ( $variableList as $variableName )
                     {
-                        $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $variableName ) );
+                        $newNodes[] = eZTemplateNodeTool::createVariableUnsetNode( [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $variableName] );
                     }
                 }
                 else

@@ -12,25 +12,21 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish PHP tag checker\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish PHP tag checker\n\n" .
                                                          "Checks for characters before the PHP start tag and after the PHP end tag\n" .
                                                          "and sets exit code based on the result\n" .
                                                          "PATH can either be a file or a directory\n" .
                                                          "\n" .
-                                                         "ezcheckphptag.php lib" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+                                                         "ezcheckphptag.php lib" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[no-print]",
                                 "[path+]",
-                                array( 'no-print' => "Do not print path for bad files"
-                                       ) );
+                                ['no-print' => "Do not print path for bad files"] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $script->shutdown( 1, "No files to check" );
 }
@@ -43,7 +39,7 @@ $ini = eZINI::instance();
 
 $pathList = $options['arguments'];
 $error = false;
-$badFiles = array();
+$badFiles = [];
 
 $shellTag = '#!';
 $startTag = '<?php';
@@ -53,7 +49,7 @@ $endNewlineTag = "?>\n";
 
 foreach ( $pathList as $path )
 {
-    $files = array();
+    $files = [];
     if ( is_dir( $path ) )
     {
         $files = eZDir::recursiveFindRelative( false, $path, '.php' );
@@ -77,7 +73,7 @@ foreach ( $pathList as $path )
             $startText = fread( $fd, 5 );
             $hasCorrectStart = false;
             $hasCorrectEnd = false;
-            $errorText = array();
+            $errorText = [];
             if ( substr( $startText, 0, 2 ) == $shellTag )
             {
                 $hasCorrectStart = true;

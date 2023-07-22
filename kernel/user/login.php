@@ -44,13 +44,13 @@ if ( $Module->isCurrentAction( 'Login' ) and
     $userPassword = $Module->actionParameter( 'UserPassword' );
     $userRedirectURI = $Module->actionParameter( 'UserRedirectURI' );
 
-    if ( trim( $userRedirectURI ) == "" )
+    if ( trim( (string) $userRedirectURI ) == "" )
     {
         // Only use redirection if RequireUserLogin is disabled
         $requireUserLogin = ( $ini->variable( "SiteAccessSettings", "RequireUserLogin" ) == "true" );
         if ( !$requireUserLogin )
         {
-            $userRedirectURI = trim( $http->postVariable( 'RedirectURI', '' ) );
+            $userRedirectURI = trim( (string) $http->postVariable( 'RedirectURI', '' ) );
             if ( empty( $userRedirectURI ) )
             {
                 $userRedirectURI = $http->sessionVariable( 'LastAccessesURI', '/' );
@@ -64,10 +64,10 @@ if ( $Module->isCurrentAction( 'Login' ) and
     }
     // Save array of previous post variables in session variable
     $post = $http->attribute( 'post' );
-    $lastPostVars = array();
+    $lastPostVars = [];
     foreach ( array_keys( $post ) as $postKey )
     {
-        if ( substr( $postKey, 0, 5 ) == 'Last_' )
+        if ( str_starts_with($postKey, 'Last_') )
             $lastPostVars[ substr( $postKey, 5, strlen( $postKey ) )] = $post[ $postKey ];
     }
     if ( count( $lastPostVars ) > 0 )
@@ -90,7 +90,7 @@ if ( $Module->isCurrentAction( 'Login' ) and
         }
         else
         {
-            $loginHandlers = array( 'standard' );
+            $loginHandlers = ['standard'];
         }
         $hasAccessToSite = true;
 
@@ -290,21 +290,17 @@ $tpl->setVariable( 'login', $userLogin, 'User' );
 $tpl->setVariable( 'post_data', $postData, 'User' );
 $tpl->setVariable( 'password', $userPassword, 'User' );
 $tpl->setVariable( 'redirect_uri', $userRedirectURI . eZSys::queryString(), 'User' );
-$tpl->setVariable( 'warning', array( 'bad_login' => $loginWarning ), 'User' );
+$tpl->setVariable( 'warning', ['bad_login' => $loginWarning], 'User' );
 
-$tpl->setVariable( 'site_access', array( 'allowed' => $siteAccessAllowed,
-                                         'name' => $siteAccessName ) );
+$tpl->setVariable( 'site_access', ['allowed' => $siteAccessAllowed, 'name' => $siteAccessName] );
 $tpl->setVariable( 'user_is_not_allowed_to_login', $userIsNotAllowedToLogin, 'User' );
 $tpl->setVariable( 'failed_login_attempts', $failedLoginAttempts, 'User' );
 $tpl->setVariable( 'max_num_of_failed_login', $maxNumOfFailedLogin, 'User' );
 
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:user/login.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Login' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Login' ), 'url' => false]];
 if ( $ini->variable( 'SiteSettings', 'LoginPage' ) == 'custom' )
     $Result['pagelayout'] = 'loginpagelayout.tpl';
 

@@ -31,12 +31,7 @@ class eZTemplateSectionIterator
      */
     public function __construct()
     {
-        $this->InternalAttributes = array( 'item' => false,
-                                           'key' => false,
-                                           'index' => false,
-                                           'number' => false,
-                                           'sequence' => false,
-                                           'last' => false );
+        $this->InternalAttributes = ['item' => false, 'key' => false, 'index' => false, 'number' => false, 'sequence' => false, 'last' => false];
     }
 
     /*!
@@ -53,7 +48,7 @@ class eZTemplateSectionIterator
     */
     function attributes()
     {
-        $attributes = array();
+        $attributes = [];
         $item = $this->InternalAttributes['item'];
         if ( is_array( $item ) )
         {

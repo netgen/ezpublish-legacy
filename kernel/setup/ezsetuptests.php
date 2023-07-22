@@ -13,35 +13,7 @@ define( 'EZ_SETUP_TEST_FAILURE', 2 );
 
 function eZSetupTestTable()
 {
-    return array( 'phpversion' => array( 'eZSetupTestPhpVersion' ),
-                  'variables_order' => array( 'eZSetupTestVariablesOrder' ),
-                  'php_session' => array( 'eZSetupTestExtension' ),
-                  'directory_permissions' => array( 'eZSetupTestDirectoryPermissions' ),
-                  'settings_permission' => array( 'eZSetupTestFilePermissions' ),
-                  'database_extensions' => array( 'eZSetupTestExtension' ),
-                  'database_all_extensions' => array( 'eZSetupTestExtension' ),
-                  'php_magicquotes' => array( 'eZSetupCheckMagicQuotes' ),
-                  'magic_quotes_runtime' => array( 'eZSetupCheckMagicQuotesRuntime' ),
-                  'php_register_globals' => array( 'eZSetupCheckRegisterGlobals' ),
-                  'mbstring_extension' => array( 'eZSetupMBStringExtension' ),
-                  'curl_extension' => array( 'eZSetupTestExtension' ),
-                  'zlib_extension' => array( 'eZSetupTestExtension' ),
-                  'dom_extension' => array( 'eZSetupTestExtension' ),
-                  'iconv_extension' => array( 'eZSetupTestExtension' ),
-                  'intl_extension' => array( 'eZSetupTestExtension' ),
-                  'xsl_extension' => array( 'eZSetupTestExtension' ),
-                  'file_upload' => array( 'eZSetupTestFileUpload' ),
-                  'open_basedir' => array( 'eZSetupTestOpenBasedir' ),
-                  'safe_mode' => array( 'eZSetupTestSafeMode' ),
-                  'image_conversion' => array( 'eZSetupCheckTestFunctions' ),
-                  'imagegd_extension' => array( 'eZSetupCheckGDVersion' ),
-                  'texttoimage_functions' => array( 'eZSetupTestFunctionExists' ),
-                  'imagemagick_program' => array( 'eZSetupCheckExecutable' ),
-                  'memory_limit' => array( 'eZSetupTestMemLimit' ),
-                  'execution_time' => array( 'eZSetupTestExecutionTime' ),
-                  'allow_url_fopen' => array( 'eZSetupTestAllowURLFOpen' ),
-                  'timezone' => array( 'eZSetupTestTimeZone' ),
-                  'ezcversion' => array( 'eZSetupTestComponentsVersion' ) );
+    return ['phpversion' => ['eZSetupTestPhpVersion'], 'variables_order' => ['eZSetupTestVariablesOrder'], 'php_session' => ['eZSetupTestExtension'], 'directory_permissions' => ['eZSetupTestDirectoryPermissions'], 'settings_permission' => ['eZSetupTestFilePermissions'], 'database_extensions' => ['eZSetupTestExtension'], 'database_all_extensions' => ['eZSetupTestExtension'], 'php_magicquotes' => ['eZSetupCheckMagicQuotes'], 'magic_quotes_runtime' => ['eZSetupCheckMagicQuotesRuntime'], 'php_register_globals' => ['eZSetupCheckRegisterGlobals'], 'mbstring_extension' => ['eZSetupMBStringExtension'], 'curl_extension' => ['eZSetupTestExtension'], 'zlib_extension' => ['eZSetupTestExtension'], 'dom_extension' => ['eZSetupTestExtension'], 'iconv_extension' => ['eZSetupTestExtension'], 'intl_extension' => ['eZSetupTestExtension'], 'xsl_extension' => ['eZSetupTestExtension'], 'file_upload' => ['eZSetupTestFileUpload'], 'open_basedir' => ['eZSetupTestOpenBasedir'], 'safe_mode' => ['eZSetupTestSafeMode'], 'image_conversion' => ['eZSetupCheckTestFunctions'], 'imagegd_extension' => ['eZSetupCheckGDVersion'], 'texttoimage_functions' => ['eZSetupTestFunctionExists'], 'imagemagick_program' => ['eZSetupCheckExecutable'], 'memory_limit' => ['eZSetupTestMemLimit'], 'execution_time' => ['eZSetupTestExecutionTime'], 'allow_url_fopen' => ['eZSetupTestAllowURLFOpen'], 'timezone' => ['eZSetupTestTimeZone'], 'ezcversion' => ['eZSetupTestComponentsVersion']];
 }
 
 function eZSetupConfigVariable( $type, $name )
@@ -68,15 +40,15 @@ function eZSetupRunTests( $testList, $client, &$givenPersistentList )
 
     $testTable = eZSetupTestTable();
 
-    $testResults = array();
-    $persistenceResults = array();
+    $testResults = [];
+    $persistenceResults = [];
     $testResult = EZ_SETUP_TEST_SUCCESS;
     $successCount = 0;
     $http = eZHTTPTool::instance();
     foreach ( $testList as $testItem )
     {
         $testName = $testItem;
-        $testElement = array();
+        $testElement = [];
         $testElement[0] = EZ_SETUP_TEST_FAILURE;
         if ( !isset( $testTable[$testItem] ) )
         {
@@ -102,7 +74,7 @@ function eZSetupRunTests( $testList, $client, &$givenPersistentList )
             $testResult = EZ_SETUP_TEST_FAILURE;
         if ( isset( $testResultArray['persistent_data'] ) )
         {
-            $persistenceResults[] = array( $testName, $testResultArray['persistent_data'] );
+            $persistenceResults[] = [$testName, $testResultArray['persistent_data']];
         }
         else if ( isset( $testResultArray['persistence_list'] ) )
         {
@@ -112,10 +84,7 @@ function eZSetupRunTests( $testList, $client, &$givenPersistentList )
         $testElement[2] = $testResultArray;
         $testResults[] = $testElement;
     }
-    return array( 'result' => $testResult,
-                  'results' => $testResults,
-                  'persistence_list' => $persistenceResults,
-                  'success_count' => $successCount );
+    return ['result' => $testResult, 'results' => $testResults, 'persistence_list' => $persistenceResults, 'success_count' => $successCount];
 }
 
 function eZSetupCheckTestFunctions( $type )
@@ -142,9 +111,7 @@ function eZSetupCheckTestFunctions( $type )
         $result = false;
     }
 
-    return array( 'result' => $result,
-                  'persistence_list' => $persistenceData,
-                  'test_results' => $testResults );
+    return ['result' => $result, 'persistence_list' => $persistenceData, 'test_results' => $testResults];
 }
 
 function eZSetupTestFileUpload( $type )
@@ -194,7 +161,7 @@ function eZSetupTestFileUpload( $type )
             }
         }
     }
-    $uploadDirs = array();
+    $uploadDirs = [];
     if ( strlen( $uploadDir ) > 0 )
     {
         $uploadDirExists = file_exists( $uploadDir );
@@ -218,7 +185,7 @@ function eZSetupTestFileUpload( $type )
             $dirPath .= '/' . $splitDir;
             $uploadDirs[] = $dirPath;
         }
-        if ( substr( $uploadDir, 0, 5 ) == '/root' )
+        if ( str_starts_with($uploadDir, '/root') )
         {
             $uploadIsRoot = true;
         }
@@ -227,16 +194,7 @@ function eZSetupTestFileUpload( $type )
                 $uploadDirWriteable and $uploadDirCreateFile );
 
     $userInfo = eZSetupPrvPosixExtension();
-    return array( 'result' => $result,
-                  'php_upload_is_enabled' => $uploadEnabled,
-                  'php_upload_is_root' => $uploadIsRoot,
-                  'php_upload_dir' => $uploadDir,
-                  'php_upload_split_dirs' => $uploadDirs,
-                  'upload_dir_exists' => $uploadDirExists,
-                  'upload_dir_writeable' => $uploadDirWriteable,
-                  'upload_dir_create_file' => $uploadDirCreateFile,
-                  'user_info' => $userInfo,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
+    return ['result' => $result, 'php_upload_is_enabled' => $uploadEnabled, 'php_upload_is_root' => $uploadIsRoot, 'php_upload_dir' => $uploadDir, 'php_upload_split_dirs' => $uploadDirs, 'upload_dir_exists' => $uploadDirExists, 'upload_dir_writeable' => $uploadDirWriteable, 'upload_dir_create_file' => $uploadDirCreateFile, 'user_info' => $userInfo, 'persistent_data' => ['result' => ['value' => $result]]];
 }
 
 function eZSetupCheckMagicQuotesRuntime( $type )
@@ -247,8 +205,7 @@ function eZSetupCheckMagicQuotesRuntime( $type )
         $magicQuote = get_magic_quotes_runtime();
     }
     $result = ( $magicQuote == 0 );
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result]]];
 }
 
 function eZSetupCheckMagicQuotes( $type )
@@ -260,8 +217,7 @@ function eZSetupCheckMagicQuotes( $type )
     }
 
     $result = ( $magicQuote == 0 );
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result]]];
 }
 
 /*!
@@ -279,7 +235,7 @@ function eZSetupTestComponentsVersion( $type )
 
     if ( $testClass && class_exists( $testClass ) )
     {
-        if ( $testFunction && !is_callable( array( $testClass, $testFunction ) ) )
+        if ( $testFunction && !is_callable( [$testClass, $testFunction] ) )
         {
             $result = false;
         }
@@ -290,11 +246,7 @@ function eZSetupTestComponentsVersion( $type )
         $ezcExists = false;
     }
 
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ),
-                                              'required' => array( 'value' => $minVersion ) ),
-                  'needed_version' => $minVersion,
-                  'class_exists' => !$ezcExists );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result], 'required' => ['value' => $minVersion]], 'needed_version' => $minVersion, 'class_exists' => !$ezcExists];
 }
 
 
@@ -325,7 +277,7 @@ function eZSetupTestPhpVersion( $type )
     // compare the versions
     $currentVersion = phpversion();
     $currentVersionArray = explode( '.', $currentVersion );
-    $neededVersionArray = explode( '.', $neededVersion );
+    $neededVersionArray = explode( '.', (string) $neededVersion );
 
     $warningVersion = false;
     $result = eZSetupPrvtVersionCompare( $currentVersionArray, $neededVersionArray ) >= 0;
@@ -334,7 +286,7 @@ function eZSetupTestPhpVersion( $type )
     {
         foreach ( array_keys( $unstableVersionArray ) as $key )
         {
-            $unstableVersion = explode( '.', $unstableVersionArray[$key] );
+            $unstableVersion = explode( '.', (string) $unstableVersionArray[$key] );
             if ( eZSetupPrvtVersionCompare( $currentVersionArray, $unstableVersion ) == 0 )
             {
                 $result = false;
@@ -344,26 +296,14 @@ function eZSetupTestPhpVersion( $type )
         }
     }
 
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ),
-                                              'found' => array( 'value' => $currentVersion ),
-                                              'required' => array( 'value' => $neededVersion ) ),
-                  'needed_version' => $neededVersion,
-                  'current_version' => $currentVersion,
-                  'warning_version' => $warningVersion );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result], 'found' => ['value' => $currentVersion], 'required' => ['value' => $neededVersion]], 'needed_version' => $neededVersion, 'current_version' => $currentVersion, 'warning_version' => $warningVersion];
 }
 
 function eZSetupTestVariablesOrder( $type )
 {
     $variablesOrder = ini_get( 'variables_order' );
-    $result = strpos( $variablesOrder, 'E' ) !== false;
-    return array(
-        'result' => $result,
-        'persistent_data' => array(
-            'result' => array( 'value' => $result ),
-            'found' => array( 'value' => $variablesOrder )
-         )
-    );
+    $result = str_contains( $variablesOrder, 'E' );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result], 'found' => ['value' => $variablesOrder]]];
 }
 
 /*!
@@ -372,19 +312,18 @@ function eZSetupTestVariablesOrder( $type )
 function eZSetupTestAllowURLFOpen( $type )
 {
     $allowFOpen = ini_get( 'allow_url_fopen' ) != 0;
-    return array( 'result' => $allowFOpen,
-                  'persistent_data' => array( 'result' => array( 'value' => $allowFOpen ) ) );
+    return ['result' => $allowFOpen, 'persistent_data' => ['result' => ['value' => $allowFOpen]]];
 }
 
 function eZSetupTestFunctionExists( $type )
 {
     $functionList = eZSetupConfigVariableArray( $type, 'Functions' );
     $requireType = eZSetupConfigVariable( $type, 'Require' );
-    $foundFunctions = array();
-    $failedFunctions = array();
+    $foundFunctions = [];
+    $failedFunctions = [];
     foreach ( $functionList as $function )
     {
-        $function = strtolower( $function );
+        $function = strtolower( (string) $function );
         if ( function_exists( $function ) )
         {
             $foundFunctions[] = $function;
@@ -400,21 +339,10 @@ function eZSetupTestFunctionExists( $type )
         if ( count( $foundFunctions ) == 0 )
             $result = false;
     }
-    else if ( count( $foundFunctions ) < count( $functionList ) )
+    else if ( count( $foundFunctions ) < (is_countable($functionList) ? count( $functionList ) : 0) )
         $result = false;
 
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ),
-                                              'found' => array( 'value' => $foundFunctions,
-                                                                'merge' => false,
-                                                                'unique' => true ),
-                                              'checked' => array( 'value' => $functionList,
-                                                                  'merge' => true,
-                                                                  'unique' => true ) ),
-                  'require_type' => $requireType,
-                  'extension_list' => $functionList,
-                  'failed_extensions' => $failedFunctions,
-                  'found_extensions' => $foundFunctions );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result], 'found' => ['value' => $foundFunctions, 'merge' => false, 'unique' => true], 'checked' => ['value' => $functionList, 'merge' => true, 'unique' => true]], 'require_type' => $requireType, 'extension_list' => $functionList, 'failed_extensions' => $failedFunctions, 'found_extensions' => $foundFunctions];
 }
 
 /*!
@@ -424,8 +352,8 @@ function eZSetupTestExtension( $type )
 {
     $extensionList = eZSetupConfigVariableArray( $type, 'Extensions' );
     $requireType = eZSetupConfigVariable( $type, 'Require' );
-    $foundExtensions = array();
-    $failedExtensions = array();
+    $foundExtensions = [];
+    $failedExtensions = [];
     foreach ( $extensionList as $extension )
     {
         if ( extension_loaded( $extension ) )
@@ -443,21 +371,10 @@ function eZSetupTestExtension( $type )
         if ( count( $foundExtensions ) == 0 )
             $result = false;
     }
-    else if ( count( $foundExtensions ) < count( $extensionList ) )
+    else if ( count( $foundExtensions ) < (is_countable($extensionList) ? count( $extensionList ) : 0) )
         $result = false;
 
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ),
-                                              'found' => array( 'value' => $foundExtensions,
-                                                                'merge' => false,
-                                                                'unique' => true ),
-                                              'checked' => array( 'value' => $extensionList,
-                                                                  'merge' => true,
-                                                                  'unique' => true ) ),
-                  'require_type' => $requireType,
-                  'extension_list' => $extensionList,
-                  'failed_extensions' => $failedExtensions,
-                  'found_extensions' => $foundExtensions );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result], 'found' => ['value' => $foundExtensions, 'merge' => false, 'unique' => true], 'checked' => ['value' => $extensionList, 'merge' => true, 'unique' => true]], 'require_type' => $requireType, 'extension_list' => $extensionList, 'failed_extensions' => $failedExtensions, 'found_extensions' => $foundExtensions];
 }
 
 
@@ -473,18 +390,18 @@ function eZSetupTestDirectoryPermissions( $type )
     $dirPermission = $ini->variable( 'FileSettings', 'StorageDirPermissions' );
 
     $result = true;
-    $resultElements = array();
-    $resultElementsByErrorCode = array();
+    $resultElements = [];
+    $resultElementsByErrorCode = [];
 
     $rootDir = eZSys::rootDir();
-    $dirPermOctal = octdec( $dirPermission );
+    $dirPermOctal = octdec( (string) $dirPermission );
 
     foreach ( $dirList as $dir )
     {
         if ( empty( $dir ) )
             continue;
 
-        $resultElement = array();
+        $resultElement = [];
         $resultElement['file']       = $dir;
         $resultElement['result']     = 1; // ok by default
         $resultElement['permission'] = false;
@@ -530,13 +447,7 @@ function eZSetupTestDirectoryPermissions( $type )
     $safeMode = ini_get( 'safe_mode' ) != 0;
     $userInfo = eZSetupPrvPosixExtension();
 
-    return array( 'result'          => $result,
-                  'safe_mode'       => $safeMode,
-                  'user_info'       => $userInfo,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ),
-                  'current_path'    => realpath( '.' ),
-                  'result_elements' => $resultElements,
-                  'result_elements_by_error_code' => $resultElementsByErrorCode );
+    return ['result'          => $result, 'safe_mode'       => $safeMode, 'user_info'       => $userInfo, 'persistent_data' => ['result' => ['value' => $result]], 'current_path'    => realpath( '.' ), 'result_elements' => $resultElements, 'result_elements_by_error_code' => $resultElementsByErrorCode];
 }
 
 function eZSetupTestFilePermissions( $type )
@@ -547,13 +458,13 @@ function eZSetupTestFilePermissions( $type )
     $filePermission = $ini->variable( 'FileSettings', 'StorageFilePermissions' );
 
     $result = true;
-    $resultElements = array();
+    $resultElements = [];
     foreach ( $fileList as $file )
     {
         if ( empty( $file ) )
             continue;
 
-        $resultElement = array();
+        $resultElement = [];
         $resultElement['file'] = $file;
         $resultElements[] = $resultElement;
 
@@ -587,12 +498,7 @@ function eZSetupTestFilePermissions( $type )
     $safeMode = ini_get( 'safe_mode' ) != 0;
     $userInfo = eZSetupPrvPosixExtension();
 
-    return array( 'result' => $result,
-                  'safe_mode' => $safeMode,
-                  'user_info' => $userInfo,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ),
-                  'current_path' => realpath( '.' ),
-                  'result_elements'   => $resultElements );
+    return ['result' => $result, 'safe_mode' => $safeMode, 'user_info' => $userInfo, 'persistent_data' => ['result' => ['value' => $result]], 'current_path' => realpath( '.' ), 'result_elements'   => $resultElements];
 }
 
 /*!
@@ -603,7 +509,7 @@ function eZSetupTestFilePermissions( $type )
 */
 function eZSetupPrvPosixExtension()
 {
-    $userInfo = array( 'has_extension' => false );
+    $userInfo = ['has_extension' => false];
     if ( extension_loaded( 'posix' ) )
     {
         $userInfo['has_extension'] = true;
@@ -631,7 +537,7 @@ function eZSetupCheckExecutable( $type )
     $filesystemType = eZSys::filesystemType();
     $envSeparator = eZSys::envSeparator();
     $programs = eZSetupConfigVariableArray( $type, $filesystemType . '_Executable' );
-    $systemSearchPaths = explode( $envSeparator, eZSys::path( true ) );
+    $systemSearchPaths = explode( $envSeparator, (string) eZSys::path( true ) );
     $additionalSearchPaths = eZSetupConfigVariableArray( $type, $filesystemType . '_SearchPaths' );
     $excludePaths = eZSetupConfigVariableArray( $type, $filesystemType . '_ExcludePaths' );
     $imageIniPath = eZSetupImageConfigVariableArray( 'ShellSettings', 'ConvertPath' );
@@ -646,14 +552,14 @@ function eZSetupCheckExecutable( $type )
      */
 
     // compute extra path
-    $extraPath = array();
+    $extraPath = [];
     if ( $http->hasPostVariable( $type . '_ExtraPath' ) )
     {
         $GLOBALS['eZSetupCheckExecutable_'.$type.'_ExtraPath'] = $http->postVariable( $type . '_ExtraPath' );
-        $extraPath = explode( $envSeparator, $http->postVariable( $type . '_ExtraPath' ) );
+        $extraPath = explode( $envSeparator, (string) $http->postVariable( $type . '_ExtraPath' ) );
     }
     else if ( isset( $GLOBALS['eZSetupCheckExecutable_'.$type.'_ExtraPath'] ) )
-        $extraPath = explode( $envSeparator, $GLOBALS['eZSetupCheckExecutable_'.$type.'_ExtraPath'] );
+        $extraPath = explode( $envSeparator, (string) $GLOBALS['eZSetupCheckExecutable_'.$type.'_ExtraPath'] );
 
     // if extra path was given in any way
     if ( $extraPath )
@@ -663,9 +569,9 @@ function eZSetupCheckExecutable( $type )
         {
             foreach ( $programs as $program )
             {
-                if ( strpos( $path, $program) == strlen( $path ) - strlen( $program ) )
+                if ( strpos( $path, (string) $program) == strlen( $path ) - strlen( (string) $program ) )
                 {
-                    $extraPath[] = substr( $path, strpos( $path, $program) );
+                    $extraPath[] = substr( $path, strpos( $path, (string) $program) );
                 }
             }
         }
@@ -680,27 +586,27 @@ function eZSetupCheckExecutable( $type )
     {
         foreach( $searchPaths as $path )
         {
-            $pathProgram = eZDir::path( array( $path, $program ) );
+            $pathProgram = eZDir::path( [$path, $program] );
             if ( file_exists( $pathProgram ) )
             {
                 if ( $filesystemType == 'unix' )
                 {
                     $relativePath = $path;
-                    if ( preg_match( "#^/(.+)$#", $path, $matches ) )
+                    if ( preg_match( "#^/(.+)$#", (string) $path, $matches ) )
                         $relativePath = $matches[1];
                     $relativePath = eZDir::cleanPath( $relativePath );
                 }
                 else // windows
                 {
                     $relativePath = $path;
-                    if ( preg_match( "#^[a-zA-Z]:[/\\\\](.+)$#", $path, $matches ) )
+                    if ( preg_match( "#^[a-zA-Z]:[/\\\\](.+)$#", (string) $path, $matches ) )
                         $relativePath = $matches[1];
                     $relativePath = eZDir::cleanPath( $relativePath );
                 }
                 $exclude = false;
                 foreach ( $excludePaths as $excludePath )
                 {
-                    $excludePath = strtolower( $excludePath );
+                    $excludePath = strtolower( (string) $excludePath );
                     $match = strtolower( $program . "@" . $relativePath );
                     if ( $match == $excludePath )
                     {
@@ -741,18 +647,7 @@ function eZSetupCheckExecutable( $type )
 
     $extraPathAsString = implode( $envSeparator, $extraPath );
 
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'path' => array( 'value' => $correctPath ),
-                                              'program' => array( 'value' => $correctProgram ),
-                                              'extra_path' => array( 'value' => $extraPathAsString,
-                                                                     'merge' => TRUE ),
-                                              'result' => array( 'value' => $result ) ),
-                  'env_separator' => $envSeparator,
-                  'filesystem_type' => $filesystemType,
-                  'extra_path' => $extraPath,
-                  'correct_path' => $correctPath,
-                  'system_search_path' => $systemSearchPaths,
-                  'additional_search_path' => $additionalSearchPaths );
+    return ['result' => $result, 'persistent_data' => ['path' => ['value' => $correctPath], 'program' => ['value' => $correctProgram], 'extra_path' => ['value' => $extraPathAsString, 'merge' => TRUE], 'result' => ['value' => $result]], 'env_separator' => $envSeparator, 'filesystem_type' => $filesystemType, 'extra_path' => $extraPath, 'correct_path' => $correctPath, 'system_search_path' => $systemSearchPaths, 'additional_search_path' => $additionalSearchPaths];
 }
 
 
@@ -771,7 +666,7 @@ function testPHPIni( $parameters )
         $pass = false;
 
     $status = $pass;
-    return array( "status" => $status, "pass" => $pass );
+    return ["status" => $status, "pass" => $pass];
 }
 
 
@@ -781,8 +676,7 @@ function testPHPIni( $parameters )
 function eZSetupCheckGDVersion( $type )
 {
     $result = function_exists( 'imagegd2' );
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ) );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result]]];
 }
 
 /*!
@@ -792,9 +686,7 @@ function eZSetupMBStringExtension( $type )
 {
     $result = eZMBStringMapper::hasMBStringExtension();
     $charsetList = eZMBStringMapper::charsetList();
-    return array( 'result' => $result,
-                  'persistent_data' => array( 'result' => array( 'value' => $result ) ),
-                  'charset_list' => $charsetList );
+    return ['result' => $result, 'persistent_data' => ['result' => ['value' => $result]], 'charset_list' => $charsetList];
 }
 
 
@@ -802,8 +694,7 @@ function eZSetupCheckRegisterGlobals( $type )
 {
     $registerGlobals = ini_get( 'register_globals' ) != 0;
     $result = !$registerGlobals;
-    return array( 'result' => $result,
-                  'persistent_data' => array() );
+    return ['result' => $result, 'persistent_data' => []];
 }
 
 /*!
@@ -816,18 +707,13 @@ function eZSetupTestExecutionTime( $type )
 
     if ( $execTimeLimit == false )
     {
-        return array( 'result' => true,
-                      'persistent_data' => array( 'result' => array( 'value' => true ) ) );
+        return ['result' => true, 'persistent_data' => ['result' => ['value' => true]]];
     }
 
     if ( $minExecutionTime <= $execTimeLimit )
-        return array( 'result' => true,
-                      'persistent_data' => array( 'result' => array( 'value' => true ) ) );
+        return ['result' => true, 'persistent_data' => ['result' => ['value' => true]]];
 
-    return array( 'result' => false,
-                  'persistent_data' => array( 'result' => array( 'value' => false ) ),
-                  'required_execution_time' => $minExecutionTime,
-                  'current_execution_time' => $execTimeLimit );
+    return ['result' => false, 'persistent_data' => ['result' => ['value' => false]], 'required_execution_time' => $minExecutionTime, 'current_execution_time' => $execTimeLimit];
 }
 
 /*!
@@ -839,12 +725,11 @@ function eZSetupTestMemLimit( $type )
     $memoryLimit = ini_get( 'memory_limit' );
     if ( $memoryLimit === '' || $memoryLimit == -1 )
     {
-        return array( 'result' => true,
-                      'persistent_data' => array( 'result' => array( 'value' => true ) ) );
+        return ['result' => true, 'persistent_data' => ['result' => ['value' => true]]];
     }
 
     $byteMinMem = intval( $minMemory );
-    switch ( $minMemory[strlen( $minMemory ) - 1] )
+    switch ( $minMemory[strlen( (string) $minMemory ) - 1] )
     {
         case 'G':
             $byteMinMem *= 1024;
@@ -866,27 +751,20 @@ function eZSetupTestMemLimit( $type )
     }
 
     if ( $byteMinMem <= $byteMemLimit )
-        return array( 'result' => true,
-                      'persistent_data' => array( 'result' => array( 'value' => true ) ) );
+        return ['result' => true, 'persistent_data' => ['result' => ['value' => true]]];
 
-    return array( 'result' => false,
-                  'persistent_data' => array( 'result' => array( 'value' => false ) ),
-                  'required_memory' => $minMemory,
-                  'current_memory' => $memoryLimit );
+    return ['result' => false, 'persistent_data' => ['result' => ['value' => false]], 'required_memory' => $minMemory, 'current_memory' => $memoryLimit];
 }
 
 function eZSetupTestOpenBasedir( $type )
 {
     $openBasedir = ini_get( 'open_basedir' );
-    $returnData = array( 'result' => true,
-                         'persistent_data' => array() );
+    $returnData = ['result' => true, 'persistent_data' => []];
     if ( $openBasedir != '' and
          $openBasedir != '.' )
     {
         $returnData['result'] = false;
-        $returnData['warnings'] = array( array( 'name' => 'open_basedir',
-                                                'text' => array( 'open_basedir is in use and can give problems running eZ Publish due to bugs in some PHP versions.',
-                                                                 'It\'s recommended that it is turned off if you experience problems running eZ Publish.' ) ) );
+        $returnData['warnings'] = [['name' => 'open_basedir', 'text' => ['open_basedir is in use and can give problems running eZ Publish due to bugs in some PHP versions.', 'It\'s recommended that it is turned off if you experience problems running eZ Publish.']]];
     }
     return $returnData;
 }
@@ -915,9 +793,7 @@ function eZSetupTestSafeMode( $type )
 {
     $safeMode = ini_get( 'safe_mode' ) != 0;
     $result = !$safeMode;
-    return array( 'result' => $result,
-                  'current_path' => realpath( '.' ),
-                  'persistent_data' => array() );
+    return ['result' => $result, 'current_path' => realpath( '.' ), 'persistent_data' => []];
 }
 
 /*!
@@ -933,7 +809,7 @@ function eZSetupTestSafeMode( $type )
 function eZSetupPrvtVersionCompare( $versionArray1, $versionArray2 )
 {
     $equal = false;
-    $count = min( count( $versionArray1 ), count( $versionArray2 ) );
+    $count = min( is_countable($versionArray1) ? count( $versionArray1 ) : 0, is_countable($versionArray2) ? count( $versionArray2 ) : 0 );
     for ( $i = 0; $i < $count; ++$i )
     {
         $equal = false;
@@ -996,7 +872,7 @@ function eZSetupTestTimeZone( $something )
         $result = false;
     }
 
-    return array( 'result' => $result );
+    return ['result' => $result];
 }
 
 ?>

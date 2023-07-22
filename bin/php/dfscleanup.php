@@ -14,24 +14,12 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Script for checking database and DFS file consistency",
-        'use-session' => false,
-        'use-modules' => true,
-        'use-extensions' => true
-    )
+    ['description' => "Script for checking database and DFS file consistency", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true]
 );
 $script->startup();
 $options = $script->getOptions(
     "[S][B][D][path:][iteration-limit:]", "",
-    array(
-        "D" => "Delete nonexistent files",
-        "S" => "Check files on DFS share against files in the database",
-        "B" => "Checks files in database against files on DFS share",
-        "path" => "Path to limit checks to (e.g.: var/storage/content - Default: var/)",
-        "iteration-limit" => "Amount of items to remove in each iteration when performing a purge operation. Default is all in one iteration.",
-
-    )
+    ["D" => "Delete nonexistent files", "S" => "Check files on DFS share against files in the database", "B" => "Checks files in database against files on DFS share", "path" => "Path to limit checks to (e.g.: var/storage/content - Default: var/)", "iteration-limit" => "Amount of items to remove in each iteration when performing a purge operation. Default is all in one iteration."]
 );
 
 $script->initialize();
@@ -51,7 +39,7 @@ $checkDFS = isset( $options['B'] );
 
 if (isset( $options['path'] ) )
 {
-    $checkPath = trim( $options['path'] );
+    $checkPath = trim( (string) $options['path'] );
 }
 else
 {
@@ -90,7 +78,7 @@ if ( $checkBase )
     }
 
     $loopRun = true;
-    $limit = $optIterationLimit ? array( 0, $optIterationLimit ) : false;
+    $limit = $optIterationLimit ? [0, $optIterationLimit] : false;
     while ( $loopRun )
     {
         try

@@ -16,30 +16,31 @@
 
 class eZCollaborationViewHandler
 {
-    const TYPE_STANDARD = 1;
-    const TYPE_GROUP = 2;
+    final public const TYPE_STANDARD = 1;
+    final public const TYPE_GROUP = 2;
 
     /**
      * Initializes the view mode.
      *
-     * @param string $viewMode
-     * @param int $viewType
+     * @param string $ViewMode
+     * @param int $ViewType
      */
-    public function __construct( $viewMode, $viewType )
+    public function __construct( /// \privatesection
+    /// The viewmode
+    public $ViewMode, public $ViewType )
     {
-        $this->ViewMode = $viewMode;
-        $this->ViewType = $viewType;
-        $this->TemplateName = $viewMode;
-        $ini = $this->ini();
-        if ( $viewType == self::TYPE_STANDARD )
+        $viewGroup = null;
+        $this->TemplateName = $ViewMode;
+        $ini = static::ini();
+        if ( $ViewType == self::TYPE_STANDARD )
         {
             $this->TemplatePrefix = "design:collaboration/view/";
-            $viewGroup = $viewMode . "View";
+            $viewGroup = $ViewMode . "View";
         }
-        else if ( $viewType == self::TYPE_GROUP )
+        else if ( $ViewType == self::TYPE_GROUP )
         {
             $this->TemplatePrefix = "design:collaboration/group/view/";
-            $viewGroup = $viewMode . "GroupView";
+            $viewGroup = $ViewMode . "GroupView";
         }
         if ( $ini->hasGroup( $viewGroup ) )
         {
@@ -128,11 +129,6 @@ class eZCollaborationViewHandler
         }
         return $instance;
     }
-
-    /// \privatesection
-    /// The viewmode
-    public $ViewMode;
-    public $ViewType;
     public $TemplateName;
     public $TemplatePrefix;
 }

@@ -26,80 +26,63 @@
 
 class eZTemplateArrayOperator
 {
-    public function __construct(      $arrayName        = 'array',
-                                      $hashName         = 'hash',
-                                      $arrayPrependName = 'array_prepend', // DEPRECATED/OBSOLETE
-                                      $prependName      = 'prepend',       // New, replaces array_prepend.
-                                      $arrayAppendName  = 'array_append',  // DEPRECATED/OBSOLETE
-                                      $appendName       = 'append',        // New, replaces array_append.
-                                      $arrayMergeName   = 'array_merge',   // DEPRECATED/OBSOLETE
-                                      $mergeName        = 'merge',         // New, replaces array_merge.
-                                      $containsName     = 'contains',
-                                      $compareName      = 'compare',
-                                      $extractName      = 'extract',
-                                      $extractLeftName  = 'extract_left',
-                                      $extractRightName = 'extract_right',
-                                      $beginsWithName   = 'begins_with',
-                                      $endsWithName     = 'ends_with',
-                                      $implodeName      = 'implode',
-                                      $explodeName      = 'explode',
-                                      $repeatName       = 'repeat',
-                                      $reverseName      = 'reverse',
-                                      $insertName       = 'insert',
-                                      $removeName       = 'remove',
-                                      $replaceName      = 'replace',
-                                      $uniqueName       = 'unique',
-                                      $arraySumName       = 'array_sum' )
+    public function __construct(      public $ArrayName        = 'array',
+                                      public $HashName         = 'hash',
+                                      public $ArrayPrependName = 'array_prepend', // DEPRECATED/OBSOLETE
+                                      public $PrependName      = 'prepend',       // New, replaces array_prepend.
+                                      public $ArrayAppendName  = 'array_append',  // DEPRECATED/OBSOLETE
+                                      public $AppendName       = 'append',        // New, replaces array_append.
+                                      public $ArrayMergeName   = 'array_merge',   // DEPRECATED/OBSOLETE
+                                      public $MergeName        = 'merge',         // New, replaces array_merge.
+                                      public $ContainsName     = 'contains',
+                                      public $CompareName      = 'compare',
+                                      public $ExtractName      = 'extract',
+                                      public $ExtractLeftName  = 'extract_left',
+                                      public $ExtractRightName = 'extract_right',
+                                      public $BeginsWithName   = 'begins_with',
+                                      public $EndsWithName     = 'ends_with',
+                                      public $ImplodeName      = 'implode',
+                                      public $ExplodeName      = 'explode',
+                                      public $RepeatName       = 'repeat',
+                                      public $ReverseName      = 'reverse',
+                                      public $InsertName       = 'insert',
+                                      public $RemoveName       = 'remove',
+                                      public $ReplaceName      = 'replace',
+                                      public $UniqueName       = 'unique',
+                                      public $ArraySumName       = 'array_sum' )
     {
-        $this->ArrayName        = $arrayName;
-        $this->HashName         = $hashName;
-        $this->ArrayPrependName = $arrayPrependName; // DEPRECATED/OBSOLETE
-        $this->PrependName      = $prependName;      // New, replaces ArrayPrependName.
-        $this->ArrayAppendName  = $arrayAppendName;  // DEPRECATED/OBSOLETE
-        $this->AppendName       = $appendName;       // New, replaces ArrayAppendName.
-        $this->ArrayMergeName   = $arrayMergeName;   // DEPRECATED/OBSOLETE
-        $this->MergeName        = $mergeName;        // New, replaces ArrayMergeName.
-        $this->ContainsName     = $containsName;
-        $this->CompareName      = $compareName;
-        $this->ExtractName      = $extractName;
-        $this->ExtractLeftName  = $extractLeftName;
-        $this->ExtractRightName = $extractRightName;
-        $this->BeginsWithName   = $beginsWithName;
-        $this->EndsWithName     = $endsWithName;
-        $this->ImplodeName      = $implodeName;
-        $this->ExplodeName      = $explodeName;
-        $this->RepeatName       = $repeatName;
-        $this->ReverseName      = $reverseName;
-        $this->InsertName       = $insertName;
-        $this->RemoveName       = $removeName;
-        $this->ReplaceName      = $replaceName;
-        $this->UniqueName       = $uniqueName;
-        $this->ArraySumName     = $arraySumName;
-
-        $this->Operators = array( $arrayName,
-                                  $hashName,
-                                  $arrayPrependName, // DEPRECATED/OBSOLETE
-                                  $prependName,      // New, replaces arrayPrependName.
-                                  $arrayAppendName,  // DEPRECATED/OBSOLETE
-                                  $appendName,       // New, replaces arrayAppendName.
-                                  $arrayMergeName,   // DEPRECATED/OBSOLETE
-                                  $mergeName,        // New, replaces arrayMergeName.
-                                  $containsName,
-                                  $compareName,
-                                  $extractName,
-                                  $extractLeftName,
-                                  $extractRightName,
-                                  $beginsWithName,
-                                  $endsWithName,
-                                  $implodeName,
-                                  $explodeName,
-                                  $repeatName,
-                                  $reverseName,
-                                  $insertName,
-                                  $removeName,
-                                  $replaceName,
-                                  $uniqueName,
-                                  $arraySumName );
+        $this->Operators = [
+            $ArrayName,
+            $HashName,
+            $ArrayPrependName,
+            // DEPRECATED/OBSOLETE
+            $PrependName,
+            // New, replaces arrayPrependName.
+            $ArrayAppendName,
+            // DEPRECATED/OBSOLETE
+            $AppendName,
+            // New, replaces arrayAppendName.
+            $ArrayMergeName,
+            // DEPRECATED/OBSOLETE
+            $MergeName,
+            // New, replaces arrayMergeName.
+            $ContainsName,
+            $CompareName,
+            $ExtractName,
+            $ExtractLeftName,
+            $ExtractRightName,
+            $BeginsWithName,
+            $EndsWithName,
+            $ImplodeName,
+            $ExplodeName,
+            $RepeatName,
+            $ReverseName,
+            $InsertName,
+            $RemoveName,
+            $ReplaceName,
+            $UniqueName,
+            $ArraySumName,
+        ];
     }
 
     /*!
@@ -112,168 +95,7 @@ class eZTemplateArrayOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->ArrayName => array( 'input' => true,
-                                                 'output' => true,
-                                                 'parameters' => true,
-                                                 'element-transformation' => true,
-                                                 'transform-parameters' => true,
-                                                 'element-transformation-func' => 'arrayTrans' ),
-                      $this->HashName => array( 'input' => true,
-                                                'output' => true,
-                                                'parameters' => true,
-                                                'element-transformation' => true,
-                                                'transform-parameters' => true,
-                                                'element-transformation-func' => 'arrayTrans'),
-                      $this->ArrayPrependName => array( 'input' => true,
-                                                        'output' => true,
-                                                        'parameters' => true,
-                                                        'element-transformation' => true,
-                                                        'transform-parameters' => true,
-                                                        'input-as-parameter' => 'always',
-                                                        'element-transformation-func' => 'mergeTrans' ),
-                      $this->PrependName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'mergeTrans' ),
-                      $this->ArrayAppendName => array( 'input' => true,
-                                                       'output' => true,
-                                                       'parameters' => true,
-                                                       'element-transformation' => true,
-                                                       'transform-parameters' => true,
-                                                       'input-as-parameter' => 'always',
-                                                       'element-transformation-func' => 'mergeTrans' ),
-                      $this->AppendName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'mergeTrans' ),
-                      $this->ArrayMergeName => array( 'input' => true,
-                                                      'output' => true,
-                                                      'parameters' => true,
-                                                      'element-transformation' => true,
-                                                      'transform-parameters' => true,
-                                                      'input-as-parameter' => 'always',
-                                                      'element-transformation-func' => 'mergeTrans' ),
-                      $this->MergeName => array( 'input' => true,
-                                                 'output' => true,
-                                                 'parameters' => true,
-                                                 'element-transformation' => true,
-                                                 'transform-parameters' => true,
-                                                 'input-as-parameter' => 'always',
-                                                 'element-transformation-func' => 'mergeTrans' ),
-                      $this->ContainsName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => 1,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => 'always',
-                                                    'element-transformation-func' => 'arrayTrans'),
-                      $this->CompareName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => 1,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'arrayTrans'),
-                      $this->ExtractName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => 2,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'extractTrans'),
-                      $this->ExtractLeftName => array( 'input' => true,
-                                                       'output' => true,
-                                                       'parameters' => 1,
-                                                       'element-transformation' => true,
-                                                       'transform-parameters' => true,
-                                                       'input-as-parameter' => 'always',
-                                                       'element-transformation-func' => 'extractTrans'),
-                      $this->ExtractRightName => array( 'input' => true,
-                                                        'output' => true,
-                                                        'parameters' => 1,
-                                                        'element-transformation' => true,
-                                                        'transform-parameters' => true,
-                                                        'input-as-parameter' => 'always',
-                                                        'element-transformation-func' => 'extractTrans'),
-                      $this->BeginsWithName => array( 'input' => true,
-                                                      'output' => true,
-                                                      'parameters' => true,
-                                                      'element-transformation' => true,
-                                                      'transform-parameters' => true,
-                                                      'input-as-parameter' => 'always',
-                                                      'element-transformation-func' => 'compareTrans'),
-                      $this->EndsWithName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => true,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => 'always',
-                                                    'element-transformation-func' => 'compareTrans'),
-                      $this->ImplodeName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => 1,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'arrayTrans'),
-                      $this->ExplodeName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => 1,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'arrayTrans'),
-                      $this->RepeatName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => 1,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'arrayTrans'),
-                      $this->ReverseName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => false,
-                                                   'element-transformation' => true,
-                                                   'transform-parameters' => true,
-                                                   'input-as-parameter' => 'always',
-                                                   'element-transformation-func' => 'arrayTrans' ),
-                      $this->InsertName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'arrayTrans' ),
-                      $this->RemoveName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => 2,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'arrayTrans'),
-                      $this->ReplaceName => array( 'input' => true,
-                                                   'output' => true,
-                                                   'parameters' => true ),
-                      $this->UniqueName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => false,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => 'always',
-                                                  'element-transformation-func' => 'arrayTrans'),
-                      $this->ArraySumName => array( 'input' => true,
-                                                    'output' => true,
-                                                    'parameters' => false,
-                                                    'element-transformation' => true,
-                                                    'transform-parameters' => true,
-                                                    'input-as-parameter' => 'always',
-                                                    'element-transformation-func' => 'arrayTrans' ) );
+        return [$this->ArrayName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'element-transformation-func' => 'arrayTrans'], $this->HashName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'element-transformation-func' => 'arrayTrans'], $this->ArrayPrependName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->PrependName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->ArrayAppendName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->AppendName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->ArrayMergeName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->MergeName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'mergeTrans'], $this->ContainsName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->CompareName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->ExtractName => ['input' => true, 'output' => true, 'parameters' => 2, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'extractTrans'], $this->ExtractLeftName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'extractTrans'], $this->ExtractRightName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'extractTrans'], $this->BeginsWithName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'compareTrans'], $this->EndsWithName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'compareTrans'], $this->ImplodeName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->ExplodeName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->RepeatName => ['input' => true, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->ReverseName => ['input' => true, 'output' => true, 'parameters' => false, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->InsertName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->RemoveName => ['input' => true, 'output' => true, 'parameters' => 2, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->ReplaceName => ['input' => true, 'output' => true, 'parameters' => true], $this->UniqueName => ['input' => true, 'output' => true, 'parameters' => false, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans'], $this->ArraySumName => ['input' => true, 'output' => true, 'parameters' => false, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => 'always', 'element-transformation-func' => 'arrayTrans']];
     }
 
     function arrayTrans( $operatorName, &$node, $tpl, &$resourceData,
@@ -285,9 +107,9 @@ class eZTemplateArrayOperator
             {
                 $code = '';
                 $paramCount = 0;
-                $values = array();
-                $staticArray = array();
-                for ( $i = 0; $i < count( $parameters ); ++$i )
+                $values = [];
+                $staticArray = [];
+                for ( $i = 0; $i < (is_countable($parameters) ? count( $parameters ) : 0); ++$i )
                 {
                     if ( $i != 0 )
                     {
@@ -317,24 +139,24 @@ class eZTemplateArrayOperator
 
                 if ( $paramCount == 0 )
                 {
-                    return array( eZTemplateNodeTool::createArrayElement( $staticArray ) );
+                    return [eZTemplateNodeTool::createArrayElement( $staticArray )];
                 }
 
                 $code .= ' );';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->HashName:
             {
                 $code = '';
                 $paramCount = 0;
-                $values = array();
-                $staticArray = array();
+                $values = [];
+                $staticArray = [];
                 $staticKeys = true;
-                $keys = array();
-                $vals = array();
-                $hashCount = (int)( count( $parameters ) / 2 );
+                $keys = [];
+                $vals = [];
+                $hashCount = (int)( (is_countable($parameters) ? count( $parameters ) : 0) / 2 );
                 for ( $i = 0; $i < $hashCount; ++$i )
                 {
                     if ( $i != 0 )
@@ -384,22 +206,22 @@ class eZTemplateArrayOperator
 
                 if ( $paramCount == 0 )
                 {
-                    return array( eZTemplateNodeTool::createArrayElement( $staticArray ) );
+                    return [eZTemplateNodeTool::createArrayElement( $staticArray )];
                 }
 
                 if ( $staticKeys )
                 {
-                    return array( eZTemplateNodeTool::createDynamicArrayElement( $keys, $vals ) );
+                    return [eZTemplateNodeTool::createDynamicArrayElement( $keys, $vals )];
                 }
 
                 $code .= ' );';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->ContainsName:
             {
-                $values = array();
+                $values = [];
                 $inParam = null;
                 $isString = false;
                 $isArray = false;
@@ -431,14 +253,14 @@ class eZTemplateArrayOperator
                     {
                         if ( $isString )
                         {
-                            $result = ( mb_strpos( $inParam, $matchParam ) !== false );
+                            $result = ( mb_strpos( (string) $inParam, (string) $matchParam ) !== false );
                         }
                         else if( $isArray )
                         {
                             $result = in_array( $matchParam, $inParam );
                         }
 
-                        return array( eZTemplateNodeTool::createBooleanElement( $result ) );
+                        return [eZTemplateNodeTool::createBooleanElement( $result )];
                     }
                     $matchParamCode = eZPHPCreator::variableText( $matchParam, 0, 0, false );
                 }
@@ -472,7 +294,7 @@ class eZTemplateArrayOperator
                         '}';
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->CompareName:
@@ -480,7 +302,7 @@ class eZTemplateArrayOperator
                 $inParam = null;
                 $isString = false;
                 $isArray = false;
-                $values = array();
+                $values = [];
 
                 if ( eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
@@ -509,7 +331,7 @@ class eZTemplateArrayOperator
                     {
                         if ( $isString )
                         {
-                            $result = strcmp( $inParam, $matchParam ) === 0;
+                            $result = strcmp( (string) $inParam, (string) $matchParam ) === 0;
                         }
                         else if( $isArray )
                         {
@@ -517,7 +339,7 @@ class eZTemplateArrayOperator
                                         count( array_diff( $inParam, $matchParam ) ) == 0 );
                         }
 
-                        return array( eZTemplateNodeTool::createBooleanElement( $result ) );
+                        return [eZTemplateNodeTool::createBooleanElement( $result )];
                     }
                     $matchParamCode = eZPHPCreator::variableText( $matchParam, 0, 0, false );
                 }
@@ -549,12 +371,12 @@ class eZTemplateArrayOperator
                          '}';
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->ImplodeName:
             {
-                $values = array();
+                $values = [];
                 if ( !eZTemplateNodeTool::isConstantElement( $parameters[1] ) )
                 {
                     $values[] = $parameters[1];
@@ -569,8 +391,8 @@ class eZTemplateArrayOperator
                 {
                     if ( count( $values ) == 0 )
                     {
-                        return array( eZTemplateNodeTool::createStringElement( implode( eZTemplateNodeTool::elementConstantValue( $parameters[1] ),
-                                                                                        eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                        return [eZTemplateNodeTool::createStringElement( implode( eZTemplateNodeTool::elementConstantValue( $parameters[1] ),
+                                                                                        eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                     }
                     else
                     {
@@ -585,24 +407,24 @@ class eZTemplateArrayOperator
 
                 $code = '%output% = implode( ' . $code . ' );';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->UniqueName:
             {
                 if ( eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
-                    return array( eZTemplateNodeTool::createArrayElement( array_unique( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                    return [eZTemplateNodeTool::createArrayElement( array_unique( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                 }
 
-                $values = array( $parameters[0] );
+                $values = [$parameters[0]];
                 $code = '%output% = array_unique( %1% );';
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->ExplodeName:
             {
-                $values = array();
+                $values = [];
                 $inParam = null;
                 $isString = false;
                 $isArray = false;
@@ -634,14 +456,14 @@ class eZTemplateArrayOperator
                     {
                         if ( $isString )
                         {
-                            $result = explode( $matchParam, $inParam );
+                            $result = explode( $matchParam, (string) $inParam );
                         }
                         else if( $isArray )
                         {
-                            $result = array( array_slice( $inParam, 0, $matchParam ), array_slice( $inParam, $matchParam ) );
+                            $result = [array_slice( $inParam, 0, $matchParam ), array_slice( $inParam, $matchParam )];
                         }
 
-                        return array( eZTemplateNodeTool::createArrayElement( $result ) );
+                        return [eZTemplateNodeTool::createArrayElement( $result )];
                     }
                     $matchParamCode = eZPHPCreator::variableText( $matchParam, 0, 0, false );
                 }
@@ -675,12 +497,12 @@ class eZTemplateArrayOperator
                          "}\n";
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->RemoveName:
             {
-                $values = array();
+                $values = [];
                 $isArray = false;
                 $isString = false;
 
@@ -710,7 +532,7 @@ class eZTemplateArrayOperator
 
                 $length = false;
                 $lengthCode = '';
-                if ( count( $parameters ) > 2 )
+                if ( (is_countable($parameters) ? count( $parameters ) : 0) > 2 )
                 {
                     if ( eZTemplateNodeTool::isConstantElement( $parameters[2] ) )
                     {
@@ -728,7 +550,7 @@ class eZTemplateArrayOperator
                 {
                     if ( $isString )
                     {
-                        return array( eZTemplateNodeTool::createStringElement( mb_substr( $inputArray, $offset, $length ) ) );
+                        return [eZTemplateNodeTool::createStringElement( mb_substr( (string) $inputArray, $offset, $length ) )];
                     }
                     else if ( $isArray )
                     {
@@ -738,7 +560,7 @@ class eZTemplateArrayOperator
                         $array_one = array_slice( $inputArray, 0, $offset );
                         $array_two = array_slice( $inputArray, $offset + $length );
 
-                        return array ( eZTemplateNodeTool::createArrayElement( array_merge( $array_one, $array_two ) ) );
+                        return [eZTemplateNodeTool::createArrayElement( array_merge( $array_one, $array_two ) )];
                     }
                 }
 
@@ -782,12 +604,12 @@ class eZTemplateArrayOperator
                                '}' );
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 1 ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 1 )];
             } break;
 
             case $this->InsertName:
             {
-                $values = array();
+                $values = [];
                 $isArray = false;
                 $isString = false;
 
@@ -815,7 +637,7 @@ class eZTemplateArrayOperator
                     $offsetCode = '%' . count( $values ) . '%';
                 }
 
-                if ( count( $parameters ) > 2 )
+                if ( (is_countable($parameters) ? count( $parameters ) : 0) > 2 )
                 {
                     if ( eZTemplateNodeTool::isConstantElement( $parameters[2] ) )
                     {
@@ -823,9 +645,9 @@ class eZTemplateArrayOperator
                     }
                 }
 
-                $insertElemCode = array();
+                $insertElemCode = [];
 
-                for( $i = 2; $i < count( $parameters ); ++$i )
+                for( $i = 2; $i < (is_countable($parameters) ? count( $parameters ) : 0); ++$i )
                 {
                     if ( eZTemplateNodeTool::isConstantElement( $parameters[$i] ) )
                     {
@@ -842,20 +664,20 @@ class eZTemplateArrayOperator
                 {
                     if ( $isString )
                     {
-                        return array( eZTemplateNodeTool::createStringElement( mb_substr( $inputArray, 0, $offset ) . $insertText . mb_substr( $inputArray, $offset ) ) );
+                        return [eZTemplateNodeTool::createStringElement( mb_substr( (string) $inputArray, 0, $offset ) . $insertText . mb_substr( (string) $inputArray, $offset ) )];
                     }
                     else if ( $isArray )
                     {
                         $array_one = array_slice( $inputArray, 0, $offset );
                         $array_two = array_slice( $inputArray, $offset );
 
-                        $array_to_insert = array();
-                        for ( $i = 2; $i < count( $parameters ); ++$i )
+                        $array_to_insert = [];
+                        for ( $i = 2; $i < (is_countable($parameters) ? count( $parameters ) : 0); ++$i )
                         {
                             $array_to_insert[] = eZTemplateNodeTool::elementConstantValue( $parameters[$i] );
                         }
 
-                        return array( eZTemplateNodeTool::createArrayElement( array_merge( $array_one, $array_to_insert, $array_two ) ) );
+                        return [eZTemplateNodeTool::createArrayElement( array_merge( $array_one, $array_to_insert, $array_two ) )];
                     }
                 }
 
@@ -908,7 +730,7 @@ class eZTemplateArrayOperator
                     $tmpCount = 4;
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount )];
             } break;
 
             case $this->ReverseName:
@@ -917,15 +739,15 @@ class eZTemplateArrayOperator
                 {
                     if ( is_string( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )
                     {
-                        return array( eZTemplateNodeTool::createStringElement( strrev( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                        return [eZTemplateNodeTool::createStringElement( strrev( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                     }
                     else if ( is_array( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )
                     {
-                        return array( eZTemplateNodeTool::createArrayElement( array_reverse( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                        return [eZTemplateNodeTool::createArrayElement( array_reverse( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                     }
                 }
 
-                $values = array( $parameters[0] );
+                $values = [$parameters[0]];
                 $code = 'if ( is_string( %1% ) )' . "\n" .
                      '{' . "\n".
                      '  %output% = strrev( %1% );' . "\n" .
@@ -935,25 +757,25 @@ class eZTemplateArrayOperator
                      '  %output% = array_reverse( %1% );' . "\n" .
                      '}' . "\n";
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->ArraySumName:
             {
                 if ( eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
                 {
-                    return array( eZTemplateNodeTool::createNumericElement( array_sum( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                    return [eZTemplateNodeTool::createNumericElement( array_sum( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                 }
 
-                $values = array( $parameters[0] );
+                $values = [$parameters[0]];
                 $code = '%output% = array_sum( %1% );';
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
             } break;
 
             case $this->RepeatName:
             {
-                $values = array();
+                $values = [];
                 $isString = false;
                 $isArray = false;
 
@@ -989,18 +811,18 @@ class eZTemplateArrayOperator
                                 $retText .= $origText;
                             }
 
-                            return array( eZTemplateNodeTool::createStringElement( $retText ) );
+                            return [eZTemplateNodeTool::createStringElement( $retText )];
                         }
                         else if ( $isArray )
                         {
-                            $retArray = array();
+                            $retArray = [];
                             $origArray = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
                             for ( $i = 0; $i < $count; $i++)
                             {
                                 $retArray = array_merge( $retArray, $origArray );
                             }
 
-                            return array( eZTemplateNodeTool::createArrayElement( $retArray ) );
+                            return [eZTemplateNodeTool::createArrayElement( $retArray )];
                         }
                     }
 
@@ -1020,7 +842,7 @@ class eZTemplateArrayOperator
                      '    %output% = array_merge( %output%, %tmp2% );' . "\n" .
                      '}' . "\n";
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 2 ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, 2 )];
             } break;
         }
     }
@@ -1032,10 +854,10 @@ class eZTemplateArrayOperator
         $isString = false;
         $inParam = null;
         $inParamCode = '';
-        $compareParams = array();
-        $compareParamsCode = array();
+        $compareParams = [];
+        $compareParamsCode = [];
         $offset = 0;
-        $values = array();
+        $values = [];
         $tmpCount = 0;
 
         if ( eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
@@ -1051,7 +873,7 @@ class eZTemplateArrayOperator
             $inParamCode = '%' . count( $values ) . '%';
         }
 
-        for( $i = 1; $i < count( $parameters ); $i++ )
+        for( $i = 1; $i < (is_countable($parameters) ? count( $parameters ) : 0); $i++ )
         {
             if ( eZTemplateNodeTool::isConstantElement( $parameters[$i] ) )
             {
@@ -1073,11 +895,11 @@ class eZTemplateArrayOperator
                 {
                     if ( $isString )
                     {
-                        $result = ( mb_strrpos( $inParam, $compareParams[0] ) === ( mb_strlen( $inParam ) - mb_strlen ( $compareParams[0] ) ) );
+                        $result = ( mb_strrpos( (string) $inParam, (string) $compareParams[0] ) === ( mb_strlen( (string) $inParam ) - mb_strlen ( (string) $compareParams[0] ) ) );
                     }
                     else if ( $isArray )
                     {
-                        $length = count( $inParam );
+                        $length = is_countable($inParam) ? count( $inParam ) : 0;
                         $params = count( $compareParams );
                         $start = $length - $params;
 
@@ -1092,7 +914,7 @@ class eZTemplateArrayOperator
                         }
                     }
 
-                    return array( eZTemplateNodeTool::createBooleanElement( $result ) );
+                    return [eZTemplateNodeTool::createBooleanElement( $result )];
                 }
 
                 if ( $isString )
@@ -1141,7 +963,7 @@ class eZTemplateArrayOperator
                     $tmpCount = 4;
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount )];
             } break;
 
             case $this->BeginsWithName:
@@ -1150,7 +972,7 @@ class eZTemplateArrayOperator
                 {
                     if ( $isString )
                     {
-                        $result = ( mb_strpos ( $inParam, $compareParams[0] ) === 0 );
+                        $result = ( mb_strpos ( (string) $inParam, (string) $compareParams[0] ) === 0 );
                     }
                     else if ( $isArray )
                     {
@@ -1165,7 +987,7 @@ class eZTemplateArrayOperator
                         }
                     }
 
-                    return array( eZTemplateNodeTool::createBooleanElement( $result ) );
+                    return [eZTemplateNodeTool::createBooleanElement( $result )];
                 }
 
                 if ( $isString )
@@ -1211,7 +1033,7 @@ class eZTemplateArrayOperator
                     $tmpCount = 1;
                 }
 
-                return array( eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount ) );
+                return [eZTemplateNodeTool::createCodePieceElement( $code, $values, false, $tmpCount )];
             } break;
         }
     }
@@ -1221,7 +1043,7 @@ class eZTemplateArrayOperator
     {
         $offset = 0;
         $length = false;
-        $values = array();
+        $values = [];
         $code = '';
         if ( $operatorName == $this->ExtractName )
         {
@@ -1300,7 +1122,7 @@ class eZTemplateArrayOperator
                     else
                         $output = array_slice( $input, $offset, $length );
                 }
-                return array( eZTemplateNodeTool::createConstantElement( $output ) );
+                return [eZTemplateNodeTool::createConstantElement( $output )];
             }
             else
             {
@@ -1316,7 +1138,7 @@ class eZTemplateArrayOperator
                       "    %output% = array_slice( %" . count( $values ) . "%, " . $code . " );" );
         }
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
     }
 
     function mergeTrans( $operatorName, &$node, $tpl, &$resourceData,
@@ -1326,9 +1148,9 @@ class eZTemplateArrayOperator
         $stringCode = '';
 
         $paramCount = 0;
-        $values = array();
-        $staticArray = array();
-        for ( $i = 1; $i < count( $parameters ); ++$i )
+        $values = [];
+        $staticArray = [];
+        for ( $i = 1; $i < (is_countable($parameters) ? count( $parameters ) : 0); ++$i )
         {
             if ( $i != 1 )
             {
@@ -1360,7 +1182,7 @@ class eZTemplateArrayOperator
                 {
                     $tmp_check = eZPHPCreator::variableText( eZTemplateNodeTool::elementConstantValue( $parameters[$i] ), 0, 0, false );
                     // hiding "%1%", "%output%" etc. in static input string to avoid replacing it on "$var" inside compiler.
-                    $tmp_check = str_replace( "%", '"."%"."', $tmp_check );
+                    $tmp_check = str_replace( "%", '"."%"."', (string) $tmp_check );
                     $code .= 'array( ' . $tmp_check . ' )';
                 }
                 $stringCode .= eZPHPCreator::variableText( eZTemplateNodeTool::elementConstantValue( $parameters[$i] ), 0, 0, false );
@@ -1408,7 +1230,7 @@ class eZTemplateArrayOperator
                         $str .= $staticArray[$i];
                     }
 
-                    return array( eZTemplateNodeTool::createStringElement( $str ) );
+                    return [eZTemplateNodeTool::createStringElement( $str )];
                 }
                 else if ( $isArray )
                 {
@@ -1424,7 +1246,7 @@ class eZTemplateArrayOperator
                             $returnArray[] = $staticArray[$i];
                         }
                     }
-                    return array( eZTemplateNodeTool::createArrayElement( $returnArray ) );
+                    return [eZTemplateNodeTool::createArrayElement( $returnArray )];
                 }
             }
             else if ( $operatorName == $this->PrependName or
@@ -1432,11 +1254,11 @@ class eZTemplateArrayOperator
             {
                 if ( $isString )
                 {
-                    return array( eZTemplateNodeTool::createStringElement( eZTemplateNodeTool::elementConstantValue( $parameters[1] ) . eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) );
+                    return [eZTemplateNodeTool::createStringElement( eZTemplateNodeTool::elementConstantValue( $parameters[1] ) . eZTemplateNodeTool::elementConstantValue( $parameters[0] ) )];
                 }
                 else if ( $isArray )
                 {
-                    return array( eZTemplateNodeTool::createArrayElement( array_merge( $staticArray, eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) ) );
+                    return [eZTemplateNodeTool::createArrayElement( array_merge( $staticArray, eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) )];
                 }
             }
         }
@@ -1486,7 +1308,7 @@ class eZTemplateArrayOperator
             }
         }
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code . "\n", $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code . "\n", $values )];
     }
 
     /*!
@@ -1501,60 +1323,7 @@ class eZTemplateArrayOperator
     */
     function namedParameterList()
     {
-        return array( $this->RemoveName  => array( 'offset'            => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ),
-                                                   'length'            => array( "type"      => "integer",
-                                                                                 "required"  => false,
-                                                                                 "default"   => 1 ) ),
-                      $this->RepeatName  => array( 'repeat_times'      => array( "type"      => "integer",
-                                                                                 "required"  => false,
-                                                                                 "default"   => 1 ) ),
-                      $this->InsertName  => array( 'insert_position'   => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ),
-                                                   'insert_string'     => array( "type"      => "string",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->ExplodeName => array( 'explode_first'     => array( "type"      => "mixed",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->ExtractName => array( 'extract_start'     => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ),
-                                                   'extract_length'    => array( "type"      => "integer",
-                                                                                 "required"  => false,
-                                                                                 "default"   => false ) ),
-                      $this->ExtractLeftName  => array( 'length'       => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->ExtractRightName => array( 'length'       => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->ReplaceName      => array( 'offset'       => array( "type"      => "integer",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false),
-                                                        'length'       => array( "type"      => "integer",
-                                                                                 "required"  => false,
-                                                                                 "default"   => false) ),
-                      $this->PrependName    => array( 'prepend_string' => array( "type"      => "string",
-                                                                                 "required"  => false,
-                                                                                 "default"   => false ) ),
-                      $this->ContainsName   => array( 'match'          => array( "type"      => "string",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->BeginsWithName => array( 'match'          => array( "type"      => "string",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->EndsWithName   => array( 'match'          => array( "type"      => "string",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ),
-                      $this->ImplodeName    => array( 'separator'      => array( "type"      => "string",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false) ),
-                      $this->CompareName    => array( 'compare'        => array( "type"      => "mixed",
-                                                                                 "required"  => true,
-                                                                                 "default"   => false ) ) );
+        return [$this->RemoveName  => ['offset'            => ["type"      => "integer", "required"  => true, "default"   => false], 'length'            => ["type"      => "integer", "required"  => false, "default"   => 1]], $this->RepeatName  => ['repeat_times'      => ["type"      => "integer", "required"  => false, "default"   => 1]], $this->InsertName  => ['insert_position'   => ["type"      => "integer", "required"  => true, "default"   => false], 'insert_string'     => ["type"      => "string", "required"  => true, "default"   => false]], $this->ExplodeName => ['explode_first'     => ["type"      => "mixed", "required"  => true, "default"   => false]], $this->ExtractName => ['extract_start'     => ["type"      => "integer", "required"  => true, "default"   => false], 'extract_length'    => ["type"      => "integer", "required"  => false, "default"   => false]], $this->ExtractLeftName  => ['length'       => ["type"      => "integer", "required"  => true, "default"   => false]], $this->ExtractRightName => ['length'       => ["type"      => "integer", "required"  => true, "default"   => false]], $this->ReplaceName      => ['offset'       => ["type"      => "integer", "required"  => true, "default"   => false], 'length'       => ["type"      => "integer", "required"  => false, "default"   => false]], $this->PrependName    => ['prepend_string' => ["type"      => "string", "required"  => false, "default"   => false]], $this->ContainsName   => ['match'          => ["type"      => "string", "required"  => true, "default"   => false]], $this->BeginsWithName => ['match'          => ["type"      => "string", "required"  => true, "default"   => false]], $this->EndsWithName   => ['match'          => ["type"      => "string", "required"  => true, "default"   => false]], $this->ImplodeName    => ['separator'      => ["type"      => "string", "required"  => true, "default"   => false]], $this->CompareName    => ['compare'        => ["type"      => "mixed", "required"  => true, "default"   => false]]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters,
@@ -1565,8 +1334,8 @@ class eZTemplateArrayOperator
         {
             case $this->ArrayName:
             {
-                $operatorValue = array();
-                for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+                $operatorValue = [];
+                for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                 {
                     $operatorValue[] = $tpl->elementValue( $operatorParameters[$i],
                                                             $rootNamespace,
@@ -1578,8 +1347,8 @@ class eZTemplateArrayOperator
 
             case $this->HashName:
             {
-                $operatorValue = array();
-                $hashCount = (int)( count( $operatorParameters ) / 2 );
+                $operatorValue = [];
+                $hashCount = (int)( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) / 2 );
                 for ( $i = 0; $i < $hashCount; ++$i )
                 {
                     $hashName = $tpl->elementValue( $operatorParameters[$i*2],
@@ -1639,7 +1408,7 @@ class eZTemplateArrayOperator
                     $i = 0;
                     if ( is_array( $operatorValue ) )
                     {
-                        if ( count( $operatorParameters ) < 1 )
+                        if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) < 1 )
                         {
                             $tpl->error( $operatorName,
                                          "Requires at least one item!",
@@ -1650,7 +1419,7 @@ class eZTemplateArrayOperator
                     }
                     else
                     {
-                        if ( count( $operatorParameters ) < 2 )
+                        if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) < 2 )
                         {
                             $tpl->error( $operatorName,
                                          "Requires an array (and at least one item)!",
@@ -1662,8 +1431,8 @@ class eZTemplateArrayOperator
                                                           $currentNamespace,
                                                           $placement );
                     }
-                    $tmpArray = array();
-                    for ( ; $i < count( $operatorParameters ); ++$i )
+                    $tmpArray = [];
+                    for ( ; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                     {
                         $tmpArray[] = $tpl->elementValue( $operatorParameters[$i],
                                                            $rootNamespace,
@@ -1682,21 +1451,21 @@ class eZTemplateArrayOperator
                 case $this->ArrayMergeName:
                 case $this->MergeName:
                 {
-                    $tmpArray   = array();
+                    $tmpArray   = [];
                     if ( $operatorValue === null ) {
-                        $tmpArray[] = array(); // set to empty array in case of
+                        $tmpArray[] = []; // set to empty array in case of
                     } else {
                         $tmpArray[] = $operatorValue;
                     }
 
-                    if ( count( $operatorParameters ) < 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) < 1 )
                     {
                         $tpl->error( $operatorName, "Requires an array (and at least one item!)",
                                      $placement );
                         return;
                     }
 
-                    for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+                    for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                     {
                         $tmpVal = $tpl->elementValue( $operatorParameters[$i],
                                                            $rootNamespace,
@@ -1713,7 +1482,7 @@ class eZTemplateArrayOperator
                 // Check if the array contains a specified element:
                 case $this->ContainsName:
                 {
-                    if ( count( $operatorParameters ) < 1 )
+                    if ( (is_countable($operatorParameters) ? count( $operatorParameters ) : 0) < 1 )
                     {
                         $tpl->error( $operatorName, "Missing matching value!",
                                      $placement );
@@ -1755,14 +1524,14 @@ class eZTemplateArrayOperator
                 // Extract a portion from the end of the array:
                 case $this->ExtractRightName:
                 {
-                    $index = count( $operatorValue ) - $namedParameters['length'];
+                    $index = (is_countable($operatorValue) ? count( $operatorValue ) : 0) - $namedParameters['length'];
                     $operatorValue = array_slice( $operatorValue, $index );
                 }break;
 
                 // Check if the array begins with a given sequence:
                 case $this->BeginsWithName:
                 {
-                    for ( $i = 0; $i < count( $operatorParameters ); $i++ )
+                    for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); $i++ )
                     {
                         $test = $tpl->elementValue( $operatorParameters[$i],
                                                     $rootNamespace,
@@ -1782,8 +1551,8 @@ class eZTemplateArrayOperator
                 // Check if the array ends with a given sequence:
                 case $this->EndsWithName:
                 {
-                    $length = count( $operatorValue );
-                    $params = count( $operatorParameters );
+                    $length = is_countable($operatorValue) ? count( $operatorValue ) : 0;
+                    $params = is_countable($operatorParameters) ? count( $operatorParameters ) : 0;
 
                     $start = $length - $params;
 
@@ -1812,13 +1581,13 @@ class eZTemplateArrayOperator
                 // Explode the array by making smaller arrays of it:
                 case $this->ExplodeName:
                 {
-                    $array_one = array();
-                    $array_two = array();
+                    $array_one = [];
+                    $array_two = [];
 
                     $array_one = array_slice( $operatorValue, 0, $namedParameters['explode_first'] );
                     $array_two = array_slice( $operatorValue, $namedParameters['explode_first'] );
 
-                    $operatorValue = array( $array_one, $array_two );
+                    $operatorValue = [$array_one, $array_two];
                 }break;
 
                 // Repeat the contents of an array a specified number of times:
@@ -1826,7 +1595,7 @@ class eZTemplateArrayOperator
                 {
                     $arrayElement = $operatorValue;
                     $count = $namedParameters['repeat_times'];
-                    $operatorValue = array();
+                    $operatorValue = [];
                     for ( $i = 0; $i < $count; $i++)
                     {
                         $operatorValue = array_merge( $operatorValue, $arrayElement );
@@ -1846,8 +1615,8 @@ class eZTemplateArrayOperator
                     $array_two = array_slice( $operatorValue, $namedParameters['insert_position'] );
 
 
-                    $array_to_insert = array();
-                    for ( $i = 1; $i < count( $operatorParameters ); ++$i )
+                    $array_to_insert = [];
+                    for ( $i = 1; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                     {
                         $array_to_insert[] = $tpl->elementValue( $operatorParameters[$i],
                                                                   $rootNamespace,
@@ -1872,9 +1641,9 @@ class eZTemplateArrayOperator
                 {
                     $array_one = array_slice( $operatorValue, 0, $namedParameters['offset'] );
                     $array_two = array_slice( $operatorValue, $namedParameters['offset'] + $namedParameters['length'] );
-                    $array_mid = array();
+                    $array_mid = [];
 
-                    for ( $i = 2; $i < count( $operatorParameters ); ++ $i )
+                    for ( $i = 2; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++ $i )
                     {
                         $array_mid[] = $tpl->elementValue( $operatorParameters[$i],
                                                             $rootNamespace,
@@ -1925,7 +1694,7 @@ class eZTemplateArrayOperator
                 // Add a string at the end of the input/target string:
                 case $this->AppendName:
                 {
-                    for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+                    for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                     {
                         $operatorValue .= $tpl->elementValue( $operatorParameters[$i],
                                                               $rootNamespace,
@@ -1944,14 +1713,14 @@ class eZTemplateArrayOperator
                 // Check if the string contains a specified sequence of chars/string.
                 case $this->ContainsName:
                 {
-                    $operatorValue = ( mb_strpos( $operatorValue, $namedParameters['match'] ) !== false );
+                    $operatorValue = ( mb_strpos( $operatorValue, (string) $namedParameters['match'] ) !== false );
                 }
                 break;
 
                 // Compare two strings:
                 case $this->CompareName:
                 {
-                    if ( strcmp( $operatorValue, $namedParameters['compare'] ) === 0 )
+                    if ( strcmp( $operatorValue, (string) $namedParameters['compare'] ) === 0 )
                     {
                         $operatorValue = true;
                     }
@@ -1988,7 +1757,7 @@ class eZTemplateArrayOperator
                 // Check if string begins with specified sequence:
                 case $this->BeginsWithName:
                 {
-                    if ( mb_strpos( $operatorValue, $namedParameters['match'] ) === 0 )
+                    if ( mb_strpos( $operatorValue, (string) $namedParameters['match'] ) === 0 )
                     {
                         $operatorValue = true;
                     }
@@ -2001,7 +1770,7 @@ class eZTemplateArrayOperator
                 // Check if string ends with specified sequence:
                 case $this->EndsWithName:
                 {
-                    if ( mb_strrpos( $operatorValue, $namedParameters['match'] ) === ( mb_strlen( $operatorValue ) - mb_strlen ($namedParameters['match'] ) ) )
+                    if ( mb_strrpos( $operatorValue, (string) $namedParameters['match'] ) === ( mb_strlen( $operatorValue ) - mb_strlen ((string) $namedParameters['match'] ) ) )
                     {
                         $operatorValue = true;
                     }
@@ -2058,7 +1827,7 @@ class eZTemplateArrayOperator
                     $second = mb_substr( $operatorValue, $namedParameters['offset'] + $namedParameters['length'] );
                     $mid = '';
 
-                    for ( $i = 2; $i < count( $operatorParameters ); ++ $i )
+                    for ( $i = 2; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++ $i )
                     {
                         $mid .= $tpl->elementValue( $operatorParameters[$i],
                                                     $rootNamespace,
@@ -2086,8 +1855,8 @@ class eZTemplateArrayOperator
         // ..or something else? -> We're building the array:
         else
         {
-            $operatorValue = array();
-            for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+            $operatorValue = [];
+            for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
             {
                 $operatorValue[] = $tpl->elementValue( $operatorParameters[$i],
                                                         $rootNamespace,
@@ -2099,30 +1868,6 @@ class eZTemplateArrayOperator
 
     /// \privatesection
     public $Operators;
-    public $ArrayName;
-    public $HashName;
-    public $ArrayPrependName;
-    public $PrependName;
-    public $ArrayAppendName;
-    public $AppendName;
-    public $ArrayMergeName;
-    public $MergeName;
-    public $ContainsName;
-    public $CompareName;
-    public $ExtractName;
-    public $ExtractLeftName;
-    public $ExtractRightName;
-    public $BeginsWithName;
-    public $EndsWithName;
-    public $ImplodeName;
-    public $ExplodeName;
-    public $RepeatName;
-    public $ReverseName;
-    public $InsertName;
-    public $RemoveName;
-    public $ReplaceName;
-    public $UniqueName;
-    public $ArraySumName;
 }
 
 ?>

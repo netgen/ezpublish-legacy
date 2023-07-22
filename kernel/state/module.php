@@ -6,137 +6,44 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZContentObjectState',
-                 'variable_params' => false );
+$Module = ['name' => 'eZContentObjectState', 'variable_params' => false];
 
-$ViewList = array();
+$ViewList = [];
 
-$ViewList['assign'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'assign.php',
-    'params' => array( 'ObjectID', 'SelectedStateID' ),
-    'functions' => array( 'assign' ),
-    'single_post_actions' => array( 'AssignButton' => 'Assign' ),
-    'post_action_parameters' => array( 'Assign' => array( 'ObjectID'            => 'ObjectID',
-                                                          'SelectedStateIDList' => 'SelectedStateIDList',
-                                                          'RedirectRelativeURI' => 'RedirectRelativeURI' ) )
-);
+$ViewList['assign'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'assign.php', 'params' => ['ObjectID', 'SelectedStateID'], 'functions' => ['assign'], 'single_post_actions' => ['AssignButton' => 'Assign'], 'post_action_parameters' => ['Assign' => ['ObjectID'            => 'ObjectID', 'SelectedStateIDList' => 'SelectedStateIDList', 'RedirectRelativeURI' => 'RedirectRelativeURI']]];
 
-$ViewList['groups'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'groups.php',
-    'params' => array(),
-    'functions' => array( 'administrate' ),
-    'unordered_params' => array( 'offset' => 'Offset' ),
-    'single_post_actions' => array( 'CreateButton' => 'Create',
-                                    'RemoveButton' => 'Remove' ),
-    'post_action_parameters' => array( 'Remove' => array( 'RemoveIDList' => 'RemoveIDList' ) )
-);
+$ViewList['groups'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'groups.php', 'params' => [], 'functions' => ['administrate'], 'unordered_params' => ['offset' => 'Offset'], 'single_post_actions' => ['CreateButton' => 'Create', 'RemoveButton' => 'Remove'], 'post_action_parameters' => ['Remove' => ['RemoveIDList' => 'RemoveIDList']]];
 
-$ViewList['group'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'group.php',
-    'params' => array( 'GroupIdentifier', 'Language' ),
-    'functions' => array( 'administrate' ),
-    'single_post_actions' => array( 'CreateButton' => 'Create',
-                                    'UpdateOrderButton' => 'UpdateOrder',
-                                    'EditButton' => 'Edit',
-                                    'RemoveButton' => 'Remove' ),
-    'post_action_parameters' => array( 'UpdateOrder' => array( 'Order' => 'Order' ),
-                                       'Remove' => array( 'RemoveIDList' => 'RemoveIDList' ) )
-);
+$ViewList['group'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'group.php', 'params' => ['GroupIdentifier', 'Language'], 'functions' => ['administrate'], 'single_post_actions' => ['CreateButton' => 'Create', 'UpdateOrderButton' => 'UpdateOrder', 'EditButton' => 'Edit', 'RemoveButton' => 'Remove'], 'post_action_parameters' => ['UpdateOrder' => ['Order' => 'Order'], 'Remove' => ['RemoveIDList' => 'RemoveIDList']]];
 
-$ViewList['group_edit'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'group_edit.php',
-    'ui_context' => 'edit',
-    'params' => array( 'GroupIdentifier' ),
-    'functions' => array( 'administrate' ),
-    'single_post_actions' => array( 'StoreButton' => 'Store',
-                                    'CancelButton' => 'Cancel' )
-);
+$ViewList['group_edit'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'group_edit.php', 'ui_context' => 'edit', 'params' => ['GroupIdentifier'], 'functions' => ['administrate'], 'single_post_actions' => ['StoreButton' => 'Store', 'CancelButton' => 'Cancel']];
 
-$ViewList['view'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'view.php',
-    'params' => array( 'GroupIdentifier', 'StateIdentifier', 'Language' ),
-    'functions' => array( 'administrate' ),
-    'single_post_actions' => array( 'EditButton' => 'Edit' )
-);
+$ViewList['view'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'view.php', 'params' => ['GroupIdentifier', 'StateIdentifier', 'Language'], 'functions' => ['administrate'], 'single_post_actions' => ['EditButton' => 'Edit']];
 
-$ViewList['edit'] = array(
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'script' => 'edit.php',
-    'ui_context' => 'edit',
-    'params' => array( 'GroupIdentifier', 'StateIdentifier' ),
-    'functions' => array( 'administrate' ),
-    'single_post_actions' => array( 'StoreButton' => 'Store',
-                                    'CancelButton' => 'Cancel' )
-);
+$ViewList['edit'] = ['default_navigation_part' => 'ezsetupnavigationpart', 'script' => 'edit.php', 'ui_context' => 'edit', 'params' => ['GroupIdentifier', 'StateIdentifier'], 'functions' => ['administrate'], 'single_post_actions' => ['StoreButton' => 'Store', 'CancelButton' => 'Cancel']];
 
-$ClassID = array(
-    'name'=> 'Class',
-    'values'=> array(),
-    'class' => 'eZContentClass',
-    'function' => 'fetchList',
-    'parameter' => array( 0, false, false, array( 'name' => 'asc' ) )
-    );
+$ClassID = ['name'=> 'Class', 'values'=> [], 'class' => 'eZContentClass', 'function' => 'fetchList', 'parameter' => [0, false, false, ['name' => 'asc']]];
 
-$SectionID = array(
-    'name'=> 'Section',
-    'values'=> array(),
-    'class' => 'eZSection',
-    'function' => 'fetchList',
-    'parameter' => array( false )
-    );
+$SectionID = ['name'=> 'Section', 'values'=> [], 'class' => 'eZSection', 'function' => 'fetchList', 'parameter' => [false]];
 
-$Assigned = array(
-    'name'=> 'Owner',
-    'values'=> array(
-        array(
-            'Name' => 'Self',
-            'value' => '1')
-        )
-    );
+$Assigned = ['name'=> 'Owner', 'values'=> [['Name' => 'Self', 'value' => '1']]];
 
-$AssignedGroup = array(
-    'name'=> 'Group',
-    'single_select' => true,
-    'values'=> array(
-        array( 'Name' => 'Self',
-               'value' => '1') ) );
+$AssignedGroup = ['name'=> 'Group', 'single_select' => true, 'values'=> [['Name' => 'Self', 'value' => '1']]];
 
-$Node = array(
-    'name'=> 'Node',
-    'values'=> array()
-    );
+$Node = ['name'=> 'Node', 'values'=> []];
 
-$Subtree = array(
-    'name'=> 'Subtree',
-    'values'=> array()
-    );
+$Subtree = ['name'=> 'Subtree', 'values'=> []];
 
 $stateLimitations = eZContentObjectStateGroup::limitations();
 
-$NewState = array(
-    'name' => 'NewState',
-    'values' => array(),
-    'class' => 'eZContentObjectState',
-    'function' => 'limitationList',
-    'parameter' => array()
-);
+$NewState = ['name' => 'NewState', 'values' => [], 'class' => 'eZContentObjectState', 'function' => 'limitationList', 'parameter' => []];
 
-$FunctionList = array();
+$FunctionList = [];
 
-$FunctionList['administrate'] = array();
+$FunctionList['administrate'] = [];
 
-$FunctionList['assign'] = array( 'Class' => $ClassID,
-                                 'Section' => $SectionID,
-                                 'Owner' => $Assigned,
-                                 'Group' => $AssignedGroup,
-                                 'Node' => $Node,
-                                 'Subtree' => $Subtree );
+$FunctionList['assign'] = ['Class' => $ClassID, 'Section' => $SectionID, 'Owner' => $Assigned, 'Group' => $AssignedGroup, 'Node' => $Node, 'Subtree' => $Subtree];
 
-$FunctionList['assign'] = array_merge( $FunctionList['assign'], $stateLimitations, array( 'NewState' => $NewState ) );
+$FunctionList['assign'] = array_merge( $FunctionList['assign'], $stateLimitations, ['NewState' => $NewState] );
 
 ?>

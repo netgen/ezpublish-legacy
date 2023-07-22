@@ -31,25 +31,25 @@
 
 $objectID      = isset( $Params['ObjectID'] ) ? (int) $Params['ObjectID'] : 0;
 $objectVersion = isset( $Params['ObjectVersion'] ) ? (int) $Params['ObjectVersion'] : 0;
-$dialog        = isset( $Params['Dialog'] ) ? trim( $Params['Dialog'] ) : '';
+$dialog        = isset( $Params['Dialog'] ) ? trim( (string) $Params['Dialog'] ) : '';
 
 if ( $objectID === 0  || $objectVersion === 0 )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'ObjectID/ObjectVersion' ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, ['%parameter' => 'ObjectID/ObjectVersion'] );
    eZExecution::cleanExit();
 }
 
 $object = eZContentObject::fetch( $objectID );
 if ( !$object instanceof eZContentObject || !$object->canRead() )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'ObjectId', '%value' => $objectID ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'ObjectId', '%value' => $objectID] );
    eZExecution::cleanExit();
 }
 
 
 if ( $dialog === '' )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'Dialog' ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, ['%parameter' => 'Dialog'] );
    eZExecution::cleanExit();
 }
 
@@ -72,13 +72,13 @@ $tpl->setVariable( 'ezoe_info_url', $ezoeInfo['info_url'] );
 
 // use persistent_variable like content/view does, sending parameters
 // to pagelayout as a hash.
-$tpl->setVariable( 'persistent_variable', array() );
+$tpl->setVariable( 'persistent_variable', [] );
 
 
 
 
 // run template and return result
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:ezoe/' . $dialog . '.tpl' );
 $Result['pagelayout'] = 'design:ezoe/popup_pagelayout.tpl';
 $Result['persistent_variable'] = $tpl->variable( 'persistent_variable' );

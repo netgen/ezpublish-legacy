@@ -58,7 +58,7 @@ class eZStepSystemFinetune extends eZStepInstaller
             $this->OptionalResult = $optionalRunResult['result'];
             $persistenceData = $runResult['persistence_list'];
 
-            $testsRun = array();
+            $testsRun = [];
             foreach ( $this->Results as $testResultItem )
             {
                 $testsRun[$testResultItem[1]] = $testResultItem[0];
@@ -76,15 +76,13 @@ class eZStepSystemFinetune extends eZStepInstaller
 
     function display()
     {
-        $this->Tpl->setVariable( 'test', array( 'result' => $this->OptionalResult,
-                                                         'results' => $this->OptionalResults ) );
+        $this->Tpl->setVariable( 'test', ['result' => $this->OptionalResult, 'results' => $this->OptionalResults] );
         $this->Tpl->setVariable( 'persistence_data', $this->PersistenceList );
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( "design:setup/init/system_finetune.tpl" );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'System finetuning' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'System finetuning' ), 'url' => false]];
         return $result;
     }
 

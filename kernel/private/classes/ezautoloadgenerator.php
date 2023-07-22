@@ -74,13 +74,7 @@ class eZAutoloadGenerator
      *
      * @var array
      */
-    protected $modeName = array(
-                                    self::MODE_KERNEL => "Kernel",
-                                    self::MODE_EXTENSION => "Extension",
-                                    self::MODE_TESTS => "Test",
-                                    self::MODE_SINGLE_EXTENSION =>"Single extension",
-                                    self::MODE_KERNEL_OVERRIDE => "Kernel overrides",
-                               );
+    protected $modeName = [self::MODE_KERNEL => "Kernel", self::MODE_EXTENSION => "Extension", self::MODE_TESTS => "Test", self::MODE_SINGLE_EXTENSION =>"Single extension", self::MODE_KERNEL_OVERRIDE => "Kernel overrides"];
 
     /**
      * Contains newly generated autoload data.
@@ -95,59 +89,59 @@ class eZAutoloadGenerator
     /**
      * Bitmask for searching in no files.
      */
-    const MODE_NONE = 0;
+    final public const MODE_NONE = 0;
 
     /**
      * Bitmask for searhing in kernel files
      */
-    const MODE_KERNEL = 1;
+    final public const MODE_KERNEL = 1;
 
     /**
      * Bitmask for search in extension files
      */
-    const MODE_EXTENSION = 2;
+    final public const MODE_EXTENSION = 2;
 
     /**
      * Bitmask for searching in test files
      */
-    const MODE_TESTS = 4;
+    final public const MODE_TESTS = 4;
 
     /**
      * Bitmask for searching in a single extension only.
      *
      * This mode is mutually exclusive from the other modes.
      */
-    const MODE_SINGLE_EXTENSION = 8;
+    final public const MODE_SINGLE_EXTENSION = 8;
 
     /**
      * Bitmask for searching for kernel overrides.
      *
      * This mode is mutually excluse from the other modes.
      */
-    const MODE_KERNEL_OVERRIDE = 16;
+    final public const MODE_KERNEL_OVERRIDE = 16;
 
     /**
      * Represents the first phase of autoload generation, where the code
      * searches for PHP source files.
      */
-    const OUTPUT_PROGRESS_PHASE1 = 1;
+    final public const OUTPUT_PROGRESS_PHASE1 = 1;
 
     /**
      * Represents the second phase of autoload generation, where the code
      * tokenizes the found PHP files to look for classes and interfaces.
      */
-    const OUTPUT_PROGRESS_PHASE2 = 2;
+    final public const OUTPUT_PROGRESS_PHASE2 = 2;
 
     /**
      * The name of the file which contains default exclude directories for the
      * autoload generator.
      */
-    const DEFAULT_EXCLUDE_FILE = '.autoloadignore';
+    final public const DEFAULT_EXCLUDE_FILE = '.autoloadignore';
 
     /**
      * Undefined token value
      */
-    const UNDEFINED_TOKEN = -1;
+    final public const UNDEFINED_TOKEN = -1;
 
     /**
      * Constructs class to generate autoload arrays.
@@ -166,13 +160,13 @@ class eZAutoloadGenerator
 
         // Set up arrays for existing autoloads, used to check for class name
         // collisions.
-        $this->existingAutoloadArrays = array();
+        $this->existingAutoloadArrays = [];
         $this->existingAutoloadArrays[self::MODE_KERNEL] = @include 'autoload/ezp_kernel.php';
         $this->existingAutoloadArrays[self::MODE_EXTENSION] = @include 'var/autoload/ezp_extension.php';
         $this->existingAutoloadArrays[self::MODE_TESTS] = @include 'var/autoload/ezp_tests.php';
 
-        $this->messages = array();
-        $this->warnings = array();
+        $this->messages = [];
+        $this->warnings = [];
     }
 
     /**
@@ -186,7 +180,7 @@ class eZAutoloadGenerator
     {
         $phpFiles = $this->fetchFiles();
 
-        $phpClasses = array();
+        $phpClasses = [];
         foreach ( $phpFiles as $mode => $fileList )
         {
             $phpClasses[$mode] = $this->getClassFileList( $fileList, $mode );
@@ -251,7 +245,7 @@ class eZAutoloadGenerator
              if ( $file )
              {
                  fwrite( $file, $this->dumpArrayStart( $location ) );
-                 fwrite( $file, $data );
+                 fwrite( $file, (string) $data );
                  fwrite( $file, $this->dumpArrayEnd() );
                  fclose( $file );
                  if ( defined( 'EZP_INI_FILE_PERMISSION' ) )
@@ -309,7 +303,7 @@ class eZAutoloadGenerator
         $sanitisedBasePath = DIRECTORY_SEPARATOR == '/' ? $path : strtr( $path, DIRECTORY_SEPARATOR, '/' );
         $dirSep = preg_quote( DIRECTORY_SEPARATOR );
 
-        $extraExcludeDirs = array();
+        $extraExcludeDirs = [];
         if ( $excludeDirs !== false and is_array( $excludeDirs ) )
         {
             foreach ( $excludeDirs as $dir )
@@ -318,7 +312,7 @@ class eZAutoloadGenerator
             }
         }
 
-        $retFiles = array();
+        $retFiles = [];
 
         $activeModes = $this->checkMode();
 
@@ -349,7 +343,7 @@ class eZAutoloadGenerator
                     break;
 
                 case self::MODE_SINGLE_EXTENSION:
-                    $retFiles = array( $modusOperandi => $this->buildFileList( "$sanitisedBasePath", $extraExcludeDirs ) );
+                    $retFiles = [$modusOperandi => $this->buildFileList( "$sanitisedBasePath", $extraExcludeDirs )];
                     break;
             }
         }
@@ -382,7 +376,7 @@ class eZAutoloadGenerator
     protected function buildFileList( $path, $extraFilter = null )
     {
         $dirSep = preg_quote( DIRECTORY_SEPARATOR );
-        $exclusionFilter = array( "@^{$path}{$dirSep}(var|settings|benchmarks|bin|autoload|port_info|update|templates|tmp|UnitTest|lib{$dirSep}ezc)@" );
+        $exclusionFilter = ["@^{$path}{$dirSep}(var|settings|benchmarks|bin|autoload|port_info|update|templates|tmp|UnitTest|lib{$dirSep}ezc)@"];
 
         if ( !empty( $extraFilter ) and is_array( $extraFilter ) )
         {
@@ -394,7 +388,7 @@ class eZAutoloadGenerator
 
         if (!empty( $path ) )
         {
-            return self::findRecursive( $path, array( '@\.php$@' ), $exclusionFilter, $this );
+            return self::findRecursive( $path, $this, ['@\.php$@'], $exclusionFilter );
         }
         return false;
     }
@@ -410,7 +404,7 @@ class eZAutoloadGenerator
      * @param eZAutoloadGenerator $gen
      * @return array
      */
-    public static function findRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), eZAutoloadGenerator $gen )
+    public static function findRecursive( $sourceDir, eZAutoloadGenerator $gen, array $includeFilters = [], array $excludeFilters = [] )
     {
         $gen->log( "Scanning for PHP-files." );
         $gen->startProgressOutput( self::OUTPUT_PROGRESS_PHASE1 );
@@ -419,8 +413,8 @@ class eZAutoloadGenerator
         $context = new ezpAutoloadFileFindContext();
         $context->generator = $gen;
 
-        self::walkRecursive( $sourceDir, $includeFilters, $excludeFilters,
-                array( 'eZAutoloadGenerator', 'findRecursiveCallback' ), $context );
+        self::walkRecursive( $sourceDir,
+                ['eZAutoloadGenerator', 'findRecursiveCallback'], $context, $includeFilters, $excludeFilters );
 
         // return the found and pattern-matched files
         sort( $context->elements );
@@ -439,11 +433,6 @@ class eZAutoloadGenerator
      * https://issues.apache.org/jira/browse/ZETACOMP-85 is implemented, this
      * method could be removed.
      *
-     * @param mixed $sourceDir
-     * @param array $includeFilters
-     * @param array $excludeFilters
-     * @param mixed $callback
-     * @param mixed $callbackContext
      *
      * @throws ezcBaseFileNotFoundException if the $sourceDir directory is not
      *         a directory or does not exist.
@@ -451,19 +440,19 @@ class eZAutoloadGenerator
      *         not be opened for reading.
      * @return array
      */
-    static protected function walkRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), $callback, &$callbackContext )
+    static protected function walkRecursive( mixed $sourceDir, mixed $callback, mixed &$callbackContext, array $includeFilters = [], array $excludeFilters = [] )
     {
         if ( !is_dir( $sourceDir ) )
         {
             throw new ezcBaseFileNotFoundException( $sourceDir, 'directory' );
         }
-        $elements = array();
+        $elements = [];
 
         // Iterate over the $excludeFilters and prohibit the directory from
         // being scanned when atleast one of them matches
         foreach ( $excludeFilters as $filter )
         {
-            if ( preg_match( $filter, $sourceDir ) )
+            if ( preg_match( $filter, (string) $sourceDir ) )
             {
                 return $elements;
             }
@@ -485,7 +474,7 @@ class eZAutoloadGenerator
             $fileInfo = @stat( $sourceDir . DIRECTORY_SEPARATOR . $entry );
             if ( !$fileInfo )
             {
-                $fileInfo = array( 'size' => 0, 'mode' => 0 );
+                $fileInfo = ['size' => 0, 'mode' => 0];
             }
 
             if ( $fileInfo['mode'] & 0x4000 )
@@ -495,11 +484,11 @@ class eZAutoloadGenerator
                 // the exception if the top directory could not be read.
                 try
                 {
-                    call_user_func_array( $callback, array( $callbackContext, $sourceDir, $entry, $fileInfo ) );
-                    $subList = self::walkRecursive( $sourceDir . DIRECTORY_SEPARATOR . $entry, $includeFilters, $excludeFilters, $callback, $callbackContext );
+                    call_user_func_array( $callback, [$callbackContext, $sourceDir, $entry, $fileInfo] );
+                    $subList = self::walkRecursive( $sourceDir . DIRECTORY_SEPARATOR . $entry, $callback, $callbackContext, $includeFilters, $excludeFilters );
                     $elements = array_merge( $elements, $subList );
                 }
-                catch ( ezcBaseFilePermissionException $e )
+                catch ( ezcBaseFilePermissionException )
                 {
                 }
             }
@@ -571,15 +560,14 @@ class eZAutoloadGenerator
      */
     protected function getClassFileList( $fileList, $mode )
     {
-        $retArray = array();
+        $classCount = null;
+        $classAdded = null;
+        $retArray = [];
         $this->log( "Searching for classes (tokenizing)." );
-        $statArray = array( 'nFiles' => count( $fileList ),
-                            'classCount' => 0,
-                            'classAdded' => 0,
-                           );
+        $statArray = ['nFiles' => is_countable($fileList) ? count( $fileList ) : 0, 'classCount' => 0, 'classAdded' => 0];
         $this->setStatArray( self::OUTPUT_PROGRESS_PHASE2, $statArray );
 
-        if ( count( $fileList ) )
+        if ( is_countable($fileList) ? count( $fileList ) : 0 )
         {
             $this->startProgressOutput( self::OUTPUT_PROGRESS_PHASE2 );
 
@@ -668,7 +656,7 @@ class eZAutoloadGenerator
                                 // using a forward slash as directory separator
                                 if ( DIRECTORY_SEPARATOR != '/' )
                                 {
-                                    $filePath = str_replace( DIRECTORY_SEPARATOR, '/', $filePath );
+                                    $filePath = str_replace( DIRECTORY_SEPARATOR, '/', (string) $filePath );
                                 }
                                 // Here there are two code paths.
                                 // MODE_KERNEL_OVERRIDE will only add a class if
@@ -713,7 +701,7 @@ class eZAutoloadGenerator
      */
     protected function checkMaxClassLength( $depData )
     {
-        $max = array();
+        $max = [];
         foreach( array_keys( $depData) as $key )
         {
             $max[$key] = 0;
@@ -723,9 +711,9 @@ class eZAutoloadGenerator
         {
             foreach ( $locationBundle as $className => $path )
             {
-                if ( strlen( $className ) > $max[$location] )
+                if ( strlen( (string) $className ) > $max[$location] )
                 {
-                    $max[$location] = strlen( $className );
+                    $max[$location] = strlen( (string) $className );
                 }
             }
         }
@@ -741,7 +729,7 @@ class eZAutoloadGenerator
      */
     protected function dumpArray( $sortedArray, $length )
     {
-        $retArray = array();
+        $retArray = [];
         foreach ( $sortedArray as $location => $sorted )
         {
             $ret = '';
@@ -763,10 +751,9 @@ class eZAutoloadGenerator
      */
     protected function checkMode()
     {
-        $modes = array( self::MODE_KERNEL, self::MODE_EXTENSION,
-                        self::MODE_TESTS, self::MODE_SINGLE_EXTENSION, self::MODE_KERNEL_OVERRIDE );
+        $modes = [self::MODE_KERNEL, self::MODE_EXTENSION, self::MODE_TESTS, self::MODE_SINGLE_EXTENSION, self::MODE_KERNEL_OVERRIDE];
 
-        $activeModes = array();
+        $activeModes = [];
 
         foreach( $modes as $mode )
         {
@@ -857,12 +844,7 @@ class eZAutoloadGenerator
      */
     protected function nameTable( $lookup )
     {
-        $names = array( self::MODE_EXTENSION => "ezp_extension.php",
-                        self::MODE_SINGLE_EXTENSION => basename( $this->options->basePath ) . '_autoload.php',
-                        self::MODE_KERNEL    => "ezp_kernel.php",
-                        self::MODE_TESTS     => "ezp_tests.php",
-                        self::MODE_KERNEL_OVERRIDE => "ezp_override.php",
-                      );
+        $names = [self::MODE_EXTENSION => "ezp_extension.php", self::MODE_SINGLE_EXTENSION => basename( $this->options->basePath ) . '_autoload.php', self::MODE_KERNEL    => "ezp_kernel.php", self::MODE_TESTS     => "ezp_tests.php", self::MODE_KERNEL_OVERRIDE => "ezp_override.php"];
 
         if ( array_key_exists( $lookup, $names ) )
         {
@@ -879,13 +861,7 @@ class eZAutoloadGenerator
      */
     protected function targetTable( $lookup )
     {
-        $targets = array(
-                            self::MODE_EXTENSION => "var/autoload",
-                            self::MODE_TESTS     => "var/autoload",
-                            self::MODE_KERNEL    => "autoload",
-                            self::MODE_SINGLE_EXTENSION => $this->options->basePath . DIRECTORY_SEPARATOR . 'autoload',
-                            self::MODE_KERNEL_OVERRIDE => "var/autoload",
-                        );
+        $targets = [self::MODE_EXTENSION => "var/autoload", self::MODE_TESTS     => "var/autoload", self::MODE_KERNEL    => "autoload", self::MODE_SINGLE_EXTENSION => $this->options->basePath . DIRECTORY_SEPARATOR . 'autoload', self::MODE_KERNEL_OVERRIDE => "var/autoload"];
 
         if ( array_key_exists( $lookup, $targets ) )
         {

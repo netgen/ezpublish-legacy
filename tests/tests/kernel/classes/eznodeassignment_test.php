@@ -38,16 +38,16 @@ class eZNodeAssignmentTest extends ezpDatabaseTestCase
         $version->setAttribute( 'status', eZContentObjectVersion::STATUS_PENDING );
         $version->store();
 
-        $idList = array( $top->mainNode->node_id );
+        $idList = [$top->mainNode->node_id];
         $arrayResult = eZNodeAssignment::fetchChildListByVersionStatus( $idList, eZContentObjectVersion::STATUS_PENDING, false );
-        $this->assertEquals( $pendingChild->id, $arrayResult[0]['contentobject_id'] );
+        static::assertEquals($pendingChild->id, $arrayResult[0]['contentobject_id']);
         $arrayResult = eZNodeAssignment::fetchChildListByVersionStatus( $idList, eZContentObjectVersion::STATUS_PUBLISHED, true );
-        $this->assertEquals( $child->id, $arrayResult[0]->attribute( 'contentobject_id') );
+        static::assertEquals($child->id, $arrayResult[0]->attribute( 'contentobject_id'));
 
         $countResult = eZNodeAssignment::fetchChildCountByVersionStatus( $idList, eZContentObjectVersion::STATUS_PENDING );
-        $this->assertEquals( 1, $countResult );
+        static::assertEquals(1, $countResult);
         $countResult = eZNodeAssignment::fetchChildCountByVersionStatus( $idList, eZContentObjectVersion::STATUS_PUBLISHED );
-        $this->assertEquals( 2, $countResult );
+        static::assertEquals(2, $countResult);
     }
 }
 ?>

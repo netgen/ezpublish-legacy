@@ -73,7 +73,7 @@ abstract class ezpClusterGateway
      *
      * @param array $params Database parameters.
      */
-    public function __construct( array $params = array() )
+    public function __construct( array $params = [] )
     {
         if ( isset( $params["host"] ) )
             $this->host = $params["host"];
@@ -136,6 +136,7 @@ abstract class ezpClusterGateway
      */
     public function retrieve( $filename )
     {
+        $metaData = [];
         // connection
         $tries = 0;
         $maxTries = 3;
@@ -191,7 +192,7 @@ abstract class ezpClusterGateway
 
             header( "ETag: \"$mtime-$filesize\"" );
             $serverVariables = array_change_key_case( $_SERVER, CASE_UPPER );
-            if ( isset( $serverVariables['HTTP_IF_NONE_MATCH'] ) && trim( $serverVariables['HTTP_IF_NONE_MATCH'] ) != "$mtime-$filesize" )
+            if ( isset( $serverVariables['HTTP_IF_NONE_MATCH'] ) && trim( (string) $serverVariables['HTTP_IF_NONE_MATCH'] ) != "$mtime-$filesize" )
             {
                 $this->notModified();
             }
@@ -201,9 +202,9 @@ abstract class ezpClusterGateway
                 $value = $serverVariables['HTTP_IF_MODIFIED_SINCE'];
 
                 // strip the garbage prepended by a semi-colon used by some browsers
-                if ( ( $pos = strpos( $value , ';' ) ) !== false )
-                    $value = substr( $value, 0, $pos );
-                if ( strtotime( $value ) <= $mtime )
+                if ( ( $pos = strpos( (string) $value , ';' ) ) !== false )
+                    $value = substr( (string) $value, 0, $pos );
+                if ( strtotime( (string) $value ) <= $mtime )
                 {
                     $this->notModified();
                 }
@@ -218,9 +219,9 @@ abstract class ezpClusterGateway
             // let the client know we do accept range by bytes
             header( 'Accept-Ranges: bytes' );
 
-            if ( isset( $_SERVER['HTTP_RANGE'] ) && strpos( $_SERVER['HTTP_RANGE'], 'bytes=' ) === 0 && strpos( $_SERVER['HTTP_RANGE'], ',' ) === false )
+            if ( isset( $_SERVER['HTTP_RANGE'] ) && str_starts_with((string) $_SERVER['HTTP_RANGE'], 'bytes=') && !str_contains( (string) $_SERVER['HTTP_RANGE'], ',' ) )
             {
-                $matches = explode( '-', substr( $_SERVER['HTTP_RANGE'], 6 ) );
+                $matches = explode( '-', substr( (string) $_SERVER['HTTP_RANGE'], 6 ) );
                 $startOffset = $matches[0];
                 $endOffset = !empty( $matches[1] ) ? $matches[1] : false;
                 if ( $endOffset !== false && empty( $startOffset ) && $startOffset !== "0" )
@@ -352,7 +353,7 @@ EOF;
         $gatewayClass = self::$gatewayClass;
 
         return new $gatewayClass(
-            array(
+            [
                 // some databases don't need a hostname (oracle for instance)
                 "host" => defined( "CLUSTER_STORAGE_HOST" ) ? CLUSTER_STORAGE_HOST : null,
                 "port" => defined( "CLUSTER_STORAGE_PORT" ) ? CLUSTER_STORAGE_PORT : null,
@@ -360,7 +361,7 @@ EOF;
                 "password" => CLUSTER_STORAGE_PASS,
                 "name" => CLUSTER_STORAGE_DB,
                 "charset" => CLUSTER_STORAGE_CHARSET,
-            )
+            ]
         );
     }
 }

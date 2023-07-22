@@ -9,7 +9,7 @@
  */
 class ezpRestRouter extends ezcMvcRouter
 {
-    const ROUTE_CACHE_ID = 'ezpRestRouteApcCache',
+    final public const ROUTE_CACHE_ID = 'ezpRestRouteApcCache',
           ROUTE_CACHE_KEY = 'ezpRestRouteApcCacheKey',
           ROUTE_CACHE_PATH = 'restRouteAPC';
 
@@ -68,7 +68,7 @@ class ezpRestRouter extends ezcMvcRouter
 
         if( self::$isRouteCacheCreated === false )
         {
-            $options = array( 'ttl' => $ttl );
+            $options = ['ttl' => $ttl];
             ezcCacheManager::createCache( self::ROUTE_CACHE_ID, self::ROUTE_CACHE_PATH, 'ezpRestCacheStorageApcCluster', $options );
             self::$isRouteCacheCreated = true;
         }

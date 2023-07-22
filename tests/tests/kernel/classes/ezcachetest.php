@@ -11,8 +11,8 @@
 class eZCacheTest extends ezpDatabaseTestCase
 {
     protected $backupGlobals = false;
-    const CLASS_IDENTIFIER = 'ezcache_test_class';
-    const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
+    final public const CLASS_IDENTIFIER = 'ezcache_test_class';
+    final public const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
 
     public function setUp()
     {
@@ -30,7 +30,7 @@ class eZCacheTest extends ezpDatabaseTestCase
         // generate a couple aliases
         $dataMap = $imageObject->dataMap();
         $aliasHandler = $dataMap['image']->attribute( 'content' );
-        foreach ( array( 'small', 'medium', 'large' ) as $aliasName )
+        foreach ( ['small', 'medium', 'large'] as $aliasName )
         {
             $alias = $aliasHandler->attribute( $aliasName );
             $aliasFiles[] = $alias['url'];
@@ -44,8 +44,8 @@ class eZCacheTest extends ezpDatabaseTestCase
         $imageAttribute = $dataMap['image'];
         $imageAttributeId = $imageAttribute->attribute( 'id' );
         $aliasHandler = $imageAttribute->attribute( 'content' );
-        $aliasFiles = array();
-        foreach ( array( 'small', 'medium', 'large' ) as $aliasName )
+        $aliasFiles = [];
+        foreach ( ['small', 'medium', 'large'] as $aliasName )
         {
             $alias = $aliasHandler->attribute( $aliasName );
             $aliasFiles[] = $alias['url'];
@@ -63,7 +63,7 @@ class eZCacheTest extends ezpDatabaseTestCase
         }
         self::assertImageFileExists( $imageAttributeId, $originalAliasFile );
 
-        eZCache::purgeImageAlias( array( 'reporter' => function(){} ) );
+        eZCache::purgeImageAlias( ['reporter' => function(){}] );
 
         foreach ( $aliasFiles as $aliasFile )
         {
@@ -102,10 +102,7 @@ class eZCacheTest extends ezpDatabaseTestCase
         $operationResult = eZOperationHandler::execute(
             'content',
             'publish',
-            array(
-                'object_id' => $object->attribute( 'id' ),
-                'version' => $version->attribute( 'version' )
-            )
+            ['object_id' => $object->attribute( 'id' ), 'version' => $version->attribute( 'version' )]
         );
 
         self::assertEquals( 1, $operationResult['status'] );
@@ -157,10 +154,7 @@ class eZCacheTest extends ezpDatabaseTestCase
         return eZImageFile::fetchObject(
             eZImageFile::definition(),
             null,
-            array(
-                'contentobject_attribute_id' => $contentObjectAttributeId,
-                'filepath' => $file
-            )
+            ['contentobject_attribute_id' => $contentObjectAttributeId, 'filepath' => $file]
         );
     }
 }

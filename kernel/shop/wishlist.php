@@ -20,7 +20,7 @@ if ( $http->hasPostVariable( "ActionAddToWishList" ) )
     if ( $http->hasPostVariable( 'eZOption' ) )
         $optionList = $http->postVariable( 'eZOption' );
     else
-        $optionList = array();
+        $optionList = [];
 
     //$price = 0.0;
     //$isVATIncluded = true;
@@ -115,7 +115,7 @@ if ( $http->hasPostVariable( "ActionAddToWishList" ) )
         $item->store();
         //$priceWithoutOptions = $price;
 
-        $optionIDList = array();
+        $optionIDList = [];
         foreach ( array_keys( $optionList ) as $key )
         {
             $attributeID = $key;
@@ -124,14 +124,12 @@ if ( $http->hasPostVariable( "ActionAddToWishList" ) )
             {
                 foreach ( $optionString as $optionID )
                 {
-                    $optionIDList[] = array( 'attribute_id' => $attributeID,
-                                             'option_string' => $optionID );
+                    $optionIDList[] = ['attribute_id' => $attributeID, 'option_string' => $optionID];
                 }
             }
             else
             {
-                $optionIDList[] = array( 'attribute_id' => $attributeID,
-                                         'option_string' => $optionString );
+                $optionIDList[] = ['attribute_id' => $attributeID, 'option_string' => $optionString];
             }
         }
 
@@ -196,7 +194,7 @@ if ( $http->hasPostVariable( "StoreChangesButton" ) )
            $module->redirectTo( $module->functionURI( "wishlist" ) . "/" );
            return;
         }
-        $productItemsCount = array();
+        $productItemsCount = [];
         // Create array of productItemID (as index) and productItemCount (as value)
         foreach ( $productItemIDlist as $key => $productItemID )
         {
@@ -227,12 +225,11 @@ $wishList = eZWishList::currentWishList();
 
 $tpl->setVariable( "wish_list", $wishList );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/wishlist.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Wishlist' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Wishlist' )]];
 
 ?>

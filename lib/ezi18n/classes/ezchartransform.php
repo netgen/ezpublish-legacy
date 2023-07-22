@@ -24,7 +24,7 @@ class eZCharTransform
     /// 1101288452
     /// 30. Jan. 2007 - 1170165730
     /// 24. Apr. 2007 - 1177423380
-    const CODE_DATE = 1177423380;
+    final public const CODE_DATE = 1_177_423_380;
 
     /*!
      Transforms the text according to the rules defined in \a $rule using character set \a $charset.
@@ -36,6 +36,7 @@ class eZCharTransform
     */
     function transform( $text, $rule, $charset = false, $useCache = true )
     {
+        $charsetName = null;
         if ( $text === '' )
         {
             return $text;
@@ -71,7 +72,7 @@ class eZCharTransform
         // Then transform that to a table that works with the current charset
         // Any character not available in the current charset will be removed
         $charsetTable = $mapper->generateCharsetMappingTable( $unicodeTable, $charset );
-        $transformationData = array( 'table' => $charsetTable );
+        $transformationData = ['table' => $charsetTable];
         unset( $unicodeTable );
 
         if ( $useCache )
@@ -127,7 +128,7 @@ class eZCharTransform
 
         $mapper->loadTransformationFiles( $charsetName, $group );
 
-        $rules = array();
+        $rules = [];
         foreach ( $commands as $command )
         {
             $rules = array_merge( $rules,
@@ -140,7 +141,7 @@ class eZCharTransform
         // Then transform that to a table that works with the current charset
         // Any character not available in the current charset will be removed
         $charsetTable = $mapper->generateCharsetMappingTable( $unicodeTable, $charset );
-        $transformationData = array( 'table' => $charsetTable );
+        $transformationData = ['table' => $charsetTable];
         unset( $unicodeTable );
 
         if ( $useCache )
@@ -217,20 +218,19 @@ class eZCharTransform
             return false;
         }
 
-        $rules = array();
+        $rules = [];
         $ruleTexts = $ini->variable( $group, 'Commands' );
         foreach ( $ruleTexts as $ruleText )
         {
-            if ( preg_match( "#^([a-zA-Z][a-zA-Z0-9_-]+)(\((.+)\))?$#", $ruleText, $matches ) )
+            if ( preg_match( "#^([a-zA-Z][a-zA-Z0-9_-]+)(\((.+)\))?$#", (string) $ruleText, $matches ) )
             {
                 $command = $matches[1];
-                $parameters = array();
+                $parameters = [];
                 if ( isset( $matches[2] ) )
                 {
                     $parameters = explode( ',', $matches[3] );
                 }
-                $rules[] = array( 'command' => $command,
-                                  'parameters' => $parameters );
+                $rules[] = ['command' => $command, 'parameters' => $parameters];
             }
         }
 
@@ -248,7 +248,7 @@ class eZCharTransform
     */
     function cacheFilePath( $prefix, $suffix, $key )
     {
-        $path = eZCharTransform::cachedTransformationPath();
+        $path = (new eZCharTransform())->cachedTransformationPath();
         if ( !file_exists( $path ) )
         {
             eZDir::mkdir( $path, false, true );
@@ -291,8 +291,8 @@ class eZCharTransform
     */
     function storeCacheFile( $filepath, $transformationData,$extraCode, $type, $charsetName )
     {
-        $file = basename( $filepath );
-        $dir = dirname( $filepath );
+        $file = basename( (string) $filepath );
+        $dir = dirname( (string) $filepath );
         $php = new eZPHPCreator( $dir, $file );
 
         $php->addComment( "Cached transformation data" );
@@ -343,7 +343,7 @@ class eZCharTransform
         else
         {
             $ini = eZINI::instance();
-            $separator = strtolower( $ini->variable( "URLTranslator", "WordSeparator" ) );
+            $separator = strtolower( (string) $ini->variable( "URLTranslator", "WordSeparator" ) );
             switch ( $separator )
             {
                 case 'dash':
@@ -374,11 +374,9 @@ class eZCharTransform
     static function commandUrlCleanupCompat( $text, $charsetName )
     {
         // Old style of url alias with lowercase only and underscores for separators
-        $text = strtolower( $text );
-        $text = preg_replace( array( "#[^a-z0-9]+#",
-                                     "#^_+|_+$#" ),
-                              array( "_",
-                                     "" ),
+        $text = strtolower( (string) $text );
+        $text = preg_replace( ["#[^a-z0-9]+#", "#^_+|_+$#"],
+                              ["_", ""],
                               $text );
         return $text;
     }
@@ -386,16 +384,17 @@ class eZCharTransform
     static function commandUrlCleanup( $text, $charsetName )
     {
         $sep  = eZCharTransform::wordSeparator();
-        $sepQ = preg_quote( $sep );
-        $text = preg_replace( array( "#[^a-zA-Z0-9_!\.-]+#",
-                                     "#\.\.+#", # Remove double dots
-                                     "#[{$sepQ}]+#", # Turn multiple separators into one
-                                     "#^[\.{$sepQ}]+|[!\.{$sepQ}]+$#" ), # Strip "!", dots and separator from beginning/end
-                              array( $sep,
-                                     $sep,
-                                     $sep,
-                                     "" ),
-                              $text );
+        $sepQ = preg_quote( (string) $sep );
+        $text = preg_replace( [
+            "#[^a-zA-Z0-9_!\.-]+#",
+            "#\.\.+#",
+            # Remove double dots
+            "#[{$sepQ}]+#",
+            # Turn multiple separators into one
+            "#^[\.{$sepQ}]+|[!\.{$sepQ}]+$#",
+        ], # Strip "!", dots and separator from beginning/end
+                              [$sep, $sep, $sep, ""],
+                              (string) $text );
         return $text;
     }
 
@@ -409,19 +408,20 @@ class eZCharTransform
         //       paste urls from the system and have the whole url recognized
         //       instead of being broken off
         $sep  = eZCharTransform::wordSeparator();
-        $sepQ = preg_quote( $sep );
+        $sepQ = preg_quote( (string) $sep );
         $prepost = " ." . $sepQ;
         if ( $sep != "-" )
             $prepost .= "-";
-        $text = preg_replace( array( "#[ \t\\\\%\#&;/:=?\[\]()+]+#",
-                                     "#\.\.+#", # Remove double dots
-                                     "#[{$sepQ}]+#", # Turn multiple separators into one
-                                     "#^[{$prepost}]+|[!{$prepost}]+$#" ), # Strip "!", dots and separator from beginning/end
-                              array( $sep,
-                                     $sep,
-                                     $sep,
-                                     "" ),
-                              $text );
+        $text = preg_replace( [
+            "#[ \t\\\\%\#&;/:=?\[\]()+]+#",
+            "#\.\.+#",
+            # Remove double dots
+            "#[{$sepQ}]+#",
+            # Turn multiple separators into one
+            "#^[{$prepost}]+|[!{$prepost}]+$#",
+        ], # Strip "!", dots and separator from beginning/end
+                              [$sep, $sep, $sep, ""],
+                              (string) $text );
         return $text;
     }
 

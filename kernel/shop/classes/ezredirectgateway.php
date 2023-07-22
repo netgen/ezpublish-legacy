@@ -19,8 +19,8 @@
 
 class eZRedirectGateway extends eZPaymentGateway
 {
-    const OBJECT_NOT_CREATED = 1;
-    const OBJECT_CREATED = 2;
+    final public const OBJECT_NOT_CREATED = 1;
+    final public const OBJECT_CREATED = 2;
 
     public function __construct()
     {

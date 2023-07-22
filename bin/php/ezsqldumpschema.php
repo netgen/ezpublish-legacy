@@ -12,12 +12,9 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish SQL Schema dump\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish SQL Schema dump\n\n" .
                                                         "Dump sql schema to specified file or standard output\n".
-                                                        "ezsqldumpschema.php --type=mysql --user=root stable33 schema.sql" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "ezsqldumpschema.php --type=mysql --user=root stable33 schema.sql" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
@@ -26,36 +23,17 @@ $options = $script->getOptions( "[type:][user:][host:][password;][port:][socket:
                                 "[format:]" .
                                 "[output-types:][allow-multi-insert][schema-file:]",
                                 "[database][filename]",
-                                array( 'type' => ( "Which database type to use for source, can be one of:\n" .
-                                                          "mysql, postgresql, oracle" ),
-                                       'host' => "Connect to host source database",
-                                       'user' => "User for login to source database",
-                                       'password' => "Password to use when connecting to source database",
-                                       'port' => 'Port to connect to source database',
-                                       'socket' => 'Socket to connect to match and source database (only for MySQL)',
-                                       'output-array' => 'Create file with array structures (Human readable)',
-                                       'output-serialized' => 'Create file with serialized data (Saves space)',
-                                       'output-sql' => 'Create file with SQL data (DB friendly)',
-                                       'compatible-sql' => 'Will turn SQL to be more compatible to existing dumps',
-                                       'no-sort' => 'Do not sort table columns in the dumped data structure',
-                                       'table-type' => ( "The table storage type to use for SQL output when creating tables.\n" .
-                                                         "MySQL: bdb, innodb and myisam\n" .
-                                                         "PostgreSQL: \n" .
-                                                         "Oracle: " ),
-                                       'table-charset' => 'Defines the charset to use on tables, the names of the charset depends on database type',
-                                       'schema-file' => 'The schema file to use when dumping data structures, is only required when dumping from files',
-                                       'format' => ( "The output format (default is generic)\n" .
-                                                     "generic - Format which suits all databases\n" .
-                                                     "local - Format which suits only the database it was dumped from." ),
-                                       'meta-data' => 'Will include extra meta-data information specific to the database.',
-                                       'diff-friendly' => 'Will make the output friendlier towards the diff command (applies to SQL output only)',
-                                       'allow-multi-insert' => ( 'Will create INSERT statements with multiple data entries (applies to data output only)' . "\n" .
-                                                                 'Multi-inserts will only be created for databases that support it' ),
-                                       'output-types' => ( "A comma separated list of types to include in dump (default is schema only):\n" .
-                                                           "schema - Table schema\n" .
-                                                           "data - Table data\n" .
-                                                           "all - Both table schema and data" )
-                                       ) );
+                                ['type' => ( "Which database type to use for source, can be one of:\n" .
+                                                          "mysql, postgresql, oracle" ), 'host' => "Connect to host source database", 'user' => "User for login to source database", 'password' => "Password to use when connecting to source database", 'port' => 'Port to connect to source database', 'socket' => 'Socket to connect to match and source database (only for MySQL)', 'output-array' => 'Create file with array structures (Human readable)', 'output-serialized' => 'Create file with serialized data (Saves space)', 'output-sql' => 'Create file with SQL data (DB friendly)', 'compatible-sql' => 'Will turn SQL to be more compatible to existing dumps', 'no-sort' => 'Do not sort table columns in the dumped data structure', 'table-type' => ( "The table storage type to use for SQL output when creating tables.\n" .
+                                                  "MySQL: bdb, innodb and myisam\n" .
+                                                  "PostgreSQL: \n" .
+                                                  "Oracle: " ), 'table-charset' => 'Defines the charset to use on tables, the names of the charset depends on database type', 'schema-file' => 'The schema file to use when dumping data structures, is only required when dumping from files', 'format' => ( "The output format (default is generic)\n" .
+                                              "generic - Format which suits all databases\n" .
+                                              "local - Format which suits only the database it was dumped from." ), 'meta-data' => 'Will include extra meta-data information specific to the database.', 'diff-friendly' => 'Will make the output friendlier towards the diff command (applies to SQL output only)', 'allow-multi-insert' => ( 'Will create INSERT statements with multiple data entries (applies to data output only)' . "\n" .
+                                                          'Multi-inserts will only be created for databases that support it' ), 'output-types' => ( "A comma separated list of types to include in dump (default is schema only):\n" .
+                                                    "schema - Table schema\n" .
+                                                    "data - Table data\n" .
+                                                    "all - Both table schema and data" )] );
 $script->initialize();
 
 $type = $options['type'];
@@ -68,7 +46,7 @@ $password = $options['password'];
 if ( !is_string( $password ) )
     $password = '';
 
-switch ( count( $options['arguments'] ) )
+switch ( is_countable($options['arguments']) ? count( $options['arguments'] ) : 0 )
 {
     case 0:
         $cli->error( "Missing match database and/or filename" );
@@ -95,7 +73,7 @@ if ( $options['output-types'] )
 {
     $includeSchema = false;
     $includeData = false;
-    $includeTypes = explode( ',', $options['output-types'] );
+    $includeTypes = explode( ',', (string) $options['output-types'] );
     foreach ( $includeTypes as $includeType )
     {
         switch ( $includeType )
@@ -119,15 +97,7 @@ if ( $options['output-types'] )
     }
 }
 
-$dbschemaParameters = array( 'schema' => $includeSchema,
-                             'data' => $includeData,
-                             'format' => $options['format'] ? $options['format'] : 'generic',
-                             'meta_data' => $options['meta-data'],
-                             'table_type' => $options['table-type'],
-                             'table_charset' => $options['table-charset'],
-                             'compatible_sql' => $options['compatible-sql'],
-                             'allow_multi_insert' => $options['allow-multi-insert'],
-                             'diff_friendly' => $options['diff-friendly'] );
+$dbschemaParameters = ['schema' => $includeSchema, 'data' => $includeData, 'format' => $options['format'] ?: 'generic', 'meta_data' => $options['meta-data'], 'table_type' => $options['table-type'], 'table_charset' => $options['table-charset'], 'compatible_sql' => $options['compatible-sql'], 'allow_multi_insert' => $options['allow-multi-insert'], 'diff_friendly' => $options['diff-friendly']];
 if ( $options['no-sort'] )
 {
     $dbschemaParameters['sort_columns'] = false;
@@ -141,7 +111,7 @@ if ( $options['output-serialized'] )
 if ( $options['output-sql'] )
     $outputType = 'sql';
 
-if ( strlen( trim( $type ) ) == 0)
+if ( strlen( trim( (string) $type ) ) == 0)
 {
     $cli->error( "No database type chosen" );
     $script->shutdown( 1 );
@@ -152,7 +122,7 @@ if ( strlen( trim( $type ) ) == 0)
 function eZTriedDatabaseString( $database, $host, $user, $password, $socket )
 {
     $msg = "'$database'";
-    if ( strlen( $host ) > 0 )
+    if ( strlen( (string) $host ) > 0 )
     {
         $msg .= " at host '$host'";
     }
@@ -160,13 +130,13 @@ function eZTriedDatabaseString( $database, $host, $user, $password, $socket )
     {
         $msg .= " locally";
     }
-    if ( strlen( $user ) > 0 )
+    if ( strlen( (string) $user ) > 0 )
     {
         $msg .= " with user '$user'";
     }
-    if ( strlen( $password ) > 0 )
+    if ( strlen( (string) $password ) > 0 )
         $msg .= " and with a password";
-    if ( strlen( $socket ) > 0 )
+    if ( strlen( (string) $socket ) > 0 )
         $msg .= " and with socket '$socket'";
     return $msg;
 }
@@ -217,17 +187,13 @@ if ( file_exists( $database ) and is_file( $database ) )
 }
 else
 {
-    if ( strlen( trim( $user ) ) == 0)
+    if ( strlen( trim( (string) $user ) ) == 0)
     {
         $cli->error( "No database user chosen" );
         $script->shutdown( 1 );
     }
 
-    $parameters = array( 'use_defaults' => false,
-                         'server' => $host,
-                         'user' => $user,
-                         'password' => $password,
-                         'database' => $database );
+    $parameters = ['use_defaults' => false, 'server' => $host, 'user' => $user, 'password' => $password, 'database' => $database];
     if ( $socket )
         $parameters['socket'] = $socket;
     if ( $port )

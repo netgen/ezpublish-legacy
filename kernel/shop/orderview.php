@@ -64,11 +64,8 @@ $tpl = eZTemplate::factory();
 
 $tpl->setVariable( "order", $order );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/orderview.tpl" );
-$Result['path'] = array( array( 'url' => 'shop/orderlist',
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Order list' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Order #%order_id', null, array( '%order_id' => $order->attribute( 'order_nr' ) ) ) ) );
+$Result['path'] = [['url' => 'shop/orderlist', 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Order #%order_id', null, ['%order_id' => $order->attribute( 'order_nr' )] )]];
 
 ?>

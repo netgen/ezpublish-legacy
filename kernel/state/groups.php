@@ -12,12 +12,11 @@ $offset = $Params['Offset'];
 $listLimitPreferenceName = 'admin_state_group_list_limit';
 $listLimitPreferenceValue = eZPreferences::value( $listLimitPreferenceName );
 
-switch( $listLimitPreferenceValue )
-{
-    case '2': { $limit = 25; } break;
-    case '3': { $limit = 50; } break;
-    default:  { $limit = 10; } break;
-}
+$limit = match ($listLimitPreferenceValue) {
+    '2' => 25,
+    '3' => 50,
+    default => 10,
+};
 
 $languages = eZContentLanguage::fetchList();
 
@@ -36,7 +35,7 @@ if ( $Module->isCurrentAction( 'Remove' ) && $Module->hasActionParameter( 'Remov
         if ( $group && !$group->isInternal() )
         {
             eZContentObjectStateGroup::removeByID( $removeID );
-            ezpEvent::getInstance()->notify( 'content/state/group/cache', array( $removeID ) );
+            ezpEvent::getInstance()->notify( 'content/state/group/cache', [$removeID] );
         }
     }
 }
@@ -48,7 +47,7 @@ else if ( $Module->isCurrentAction( 'Create' ) )
 $groups = eZContentObjectStateGroup::fetchByOffset( $limit, $offset );
 $groupCount = eZPersistentObject::count( eZContentObjectStateGroup::definition() );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 
 $tpl->setVariable( 'limit', $limit );
 $tpl->setVariable( 'list_limit_preference_name', $listLimitPreferenceName );
@@ -58,12 +57,6 @@ $tpl->setVariable( 'group_count', $groupCount );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'languages', $languages );
 
-$Result = array(
-    'content' => $tpl->fetch( 'design:state/groups.tpl' ),
-    'path'    => array(
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Groups' ) )
-    )
-);
+$Result = ['content' => $tpl->fetch( 'design:state/groups.tpl' ), 'path'    => [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Groups' )]]];
 
 ?>

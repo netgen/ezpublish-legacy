@@ -24,31 +24,31 @@ $roleID = $policy->attribute( 'role_id' );
 $role = eZRole::fetch( $roleID );
 $roleName = $role->attribute( 'name' );
 $limitationValueList = $policy->limitationList();
-$nodeList = array();
-$subtreeList = array();
+$nodeList = [];
+$subtreeList = [];
 
 if ( $currentModule == '*' )
 {
-    $functions = array();
+    $functions = [];
 }
 else
 {
     $mod = eZModule::exists( $currentModule );
     $functions = $mod->attribute( 'available_functions' );
 }
-$currentFunctionLimitations = array();
+$currentFunctionLimitations = [];
 if ( isset( $functions[$currentFunction] ) && $functions[$currentFunction] )
 {
     foreach ( $functions[$currentFunction] as $key => $limitation )
     {
-        if ( ( count( $limitation['values'] ) == 0 ) && array_key_exists( 'class', $limitation ) )
+        if ( ( (is_countable($limitation['values']) ? count( $limitation['values'] ) : 0) == 0 ) && array_key_exists( 'class', $limitation ) )
         {
-            $obj = new $limitation['class']( array() );
-            $limitationValueList = call_user_func_array( array( $obj, $limitation['function'] ), $limitation['parameter'] );
-            $limitationValueArray = array();
+            $obj = new $limitation['class']( [] );
+            $limitationValueList = call_user_func_array( [$obj, $limitation['function']], $limitation['parameter'] );
+            $limitationValueArray = [];
             foreach ( $limitationValueList as $limitationValue )
             {
-                $limitationValuePair = array();
+                $limitationValuePair = [];
                 $limitationValuePair['Name'] = $limitationValue['name'];
                 $limitationValuePair['value'] = $limitationValue['id'];
                 $limitationValueArray[] = $limitationValuePair;
@@ -106,7 +106,7 @@ if ( $http->hasPostVariable( 'DeleteSubtreeButton' ) )
 }
 
 // Fetch node limitations
-$nodeIDList = array();
+$nodeIDList = [];
 $nodeLimitation = eZPolicyLimitation::fetchByIdentifier( $policyID, 'Node' );
 if ( $nodeLimitation != null )
 {
@@ -135,7 +135,7 @@ if ( $subtreeLimitation != null )
         {
             $subtreeID = $subtreeObject->attribute( 'node_id' );
             if ( !isset( $subtreeIDList ) )
-                $subtreeIDList = array();
+                $subtreeIDList = [];
             $subtreeIDList[] = $subtreeID;
             $subtree = eZContentObjectTreeNode::fetch( $subtreeID );
             $subtreeList[] = $subtree;
@@ -204,20 +204,16 @@ if ( $http->hasPostVariable( 'UpdatePolicy' ) )
 if ( $http->hasPostVariable( 'BrowseLimitationNodeButton' ) )
 {
     processDropdownLimitations( $policy, $currentModule, $currentFunction, $currentFunctionLimitations );
-    eZContentBrowse::browse( array( 'action_name' => 'FindLimitationNode',
-                                    'content' => array( 'policy_id' => $originalPolicyID ),
-                                    'from_page' => '/role/policyedit/' . $originalPolicyID ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'FindLimitationNode', 'content' => ['policy_id' => $originalPolicyID], 'from_page' => '/role/policyedit/' . $originalPolicyID] );
     return;
 }
 
 if ( $http->hasPostVariable( 'BrowseLimitationSubtreeButton' ) )
 {
     processDropdownLimitations( $policy, $currentModule, $currentFunction, $currentFunctionLimitations );
-    eZContentBrowse::browse( array( 'action_name' => 'FindLimitationSubtree',
-                                    'content' => array( 'policy_id' => $originalPolicyID ),
-                                    'from_page' => '/role/policyedit/' . $originalPolicyID ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'FindLimitationSubtree', 'content' => ['policy_id' => $originalPolicyID], 'from_page' => '/role/policyedit/' . $originalPolicyID] );
     return;
 }
 
@@ -296,7 +292,7 @@ if ( $http->hasPostVariable( 'SelectedNodeIDArray' ) and
     $db->commit();
 }
 
-$currentLimitationList = array();
+$currentLimitationList = [];
 foreach ( $currentFunctionLimitations as $currentFunctionLimitation )
 {
     $currentLimitationList[$currentFunctionLimitation['name']] = '-1';
@@ -308,7 +304,7 @@ foreach ( $limitationList as $limitation )
     $limitationID = $limitation->attribute( 'id' );
     $limitationIdentifier = $limitation->attribute( 'identifier' );
     $limitationValueList = eZPolicyLimitationValue::fetchList( $limitationID );
-    $valueList = array();
+    $valueList = [];
     foreach ( $limitationValueList as $limitationValue )
     {
         $valueList[] = $limitationValue->attribute( 'value' );
@@ -330,10 +326,9 @@ $tpl->setVariable( 'node_list', $nodeList );
 $tpl->setVariable( 'subtree_list', $subtreeList );
 $tpl->setVariable( 'current_limitation_list', $currentLimitationList );
 
-$Result = array();
+$Result = [];
 
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/role', 'Editing policy' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/role', 'Editing policy' )]];
 $Result['content'] = $tpl->fetch( 'design:role/policyedit.tpl' );
 
 /**

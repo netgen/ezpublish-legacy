@@ -29,9 +29,9 @@ class eZBenchmarkUnit
     function __construct( $name = false )
     {
         if ( !$name )
-            $name = get_class( $this );
+            $name = static::class;
         $this->Name = $name;
-        $this->MarkList = array();
+        $this->MarkList = [];
     }
 
     /*!
@@ -57,7 +57,7 @@ class eZBenchmarkUnit
     */
     function count()
     {
-        return count( $this->MarkList );
+        return is_countable($this->MarkList) ? count( $this->MarkList ) : 0;
     }
 
     /*!
@@ -85,7 +85,7 @@ class eZBenchmarkUnit
     }
 
     /// \privatesection
-    var $Name;
+    public $Name;
 }
 
 ?>

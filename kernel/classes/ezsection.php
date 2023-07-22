@@ -30,31 +30,7 @@ class eZSection extends eZPersistentObject
     */
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => 0,
-                                                          'required' => true ),
-                                         "navigation_part_identifier" => array( 'name' => "NavigationPartIdentifier",
-                                                                                'datatype' => 'string',
-                                                                                'default' => 'ezcontentnavigationpart',
-                                                                                'required' => true ),
-                                         "locale" => array( 'name' => "Locale",
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => true ),
-                                         "identifier" => array( 'name' => "Identifier",
-                                                            'datatype' => 'string',
-                                                            'default' => '',
-                                                            'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZSection",
-                      "sort" => array( "name" => "asc" ),
-                      "name" => "ezsection" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => 0, 'required' => true], "navigation_part_identifier" => ['name' => "NavigationPartIdentifier", 'datatype' => 'string', 'default' => 'ezcontentnavigationpart', 'required' => true], "locale" => ['name' => "Locale", 'datatype' => 'string', 'default' => '', 'required' => true], "identifier" => ['name' => "Identifier", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZSection", "sort" => ["name" => "asc"], "name" => "ezsection"];
         return $definition;
     }
 
@@ -71,7 +47,7 @@ class eZSection extends eZPersistentObject
         {
             $section = eZPersistentObject::fetchObject( eZSection::definition(),
                                                 null,
-                                                array( "id" => $sectionID ),
+                                                ["id" => $sectionID],
                                                 $asObject );
             if ( $asObject )
             {
@@ -98,7 +74,7 @@ class eZSection extends eZPersistentObject
         {
             $sectionFetched = eZPersistentObject::fetchObject( eZSection::definition(),
                                                        null,
-                                                       array( "identifier" => $sectionIdentifier ),
+                                                       ["identifier" => $sectionIdentifier],
                                                        $asObject );
             if( !$sectionFetched )
             {
@@ -128,8 +104,7 @@ class eZSection extends eZPersistentObject
     {
         $limits = null;
         if ( $offset or $limit )
-            $limits = array( 'offset' => $offset,
-                             'length' => $limit );
+            $limits = ['offset' => $offset, 'length' => $limit];
         return eZPersistentObject::fetchObjectList( eZSection::definition(),
                                                     null,
                                                     $conditions, null, $limits,
@@ -148,8 +123,8 @@ class eZSection extends eZPersistentObject
         $sectionList = eZPersistentObject::fetchObjectList( eZSection::definition(),
                                                              null,
                                                              null,
-                                                             array( 'name' => 'ASC' ),
-                                                             array( 'offset' => $offset, 'length' => $limit ),
+                                                             ['name' => 'ASC'],
+                                                             ['offset' => $offset, 'length' => $limit],
                                                              $asObject );
         return $sectionList;
     }
@@ -172,7 +147,7 @@ class eZSection extends eZPersistentObject
     */
     function removeThis( $conditions = null, $extraConditions = null )
     {
-        $this->remove( array( "id" => $this->ID ), $extraConditions );
+        $this->remove( ["id" => $this->ID], $extraConditions );
     }
 
     /*
@@ -186,13 +161,13 @@ class eZSection extends eZPersistentObject
         }
 
         $objects = eZPersistentObject::fetchObjectList( eZContentObject::definition(), null,
-                                                        array( 'section_id' => $sectionID ) );
+                                                        ['section_id' => $sectionID] );
         $limitations = eZPolicyLimitation::findByType( 'Section', $sectionID, true, false );
         $userRoles = eZRole::fetchRolesByLimitation( 'section', $sectionID );
 
-        if ( count( $objects ) > 0 or
-             count( $limitations ) > 0 or
-             count( $userRoles ) > 0 )
+        if ( count( (array) $objects ) > 0 or
+             (is_countable($limitations) ? count( $limitations ) : 0) > 0 or
+             (is_countable($userRoles) ? count( $userRoles ) : 0) > 0 )
         {
             return false;
         }
@@ -227,10 +202,7 @@ class eZSection extends eZPersistentObject
                     eZOperationHandler::execute(
                         "content",
                         "updatesection",
-                        array(
-                            "node_id" => $node->attribute( "node_id" ),
-                            "selected_section_id" => $sectionID
-                        ),
+                        ["node_id" => $node->attribute( "node_id" ), "selected_section_id" => $sectionID],
                         null,
                         true
                     );
@@ -271,7 +243,7 @@ class eZSection extends eZPersistentObject
                     }
                 }
             } else {
-                eZSearch::updateObjectsSection(array($object->attribute("id")), $sectionID);
+                eZSearch::updateObjectsSection([$object->attribute("id")], $sectionID);
             }
         }
     }

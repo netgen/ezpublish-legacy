@@ -15,7 +15,7 @@ foreach ( $Params['UserParameters'] as $key => $param )
     $userParamString .= "/($key)/$param";
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = '';
 
 $layoutINI = eZINI::instance( 'layout.ini' );
@@ -29,14 +29,14 @@ if ( $layoutINI->hasGroup( $LayoutStyle ) )
         header( 'Content-Type: ' . $layoutINI->variable( $LayoutStyle, 'ContentType' ) . '; charset=' . $i18nINI->variable( 'CharacterSettings', 'Charset' ) );
 
     $res = eZTemplateDesignResource::instance();
-    $res->setKeys( array( array( 'layout', $LayoutStyle ) ) );
+    $res->setKeys( [['layout', $LayoutStyle]] );
 
     if ( $layoutINI->hasVariable( $LayoutStyle, 'UseAccessPass' ) && $layoutINI->variable( $LayoutStyle, 'UseAccessPass' ) == 'false' )
     {
     }
     else
     {
-        eZSys::addAccessPath( array( 'layout', 'set', $LayoutStyle ), 'layout', false );
+        eZSys::addAccessPath( ['layout', 'set', $LayoutStyle], 'layout', false );
     }
 
 

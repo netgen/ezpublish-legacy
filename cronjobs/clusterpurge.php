@@ -15,18 +15,7 @@ if ( !eZScriptClusterPurge::isRequired() )
 }
 
 $purgeHandler = new eZScriptClusterPurge();
-$purgeHandler->optScopes = array( 'classattridentifiers',
-                                  'classidentifiers',
-                                  'content',
-                                  'expirycache',
-                                  'statelimitations',
-                                  'template-block',
-                                  'user-info-cache',
-                                  'viewcache',
-                                  'wildcard-cache-index',
-                                  'image',
-                                  'media',
-                                  'binaryfile' );
+$purgeHandler->optScopes = ['classattridentifiers', 'classidentifiers', 'content', 'expirycache', 'statelimitations', 'template-block', 'user-info-cache', 'viewcache', 'wildcard-cache-index', 'image', 'media', 'binaryfile'];
 $purgeHandler->optExpiry = 30;
 $purgeHandler->run();
 

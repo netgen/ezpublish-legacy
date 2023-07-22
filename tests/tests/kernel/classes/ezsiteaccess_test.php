@@ -38,11 +38,11 @@ class eZSiteAccess_Test extends ezpTestCase
         $ini = eZINI::instance();
         $siteAccessList = $ini->variable( 'SiteAccessSettings', 'AvailableSiteAccessList' );
 
-        $ini->setVariable( 'SiteAccessSettings', 'AvailableSiteAccessList', array('eng') );
+        $ini->setVariable( 'SiteAccessSettings', 'AvailableSiteAccessList', ['eng'] );
         $path = eZSiteAccess::findPathToSiteAccess('plain');
         self::assertFalse( $path );
 
-        $ini->setVariable( 'SiteAccessSettings', 'AvailableSiteAccessList', array('plain') );
+        $ini->setVariable( 'SiteAccessSettings', 'AvailableSiteAccessList', ['plain'] );
         $path = eZSiteAccess::findPathToSiteAccess('plain');
         self::assertEquals( 'settings/siteaccess/plain', $path );
 

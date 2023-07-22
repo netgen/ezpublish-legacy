@@ -43,29 +43,27 @@ class eZLintSchema extends eZDBSchemaInterface
      * Initializes the lint checker with a foreign db schema.
      *
      * @param array $db A dummy parameter, pass false.
-     * @param eZDBSchemaInterface $otherSchema The db schema that should be checked
+     * @param eZDBSchemaInterface $OtherSchema The db schema that should be checked
      */
-    public function __construct( $db, $otherSchema )
+    public function __construct( $db, /// \privatesection
+    /// eZDBSchemaInterface object which should be lint checked
+    public $OtherSchema )
     {
         parent::__construct( $db );
-        $this->OtherSchema = $otherSchema;
-        $this->CorrectSchema = false;
-        $this->IsLintChecked = false;
     }
 
     /*!
      Runs the lint checker on the database schema in otherSchema()
      and returns the new schema that is correct.
     */
-    function schema( $params = array() )
+    function schema( $params = [] )
     {
         if ( $this->IsLintChecked )
         {
             return $this->CorrectSchema;
         }
 
-        $params = array_merge( array( 'meta_data' => false,
-                                      'format' => 'generic' ),
+        $params = array_merge( ['meta_data' => false, 'format' => 'generic'],
                                $params );
 
         $this->CorrectSchema = $this->OtherSchema->schema( $params );
@@ -103,22 +101,21 @@ class eZLintSchema extends eZDBSchemaInterface
     */
     function shortenIdentifier( $identifier, $limit, $shortenList )
     {
-        reset( $shortenList );
         // Replace one word at a time until we have a string that is short
         // enough, or we run out of replace words
-        while ( strlen( $identifier ) > $limit and
+        while ( strlen( (string) $identifier ) > $limit and
                 current( $shortenList ) !== false )
         {
-            $from = key( $shortenList );
+            $from = array_key_first( $shortenList );
             $to = current( $shortenList );
             next( $shortenList );
-            $identifier = str_replace( $from, $to, $identifier );
+            $identifier = str_replace( $from, $to, (string) $identifier );
         }
 
         // It is still to large so we just cut it off
-        if ( strlen( $identifier ) > $limit )
+        if ( strlen( (string) $identifier ) > $limit )
         {
-            $identifier = substr( $identifier, 0, $limit );
+            $identifier = substr( (string) $identifier, 0, $limit );
         }
         return $identifier;
     }
@@ -153,24 +150,24 @@ class eZLintSchema extends eZDBSchemaInterface
         // Fields which do not get lint checked, they are currently
         // handled with workarounds in the various schema handlers
         $list = $ini->variable( 'LintChecker', 'IgnoredFields' );
-        $ignoredFieldList = array();
+        $ignoredFieldList = [];
         foreach ( $list as $entry )
         {
-            list( $tableName, $fieldName ) = explode( '.', $entry, 2 );
+            [$tableName, $fieldName] = explode( '.', (string) $entry, 2 );
             if ( !isset( $ignoredFieldList[$tableName] ) )
-                $ignoredFieldList[$tableName] = array();
+                $ignoredFieldList[$tableName] = [];
             $ignoredFieldList[$tableName][] = $fieldName;
         }
 
         // Fields which do not get lint checked, they are currently
         // handled with workarounds in the various schema handlers
         $list = $ini->variable( 'LintChecker', 'IgnoredFieldSyntax' );
-        $ignoredFieldSyntaxList = array();
+        $ignoredFieldSyntaxList = [];
         foreach ( $list as $entry )
         {
-            list( $tableName, $fieldName ) = explode( '.', $entry, 2 );
+            [$tableName, $fieldName] = explode( '.', (string) $entry, 2 );
             if ( !isset( $ignoredFieldList[$tableName] ) )
-                $ignoredFieldSyntaxList[$tableName] = array();
+                $ignoredFieldSyntaxList[$tableName] = [];
             $ignoredFieldSyntaxList[$tableName][] = $fieldName;
         }
 
@@ -178,7 +175,7 @@ class eZLintSchema extends eZDBSchemaInterface
         // handled with workarounds in the various schema handlers
         $ignoredIndexList = $ini->variable( 'LintChecker', 'IgnoredIndexes' );
 
-        $badTables = array();
+        $badTables = [];
         foreach ( $schema as $tableName => $tableDef )
         {
             // Skip the info structure, this is not a table
@@ -186,35 +183,34 @@ class eZLintSchema extends eZDBSchemaInterface
                 continue;
 
             $existingTableName = $tableName;
-            $tableComments = array();
+            $tableComments = [];
 
             // If table is not in ignore list we check the name
             if ( !in_array( $tableName, $ignoredTableList ) )
             {
                 // identifiers must be 30 or less
                 // for tables we require 26 or less to allow adding suffix or prefix for indexes etc.
-                if ( strlen( $tableName ) > $tableNameLimit )
+                if ( strlen( (string) $tableName ) > $tableNameLimit )
                 {
-                    $tableComment = "Table names must not exceed $tableNameLimit characters,\n'$tableName' is " . strlen( $tableName ) . " characters,\ndatabases like Oracle will have problems with this.";
+                    $tableComment = "Table names must not exceed $tableNameLimit characters,\n'$tableName' is " . strlen( (string) $tableName ) . " characters,\ndatabases like Oracle will have problems with this.";
                     $tableName = $this->shortenIdentifier( $tableName, $tableNameLimit, $shortenList );
                     $tableComment .= "\nNew name is '$tableName'";
                     $tableComments[] = $tableComment;
                     $status = false;
                 }
 
-                if ( strcmp( $tableName, $existingTableName ) != 0 )
+                if ( strcmp( (string) $tableName, (string) $existingTableName ) != 0 )
                 {
-                    $badTables[] = array( 'from' => $existingTableName,
-                                          'to' => $tableName );
+                    $badTables[] = ['from' => $existingTableName, 'to' => $tableName];
                 }
             }
 
             if ( isset( $tableDef['fields'] ) )
             {
-                $badFields = array();
+                $badFields = [];
                 foreach ( $tableDef['fields'] as $fieldName => $fieldDef )
                 {
-                    $comments = array();
+                    $comments = [];
                     $existingFieldName = $fieldName;
 
                     // Do we ignore the field name?
@@ -223,9 +219,9 @@ class eZLintSchema extends eZDBSchemaInterface
                     {
 
                         // identifiers must be 30 or less
-                        if ( strlen( $fieldName ) > $fieldNameLimit )
+                        if ( strlen( (string) $fieldName ) > $fieldNameLimit )
                         {
-                            $comment = "Field names must not exceed $fieldNameLimit characters,\n'$fieldName' in table '$existingTableName' is " . strlen( $fieldName ) . " characters,\ndatabases like Oracle will have problems with this.";
+                            $comment = "Field names must not exceed $fieldNameLimit characters,\n'$fieldName' in table '$existingTableName' is " . strlen( (string) $fieldName ) . " characters,\ndatabases like Oracle will have problems with this.";
                             $fieldName = $this->shortenIdentifier( $fieldName, $fieldNameLimit, $shortenList );
                             $comment .= "\nNew name is '$fieldName'";
                             $comments[] = $comment;
@@ -250,10 +246,9 @@ class eZLintSchema extends eZDBSchemaInterface
                         */
                     }
 
-                    if ( strcmp( $existingFieldName, $fieldName ) != 0 )
+                    if ( strcmp( (string) $existingFieldName, (string) $fieldName ) != 0 )
                     {
-                        $badFields[] = array( 'from' => $existingFieldName,
-                                              'to' => $fieldName );
+                        $badFields[] = ['from' => $existingFieldName, 'to' => $fieldName];
                     }
 
                     if ( count( $comments ) > 0 )
@@ -276,7 +271,7 @@ class eZLintSchema extends eZDBSchemaInterface
 
             if ( isset( $tableDef['indexes'] ) )
             {
-                $badIndexes = array();
+                $badIndexes = [];
                 foreach ( $tableDef['indexes'] as $indexName => $indexDef )
                 {
                     // Primary key
@@ -287,7 +282,7 @@ class eZLintSchema extends eZDBSchemaInterface
                     if ( in_array( $indexName, $ignoredIndexList ) )
                         continue;
 
-                    $comments = array();
+                    $comments = [];
 
                     $existingIndexName = $indexName;
                     if ( isset( $schema[$indexName] ) )
@@ -325,9 +320,9 @@ class eZLintSchema extends eZDBSchemaInterface
                     }
 
                     // identifiers must be 30 or less
-                    if ( strlen( $indexName ) > $indexNameLimit )
+                    if ( strlen( (string) $indexName ) > $indexNameLimit )
                     {
-                        $comment = "Index names must not exceed $indexNameLimit characters,\n'$indexName' is " . strlen( $indexName ) . " characters,\ndatabases like Oracle will have problems with this.";
+                        $comment = "Index names must not exceed $indexNameLimit characters,\n'$indexName' is " . strlen( (string) $indexName ) . " characters,\ndatabases like Oracle will have problems with this.";
                         $indexName = $this->shortenIdentifier( $indexName, $indexNameLimit, $shortenList );
                         $comment .= "\nNew name is '$indexName'";
                         $comments[] = $comment;
@@ -352,10 +347,9 @@ class eZLintSchema extends eZDBSchemaInterface
                         }
                     }
 
-                    if ( strcmp( $existingIndexName, $indexName ) != 0 )
+                    if ( strcmp( (string) $existingIndexName, (string) $indexName ) != 0 )
                     {
-                        $badIndexes[] = array( 'from' => $existingIndexName,
-                                               'to' => $indexName );
+                        $badIndexes[] = ['from' => $existingIndexName, 'to' => $indexName];
                     }
                     if ( count( $comments ) > 0 )
                     {
@@ -394,7 +388,7 @@ class eZLintSchema extends eZDBSchemaInterface
     /*!
      Forwards request to data() on the otherSchema() object.
     */
-    function data( $schema = false, $tableNameList = false, $params = array() )
+    function data( $schema = false, $tableNameList = false, $params = [] )
     {
         return $this->OtherSchema->data( $schema, $tableNameList, $params );
     }
@@ -402,7 +396,7 @@ class eZLintSchema extends eZDBSchemaInterface
     /*!
      Forwards request to generateSchemaFile() on the otherSchema() object.
     */
-    function generateSchemaFile( $schema, $params = array() )
+    function generateSchemaFile( $schema, $params = [] )
     {
         return $this->OtherSchema->generateSchemaFile( $schema, $params );
     }
@@ -410,7 +404,7 @@ class eZLintSchema extends eZDBSchemaInterface
     /*!
      Forwards request to generateUpgradeFile() on the otherSchema() object.
     */
-    function generateUpgradeFile( $differences, $params = array() )
+    function generateUpgradeFile( $differences, $params = [] )
     {
         return $this->OtherSchema->generateUpgradeFile( $differences, $params );
     }
@@ -518,14 +512,10 @@ class eZLintSchema extends eZDBSchemaInterface
     {
         return $this->OtherSchema->schemaName();
     }
-
-    /// \privatesection
-    /// eZDBSchemaInterface object which should be lint checked
-    public $OtherSchema;
     /// The corrected schema
-    public $CorrectSchema;
+    public $CorrectSchema = false;
     /// Whether the schema has been checked or not
-    public $IsLintChecked;
+    public $IsLintChecked = false;
 }
 
 ?>

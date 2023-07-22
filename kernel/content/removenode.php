@@ -44,11 +44,11 @@ if ( $Module->isCurrentAction( 'ConfirmAssignmentRemove' ) )
 {
     $nodeID = $http->postVariable( 'RemoveNodeID' ) ;
     $version->removeAssignment( $nodeID );
-    $Module->redirectToView( "edit", array( $ObjectID, $EditVersion ) );
+    $Module->redirectToView( "edit", [$ObjectID, $EditVersion] );
 }
 elseif ( $Module->isCurrentAction( 'CancelAssignmentRemove' ) )
 {
-    $Module->redirectToView( "edit", array( $ObjectID, $EditVersion ) );
+    $Module->redirectToView( "edit", [$ObjectID, $EditVersion] );
 }
 
 $tpl->setVariable( 'object', $object );
@@ -60,7 +60,6 @@ $tpl->setVariable( 'node', $node );
 
 $Result['content'] = $tpl->fetch( 'design:node/removenode.tpl' );
 
-$Result['path'] = array( array( 'text' => $object->attribute( 'name' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => $object->attribute( 'name' ), 'url' => false]];
 
 ?>

@@ -33,14 +33,14 @@
 
 class eZTemplateWhileFunction
 {
-    const FUNCTION_NAME = 'while';
+    final public const FUNCTION_NAME = 'while';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions.
      */
     function functionList()
     {
-        $functionList = array( eZTemplateWhileFunction::FUNCTION_NAME );
+        $functionList = [eZTemplateWhileFunction::FUNCTION_NAME];
         return $functionList;
     }
 
@@ -51,10 +51,7 @@ class eZTemplateWhileFunction
      */
     function attributeList()
     {
-        return array( 'delimiter' => true,
-                      'break'     => false,
-                      'continue'  => false,
-                      'skip'      => false );
+        return ['delimiter' => true, 'break'     => false, 'continue'  => false, 'skip'      => false];
     }
 
 
@@ -63,10 +60,7 @@ class eZTemplateWhileFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateWhileFunction::FUNCTION_NAME => array( 'parameters' => true,
-                                                                'static' => false,
-                                                                'transform-parameters' => true,
-                                                                'tree-transformation' => true ) );
+        return [eZTemplateWhileFunction::FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -78,9 +72,9 @@ class eZTemplateWhileFunction
         // {while <condition> [sequence <sequence_array> as $<sequence_var>]}
 
         $tpl->WhileCounter++;
-        $newNodes      = array();
+        $newNodes      = [];
         $nodePlacement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-        $uniqid        =  md5( $nodePlacement[2] ) . "_" . $tpl->WhileCounter;
+        $uniqid        =  md5( (string) $nodePlacement[2] ) . "_" . $tpl->WhileCounter;
 
         $loop = new eZTemplateCompiledLoop( eZTemplateWhileFunction::FUNCTION_NAME,
                                             $newNodes, $parameters, $nodePlacement, $uniqid,
@@ -92,7 +86,7 @@ class eZTemplateWhileFunction
         // loop header
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "while ( 1 ) // while\n{" );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, array( 'treat-value-as-non-object' => true ),
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, ['treat-value-as-non-object' => true],
                                                               "while_cond" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( ! \$while_cond ) break;\n" );
 
@@ -112,7 +106,7 @@ class eZTemplateWhileFunction
      */
     function process( $tpl, &$textElements, $functionName, $functionChildren, $functionParameters, $functionPlacement, $rootNamespace, $currentNamespace )
     {
-        if ( count( $functionParameters ) == 0 )
+        if ( (is_countable($functionParameters) ? count( $functionParameters ) : 0) == 0 )
         {
             eZDebug::writeError( "Not enough arguments passed to 'while' function." );
             return;

@@ -26,7 +26,7 @@ if ( !eZContentObject::exists( $ObjectID ) )
 // Check if the user can read the object
 $object = eZContentObject::fetch( $ObjectID );
 if ( !$object->canRead() )
-    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array( 'AccessList' => $object->accessList( 'read' ) ) );
+    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', ['AccessList' => $object->accessList( 'read' )] );
 
 // Check if the object has a price datatype, if not it cannot be used in the basket
 $error = $basket->canAddProduct( $object );
@@ -35,10 +35,7 @@ if ( $error !== eZError::SHOP_OK )
 
 $OptionList = $http->sessionVariable( "AddToBasket_OptionList_" . $ObjectID );
 
-$operationResult = eZOperationHandler::execute( 'shop', 'addtobasket', array( 'basket_id' => $basket->attribute( 'id' ),
-                                                                              'object_id' => $ObjectID,
-                                                                              'quantity' => $quantity,
-                                                                              'option_list' => $OptionList ) );
+$operationResult = eZOperationHandler::execute( 'shop', 'addtobasket', ['basket_id' => $basket->attribute( 'id' ), 'object_id' => $ObjectID, 'quantity' => $quantity, 'option_list' => $OptionList] );
 
 switch( $operationResult['status'] )
 {

@@ -16,9 +16,9 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
-$viewParameters = array();
+$viewParameters = [];
 $viewParameters = array_merge( $viewParameters, $UserParameters );
 
 $Params['TemplateName'] = "design:user/register.tpl";
@@ -36,12 +36,9 @@ if ( $redirectNumber == '3' )
 {
     $tpl->setVariable( 'content_attributes', false );
 
-    $Result = array();
+    $Result = [];
     $Result['content'] = $tpl->fetch( 'design:user/register.tpl' );
-    $Result['path'] = array( array( 'url' => false,
-                            'text' => ezpI18n::tr( 'kernel/user', 'User' ) ),
-                        array( 'url' => false,
-                            'text' => ezpI18n::tr( 'kernel/user', 'Register' ) ) );
+    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'User' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'Register' )]];
     return $Result;
 }
 
@@ -96,12 +93,9 @@ if ( !$http->hasSessionVariable( "RegisterUserID" ) )
         $tpl->setVariable( 'user_has_cookie', eZSession::userHasSessionCookie(), 'User' );
         $tpl->setVariable( 'user_session_validates', true, 'User' );
 
-        $Result = array();
+        $Result = [];
         $Result['content'] = $tpl->fetch( 'design:user/register_user_not_valid.tpl' );
-        $Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/user', 'User' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/user', 'Register' ) ) );
+        $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'User' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'Register' )]];
         return $Result;
     }
     // else create user object
@@ -130,7 +124,7 @@ if ( !$http->hasSessionVariable( "RegisterUserID" ) )
     $count = $rows[0]['count'];
     if ( $count < 1 )
     {
-        $errMsg = ezpI18n::tr( 'design/standard/user', 'The node (%1) specified in [UserSettings].DefaultUserPlacement setting in site.ini does not exist!', null, array( $defaultUserPlacement ) );
+        $errMsg = ezpI18n::tr( 'design/standard/user', 'The node (%1) specified in [UserSettings].DefaultUserPlacement setting in site.ini does not exist!', null, [$defaultUserPlacement] );
         $checkErrNodeId = true;
         eZDebug::writeError( "$errMsg" );
         $tpl->setVariable( 'errMsg', $errMsg );
@@ -155,10 +149,7 @@ if ( !$http->hasSessionVariable( "RegisterUserID" ) )
 
     $userID = $objectID;
 
-    $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObject->attribute( 'id' ),
-                                                       'contentobject_version' => 1,
-                                                       'parent_node' => $defaultUserPlacement,
-                                                       'is_main' => 1 ) );
+    $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $contentObject->attribute( 'id' ), 'contentobject_version' => 1, 'parent_node' => $defaultUserPlacement, 'is_main' => 1] );
     $nodeAssignment->store();
 }
 
@@ -193,7 +184,7 @@ if ( !function_exists( 'checkContentActions' ) )
         if ( $module->isCurrentAction( 'Publish' ) )
         {
             $userID = $object->attribute( 'id' );
-            $operationResult = eZOperationHandler::execute( 'user', 'register', array( 'user_id' => $userID ) );
+            $operationResult = eZOperationHandler::execute( 'user', 'register', ['user_id' => $userID] );
 
             // send feedback
             $ini = eZINI::instance();
@@ -253,7 +244,7 @@ if ( !function_exists( 'checkContentActions' ) )
                         }
                         // try to call the registration feedback class with function registrationFeedback
                         if ( $registrationFeedbackClass && method_exists( $registrationFeedbackClass, 'registrationFeedback' ) )
-                            call_user_func( array( $registrationFeedbackClass, 'registrationFeedback' ), $user, $tpl, $object, $hostname );
+                            call_user_func( [$registrationFeedbackClass, 'registrationFeedback'], $user, $tpl, $object, $hostname );
                         else
                             eZDebug::writeWarning( "Unknown feedback type '$feedbackType'", 'user/register' );
                     }
@@ -320,9 +311,6 @@ if ( $ini->variable( 'SiteSettings', 'LoginPage' ) == 'custom' )
     $Result['pagelayout'] = 'loginpagelayout.tpl';
 }
 
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/user', 'User' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/user', 'Register' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'User' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/user', 'Register' )]];
 
 ?>

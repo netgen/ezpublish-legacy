@@ -19,7 +19,7 @@ class eZNodeviewfunctions
     // Deprecated function for generating the view cache
     static function generateNodeView( $tpl, $node, $object, $languageCode, $viewMode, $offset,
                                       $cacheDir, $cachePath, $viewCacheEnabled,
-                                      $viewParameters = array( 'offset' => 0, 'year' => false, 'month' => false, 'day' => false ),
+                                      $viewParameters = ['offset' => 0, 'year' => false, 'month' => false, 'day' => false],
                                       $collectionAttributes = false, $validation = false )
     {
         $cacheFile = eZClusterFileHandler::instance( $cachePath );
@@ -28,7 +28,7 @@ class eZNodeviewfunctions
                          "viewParameters",
                          "collectionAttributes", "validation" );
         $Result = $cacheFile->processCache( null, // no retrieve, only generate is called
-                                            array( 'eZNodeviewfunctions', 'generateCallback' ),
+                                            ['eZNodeviewfunctions', 'generateCallback'],
                                             null,
                                             null,
                                             $args );
@@ -39,6 +39,16 @@ class eZNodeviewfunctions
     //       back to eZClusterFileHandler for processing.
     static function generateCallback( $file, $args )
     {
+        $tpl = null;
+        $node = null;
+        $object = null;
+        $languageCode = null;
+        $viewMode = null;
+        $offset = null;
+        $viewParameters = null;
+        $collectionAttributes = null;
+        $validation = null;
+        $viewCacheEnabled = null;
         extract( $args );
 
         $res = eZNodeViewFunctions::generateNodeViewData( $tpl, $node, $object, $languageCode, $viewMode, $offset,
@@ -50,9 +60,7 @@ class eZNodeviewfunctions
         // or if explicitly turned off
         if ( !$viewCacheEnabled )
             $store = false;
-        $retval = array( 'content' => $res,
-                         'scope'   => 'viewcache',
-                         'store'   => $store );
+        $retval = ['content' => $res, 'scope'   => 'viewcache', 'store'   => $store];
         if ( $store )
             $retval['binarydata'] = serialize( $res );
 
@@ -62,19 +70,15 @@ class eZNodeviewfunctions
     /**
      * Generate result data for a node view
      *
-     * @param eZTemplate $tpl
-     * @param eZContentObjectTreeNode $node
-     * @param eZContentObject $object
      * @param bool|string $languageCode
      * @param string $viewMode
      * @param int $offset
-     * @param array $viewParameters
      * @param bool|array $collectionAttributes
      * @param bool $validation
      * @return array Result array for view
      */
     static function generateNodeViewData( eZTemplate $tpl, eZContentObjectTreeNode $node, eZContentObject $object, $languageCode, $viewMode, $offset,
-                                          array $viewParameters = array( 'offset' => 0, 'year' => false, 'month' => false, 'day' => false ),
+                                          array $viewParameters = ['offset' => 0, 'year' => false, 'month' => false, 'day' => false],
                                           $collectionAttributes = false, $validation = false )
     {
         $section = eZSection::fetch( $object->attribute( 'section_id' ) );
@@ -89,23 +93,7 @@ class eZNodeviewfunctions
             $sectionIdentifier = null;
         }
 
-        $keyArray = array( array( 'object', $object->attribute( 'id' ) ),
-                           array( 'node', $node->attribute( 'node_id' ) ),
-                           array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                           array( 'class', $object->attribute( 'contentclass_id' ) ),
-                           array( 'class_identifier', $node->attribute( 'class_identifier' ) ),
-                           array( 'view_offset', $offset ),
-                           array( 'viewmode', $viewMode ),
-                           array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                           array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                           array( 'navigation_part_identifier', $navigationPartIdentifier ),
-                           array( 'depth', $node->attribute( 'depth' ) ),
-                           array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                           array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) ),
-                           array( 'state', $object->attribute( 'state_id_array' ) ),
-                           array( 'state_identifier', $object->attribute( 'state_identifier_array' ) ),
-                           array( 'section', $object->attribute( 'section_id' ) ),
-                           array( 'section_identifier', $sectionIdentifier ) );
+        $keyArray = [['object', $object->attribute( 'id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $node->attribute( 'class_identifier' )], ['view_offset', $offset], ['viewmode', $viewMode], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['navigation_part_identifier', $navigationPartIdentifier], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['state', $object->attribute( 'state_id_array' )], ['state_identifier', $object->attribute( 'state_identifier_array' )], ['section', $object->attribute( 'section_id' )], ['section_identifier', $sectionIdentifier]];
 
         $parentClassID = false;
         $parentClassIdentifier = false;
@@ -115,13 +103,13 @@ class eZNodeviewfunctions
         if ( is_object( $parentNode ) )
         {
             $parentNodeRemoteID = $parentNode->attribute( 'remote_id' );
-            $keyArray[] = array( 'parent_node_remote_id', $parentNodeRemoteID );
+            $keyArray[] = ['parent_node_remote_id', $parentNodeRemoteID];
 
             $parentObject = $parentNode->attribute( 'object' );
             if ( is_object( $parentObject ) )
             {
                 $parentObjectRemoteID = $parentObject->attribute( 'remote_id' );
-                $keyArray[] = array( 'parent_object_remote_id', $parentObjectRemoteID );
+                $keyArray[] = ['parent_object_remote_id', $parentObjectRemoteID];
 
                 $parentClass = $parentObject->contentClass();
                 if ( is_object( $parentClass ) )
@@ -129,8 +117,8 @@ class eZNodeviewfunctions
                     $parentClassID = $parentClass->attribute( 'id' );
                     $parentClassIdentifier = $parentClass->attribute( 'identifier' );
 
-                    $keyArray[] = array( 'parent_class', $parentClassID );
-                    $keyArray[] = array( 'parent_class_identifier', $parentClassIdentifier );
+                    $keyArray[] = ['parent_class', $parentClassID];
+                    $keyArray[] = ['parent_class_identifier', $parentClassIdentifier];
                 }
             }
         }
@@ -164,32 +152,24 @@ class eZNodeviewfunctions
 
         $parents = $node->attribute( 'path' );
 
-        $path = array();
-        $titlePath = array();
+        $path = [];
+        $titlePath = [];
         foreach ( $parents as $parent )
         {
-            $path[] = array( 'text' => $parent->attribute( 'name' ),
-                             'url' => '/content/view/full/' . $parent->attribute( 'node_id' ),
-                             'url_alias' => $parent->attribute( 'url_alias' ),
-                             'node_id' => $parent->attribute( 'node_id' ) );
+            $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/view/full/' . $parent->attribute( 'node_id' ), 'url_alias' => $parent->attribute( 'url_alias' ), 'node_id' => $parent->attribute( 'node_id' )];
         }
 
         $titlePath = $path;
-        $path[] = array( 'text' => $object->attribute( 'name' ),
-                         'url' => false,
-                         'url_alias' => false,
-                         'node_id' => $node->attribute( 'node_id' ) );
+        $path[] = ['text' => $object->attribute( 'name' ), 'url' => false, 'url_alias' => false, 'node_id' => $node->attribute( 'node_id' )];
 
-        $titlePath[] = array( 'text' => $object->attribute( 'name' ),
-                              'url' => false,
-                              'url_alias' => false );
+        $titlePath[] = ['text' => $object->attribute( 'name' ), 'url' => false, 'url_alias' => false];
 
         $tpl->setVariable( 'node_path', $path );
 
         $event = ezpEvent::getInstance();
-        $event->notify( 'content/pre_rendering', array( $node, $tpl, $viewMode ) );
+        $event->notify( 'content/pre_rendering', [$node, $tpl, $viewMode] );
 
-        $Result = array();
+        $Result = [];
         $Result['content']         = $tpl->fetch( 'design:node/view/' . $viewMode . '.tpl' );
         $Result['view_parameters'] = $viewParameters;
         $Result['path']            = $path;
@@ -198,7 +178,7 @@ class eZNodeviewfunctions
         $Result['node_id']         = $node->attribute( 'node_id' );
         $Result['navigation_part'] = $navigationPartIdentifier;
 
-        $contentInfoArray = array();
+        $contentInfoArray = [];
         $contentInfoArray['object_id']        = $object->attribute( 'id' );
         $contentInfoArray['node_id']          = $node->attribute( 'node_id' );
         $contentInfoArray['parent_node_id']   = $node->attribute( 'parent_node_id' );
@@ -230,7 +210,7 @@ class eZNodeviewfunctions
         if ( $tpl->variable( 'persistent_variable' ) !== false )
         {
             $contentInfoArray['persistent_variable'] = $tpl->variable( 'persistent_variable' );
-            $keyArray[] = array( 'persistent_variable', $contentInfoArray['persistent_variable'] );
+            $keyArray[] = ['persistent_variable', $contentInfoArray['persistent_variable']];
             $res->setKeys( $keyArray );
         }
         $contentInfoArray['class_group']             = $object->attribute( 'match_ingroup_id_list' );
@@ -301,7 +281,7 @@ class eZNodeviewfunctions
         }
 
         // should we use current siteaccess or let several siteaccesse share cache?
-        if ( strpos( $viewCacheTweak, 'ignore_siteaccess_name' ) === false )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_siteaccess_name' ) )
         {
             $currentSiteAccess = $GLOBALS['eZCurrentAccess']['name'];
         }
@@ -310,24 +290,20 @@ class eZNodeviewfunctions
             $currentSiteAccess = $ini->variable( 'SiteSettings', 'DefaultAccess' );
         }
 
-        $cacheHashArray = array( $nodeID,
-                                 $viewMode,
-                                 $language,
-                                 $offset,
-                                 $layout );
+        $cacheHashArray = [$nodeID, $viewMode, $language, $offset, $layout];
 
         // several user related cache tweaks
-        if ( strpos( $viewCacheTweak, 'ignore_userroles' ) === false )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_userroles' ) )
         {
             $cacheHashArray[] = implode( '.', $user->roleIDList() );
         }
 
-        if ( strpos( $viewCacheTweak, 'ignore_userlimitedlist' ) === false )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_userlimitedlist' ) )
         {
             $cacheHashArray[] = implode( '.', $user->limitValueList() );
         }
 
-        if ( strpos( $viewCacheTweak, 'ignore_discountlist' ) === false )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_discountlist' ) )
         {
             $cacheHashArray[] = implode( '.', eZUserDiscountRule::fetchIDListByUserID( $user->attribute( 'contentobject_id' ) ) );
         }
@@ -335,25 +311,25 @@ class eZNodeviewfunctions
         $cacheHashArray[] = eZSys::indexFile();
 
         // Add access type to cache hash if current access is uri type (so uri and host doesn't share cache)
-        if ( strpos( $viewCacheTweak, 'ignore_siteaccess_type' ) === false && $GLOBALS['eZCurrentAccess']['type'] === eZSiteAccess::TYPE_URI )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_siteaccess_type' ) && $GLOBALS['eZCurrentAccess']['type'] === eZSiteAccess::TYPE_URI )
         {
             $cacheHashArray[] = eZSiteAccess::TYPE_URI;
         }
 
         // Make the cache unique for every logged in user
-        if ( strpos( $viewCacheTweak, 'pr_user' ) !== false and !$user->isAnonymous() )
+        if ( str_contains( (string) $viewCacheTweak, 'pr_user' ) and !$user->isAnonymous() )
         {
             $cacheNameExtra = $user->attribute( 'contentobject_id' ) . '-';
         }
 
         // Add the request protocol to the cache key generation
-        if ( strpos( $viewCacheTweak, 'protocol' ) !== false )
+        if ( str_contains( (string) $viewCacheTweak, 'protocol' ) )
         {
             $cacheHashArray[] = eZSys::isSSLNow();
         }
 
         // Make the cache unique for every case of view parameters
-        if ( strpos( $viewCacheTweak, 'ignore_viewparameters' ) === false && $viewParameters )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_viewparameters' ) && $viewParameters )
         {
             $vpString = '';
             ksort( $viewParameters );
@@ -376,9 +352,9 @@ class eZNodeviewfunctions
             $depPreferences = $cachedViewPreferences;
         }
 
-        if ( strpos( $viewCacheTweak, 'ignore_userpreferences' ) === false && isset ( $depPreferences[$viewMode] ) )
+        if ( !str_contains( (string) $viewCacheTweak, 'ignore_userpreferences' ) && isset ( $depPreferences[$viewMode] ) )
         {
-            $depPreferences = explode( ';', $depPreferences[$viewMode] );
+            $depPreferences = explode( ';', (string) $depPreferences[$viewMode] );
             $pString = '';
             // Fetch preferences for the specified user
             $preferences = eZPreferences::values( $user );
@@ -398,12 +374,10 @@ class eZNodeviewfunctions
 
         $cacheFile = $nodeID . '-' . $cacheNameExtra . md5( implode( '-', $cacheHashArray ) ) . '.cache';
         $extraPath = eZDir::filenamePath( $nodeID );
-        $cacheDir = eZDir::path( array( eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' ), $currentSiteAccess, $extraPath ) );
-        $cachePath = eZDir::path( array( $cacheDir, $cacheFile ) );
+        $cacheDir = eZDir::path( [eZSys::cacheDirectory(), $ini->variable( 'ContentSettings', 'CacheDir' ), $currentSiteAccess, $extraPath] );
+        $cachePath = eZDir::path( [$cacheDir, $cacheFile] );
 
-        return array( 'cache_path' => $cachePath,
-                      'cache_dir' => $cacheDir,
-                      'cache_file' => $cacheFile );
+        return ['cache_path' => $cachePath, 'cache_dir' => $cacheDir, 'cache_file' => $cacheFile];
     }
 
     /**
@@ -420,6 +394,7 @@ class eZNodeviewfunctions
      */
     static public function contentViewRetrieve( $file, $mtime, $args )
     {
+        $ini = null;
         extract( $args );
 
         $cacheExpired = false;
@@ -445,7 +420,7 @@ class eZNodeviewfunctions
             }
 
             // Check if cache has expired when cache_ttl is set
-            $cacheTTL = isset( $Result['cache_ttl'] ) ? $Result['cache_ttl'] : -1;
+            $cacheTTL = $Result['cache_ttl'] ?? -1;
             if ( $cacheTTL > 0 )
             {
                 $expiryTime = $mtime + $cacheTTL;
@@ -491,41 +466,19 @@ class eZNodeviewfunctions
                     {
                         $res = eZTemplateDesignResource::instance();
                         $res->setKeys(
-                            array(
-                                array( 'error_type', $Result['errorType'] ),
-                                array( 'error_number', $Result['errorNumber'] )
-                            )
+                            [['error_type', $Result['errorType']], ['error_number', $Result['errorNumber']]]
                         );
                     }
                     return $Result;
                 }
-                $keyArray = array( array( 'object', $Result['content_info']['object_id'] ),
-                                   array( 'node', $Result['content_info']['node_id'] ),
-                                   array( 'parent_node', $Result['content_info']['parent_node_id'] ),
-                                   array( 'parent_node_remote_id', $Result['content_info']['parent_node_remote_id'] ),
-                                   array( 'parent_object_remote_id', $Result['content_info']['parent_object_remote_id'] ),
-                                   array( 'class', $Result['content_info']['class_id'] ),
-                                   array( 'view_offset', $Result['content_info']['offset'] ),
-                                   array( 'navigation_part_identifier', $Result['content_info']['navigation_part_identifier'] ),
-                                   array( 'viewmode', $Result['content_info']['viewmode'] ),
-                                   array( 'depth', $Result['content_info']['node_depth'] ),
-                                   array( 'remote_id', $Result['content_info']['remote_id'] ),
-                                   array( 'node_remote_id', $Result['content_info']['node_remote_id'] ),
-                                   array( 'url_alias', $Result['content_info']['url_alias'] ),
-                                   array( 'persistent_variable', $Result['content_info']['persistent_variable'] ),
-                                   array( 'class_group', $Result['content_info']['class_group'] ),
-                                   array( 'parent_class_id', $Result['content_info']['parent_class_id'] ),
-                                   array( 'parent_class_identifier', $Result['content_info']['parent_class_identifier'] ),
-                                   array( 'state', $Result['content_info']['state'] ),
-                                   array( 'state_identifier', $Result['content_info']['state_identifier'] ),
-                                   array( 'section', $Result['section_id'] ) );
+                $keyArray = [['object', $Result['content_info']['object_id']], ['node', $Result['content_info']['node_id']], ['parent_node', $Result['content_info']['parent_node_id']], ['parent_node_remote_id', $Result['content_info']['parent_node_remote_id']], ['parent_object_remote_id', $Result['content_info']['parent_object_remote_id']], ['class', $Result['content_info']['class_id']], ['view_offset', $Result['content_info']['offset']], ['navigation_part_identifier', $Result['content_info']['navigation_part_identifier']], ['viewmode', $Result['content_info']['viewmode']], ['depth', $Result['content_info']['node_depth']], ['remote_id', $Result['content_info']['remote_id']], ['node_remote_id', $Result['content_info']['node_remote_id']], ['url_alias', $Result['content_info']['url_alias']], ['persistent_variable', $Result['content_info']['persistent_variable']], ['class_group', $Result['content_info']['class_group']], ['parent_class_id', $Result['content_info']['parent_class_id']], ['parent_class_identifier', $Result['content_info']['parent_class_identifier']], ['state', $Result['content_info']['state']], ['state_identifier', $Result['content_info']['state_identifier']], ['section', $Result['section_id']]];
 
                 if ( isset( $Result['content_info']['class_identifier'] ) )
-                    $keyArray[] = array( 'class_identifier', $Result['content_info']['class_identifier'] );
+                    $keyArray[] = ['class_identifier', $Result['content_info']['class_identifier']];
 
                 // Added in 5.3.5 / 5.4.2, so test that cache contains this before using
                 if ( isset( $Result['content_info']['section_identifier'] ) )
-                    $keyArray[] = array( 'section_identifier', $Result['content_info']['section_identifier'] );
+                    $keyArray[] = ['section_identifier', $Result['content_info']['section_identifier']];
 
                 $res = eZTemplateDesignResource::instance();
                 $res->setKeys( $keyArray );
@@ -566,6 +519,15 @@ class eZNodeviewfunctions
      */
     static public function contentViewGenerate( $file, $args )
     {
+        $NodeID = null;
+        $Module = null;
+        $tpl = null;
+        $LanguageCode = null;
+        $ViewMode = null;
+        $Offset = null;
+        $viewParameters = null;
+        $collectionAttributes = null;
+        $validation = null;
         extract( $args );
         $node = eZContentObjectTreeNode::fetch( $NodeID );
         if ( !$node instanceof eZContentObjectTreeNode )
@@ -595,7 +557,7 @@ class eZNodeviewfunctions
                 $Module,
                 eZError::KERNEL_ACCESS_DENIED,
                 true,
-                array( 'AccessList' => $node->checkAccess( 'read', false, false, true ) )
+                ['AccessList' => $node->checkAccess( 'read', false, false, true )]
             );
         }
 
@@ -614,23 +576,19 @@ class eZNodeviewfunctions
         // 'store' depends on noCache: if $noCache is set, this means that retrieve
         // returned it, and the noCache fake cache file is already stored
         // and should not be stored again
-        $retval = array( 'content' => $result,
-                         'scope'   => 'viewcache',
-                         'store'   => !( isset( $noCache ) and $noCache ) );
+        $retval = ['content' => $result, 'scope'   => 'viewcache', 'store'   => !( isset( $noCache ) and $noCache )];
         if ( $file !== false && $retval['store'] )
             $retval['binarydata'] = serialize( $result );
         return $retval;
     }
 
     /**
-     * @param eZModule $Module
      * @param int $error
      * @param bool $store
-     * @param array $errorParameters
      *
      * @return array
      */
-    static protected function contentViewGenerateError( eZModule $Module, $error, $store = true, array $errorParameters = array() )
+    static protected function contentViewGenerateError( eZModule $Module, $error, $store = true, array $errorParameters = [] )
     {
         $content = $Module->handleError(
             $error,
@@ -638,12 +596,7 @@ class eZNodeviewfunctions
             $errorParameters
         );
 
-        return array(
-            'content' => $content,
-            'scope' => 'viewcache',
-            'store' => $store,
-            'binarydata' => serialize( $content ),
-        );
+        return ['content' => $content, 'scope' => 'viewcache', 'store' => $store, 'binarydata' => serialize( $content )];
     }
 }
 

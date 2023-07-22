@@ -41,7 +41,6 @@ class ezpContentLocation extends ezpLocation
 
     /**
      * Returns the ezpContentLocation object for a particular node object
-     * @param eZContentObjectTreeNode $node
      * @return ezpContentLocation
      */
     public static function fromNode( eZContentObjectTreeNode $node )
@@ -65,6 +64,6 @@ class ezpContentLocation extends ezpLocation
 
     protected $node;
 
-    protected static $validNodeAttributes = array( 'node_id', 'path_string', 'name', 'url_alias', 'is_main', 'remote_id' );
+    protected static $validNodeAttributes = ['node_id', 'path_string', 'name', 'url_alias', 'is_main', 'remote_id'];
 }
 ?>

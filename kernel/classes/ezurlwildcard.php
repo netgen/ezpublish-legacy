@@ -21,27 +21,27 @@ class eZURLWildcard extends eZPersistentObject
      * Max number of wildcard entries per cache file
      * @var int
      */
-    const WILDCARDS_PER_CACHE_FILE = 100;
+    final public const WILDCARDS_PER_CACHE_FILE = 100;
 
     /**
      * Wildcards types
      * @var int
      */
-    const TYPE_NONE = 0;
-    const TYPE_FORWARD = 1;
-    const TYPE_DIRECT = 2;
+    final public const TYPE_NONE = 0;
+    final public const TYPE_FORWARD = 1;
+    final public const TYPE_DIRECT = 2;
 
     /**
      * ExpiryHandler key
      * @var string
      */
-    const CACHE_SIGNATURE = 'urlalias-wildcard';
+    final public const CACHE_SIGNATURE = 'urlalias-wildcard';
 
     /**
      * Cluster file handler instances of cache files
      * @var array(eZClusterFileHandlerInterface)
      */
-    protected static $cacheFiles = array();
+    protected static $cacheFiles = [];
 
     /**
      * Wildcards index local cache
@@ -51,27 +51,7 @@ class eZURLWildcard extends eZPersistentObject
 
     public static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "source_url" => array( 'name' => "SourceURL",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "destination_url" => array( 'name' => "DestinationURL",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         "type" => array( 'name' => "Type",
-                                                          'datatype' => 'integer',
-                                                          'default' => '0',
-                                                          'required' => true ) ),
-                      "keys" => array( "id" ),
-                      'function_attributes' => array(),
-                      "increment_key" => "id",
-                      "class_name" => "eZURLWildcard",
-                      "name" => "ezurlwildcard" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "source_url" => ['name' => "SourceURL", 'datatype' => 'string', 'default' => '', 'required' => true], "destination_url" => ['name' => "DestinationURL", 'datatype' => 'string', 'default' => '', 'required' => true], "type" => ['name' => "Type", 'datatype' => 'integer', 'default' => '0', 'required' => true]], "keys" => ["id"], 'function_attributes' => [], "increment_key" => "id", "class_name" => "eZURLWildcard", "name" => "ezurlwildcard"];
         return $definition;
     }
 
@@ -82,10 +62,7 @@ class eZURLWildcard extends eZPersistentObject
      */
     public function asArray()
     {
-        return array( 'id' => $this->attribute( 'id' ),
-                      'source_url' => $this->attribute( 'source_url' ),
-                      'destination_url' => $this->attribute( 'destination_url' ),
-                      'type' => $this->attribute( 'type' ) );
+        return ['id' => $this->attribute( 'id' ), 'source_url' => $this->attribute( 'source_url' ), 'destination_url' => $this->attribute( 'destination_url' ), 'type' => $this->attribute( 'type' )];
     }
 
     /**
@@ -138,7 +115,7 @@ class eZURLWildcard extends eZPersistentObject
             // remove by portion of 100 rows.
             $ids = array_splice( $idList, 0, 100 );
 
-            $conditions = array( 'id' => array( $ids ) );
+            $conditions = ['id' => [$ids]];
 
             eZPersistentObject::removeObject( self::definition(),
                                               $conditions );
@@ -155,7 +132,7 @@ class eZURLWildcard extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( self::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -169,7 +146,7 @@ class eZURLWildcard extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( self::definition(),
                                                 null,
-                                                array( "source_url" => $url ),
+                                                ["source_url" => $url],
                                                 $asObject );
     }
 
@@ -186,7 +163,7 @@ class eZURLWildcard extends eZPersistentObject
                                                     null,
                                                     null,
                                                     null,
-                                                    array( 'offset' => $offset, 'length' => $limit ),
+                                                    ['offset' => $offset, 'length' => $limit],
                                                     $asObject );
     }
 
@@ -197,13 +174,12 @@ class eZURLWildcard extends eZPersistentObject
     public static function fetchListCount()
     {
         $rows = eZPersistentObject::fetchObjectList( self::definition(),
-                                                     array(),
+                                                     [],
                                                      null,
                                                      false,
                                                      null,
                                                      false, false,
-                                                     array( array( 'operation' => 'count( * )',
-                                                                   'name' => 'count' ) ) );
+                                                     [['operation' => 'count( * )', 'name' => 'count']] );
         return $rows[0]['count'];
     }
 
@@ -216,6 +192,7 @@ class eZURLWildcard extends eZPersistentObject
      */
     public static function translate( &$uri )
     {
+        $wildcardInfo = [];
         $result = false;
 
         // get uri string
@@ -241,7 +218,7 @@ class eZURLWildcard extends eZPersistentObject
         {
             foreach ( $wildcards as $wildcardNum => $wildcard )
             {
-                if ( preg_match( $wildcard, $uriString ) )
+                if ( preg_match( $wildcard, (string) $uriString ) )
                 {
                     eZDebugSetting::writeDebug( 'kernel-urltranslator', "matched with: '$wildcard'", __METHOD__ );
 
@@ -355,17 +332,12 @@ class eZURLWildcard extends eZPersistentObject
         {
             $cacheDir = eZSys::cacheDirectory();
             $ini = eZINI::instance();
-            $keys = array( 'implementation' => $ini->variable( 'DatabaseSettings', 'DatabaseImplementation' ),
-                           'server' => $ini->variable( 'DatabaseSettings', 'Server' ),
-                           'database' => $ini->variable( 'DatabaseSettings', 'Database' ) );
+            $keys = ['implementation' => $ini->variable( 'DatabaseSettings', 'DatabaseImplementation' ), 'server' => $ini->variable( 'DatabaseSettings', 'Server' ), 'database' => $ini->variable( 'DatabaseSettings', 'Database' )];
             $wildcardKey = md5( implode( "\n", $keys ) );
             $wildcardCacheDir = "$cacheDir/wildcard";
             $wildcardCacheFile = "wildcard_$wildcardKey";
             $wildcardCachePath = "$wildcardCacheDir/$wildcardCacheFile";
-            $cacheInfo = array( 'dir' => $wildcardCacheDir,
-                                'file' => $wildcardCacheFile,
-                                'path' => $wildcardCachePath,
-                                'keys' => $keys );
+            $cacheInfo = ['dir' => $wildcardCacheDir, 'file' => $wildcardCacheFile, 'path' => $wildcardCachePath, 'keys' => $keys];
         }
 
         return $cacheInfo;
@@ -429,7 +401,7 @@ class eZURLWildcard extends eZPersistentObject
             $cacheIndexFile = self::loadCacheFile();
 
             // if NULL is returned, the cache doesn't exist or isn't valid
-            self::$wildcardsIndex = $cacheIndexFile->processFile( array( __CLASS__, 'fetchCacheFile' ), self::expiryTimestamp() );
+            self::$wildcardsIndex = $cacheIndexFile->processFile( self::fetchCacheFile(...), self::expiryTimestamp() );
             if ( self::$wildcardsIndex === null )
             {
                 // This will generate and return the index, and store the cache
@@ -463,7 +435,7 @@ class eZURLWildcard extends eZPersistentObject
         }
 
         // Index file (wildcard_md5_index.php)
-        $wildcardsIndex = array();
+        $wildcardsIndex = [];
 
         $limit = self::WILDCARDS_PER_CACHE_FILE;
         $offset = 0;
@@ -472,13 +444,13 @@ class eZURLWildcard extends eZPersistentObject
         while( 1 )
         {
             $wildcards = self::fetchList( $offset, $limit, false );
-            if ( count( $wildcards ) === 0 )
+            if ( (is_countable($wildcards) ? count( $wildcards ) : 0) === 0 )
             {
                 break;
             }
 
             // sub cache file (wildcard_md5_<i>.php)
-            $wildcardDetails = array();
+            $wildcardDetails = [];
             $currentSubCacheFile = self::loadCacheFile( $cacheFilesCount );
             foreach ( $wildcards as $wildcard )
             {
@@ -513,8 +485,8 @@ class eZURLWildcard extends eZPersistentObject
     protected static function matchRegexpCode( $wildcard )
     {
         $matchWilcard = $wildcard['source_url'];
-        $matchWilcardList = explode( "*", $matchWilcard );
-        $regexpList = array();
+        $matchWilcardList = explode( "*", (string) $matchWilcard );
+        $regexpList = [];
         foreach ( $matchWilcardList as $matchWilcardItem )
         {
             $regexpList[] = preg_quote( $matchWilcardItem, '#' );
@@ -538,11 +510,11 @@ class eZURLWildcard extends eZPersistentObject
      */
     protected static function matchReplaceCode( $wildcard )
     {
-        $return = array();
+        $return = [];
 
-        $replaceWildcardList = preg_split( "#{([0-9]+)}#", $wildcard['destination_url'], false, PREG_SPLIT_DELIM_CAPTURE );
+        $replaceWildcardList = preg_split( "#{([0-9]+)}#", (string) $wildcard['destination_url'], false, PREG_SPLIT_DELIM_CAPTURE );
 
-        $replaceArray = array();
+        $replaceArray = [];
         foreach ( $replaceWildcardList as $index => $replaceWildcardItem )
         {
             // even values are placeholders
@@ -582,7 +554,7 @@ class eZURLWildcard extends eZPersistentObject
      *
      * @todo make private, this method isn't used anywhere else
      */
-    protected static function translateWithCache( $wildcardNum, &$uri, &$wildcardInfo, $matchRegexp )
+    protected static function translateWithCache( $wildcardNum, &$uri, mixed &$wildcardInfo, $matchRegexp )
     {
         eZDebugSetting::writeDebug( 'kernel-urltranslator', "wildcardNum = $wildcardNum, uri = $uri", __METHOD__ );
 
@@ -591,7 +563,7 @@ class eZURLWildcard extends eZPersistentObject
         eZDebugSetting::writeDebug( 'kernel-urltranslator', "cacheFileNum = $cacheFileNum", __METHOD__ );
 
         $cacheFile = self::loadCacheFile( $cacheFileNum );
-        $wildcardsInfos = $cacheFile->processFile( array( __CLASS__, 'fetchCacheFile' ) );
+        $wildcardsInfos = $cacheFile->processFile( self::fetchCacheFile(...) );
 
         if ( !isset( $wildcardsInfos[$wildcardNum] ) )
         {
@@ -601,7 +573,7 @@ class eZURLWildcard extends eZPersistentObject
 
         // @todo Try to replace this with a preg_replace in order to get rid of eval()
         $replaceRegexp = $wildcardsInfos[$wildcardNum]['uri'];
-        $uri = preg_replace( $matchRegexp, $replaceRegexp, $uri );
+        $uri = preg_replace( $matchRegexp, (string) $replaceRegexp, $uri );
         $wildcardInfo = $wildcardsInfos[$wildcardNum]['info'];
 
         eZDebugSetting::writeDebug( 'kernel-urltranslator', "found wildcard: " . var_export( $wildcardInfo, true ), __METHOD__ );

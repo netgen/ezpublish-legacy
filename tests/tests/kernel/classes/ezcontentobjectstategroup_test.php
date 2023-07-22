@@ -12,10 +12,7 @@ class eZContentObjectStateGroupTest extends ezpDatabaseTestCase
 {
     public function providerCreateWithInvalidIdentifier()
     {
-        return array(
-            array( 'WithUpperCaseChars' ),
-            array( str_repeat( 'x', 46 ) )
-        );
+        return [['WithUpperCaseChars'], [str_repeat( 'x', 46 )]];
     }
 
     /**
@@ -23,20 +20,17 @@ class eZContentObjectStateGroupTest extends ezpDatabaseTestCase
      */
     public function testCreateWithInvalidIdentifier( $identifier )
     {
-        $row = array( 'identifier' => $identifier );
+        $row = ['identifier' => $identifier];
         $stateGroup = new eZContentObjectStateGroup( $row );
         $trans = $stateGroup->translationByLocale( 'eng-GB' );
         $trans->setAttribute( 'name', $identifier );
-        $messages = array();
-        $this->assertFalse( $stateGroup->isValid( $messages ), "Invalid state group identifier '$identifier' was accepted" );
+        $messages = [];
+        static::assertFalse($stateGroup->isValid( $messages ), "Invalid state group identifier '$identifier' was accepted");
     }
 
     public function providerCreateWithvalidIdentifier()
     {
-        return array(
-            array( 'lowercasechars' ),
-            array( str_repeat( 'x', 45 ) )
-        );
+        return [['lowercasechars'], [str_repeat( 'x', 45 )]];
     }
 
     /**
@@ -44,12 +38,12 @@ class eZContentObjectStateGroupTest extends ezpDatabaseTestCase
      */
     public function testCreateWithvalidIdentifier( $identifier )
     {
-        $row = array( 'identifier' => $identifier );
+        $row = ['identifier' => $identifier];
         $stateGroup = new eZContentObjectStateGroup( $row );
         $trans = $stateGroup->translationByLocale( 'eng-GB' );
         $trans->setAttribute( 'name', $identifier );
-        $messages = array();
-        $this->assertTrue( $stateGroup->isValid( $messages ), "Valid state group identifier '$identifier' was refused, " . var_export( $messages, true ) );
+        $messages = [];
+        static::assertTrue($stateGroup->isValid( $messages ), "Valid state group identifier '$identifier' was refused, " . var_export( $messages, true ));
     }
 
     public static function suite()

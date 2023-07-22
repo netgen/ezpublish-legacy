@@ -20,7 +20,7 @@ if ( !is_numeric( $offset ) )
 if ( $http->hasVariable( 'filterString' ) )
 {
     $filterString = $http->variable('filterString');
-    if ( ( strlen( trim( $filterString ) ) > 0 ) )
+    if ( ( strlen( trim( (string) $filterString ) ) > 0 ) )
         $doFiltration = true;
 }
 
@@ -32,20 +32,20 @@ $siteAccess = $http->sessionVariable( 'eZTemplateAdminCurrentSiteAccess' );
 
 $overrideArray = eZTemplateDesignResource::overrideArray( $siteAccess );
 
-$mostUsedOverrideArray = array();
-$filteredOverrideArray = array();
-$mostUsedMatchArray = array( 'node/view/', 'content/view/embed', 'pagelayout.tpl', 'search.tpl', 'basket' );
+$mostUsedOverrideArray = [];
+$filteredOverrideArray = [];
+$mostUsedMatchArray = ['node/view/', 'content/view/embed', 'pagelayout.tpl', 'search.tpl', 'basket'];
 foreach ( array_keys( $overrideArray ) as $overrideKey )
 {
     foreach ( $mostUsedMatchArray as $mostUsedMatch )
     {
-        if ( strpos( $overrideArray[$overrideKey]['template'], $mostUsedMatch ) !== false )
+        if ( str_contains( (string) $overrideArray[$overrideKey]['template'], $mostUsedMatch ) )
         {
             $mostUsedOverrideArray[$overrideKey] = $overrideArray[$overrideKey];
         }
     }
     if ( $doFiltration ) {
-        if ( strpos( $overrideArray[$overrideKey]['template'], $filterString ) !== false )
+        if ( str_contains( (string) $overrideArray[$overrideKey]['template'], (string) $filterString ) )
         {
             $filteredOverrideArray[$overrideKey] = $overrideArray[$overrideKey];
         }
@@ -66,12 +66,11 @@ else
 }
 
 $tpl->setVariable( 'most_used_template_array', $mostUsedOverrideArray );
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/templatelist.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/design', 'Template list' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/design', 'Template list' )]];
 
 ?>

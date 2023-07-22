@@ -15,7 +15,7 @@ class ezpObject
      *
      * @var array( string=>mixed )
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * Contains the result of the last publish operation
@@ -48,7 +48,7 @@ class ezpObject
         $this->class = eZContentClass::fetchByIdentifier( $classIdentifier );
         if ( !$this->class instanceof eZContentClass )
             throw new ezcBaseValueException( 'class',
-                                             ( isset( $this->class ) ? get_class( $this->class ) : null ),
+                                             ( isset( $this->class ) ? $this->class::class : null ),
                                              'eZContentClass ($classIdentifier was: ' . $classIdentifier . ' ) ',
                                              'member' );
 
@@ -60,7 +60,7 @@ class ezpObject
             $this->mainNode = new ezpNode( $this->object, $parentNodeID, true );
         }
 
-        $this->nodes = array( $this->mainNode );
+        $this->nodes = [$this->mainNode];
     }
 
     /**
@@ -79,7 +79,7 @@ class ezpObject
                 if ( isset( $this->object ) )
                     return $this->object->dataMap();
                 else
-                    return array();
+                    return [];
             } break;
             default:
             {
@@ -104,10 +104,9 @@ class ezpObject
      *
      * @throws ezcBasePropertyNotFoundException if the property does not exist.
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         switch( $name )
         {
@@ -189,7 +188,7 @@ class ezpObject
 
     public function __call( $name, $arguments )
     {
-        return call_user_func_array( array( $this->object, $name ), $arguments );
+        return call_user_func_array( [$this->object, $name], $arguments );
         // return $this->object->$name( $arguments );
     }
 
@@ -245,8 +244,7 @@ class ezpObject
             $versionNumber = $object->attribute( 'current_version' );
         }
 
-        return eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $objectID,
-                                                                         'version' => $versionNumber ) );
+        return eZOperationHandler::execute( 'content', 'publish', ['object_id' => $objectID, 'version' => $versionNumber] );
     }
 
     /**
@@ -256,7 +254,7 @@ class ezpObject
      * @param mixed $translationData array( attribute identifier => attribute value )
      * @return void
      */
-    public function addTranslation( $newLanguageCode, $translationData )
+    public function addTranslation( $newLanguageCode, mixed $translationData )
     {
         // Make sure to refresh the objects data.
         $this->refresh();
@@ -339,7 +337,7 @@ class ezpObject
 
     private static function createDataMap( $attributeArray )
     {
-        $ret = array();
+        $ret = [];
         foreach( $attributeArray as $attribute )
         {
             $ret[$attribute->contentClassAttributeIdentifier()] = $attribute;
@@ -356,7 +354,7 @@ class ezpObject
         $xml = eZXMLTextType::domString( $xml );
 
         $urlIdArray = $parser->getUrlIDArray();
-        if ( count( $urlIdArray ) > 0 )
+        if ( (is_countable($urlIdArray) ? count( $urlIdArray ) : 0) > 0 )
             eZSimplifiedXMLInput::updateUrlObjectLinks( $attribute, $urlIdArray );
 
         return $xml;

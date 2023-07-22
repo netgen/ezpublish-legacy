@@ -23,23 +23,7 @@ class eZSiteData extends eZPersistentObject
      */
     public static function definition()
     {
-        return array( 'fields'       => array( 'name'               => array( 'name'     => 'name',
-                                                                              'datatype' => 'string',
-                                                                              'default'  => null,
-                                                                              'required' => true ),
-
-                                               'value'             => array( 'name'     => 'value',
-                                                                             'datatype' => 'string',
-                                                                             'default'  => null,
-                                                                             'required' => true ),
-
-                                            ),
-
-                      'keys'                 => array( 'name' ),
-                      'class_name'           => 'eZSiteData',
-                      'name'                 => 'ezsite_data',
-                      'function_attributes'  => array()
-        );
+        return ['fields'       => ['name'               => ['name'     => 'name', 'datatype' => 'string', 'default'  => null, 'required' => true], 'value'             => ['name'     => 'value', 'datatype' => 'string', 'default'  => null, 'required' => true]], 'keys'                 => ['name'], 'class_name'           => 'eZSiteData', 'name'                 => 'ezsite_data', 'function_attributes'  => []];
     }
 
     /**
@@ -52,10 +36,7 @@ class eZSiteData extends eZPersistentObject
      */
     public static function create( $name, $value )
     {
-        return new eZSiteData( array(
-            'name' => $name,
-            'value' => $value
-        ) );
+        return new eZSiteData( ['name' => $name, 'value' => $value] );
     }
 
     /**
@@ -66,7 +47,7 @@ class eZSiteData extends eZPersistentObject
      */
     public static function fetchByName( $name )
     {
-        $result = parent::fetchObject( self::definition(), null, array( 'name' => $name ) );
+        $result = parent::fetchObject( self::definition(), null, ['name' => $name] );
         return $result;
     }
 

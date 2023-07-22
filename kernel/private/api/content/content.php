@@ -66,7 +66,6 @@ class ezpContent
 
     /**
      * Instanciates an ezpContent from an eZContentObjectTreeNode
-     * @param eZContentObjectTreeNode $node
      * @return ezpContent
      */
     public static function fromNode( eZContentObjectTreeNode $node, $checkAccess = true )

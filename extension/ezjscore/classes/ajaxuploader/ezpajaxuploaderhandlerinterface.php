@@ -35,7 +35,6 @@ interface ezpAjaxUploaderHandlerInterface
      * Returns the content class to use when creating the content object from
      * the file
      *
-     * @param array $mimeData
      * @return eZContentClass
      */
     public function getContentClass( array $mimeData );
@@ -43,7 +42,6 @@ interface ezpAjaxUploaderHandlerInterface
     /**
      * Returns the node id of the default location of the future object
      *
-     * @param eZContentClass $class
      * @return int
      */
     public function getDefaultParentNodeId( eZContentClass $class );
@@ -62,7 +60,6 @@ interface ezpAjaxUploaderHandlerInterface
      * Serialize the eZContentObject to be used to build the result in
      * JavaScript
      *
-     * @param eZContentObject $object
      * @return array
      */
     public function serializeObject( eZContentObject $object );

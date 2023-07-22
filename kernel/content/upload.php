@@ -12,7 +12,7 @@ $module = $Params['Module'];
 
 $upload = new eZContentUpload();
 
-$errors = array();
+$errors = [];
 
 if ( $module->isCurrentAction( 'CancelUpload' ) )
 {
@@ -28,12 +28,12 @@ if ( $module->isCurrentAction( 'CancelUpload' ) )
     else if ( $upload->attribute( 'result_module' ) )
     {
         $info = $upload->attribute( 'result_module' );
-        $moduleName = isset( $info[0] ) ? $info[0] : false;
-        $viewName = isset( $info[1] ) ? $info[1] : false;
-        $parameters = isset( $info[2] ) ? $info[2] : false;
-        $unorderedParameters = isset( $info[3] ) ? $info[3] : false;
-        $userParameters = isset( $info[4] ) ? $info[4] : false;
-        $anchor = isset( $info[5] ) ? $info[5] : false;
+        $moduleName = $info[0] ?? false;
+        $viewName = $info[1] ?? false;
+        $parameters = $info[2] ?? false;
+        $unorderedParameters = $info[3] ?? false;
+        $userParameters = $info[4] ?? false;
+        $anchor = $info[5] ?? false;
         $url = $module->redirectionURI( $moduleName, $viewName, $parameters,
                                         $unorderedParameters, $userParameters, $anchor );
     }
@@ -92,8 +92,8 @@ if ( $module->isCurrentAction( 'UploadFile' ) )
             $data = $upload->attribute( 'result_module' );
             $moduleName = $data[0];
             $view = $data[1];
-            $parameters = isset( $data[2] ) ? $data[2] : array();
-            $userParameters = isset( $data[3] ) ? $data[3] : array();
+            $parameters = $data[2] ?? [];
+            $userParameters = $data[3] ?? [];
             $resultModule = eZModule::findModule( $moduleName, $module );
             $resultModule->setCurrentAction( $upload->attribute( 'result_action_name' ), $view );
             $actionParameters = false;
@@ -126,14 +126,14 @@ if ( $module->isCurrentAction( 'UploadFile' ) )
 
 
 $res = eZTemplateDesignResource::instance();
-$keyArray = array();
+$keyArray = [];
 $attributeKeys = $upload->attribute( 'keys' );
 
 if ( is_array( $attributeKeys ) )
 {
     foreach ( $attributeKeys as $attributeKey => $attributeValue )
     {
-        $keyArray[] = array( $attributeKey, $attributeValue );
+        $keyArray[] = [$attributeKey, $attributeValue];
     }
 }
 $res->setKeys( $keyArray );
@@ -141,7 +141,7 @@ $res->setKeys( $keyArray );
 $tpl->setVariable( 'upload', $upload );
 $tpl->setVariable( 'errors', $errors );
 
-$Result = array();
+$Result = [];
 
 $navigationPart = $upload->attribute( 'navigation_part_identifier' );
 if ( $navigationPart )
@@ -157,7 +157,6 @@ $res = eZTemplateDesignResource::instance();
 
 $Result['content'] = $tpl->fetch( 'design:content/upload.tpl' );
 
-$Result['path'] = array( array( 'text' => 'Upload',
-                                'url' => false ) );
+$Result['path'] = [['text' => 'Upload', 'url' => false]];
 
 ?>

@@ -14,8 +14,8 @@
  */
 class ezpAsynchronousPublisherLogOutput implements ezpAsynchronousPublisherOutput
 {
-    private $logFile = 'async.log';
-    private $logDir = 'var/log';
+    private string $logFile = 'async.log';
+    private string $logDir = 'var/log';
 
     public function write( $message )
     {

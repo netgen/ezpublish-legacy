@@ -24,7 +24,7 @@ class eZTemplateExecuteOperator
      */
     public function __construct( $fetchName = 'fetch', $fetchAliasName = 'fetch_alias' )
     {
-        $this->Operators = array( $fetchName, $fetchAliasName );
+        $this->Operators = [$fetchName, $fetchAliasName];
         $this->Fetch = $fetchName;
         $this->FetchAlias = $fetchAliasName;
     }
@@ -47,26 +47,15 @@ class eZTemplateExecuteOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->Fetch => array( 'input' => false,
-                                             'output' => true,
-                                             'parameters' => true,
-                                             'element-transformation' => true,
-                                             'transform-parameters' => true,
-                                             'element-transformation-func' => 'fetchTransform' ),
-                      $this->FetchAlias => array( 'input' => false,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'element-transformation-func' => 'fetchTransform' )
-                      );
+        return [$this->Fetch => ['input' => false, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'element-transformation-func' => 'fetchTransform'], $this->FetchAlias => ['input' => false, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'element-transformation-func' => 'fetchTransform']];
     }
 
     function fetchTransform( $operatorName, &$node, $tpl, &$resourceData,
                              $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
+        $moduleName = null;
         $parameterTranslation = false;
-        $constParameters = array();
+        $constParameters = [];
 
         if ( $operatorName == $this->Fetch )
         {
@@ -83,9 +72,9 @@ class eZTemplateExecuteOperator
             if ( !$moduleFunctionInfo->isValid() )
             {
                 eZDebug::writeError( "Cannot execute  module '$moduleName', no module found", __METHOD__ );
-                return array();
+                return [];
             }
-            $fetchParameters = array();
+            $fetchParameters = [];
             if ( isset( $parameters[2] ) )
                 $fetchParameters =  $parameters[2];
         }
@@ -105,12 +94,12 @@ class eZTemplateExecuteOperator
                 if ( !$moduleFunctionInfo->isValid() )
                 {
                     eZDebug::writeError( "Cannot execute function '$aliasFunctionName' in module '$moduleName', no valid data", __METHOD__ );
-                    return array();
+                    return [];
                 }
 
                 $functionName = $aliasSettings->variable( $aliasFunctionName, 'FunctionName' );
 
-                $functionArray = array();
+                $functionArray = [];
                 if ( $aliasSettings->hasVariable( $aliasFunctionName, 'Parameter' ) )
                 {
                     $parameterTranslation = $aliasSettings->variable( $aliasFunctionName, 'Parameter' );
@@ -124,7 +113,7 @@ class eZTemplateExecuteOperator
                         foreach ( array_keys( $constantParameterArray ) as $constKey )
                         {
                             if ( $moduleFunctionInfo->isParameterArray( $functionName, $constKey ) )
-                                $constParameters[$constKey] = explode( ';', $constantParameterArray[$constKey] );
+                                $constParameters[$constKey] = explode( ';', (string) $constantParameterArray[$constKey] );
                             else
                                 $constParameters[$constKey] = $constantParameterArray[$constKey];
                         }
@@ -135,10 +124,10 @@ class eZTemplateExecuteOperator
             {
                 $placement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
                 $tpl->warning( 'fetch_alias', "Fetch alias '$aliasFunctionName' is not defined in fetchalias.ini", $placement );
-                return array();
+                return [];
             }
 
-            $fetchParameters = array();
+            $fetchParameters = [];
             if ( isset( $parameters[1] ) )
                 $fetchParameters = $parameters[1];
         }
@@ -173,11 +162,11 @@ class eZTemplateExecuteOperator
         }
         else
         {
-            $functionKeys = array();
+            $functionKeys = [];
         }
 
         $paramCount = 0;
-        $values = array();
+        $values = [];
         if ( $isVariable )
         {
             $values[] = $fetchParameters;
@@ -215,7 +204,7 @@ class eZTemplateExecuteOperator
         else
         {
             $parametersCode = 'array( ';
-            if ( count( $functionDefinition['parameters'] ) )
+            if ( is_countable($functionDefinition['parameters']) ? count( $functionDefinition['parameters'] ) : 0 )
             {
                 foreach( $functionDefinition['parameters'] as $parameterDefinition )
                 {
@@ -288,7 +277,7 @@ class eZTemplateExecuteOperator
 
         $code .= '%output% = isset( %output%[\'result\'] ) ? %output%[\'result\'] : null;' . "\n";
 
-        return array( eZTemplateNodeTool::createCodePieceElement( $code, $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( $code, $values )];
     }
 
     /*!
@@ -296,21 +285,7 @@ class eZTemplateExecuteOperator
     */
     function namedParameterList()
     {
-        return array( 'fetch' => array( 'module_name' => array( 'type' => 'string',
-                                                                'required' => true,
-                                                                'default' => false ),
-                                        'function_name' => array( 'type' => 'string',
-                                                                  'required' => true,
-                                                                  'default' => false ),
-                                        'function_parameters' => array( 'type' => 'array',
-                                                                        'required' => false,
-                                                                        'default' => array() ) ),
-                      'fetch_alias' => array( 'function_name' => array( 'type' => 'string',
-                                                                  'required' => true,
-                                                                  'default' => false ),
-                                              'function_parameters' => array( 'type' => 'array',
-                                                                              'required' => false,
-                                                                              'default' => array() ) ) );
+        return ['fetch' => ['module_name' => ['type' => 'string', 'required' => true, 'default' => false], 'function_name' => ['type' => 'string', 'required' => true, 'default' => false], 'function_parameters' => ['type' => 'array', 'required' => false, 'default' => []]], 'fetch_alias' => ['function_name' => ['type' => 'string', 'required' => true, 'default' => false], 'function_parameters' => ['type' => 'array', 'required' => false, 'default' => []]]];
     }
 
     /*!

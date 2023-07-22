@@ -14,11 +14,10 @@ class eZTemplateLoopSequence
     /**
      * Constructor
      *
-     * @param array $array
+     * @param array $ArrayRef
      */
-    public function __construct( $array )
+    public function __construct( public $ArrayRef )
     {
-        $this->ArrayRef = $array;
         $this->CurVal   =  current( $this->ArrayRef );
     }
 
@@ -35,8 +34,6 @@ class eZTemplateLoopSequence
             $this->CurVal = current( $this->ArrayRef );
         }
     }
-
-    public $ArrayRef;
     public $CurVal;
 }
 
@@ -47,27 +44,14 @@ class eZTemplateLoopSequence
 */
 class eZTemplateLoop
 {
-    public function __construct( $functionName, &$functionParameters, $functionChildren, $functionPlacement,
-                             $tpl, &$textElements, $rootNamespace, $currentNamespace )
+    public function __construct( ///
+    /// \privatesection
+    ///
+    public $FunctionName, &$functionParameters, public $FunctionChildren, public $FunctionPlacement,
+                             public $Tpl, &$textElements, public $RootNamespace, public $CurrentNamespace )
     {
-        $this->SkipDelimiter         = true;
-        $this->SkipSequenceIncrement = false;
-        $this->Delimiter             = null;
-        $this->Initialized           = true;
-        $this->SequenceVarName       = null;
-        $this->Sequence              = null;
-        $this->LoopVariablesNames    = array();
-
-
-        $this->FunctionName       = $functionName;
         $this->FunctionParameters =& $functionParameters;
-        $this->FunctionChildren   = $functionChildren;
-
-        $this->Tpl                = $tpl;
         $this->TextElements       =& $textElements;
-        $this->RootNamespace      = $rootNamespace;
-        $this->CurrentNamespace   = $currentNamespace;
-        $this->FunctionPlacement  = $functionPlacement;
 
         $this->Initialized = $this->processFunctionParameters();
     }
@@ -79,7 +63,7 @@ class eZTemplateLoop
     {
         $params =& $this->FunctionParameters;
 
-        if ( !isset( $params['sequence_array'] ) || !count( $params['sequence_array'] ) )
+        if ( !isset( $params['sequence_array'] ) || !(is_countable($params['sequence_array']) ? count( $params['sequence_array'] ) : 0) )
             return true;
 
         $this->parseParamVarName( 'sequence_var', $seqVarName );
@@ -244,7 +228,7 @@ class eZTemplateLoop
         {
             $delimiterModulo = $delimiterParameters["modulo"];
             $modulo = $this->Tpl->elementValue( $delimiterModulo, $this->RootNamespace, $this->FunctionName, $this->FunctionPlacement );
-            $modulo = trim( $modulo );
+            $modulo = trim( (string) $modulo );
             if ( is_numeric( $modulo ) )
                 $delimiterMatch = ( $index % $modulo ) == 0;
         }
@@ -272,10 +256,10 @@ class eZTemplateLoop
         $dst = null;
 
         if ( !isset( $this->FunctionParameters[$paramName] ) ||
-             !count( $this->FunctionParameters[$paramName] ) )
+             !(is_countable($this->FunctionParameters[$paramName]) ? count( $this->FunctionParameters[$paramName] ) : 0) )
             return false;
 
-        list( $varNsName, $varNsType, $varName ) = $this->FunctionParameters[$paramName][0][1];
+        [$varNsName, $varNsType, $varName] = $this->FunctionParameters[$paramName][0][1];
 
         if ( $varNsType != eZTemplate::NAMESPACE_SCOPE_LOCAL || $varNsName )
         {
@@ -300,7 +284,7 @@ class eZTemplateLoop
     {
         $dst = null;
 
-        if ( !isset( $this->FunctionParameters[$paramName] ) || !count( $this->FunctionParameters[$paramName] ) )
+        if ( !isset( $this->FunctionParameters[$paramName] ) || !(is_countable($this->FunctionParameters[$paramName]) ? count( $this->FunctionParameters[$paramName] ) : 0) )
             return false;
 
         // get parameter value
@@ -330,7 +314,7 @@ class eZTemplateLoop
     {
         $dst = null;
 
-        if ( !isset( $this->FunctionParameters[$paramName] ) || !count( $this->FunctionParameters[$paramName] ) )
+        if ( !isset( $this->FunctionParameters[$paramName] ) || !(is_countable($this->FunctionParameters[$paramName]) ? count( $this->FunctionParameters[$paramName] ) : 0) )
             return false;
 
         $dst = $this->Tpl->elementValue( $this->FunctionParameters[$paramName], $this->RootNamespace,
@@ -351,34 +335,22 @@ class eZTemplateLoop
         else
             $this->LoopVariablesNames[] = $varName;
     }
-
-    ///
-    /// \privatesection
-    ///
-
-    public $FunctionName;
     public $FunctionParameters;
-    public $FunctionChildren;
-    public $FunctionPlacement;
 
-    public $SkipDelimiter;
-    public $SkipSequenceIncrement;
-    public $delimiter;
-
-    public $Tpl;
+    public $SkipDelimiter = true;
+    public $SkipSequenceIncrement = false;
+    public $delimiter = null;
     public $TextElements;
-    public $RootNamespace;
-    public $CurrentNamespace;
 
-    public $Initialized;
-    public $Sequence;
-    public $SequenceVarName;
+    public $Initialized = true;
+    public $Sequence = null;
+    public $SequenceVarName = null;
     /*!
      * Before we create a new loop variable, we check if it already exists.
      * If it doesn't, we store its name in this array, so that we know
      * which variables to destroy after the loop execution finishes.
      */
-    public $LoopVariablesNames;
+    public $LoopVariablesNames = [];
 }
 
 ?>

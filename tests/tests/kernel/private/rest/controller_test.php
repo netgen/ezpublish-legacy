@@ -13,7 +13,7 @@
  */
 class ezpRestControllerTest extends ezpRestTestCase
 {
-    public function __construct($name = NULL, array $data = array(), $dataName = '')
+    public function __construct($name = NULL, array $data = [], $dataName = '')
     {
         parent::__construct( $name, $data, $dataName );
     }
@@ -25,7 +25,7 @@ class ezpRestControllerTest extends ezpRestTestCase
     public function testHasResponseGroup()
     {
         $r = new ezpRestRequest();
-        $r->variables['ResponseGroups'] = array( 'foo', 'bar' );
+        $r->variables['ResponseGroups'] = ['foo', 'bar'];
         $r->protocol = 'http-get';
         $controller = new ezpRestTestController( 'test', $r );
 
@@ -45,7 +45,7 @@ class ezpRestControllerTest extends ezpRestTestCase
     public function testGetResponseGroups()
     {
         $r = new ezpRestRequest();
-        $r->variables['ResponseGroups'] = array( 'foo', 'bar' );
+        $r->variables['ResponseGroups'] = ['foo', 'bar'];
         $r->protocol = 'http-get';
         $controller = new ezpRestTestController( 'test', $r );
 
@@ -66,7 +66,7 @@ class ezpRestControllerTest extends ezpRestTestCase
     public function testDefaultResponseGroups()
     {
         $r = new ezpRestRequest();
-        $r->variables['ResponseGroups'] = array( 'foo', 'bar' );
+        $r->variables['ResponseGroups'] = ['foo', 'bar'];
         $r->protocol = 'http-get';
         $controller = new ezpRestTestController( 'test', $r );
 
@@ -76,7 +76,7 @@ class ezpRestControllerTest extends ezpRestTestCase
         // Add a default response group which is not it provided ones
         // This response group should be registered as a valid response group
         $defaultResponseGroup = 'baz';
-        $setDefaultRefMethod->invoke( $controller, array( $defaultResponseGroup ) );
+        $setDefaultRefMethod->invoke( $controller, [$defaultResponseGroup] );
 
         $getResponseGroupsRefMethod = $refObj->getMethod( 'getResponseGroups' );
         $getResponseGroupsRefMethod->setAccessible( true );
@@ -94,7 +94,7 @@ class ezpRestControllerTest extends ezpRestTestCase
         $r = new ezpRestRequest();
         $r->protocol = 'http-get';
         $translation = 'eng-GB';
-        $r->contentVariables = array( 'Translation' => $translation );
+        $r->contentVariables = ['Translation' => $translation];
         $controller = new ezpRestTestController( 'test', $r );
 
         $refObj = new ReflectionObject( $controller );
@@ -112,7 +112,7 @@ class ezpRestControllerTest extends ezpRestTestCase
     {
         $r = new ezpRestRequest();
         $translation = 'eng-GB';
-        $r->contentVariables = array( 'Translation' => $translation );
+        $r->contentVariables = ['Translation' => $translation];
         $r->protocol = 'http-get';
         $controller = new ezpRestTestController( 'test', $r );
 
@@ -131,11 +131,7 @@ class ezpRestControllerTest extends ezpRestTestCase
     {
         $r = new ezpRestRequest();
         $r->protocol = 'http-get';
-        $providedContentVariables = array(
-            'Translation' => 'eng-GB',
-            'Foo' => 'FooValue',
-            'Bar' => 'BarValue'
-        );
+        $providedContentVariables = ['Translation' => 'eng-GB', 'Foo' => 'FooValue', 'Bar' => 'BarValue'];
         $r->contentVariables = $providedContentVariables;
         $controller = new ezpRestTestController( 'test', $r );
 

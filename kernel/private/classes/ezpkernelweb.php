@@ -14,45 +14,21 @@
  */
 class ezpKernelWeb implements ezpWebBasedKernelHandler
 {
-    /**
-     * @var ezpMobileDeviceDetect
-     */
-    private $mobileDeviceDetect;
+    private readonly \ezpMobileDeviceDetect $mobileDeviceDetect;
 
-    /**
-     * @var array
-     */
-    private $policyCheckViewMap;
+    private ?array $policyCheckViewMap = null;
 
-    /**
-     * @var eZModule
-     */
-    private $module;
+    private ?\eZModule $module = null;
 
-    /**
-     * @var array
-     */
-    private $warningList = array();
+    private array $warningList = [];
 
-    /**
-     * @var array
-     */
-    private $siteBasics;
+    private ?array $siteBasics = null;
 
-    /**
-     * @var string
-     */
-    private $actualRequestedURI;
+    private ?string $actualRequestedURI = null;
 
-    /**
-     * @var string
-     */
-    private $oldURI;
+    private ?\eZURI $oldURI = null;
 
-    /**
-     * @var string
-     */
-    private $completeRequestedURI;
+    private ?string $completeRequestedURI = null;
 
     /**
      * Current siteaccess data
@@ -61,20 +37,11 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
      */
     private $access;
 
-    /**
-     * @var eZURI
-     */
-    private $uri;
+    private ?\eZURI $uri = null;
 
-    /**
-     * @var array
-     */
-    private $check;
+    private array|bool|null $check = null;
 
-    /**
-     * @var array
-     */
-    private $site;
+    private ?array $site = null;
 
     /**
      * @see eZLocale::httpLocaleCode()
@@ -103,19 +70,20 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
      *
      * @var array
      */
-    protected $settings = array();
+    protected $settings = [];
 
     /**
      * Constructs an ezpKernel instance
      */
-    public function __construct( array $settings = array() )
+    public function __construct( array $settings = [] )
     {
+        $i18nSettings = [];
         if ( isset( $settings['injected-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
@@ -124,33 +92,29 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
         if ( isset( $settings['injected-merge-settings'] ) )
         {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ( $settings['injected-merge-settings'] as $keySetting => $injectedSetting )
             {
-                list( $file, $section, $setting ) = explode( '/', $keySetting );
+                [$file, $section, $setting] = explode( '/', (string) $keySetting );
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
             }
             // Those settings override anything else in local .ini files and their overrides
             eZINI::injectMergeSettings( $injectedSettings );
         }
 
-        $this->settings = $settings + array(
-            'siteaccess'            => null,
-            'use-exceptions'        => false,
-            'session'               => null,
-            'service-container'     => null,
-        );
+        $this->settings = $settings + ['siteaccess'            => null, 'use-exceptions'        => false, 'session'               => null, 'service-container'     => null];
         unset( $settings, $injectedSettings, $file, $section, $setting, $keySetting, $injectedSetting );
 
         require_once __DIR__ . '/global_functions.php';
         $this->setUseExceptions( $this->settings['use-exceptions'] );
 
-        $GLOBALS['eZSiteBasics'] = array(
+        $GLOBALS['eZSiteBasics'] = [
             'external-css' => true,
             'show-page-layout' => true,
             'module-run-required' => true,
             'policy-check-required' => true,
-            'policy-check-omit-list' => array(),// List of module names which will skip policy checking
+            'policy-check-omit-list' => [],
+            // List of module names which will skip policy checking
             'url-translator-allowed' => true,
             'validity-check-required' => false,
             'user-object-required' => true,
@@ -158,19 +122,15 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             'db-required' => false,
             'no-cache-adviced' => false,
             'site-design-override' => false,
-            'module-repositories' => array(),// List of directories to search for modules
-        );
+            'module-repositories' => [],
+        ];
         $this->siteBasics =& $GLOBALS['eZSiteBasics'];
 
         // Reads settings from i18n.ini and passes them to eZTextCodec.
-        list(
-            $i18nSettings['internal-charset'],
-            $i18nSettings['http-charset'],
-            $i18nSettings['mbstring-extension']
-        ) = eZINI::instance( 'i18n.ini' )->variableMulti(
+        [$i18nSettings['internal-charset'], $i18nSettings['http-charset'], $i18nSettings['mbstring-extension']] = eZINI::instance( 'i18n.ini' )->variableMulti(
             'CharacterSettings',
-                array( 'Charset', 'HTTPCharset', 'MBStringExtension' ),
-                array( false, false, 'enabled' )
+                ['Charset', 'HTTPCharset', 'MBStringExtension'],
+                [false, false, 'enabled']
         );
 
         eZTextCodec::updateSettings( $i18nSettings );// @todo Change so code only supports utf-8 in 5.0?
@@ -188,16 +148,12 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             date_default_timezone_set( $timezone );
         }
 
-        list( $iniFilePermission, $iniDirPermission ) =
-            $ini->variableMulti( 'FileSettings', array( 'StorageFilePermissions', 'StorageDirPermissions' ) );
+        [$iniFilePermission, $iniDirPermission] =
+            $ini->variableMulti( 'FileSettings', ['StorageFilePermissions', 'StorageDirPermissions'] );
 
         // OPTIMIZATION:
         // Sets permission array as global variable, this avoids the eZCodePage include
-        $GLOBALS['EZCODEPAGEPERMISSIONS'] = array(
-            'file_permission' => octdec( $iniFilePermission ),
-            'dir_permission'  => octdec( $iniDirPermission ),
-            'var_directory'   => eZSys::cacheDirectory()
-        );
+        $GLOBALS['EZCODEPAGEPERMISSIONS'] = ['file_permission' => octdec( (string) $iniFilePermission ), 'dir_permission'  => octdec( (string) $iniDirPermission ), 'var_directory'   => eZSys::cacheDirectory()];
         unset( $i18nSettings, $timezone, $iniFilePermission, $iniDirPermission );
 
         eZExecution::addCleanupHandler(
@@ -229,7 +185,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         if ( $this->hasServiceContainer() && $this->getServiceContainer()->has( 'request' ) )
         {
             eZSys::init(
-                basename( $this->getServiceContainer()->get( 'request' )->server->get( 'SCRIPT_FILENAME' ) ),
+                basename( (string) $this->getServiceContainer()->get( 'request' )->server->get( 'SCRIPT_FILENAME' ) ),
                 $ini->variable( 'SiteAccessSettings', 'ForceVirtualHost' ) === 'true'
             );
         }
@@ -246,14 +202,12 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         // Extension check end
 
         // Use injected siteaccess if available or match it internally.
-        $this->access = isset( $this->settings['siteaccess'] ) ?
-            $this->settings['siteaccess'] :
-            eZSiteAccess::match(
-                eZURI::instance( eZSys::requestURI() ),
-                eZSys::hostname(),
-                eZSys::serverPort(),
-                eZSys::indexFile()
-            )
+        $this->access = $this->settings['siteaccess'] ?? eZSiteAccess::match(
+            eZURI::instance( eZSys::requestURI() ),
+            eZSys::hostname(),
+            eZSys::serverPort(),
+            eZSys::indexFile()
+        )
         ;
 
         eZSiteAccess::change( $this->access );
@@ -324,16 +278,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         // send header information
         foreach (
             eZHTTPHeader::headerOverrideArray( $this->uri ) +
-            array(
-                'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                'Last-Modified' => gmdate( 'D, d M Y H:i:s' ) . ' GMT',
-                'Cache-Control' => 'no-cache, must-revalidate',
-                'Pragma' => 'no-cache',
-                'X-Powered-By' => eZPublishSDK::EDITION,
-                'Content-Type' => 'text/html; charset=' . $this->httpCharset,
-                'Served-by' => isset( $_SERVER["SERVER_NAME"] ) ? $_SERVER['SERVER_NAME'] : null,
-                'Content-language' => $this->languageCode
-              ) as $key => $value
+            ['Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT', 'Last-Modified' => gmdate( 'D, d M Y H:i:s' ) . ' GMT', 'Cache-Control' => 'no-cache, must-revalidate', 'Pragma' => 'no-cache', 'X-Powered-By' => eZPublishSDK::EDITION, 'Content-Type' => 'text/html; charset=' . $this->httpCharset, 'Served-by' => isset( $_SERVER["SERVER_NAME"] ) ? $_SERVER['SERVER_NAME'] : null, 'Content-language' => $this->languageCode] as $key => $value
         )
         {
             header( $key . ': ' . $value );
@@ -368,12 +313,12 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 // Only set the cookie if it doesnt exist. This way we are not constantly sending the set request in the headers.
                 if ( !isset( $_COOKIE['is_logged_in'] ) || $_COOKIE['is_logged_in'] !== 'true' )
                 {
-                    setcookie( 'is_logged_in', 'true', 0, $cookiePath );
+                    setcookie( 'is_logged_in', 'true', ['expires' => 0, 'path' => $cookiePath] );
                 }
             }
             else if ( isset( $_COOKIE['is_logged_in'] ) )
             {
-                setcookie( 'is_logged_in', false, 0, $cookiePath );
+                setcookie( 'is_logged_in', false, ['expires' => 0, 'path' => $cookiePath] );
             }
         }
 
@@ -410,7 +355,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
             // Update last accessed view page
             if ( $currentURI != $lastAccessedViewURI &&
-                 !in_array( $uiContextName, array( 'edit', 'administration', 'ajax', 'browse', 'authentication' ) ) )
+                 !in_array( $uiContextName, ['edit', 'administration', 'ajax', 'browse', 'authentication'] ) )
             {
                 $http->setSessionVariable( "LastAccessesURI", $currentURI );
             }
@@ -426,7 +371,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         if ( !is_array( $moduleResult ) )
         {
             eZDebug::writeError( 'Module did not return proper result: ' . $this->module->attribute( 'name' ), 'index.php' );
-            $moduleResult = array();
+            $moduleResult = [];
             $moduleResult['content'] = false;
         }
 
@@ -483,30 +428,14 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 if ( isset( $GLOBALS['eZDebugError'] ) && $GLOBALS['eZDebugError'] )
                 {
                     eZAppendWarningItem(
-                        array(
-                            'error' => array(
-                                'type' => 'error',
-                                'number' => 1 ,
-                                'count' => $GLOBALS['eZDebugErrorCount']
-                            ),
-                            'identifier' => 'ezdebug-first-error',
-                            'text' => ezpI18n::tr( 'index.php', 'Some errors occurred, see debug for more information.' )
-                        )
+                        ['error' => ['type' => 'error', 'number' => 1, 'count' => $GLOBALS['eZDebugErrorCount']], 'identifier' => 'ezdebug-first-error', 'text' => ezpI18n::tr( 'index.php', 'Some errors occurred, see debug for more information.' )]
                     );
                 }
 
                 if ( isset( $GLOBALS['eZDebugWarning'] ) && $GLOBALS['eZDebugWarning'] )
                 {
                     eZAppendWarningItem(
-                        array(
-                            'error' => array(
-                                'type' => 'warning',
-                                'number' => 1,
-                                'count' => $GLOBALS['eZDebugWarningCount']
-                            ),
-                            'identifier' => 'ezdebug-first-warning',
-                            'text' => ezpI18n::tr( 'index.php', 'Some general warnings occured, see debug for more information.' )
-                        )
+                        ['error' => ['type' => 'warning', 'number' => 1, 'count' => $GLOBALS['eZDebugWarningCount']], 'identifier' => 'ezdebug-first-warning', 'text' => ezpI18n::tr( 'index.php', 'Some general warnings occured, see debug for more information.' )]
                     );
                 }
             }
@@ -530,7 +459,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             $resource = "design:";
             if ( is_string( $this->siteBasics['show-page-layout'] ) )
             {
-                if ( strpos( $this->siteBasics['show-page-layout'], ":" ) !== false )
+                if ( str_contains( $this->siteBasics['show-page-layout'], ":" ) )
                 {
                     $resource = "";
                 }
@@ -584,7 +513,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
         $this->shutdown();
 
-        return new ezpKernelResult( $content, array( 'module_result' => $moduleResult ) );
+        return new ezpKernelResult( $content, ['module_result' => $moduleResult] );
     }
 
     /**
@@ -592,6 +521,8 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
      */
     protected function dispatchLoop()
     {
+        $tmp_uri = null;
+        $moduleResult = [];
         $ini = eZINI::instance();
 
         // Start the module loop
@@ -686,7 +617,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                     && !isset( $this->module->Module['function']['script'] )
                 )
                 {
-                    $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_VIEW_NOT_FOUND, 'kernel', array( "check" => $moduleCheck ) );
+                    $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_VIEW_NOT_FOUND, 'kernel', ["check" => $moduleCheck] );
                     $runModuleView = false;
                     $this->siteBasics['policy-check-required'] = false;
                     $omitPolicyCheck = true;
@@ -746,7 +677,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
 
                     if ( $hasAccessToSite )
                     {
-                        $accessParams = array();
+                        $accessParams = [];
                         $moduleAccessAllowed = $currentUser->hasAccessToView( $this->module, $functionName, $accessParams );
                         if ( isset( $accessParams['accessList'] ) )
                         {
@@ -764,11 +695,8 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                             {
                                 $moduleResult = $this->module->run(
                                     'login',
-                                    array(),
-                                    array(
-                                        'SiteAccessAllowed' => false,
-                                        'SiteAccessName' => $this->access['name']
-                                    )
+                                    [],
+                                    ['SiteAccessAllowed' => false, 'SiteAccessName' => $this->access['name']]
                                 );
                                 $runModuleView = false;
                             }
@@ -782,7 +710,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 {
                     if ( $objectHasMovedError == true )
                     {
-                        $moduleResult = $this->module->handleError( eZError::KERNEL_MOVED, 'kernel', array( 'new_location' => $objectHasMovedURI ) );
+                        $moduleResult = $this->module->handleError( eZError::KERNEL_MOVED, 'kernel', ['new_location' => $objectHasMovedURI] );
                     }
                     else if ( !$moduleAccessAllowed )
                     {
@@ -792,7 +720,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                         }
 
                         if ( isset( $accessList ) )
-                            $moduleResult = $this->module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array( 'AccessList' => $accessList ) );
+                            $moduleResult = $this->module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', ['AccessList' => $accessList] );
                         else
                             $moduleResult = $this->module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel' );
 
@@ -818,10 +746,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                             $moduleResult = $this->module->handleError(
                                 eZError::KERNEL_MODULE_VIEW_NOT_FOUND,
                                 'kernel',
-                                array(
-                                    'module' => $moduleName,
-                                    'view' => $functionName
-                                )
+                                ['module' => $moduleName, 'view' => $functionName]
                             );
                     }
                 }
@@ -831,7 +756,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 eZDebug::writeError( "Undefined module: $moduleName", "index" );
                 $this->module = new eZModule( "", "", $moduleName );
                 $GLOBALS['eZRequestedModule'] = $this->module;
-                $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_NOT_FOUND, 'kernel', array( 'module' => $moduleName ) );
+                $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_NOT_FOUND, 'kernel', ['module' => $moduleName] );
             }
             else
             {
@@ -840,7 +765,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 else
                     eZDebug::writeError( "Module '" . $moduleCheck['module'] . "' is disabled", "index" );
                 $GLOBALS['eZRequestedModule'] = $this->module = new eZModule( "", "", $moduleCheck['module'] );
-                $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_DISABLED, 'kernel', array( 'check' => $moduleCheck ) );
+                $moduleResult = $this->module->handleError( eZError::KERNEL_MODULE_DISABLED, 'kernel', ['check' => $moduleCheck] );
             }
             $this->siteBasics['module-run-required'] = false;
             if ( isset( $moduleResult['rerun_uri'] ) )
@@ -871,7 +796,6 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
     /**
      * Returns the map for policy check view
      *
-     * @param array $policyCheckOmitList
      *
      * @return array
      */
@@ -880,15 +804,15 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         if ( $this->policyCheckViewMap !== null )
             return $this->policyCheckViewMap;
 
-        $this->policyCheckViewMap = array();
+        $this->policyCheckViewMap = [];
         foreach ( $policyCheckOmitList as $omitItem )
         {
-            $items = explode( '/', $omitItem );
+            $items = explode( '/', (string) $omitItem );
             if ( count( $items ) > 1 )
             {
                 $module = $items[0];
                 if ( !isset( $this->policyCheckViewMap[$module] ) )
-                    $this->policyCheckViewMap[$module] = array();
+                    $this->policyCheckViewMap[$module] = [];
                 $this->policyCheckViewMap[$module][$items[1]] = true;
             }
         }
@@ -937,27 +861,27 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             if ( eZURLAliasML::translate( $translatedModuleRedirectUri, true ) )
             {
                 $moduleRedirectUri = $translatedModuleRedirectUri;
-                if ( strlen( $moduleRedirectUri ) > 0 && $moduleRedirectUri[0] !== '/' )
+                if ( strlen( (string) $moduleRedirectUri ) > 0 && $moduleRedirectUri[0] !== '/' )
                     $moduleRedirectUri = '/' . $moduleRedirectUri;
             }
         }
 
-        if ( preg_match( '#^(\w+:)|^//#', $moduleRedirectUri ) )
+        if ( preg_match( '#^(\w+:)|^//#', (string) $moduleRedirectUri ) )
         {
             $redirectURI = $moduleRedirectUri;
         }
         else
         {
             $leftSlash = strlen( $redirectURI ) > 0 && $redirectURI[strlen( $redirectURI ) - 1] === '/';
-            $rightSlash = strlen( $moduleRedirectUri ) > 0 && $moduleRedirectUri[0] === '/';
+            $rightSlash = strlen( (string) $moduleRedirectUri ) > 0 && $moduleRedirectUri[0] === '/';
 
             if ( !$leftSlash && !$rightSlash ) // Both are without a slash, so add one
                 $moduleRedirectUri = '/' . $moduleRedirectUri;
             else if ( $leftSlash && $rightSlash ) // Both are with a slash, so we remove one
-                $moduleRedirectUri = substr( $moduleRedirectUri, 1 );
+                $moduleRedirectUri = substr( (string) $moduleRedirectUri, 1 );
 
             // In some cases $moduleRedirectUri can already contain $redirectURI (including the siteaccess).
-            if ( !empty( $redirectURI ) && strpos( $moduleRedirectUri, $redirectURI ) === 0 )
+            if ( !empty( $redirectURI ) && str_starts_with((string) $moduleRedirectUri, $redirectURI) )
             {
                 $redirectURI = $moduleRedirectUri;
             }
@@ -986,30 +910,14 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
                 if ( isset( $GLOBALS['eZDebugError'] ) && $GLOBALS['eZDebugError'] )
                 {
                     eZAppendWarningItem(
-                        array(
-                            'error' => array(
-                                'type' => 'error',
-                                'number' => 1,
-                                'count' => $GLOBALS['eZDebugErrorCount']
-                            ),
-                            'identifier' => 'ezdebug-first-error',
-                            'text' => ezpI18n::tr( 'index.php', 'Some errors occurred, see debug for more information.' )
-                        )
+                        ['error' => ['type' => 'error', 'number' => 1, 'count' => $GLOBALS['eZDebugErrorCount']], 'identifier' => 'ezdebug-first-error', 'text' => ezpI18n::tr( 'index.php', 'Some errors occurred, see debug for more information.' )]
                     );
                 }
 
                 if ( isset( $GLOBALS['eZDebugWarning'] ) && $GLOBALS['eZDebugWarning'] )
                 {
                     eZAppendWarningItem(
-                        array(
-                            'error' => array(
-                                'type' => 'warning',
-                                'number' => 1,
-                                'count' => $GLOBALS['eZDebugWarningCount']
-                            ),
-                            'identifier' => 'ezdebug-first-warning',
-                            'text' => ezpI18n::tr( 'index.php', 'Some general warnings occured, see debug for more information.' )
-                        )
+                        ['error' => ['type' => 'warning', 'number' => 1, 'count' => $GLOBALS['eZDebugWarningCount']], 'identifier' => 'ezdebug-first-warning', 'text' => ezpI18n::tr( 'index.php', 'Some general warnings occured, see debug for more information.' )]
                     );
                 }
             }
@@ -1026,7 +934,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             eZExecution::cleanExit();
         }
 
-        return eZHTTPTool::redirect( $redirectURI, array(), $this->module->redirectStatus(), true, true );
+        return eZHTTPTool::redirect( $redirectURI, [], $this->module->redirectStatus(), true, true );
     }
 
     /**
@@ -1083,7 +991,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         $GLOBALS['eZRequestedURI'] = $this->uri;
 
         // Be able to do general events early in process
-        ezpEvent::getInstance()->notify( 'request/preinput', array( $this->uri ) );
+        ezpEvent::getInstance()->notify( 'request/preinput', [$this->uri] );
 
         // Initialize module loading
         $this->siteBasics['module-repositories'] = eZModule::activeModuleRepositories();
@@ -1096,7 +1004,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         // TODO: Move validity check in the constructor? Setup is not meant to be launched at each (sub)request is it?
         if ( $ini->variable( 'SiteAccessSettings', 'CheckValidity' ) === 'true' )
         {
-            $this->check = array( 'module' => 'setup', 'function' => 'init' );
+            $this->check = ['module' => 'setup', 'function' => 'init'];
             // Turn off some features that won't bee needed yet
             $this->siteBasics['policy-check-omit-list'][] = 'setup';
             $this->siteBasics['show-page-layout'] = $ini->variable( 'SetupSettings', 'PageLayout' );
@@ -1104,7 +1012,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             $this->siteBasics['session-required'] = $this->siteBasics['user-object-required'] = false;
             $this->siteBasics['db-required'] = $this->siteBasics['no-cache-adviced'] = $this->siteBasics['url-translator-allowed'] = false;
             $this->siteBasics['site-design-override'] = $ini->variable( 'SetupSettings', 'OverrideSiteDesign' );
-            $this->access = eZSiteAccess::change( array( 'name' => 'setup', 'type' => eZSiteAccess::TYPE_URI ) );
+            $this->access = eZSiteAccess::change( ['name' => 'setup', 'type' => eZSiteAccess::TYPE_URI] );
             eZTranslatorManager::enableDynamicTranslations();
         }
 
@@ -1155,13 +1063,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         // if $this->siteBasics['db-required'], open a db connection and check that db is connected
         if ( $this->siteBasics['db-required'] && !eZDB::instance()->isConnected() )
         {
-            $this->warningList[] = array(
-                'error' => array(
-                    'type' => 'kernel',
-                    'number' => eZError::KERNEL_NO_DB_CONNECTION
-                ),
-                'text' => 'No database connection could be made, the system might not behave properly.'
-            );
+            $this->warningList[] = ['error' => ['type' => 'kernel', 'number' => eZError::KERNEL_NO_DB_CONNECTION], 'text' => 'No database connection could be made, the system might not behave properly.'];
         }
 
         // pre check, RequireUserLogin & FORCE_LOGIN related so needs to be after session init
@@ -1170,12 +1072,12 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
             $this->check = eZUserLoginHandler::preCheck( $this->siteBasics, $this->uri );
         }
 
-        ezpEvent::getInstance()->notify( 'request/input', array( $this->uri ) );
+        ezpEvent::getInstance()->notify( 'request/input', [$this->uri] );
 
         // Initialize with locale settings
         // TODO: Move to constructor? Is it relevant to init the locale/charset for each (sub)requests?
         $this->languageCode = eZLocale::instance()->httpLocaleCode();
-        $phpLocale = trim( $ini->variable( 'RegionalSettings', 'SystemLocale' ) );
+        $phpLocale = trim( (string) $ini->variable( 'RegionalSettings', 'SystemLocale' ) );
         if ( $phpLocale != '' )
         {
             setlocale( LC_ALL, explode( ',', $phpLocale ) );
@@ -1184,14 +1086,7 @@ class ezpKernelWeb implements ezpWebBasedKernelHandler
         $this->httpCharset = eZTextCodec::httpCharset();
 
         // TODO: are these parameters supposed to vary across potential sub-requests?
-        $this->site = array(
-            'title' => $ini->variable( 'SiteSettings', 'SiteName' ),
-            'design' => $ini->variable( 'DesignSettings', 'SiteDesign' ),
-            'http_equiv' => array(
-                'Content-Type' => 'text/html; charset=' . $this->httpCharset,
-                'Content-language' => $this->languageCode
-            )
-        );
+        $this->site = ['title' => $ini->variable( 'SiteSettings', 'SiteName' ), 'design' => $ini->variable( 'DesignSettings', 'SiteDesign' ), 'http_equiv' => ['Content-Type' => 'text/html; charset=' . $this->httpCharset, 'Content-language' => $this->languageCode]];
 
         // Read role settings
         $this->siteBasics['policy-check-omit-list'] = array_merge(

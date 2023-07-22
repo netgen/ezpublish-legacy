@@ -38,7 +38,7 @@ class eZPersistentObject
      * @access protected
      * @var bool
      */
-    public $PersistentDataDirty;
+    public $PersistentDataDirty = false;
 
     /**
      * Initializes the object with the $row.
@@ -51,7 +51,6 @@ class eZPersistentObject
      */
     public function __construct( $row = null )
     {
-        $this->PersistentDataDirty = false;
         if ( is_numeric( $row ) )
             $row = $this->fetch( $row, false );
         $this->fill( $row );
@@ -89,7 +88,7 @@ class eZPersistentObject
             {
                 $item = $item['name'];
             }
-            $this->$item = isset( $row[$key] ) ? $row[$key] : null;
+            $this->$item = $row[$key] ?? null;
         }
 
         return true;
@@ -102,8 +101,6 @@ class eZPersistentObject
      *
      * @todo Change the actual access to protected instead of just marking it as such
      * @access protected
-     * @param eZDBInterface $db
-     * @param array $fieldDefs
      * @param array $fields
      * @return void
      */
@@ -112,7 +109,7 @@ class eZPersistentObject
         if ( !$db->useShortNames() || !$fields )
             return;
 
-        $short_fields_names = array();
+        $short_fields_names = [];
         foreach ( $fields as $key => $val )
         {
             if( is_numeric( $key ) ) // $fields is not an associative array
@@ -146,8 +143,6 @@ class eZPersistentObject
      * with long names if there is an alias in $fieldDefs.
      *
      * @access protected
-     * @param eZDBInterface $db
-     * @param array $fieldDefs
      * @param array $fields
      * @return void
      */
@@ -190,8 +185,8 @@ class eZPersistentObject
         {
             $field = '*';
         }
-        $customFields = array( array( 'operation' => 'COUNT( ' . $field . ' )', 'name' => 'row_count' ) );
-        $rows = eZPersistentObject::fetchObjectList( $def, array(), $conds, array(), null, false, false, $customFields );
+        $customFields = [['operation' => 'COUNT( ' . $field . ' )', 'name' => 'row_count']];
+        $rows = eZPersistentObject::fetchObjectList( $def, [], $conds, [], null, false, false, $customFields );
         return $rows[0]['row_count'];
     }
 
@@ -213,7 +208,7 @@ class eZPersistentObject
     public static function fetchObject( $def, $field_filters, $conds, $asObject = true, $grouping = null, $custom_fields = null )
     {
         $rows = eZPersistentObject::fetchObjectList( $def, $field_filters, $conds,
-                                                      array(), null, $asObject,
+                                                      [], null, $asObject,
                                                       $grouping, $custom_fields );
         if ( $rows )
             return $rows[0];
@@ -242,7 +237,7 @@ class eZPersistentObject
         $keys = $def["keys"];
         if ( !is_array( $conditions ) )
         {
-            $conditions = array();
+            $conditions = [];
             foreach ( $keys as $key )
             {
                 $value = $this->attribute( $key );
@@ -344,9 +339,9 @@ class eZPersistentObject
         $fields = $def["fields"];
         $keys = $def["keys"];
         $table = $def["name"];
-        $relations = isset( $def["relations"] ) ? $def["relations"] : null;
+        $relations = $def["relations"] ?? null;
         $insert_object = false;
-        $exclude_fields = array();
+        $exclude_fields = [];
         foreach ( $keys as $key )
         {
             $value = $obj->attribute( $key );
@@ -364,9 +359,9 @@ class eZPersistentObject
         // If we filter out some of the fields we need to intersect it with $use_fields
         if ( is_array( $fieldFilters ) )
             $use_fields = array_intersect( $use_fields, $fieldFilters );
-        $doNotEscapeFields = array();
-        $changedValueFields = array();
-        $numericDataTypes = array( 'integer', 'float', 'double' );
+        $doNotEscapeFields = [];
+        $changedValueFields = [];
+        $numericDataTypes = ['integer', 'float', 'double'];
 
         foreach ( $use_fields as $field_name  )
         {
@@ -413,7 +408,7 @@ class eZPersistentObject
             {
                 $obj->setAttribute( $field_name, $db->truncateString( $value, $field_def['max_length'], $field_name ) );
             }
-            $bindDataTypes = array( 'text' );
+            $bindDataTypes = ['text'];
             if ( $db->bindingType() != eZDBInterface::BINDING_NO &&
                  $db->countStringSize( $value ) > 2000 &&
                  is_array( $field_def ) &&
@@ -427,7 +422,7 @@ class eZPersistentObject
             }
 
         }
-        $key_conds = array();
+        $key_conds = [];
         foreach ( $keys as $key )
         {
             $value = $obj->attribute( $key );
@@ -445,16 +440,16 @@ class eZPersistentObject
                     $important_keys[] = $relation;
             }
         }
-        if ( count( $important_keys ) == 0 && !$useFieldFilters )
+        if ( (is_countable($important_keys) ? count( $important_keys ) : 0) == 0 && !$useFieldFilters )
         {
             $insert_object = true;
         }
         else if ( !$insert_object )
         {
             $rows = eZPersistentObject::fetchObjectList( $def, $keys, $key_conds,
-                                                          array(), null, false,
+                                                          [], null, false,
                                                           null, null );
-            if ( count( $rows ) == 0 )
+            if ( count( (array) $rows ) == 0 )
             {
                 /* If we only want to update some fields in a record
                  * and that records does not exist, then we should do nothing, only return.
@@ -482,7 +477,7 @@ class eZPersistentObject
             else
                 $field_text = implode( ', ', $use_field_names );
 
-            $use_values_hash = array();
+            $use_values_hash = [];
             $escapeFields = array_diff( $use_fields, $doNotEscapeFields );
 
             foreach ( $escapeFields as $key )
@@ -524,7 +519,7 @@ class eZPersistentObject
             {
                 $use_values_hash[$key] = $changedValueFields[$key];
             }
-            $use_values = array();
+            $use_values = [];
             foreach ( $use_field_names as $field )
                 $use_values[] = $use_values_hash[$field];
             unset( $use_values_hash );
@@ -551,10 +546,10 @@ class eZPersistentObject
                 // If we filter out some of the fields we need to intersect it with $use_fields
                 if ( is_array( $fieldFilters ) )
                     $use_fields = array_intersect( $use_fields, $fieldFilters );
-                $use_field_names = array();
+                $use_field_names = [];
                 foreach ( $use_fields as $key )
                 {
-                    if ( $db->useShortNames() && is_array( $fields[$key] ) && array_key_exists( 'short_name', $fields[$key] ) && strlen( $fields[$key]['short_name'] ) > 0 )
+                    if ( $db->useShortNames() && is_array( $fields[$key] ) && array_key_exists( 'short_name', $fields[$key] ) && strlen( (string) $fields[$key]['short_name'] ) > 0 )
                         $use_field_names[$key] = $fields[$key]['short_name'];
                     else
                         $use_field_names[$key] = $key;
@@ -675,24 +670,10 @@ class eZPersistentObject
                         }
                         else
                         {
-                          switch ( $cond[0] )
-                          {
-                              case '>=':
-                              case '<=':
-                              case '<':
-                              case '>':
-                              case '=':
-                              case '<>':
-                              case '!=':
-                              case 'like':
-                                  {
-                                      $where_text .= $db->escapeString( $id ) . " " . $cond[0] . " '" . $db->escapeString( $cond[1] ) . "'";
-                                  } break;
-                              default:
-                                  {
-                                      eZDebug::writeError( "Conditional operator '$cond[0]' is not supported.", __METHOD__ );
-                                  } break;
-                          }
+                          match ($cond[0]) {
+                              '>=', '<=', '<', '>', '=', '<>', '!=', 'like' => $where_text .= $db->escapeString( $id ) . " " . $cond[0] . " '" . $db->escapeString( $cond[1] ) . "'",
+                              default => eZDebug::writeError( "Conditional operator '$cond[0]' is not supported.", __METHOD__ ),
+                          };
 
                         }
                     }
@@ -863,7 +844,7 @@ class eZPersistentObject
         $sort_text = "";
         if ( $sorts !== false and ( isset( $def["sort"] ) or is_array( $sorts ) ) )
         {
-            $sort_list = array();
+            $sort_list = [];
             if ( is_array( $sorts ) )
             {
                 $sort_list = $sorts;
@@ -872,7 +853,7 @@ class eZPersistentObject
             {
                 $sort_list = $def["sort"];
             }
-            if ( count( $sort_list ) > 0 )
+            if ( (is_countable($sort_list) ? count( $sort_list ) : 0) > 0 )
             {
                 $sort_text = " ORDER BY ";
                 $i = 0;
@@ -892,10 +873,10 @@ class eZPersistentObject
         $grouping_text = "";
         if ( isset( $def["grouping"] ) or ( is_array( $grouping ) and count( $grouping ) > 0 ) )
         {
-            $grouping_list = isset( $def["grouping"] ) ? $def["grouping"] : array();
+            $grouping_list = $def["grouping"] ?? [];
             if ( is_array( $grouping ) )
                 $grouping_list = $grouping;
-            if ( count( $grouping_list ) > 0 )
+            if ( (is_countable($grouping_list) ? count( $grouping_list ) : 0) > 0 )
             {
                 $grouping_text = " GROUP BY ";
                 $i = 0;
@@ -909,7 +890,7 @@ class eZPersistentObject
             }
         }
 
-        $db_params = array();
+        $db_params = [];
         if ( is_array( $limit ) )
         {
             if ( isset( $limit["offset"] ) )
@@ -968,7 +949,7 @@ class eZPersistentObject
 
         if ( $asObject )
         {
-            $objects = array();
+            $objects = [];
             if ( is_array( $rows ) )
             {
                 foreach ( $rows as &$row )
@@ -1064,9 +1045,7 @@ class eZPersistentObject
         $db = eZDB::instance();
         $table = $def["name"];
         $keys = $def["keys"];
-
-        reset( $orderField );
-        $order_id = key( $orderField );
+        $order_id = array_key_first( $orderField );
         $order_val = $orderField[$order_id];
         if ( $down )
         {
@@ -1080,16 +1059,15 @@ class eZPersistentObject
             $order_type = "desc";
             $order_add = 1;
         }
-        $fields = array_merge( $keys, array( $order_id ) );
+        $fields = array_merge( $keys, [$order_id] );
         $rows = eZPersistentObject::fetchObjectList( $def,
                                                       $fields,
                                                       array_merge( $conditions,
-                                                                   array( $order_id => array( $order_operator,
-                                                                                              $order_val ) ) ),
-                                                      array( $order_id => $order_type ),
-                                                      array( "length" => 2 ),
+                                                                   [$order_id => [$order_operator, $order_val]] ),
+                                                      [$order_id => $order_type],
+                                                      ["length" => 2],
                                                       false );
-        if ( count( $rows ) == 2 )
+        if ( count( (array) $rows ) == 2 )
         {
             $swapSQL1 = eZPersistentObject::swapRow( $table, $keys, $order_id, $rows, 1, 0 );
             $swapSQL2 = eZPersistentObject::swapRow( $table, $keys, $order_id, $rows, 0, 1 );
@@ -1103,8 +1081,8 @@ class eZPersistentObject
             $tmp = eZPersistentObject::fetchObjectList( $def,
                                                          $fields,
                                                          $conditions,
-                                                         array( $order_id => $order_type ),
-                                                         array( "length" => 1 ),
+                                                         [$order_id => $order_type],
+                                                         ["length" => 1],
                                                          false );
             $where_text = eZPersistentObject::conditionTextByRow( $keys, $rows[0] );
             $db->query( "UPDATE $table SET $order_id='" . ( $tmp[0][$order_id] + $order_add ) .
@@ -1158,7 +1136,7 @@ class eZPersistentObject
      */
     public static function definition()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -1170,12 +1148,12 @@ class eZPersistentObject
     public static function escapeArray( $array )
     {
         $db = eZDB::instance();
-        $out = array();
+        $out = [];
         foreach( $array as $key => $value )
         {
             if ( is_array( $value ) )
             {
-                $tmp = array();
+                $tmp = [];
                 foreach( $value as $valueItem )
                 {
                     $tmp[] = $db->escapeString( $valueItem );
@@ -1217,8 +1195,8 @@ class eZPersistentObject
         foreach( $updateFields as $field => $value )
         {
             $fieldDef = $fields[ $field ];
-            $numericDataTypes = array( 'integer', 'float', 'double' );
-            if ( strlen( $value ) == 0 &&
+            $numericDataTypes = ['integer', 'float', 'double'];
+            if ( strlen( (string) $value ) == 0 &&
                  is_array( $fieldDef ) &&
                  in_array( $fieldDef['datatype'], $numericDataTypes  ) &&
                  array_key_exists( 'default', $fieldDef ) &&
@@ -1227,7 +1205,7 @@ class eZPersistentObject
                 $value = $fieldDef[ 'default' ];
             }
 
-            $bindDataTypes = array( 'text' );
+            $bindDataTypes = ['text'];
             if ( $db->bindingType() != eZDBInterface::BINDING_NO &&
                  $db->countStringSize( $value ) > 2000 &&
                  is_array( $fieldDef ) &&
@@ -1287,9 +1265,9 @@ class eZPersistentObject
         $def = $this->definition();
         $attrs = array_keys( $def["fields"] );
         if ( isset( $def["function_attributes"] ) )
-            $attrs = array_unique( array_merge( $attrs, array_keys( $def["function_attributes"] ) ) );
+            $attrs = array_unique( [...$attrs, ...array_keys( $def["function_attributes"] )] );
         if ( isset( $def["functions"] ) )
-            $attrs = array_unique( array_merge( $attrs, array_keys( $def["functions"] ) ) );
+            $attrs = array_unique( [...$attrs, ...array_keys( $def["functions"] )] );
         return $attrs;
     }
 
@@ -1322,7 +1300,7 @@ class eZPersistentObject
     public function attribute( $attr, $noFunction = false )
     {
         $def = $this->definition();
-        $attrFunctions = isset( $def["function_attributes"] ) ? $def["function_attributes"] : null;
+        $attrFunctions = $def["function_attributes"] ?? null;
         if ( $noFunction === false && isset( $attrFunctions[$attr] ) )
         {
             $functionName = $attrFunctions[$attr];
@@ -1331,7 +1309,7 @@ class eZPersistentObject
                 return $this->$functionName();
             }
 
-            eZDebug::writeError( 'Could not find function : "' . get_class( $this ) . '::' . $functionName . '()".', __METHOD__ );
+            eZDebug::writeError( 'Could not find function : "' . static::class . '::' . $functionName . '()".', __METHOD__ );
             return null;
         }
 
@@ -1368,7 +1346,7 @@ class eZPersistentObject
     {
         $def = $this->definition();
         $fields = $def["fields"];
-        $functions = isset( $def["set_functions"] ) ? $def["set_functions"] : null;
+        $functions = $def["set_functions"] ?? null;
         if ( isset( $fields[$attr] ) )
         {
             $attrName = $fields[$attr];

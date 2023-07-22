@@ -9,24 +9,21 @@
  */
 class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
 {
-    const FILTER_TYPE_PREROUTING = 'PreRouting';
-    const FILTER_TYPE_REQUEST = 'Request';
-    const FILTER_TYPE_RESULT = 'Result';
-    const FILTER_TYPE_RESPONSE = 'Response';
+    final public const FILTER_TYPE_PREROUTING = 'PreRouting';
+    final public const FILTER_TYPE_REQUEST = 'Request';
+    final public const FILTER_TYPE_RESULT = 'Result';
+    final public const FILTER_TYPE_RESPONSE = 'Response';
 
-    const INDEX_FILE = 'index_rest.php';
+    final public const INDEX_FILE = 'index_rest.php';
 
     /**
      * @var string The path prefix for signifying HTTP calls to the REST interface. Can be empty in case of an api host.
      */
     public $apiPrefix;
 
-    private $responseWriterClass;
-
-    public function __construct( $responseWriterClass = null )
+    public function __construct( private $responseWriterClass = null )
     {
         $this->apiPrefix = eZINI::instance( 'rest.ini' )->variable( 'System', 'ApiPrefix' );
-        $this->responseWriterClass = $responseWriterClass;
     }
 
     public function createFatalRedirectRequest( ezcMvcRequest $request, ezcMvcResult $result, Exception $e )
@@ -41,7 +38,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
     public function createRequestParser()
     {
         $parser = new ezpRestHttpRequestParser();
-        if ( strpos( $_SERVER['SCRIPT_NAME'], self::INDEX_FILE ) !== false ) // Non-vhost mode
+        if ( str_contains( (string) $_SERVER['SCRIPT_NAME'], self::INDEX_FILE ) ) // Non-vhost mode
         {
             // In non-vhost mode we need to build the prefix to be removed from URI
             $parser->prefix = eZSys::indexDir(true);
@@ -52,7 +49,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
 
     public function createResponseWriter( ezcMvcRoutingInformation $routeInfo, ezcMvcRequest $request, ezcMvcResult $result, ezcMvcResponse $response )
     {
-        $class = isset( $this->responseWriterClass ) ? $this->responseWriterClass : 'ezpRestHttpResponseWriter';
+        $class = $this->responseWriterClass ?? 'ezpRestHttpResponseWriter';
         return new $class( $response );
     }
 
@@ -75,7 +72,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
         $prefixFilterOptions->iniFile = 'rest.ini';
         $prefixFilterOptions->iniSection = 'System';
         $prefixFilterOptions->iniVariable = 'PrefixFilterClass';
-        $prefixFilterOptions->handlerParams = array( $request, $this->apiPrefix );
+        $prefixFilterOptions->handlerParams = [$request, $this->apiPrefix];
 
         $prefixFilter = eZExtension::getHandlerClass( $prefixFilterOptions );
         $prefixFilter->filter();
@@ -85,7 +82,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
 
         try
         {
-            $this->runCustomFilters( self::FILTER_TYPE_PREROUTING, array( 'request' => $request ) );
+            $this->runCustomFilters( self::FILTER_TYPE_PREROUTING, ['request' => $request] );
         }
         catch ( Exception $e )
         {
@@ -101,7 +98,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
         // is not caught by MvcTools, so the error controller will not pick them up.
         try
         {
-            $this->runCustomFilters( self::FILTER_TYPE_REQUEST, array( 'routeInfo' => $routeInfo, 'request' => $request ) );
+            $this->runCustomFilters( self::FILTER_TYPE_REQUEST, ['routeInfo' => $routeInfo, 'request' => $request] );
             $authConfig = new ezpRestAuthConfiguration( $routeInfo, $request );
             // For now this return is needed in order to pass redirect requests to the dispatcher
             return $authConfig->filter();
@@ -117,8 +114,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
     public function runResponseFilters( ezcMvcRoutingInformation $routeInfo, ezcMvcRequest $request, ezcMvcResult $result, ezcMvcResponse $response )
     {
         $response->generator = "eZ Publish";
-        $params = array( 'routeInfo' => $routeInfo, 'request' => $request,
-                         'result' => $result, 'response' => $response );
+        $params = ['routeInfo' => $routeInfo, 'request' => $request, 'result' => $result, 'response' => $response];
         try
         {
             $this->runCustomFilters( self::FILTER_TYPE_RESPONSE, $params );
@@ -132,8 +128,7 @@ class ezpMvcConfiguration implements ezcMvcDispatcherConfiguration
 
     public function runResultFilters( ezcMvcRoutingInformation $routeInfo, ezcMvcRequest $request, ezcMvcResult $result )
     {
-        $params = array( 'routeInfo' => $routeInfo, 'request' => $request,
-                         'result' => $result );
+        $params = ['routeInfo' => $routeInfo, 'request' => $request, 'result' => $result];
         try
         {
             $this->runCustomFilters( self::FILTER_TYPE_RESULT, $params );

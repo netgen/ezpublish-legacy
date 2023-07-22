@@ -29,35 +29,7 @@ class eZISBNGroupRange extends eZPersistentObject
     */
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'from_number' => array( 'name' => 'FromNumber',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'to_number' => array( 'name' => 'ToNumber',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'group_from' => array( 'name' => 'GroupFrom',
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'group_to' => array( 'name' => 'GroupTo',
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ),
-                                         'group_length' => array( 'name' => 'GroupLength',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZISBNGroupRange',
-                      'name' => 'ezisbn_group_range' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'from_number' => ['name' => 'FromNumber', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'to_number' => ['name' => 'ToNumber', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'group_from' => ['name' => 'GroupFrom', 'datatype' => 'string', 'default' => '', 'required' => true], 'group_to' => ['name' => 'GroupTo', 'datatype' => 'string', 'default' => '', 'required' => true], 'group_length' => ['name' => 'GroupLength', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZISBNGroupRange', 'name' => 'ezisbn_group_range'];
     }
 
     /*!
@@ -76,13 +48,7 @@ class eZISBNGroupRange extends eZPersistentObject
     */
     static function create( $fromNumber, $toNumber, $groupFrom, $groupTo, $length )
     {
-        $row = array(
-            'id' => null,
-            'from_number' => $fromNumber,
-            'to_number' => $toNumber,
-            'group_from' => $groupFrom,
-            'group_to' => $groupTo,
-            'group_length' => $length );
+        $row = ['id' => null, 'from_number' => $fromNumber, 'to_number' => $toNumber, 'group_from' => $groupFrom, 'group_to' => $groupTo, 'group_length' => $length];
         return new eZISBNGroupRange( $row );
     }
 
@@ -94,7 +60,7 @@ class eZISBNGroupRange extends eZPersistentObject
     static function removeByID( $id )
     {
         eZPersistentObject::removeObject( eZISBNGroupRange::definition(),
-                                          array( 'id' => $id ) );
+                                          ['id' => $id] );
     }
 
     /*!
@@ -103,7 +69,7 @@ class eZISBNGroupRange extends eZPersistentObject
     */
     static function fetchList( $asObject = true )
     {
-        $sortArray = array( 'from_number' => 'asc' );
+        $sortArray = ['from_number' => 'asc'];
         return eZPersistentObject::fetchObjectList( eZISBNGroupRange::definition(),
                                                     null, null, $sortArray, null,
                                                     $asObject );
@@ -119,14 +85,13 @@ class eZISBNGroupRange extends eZPersistentObject
     static function extractGroup( $isbnNr )
     {
         $groupRange = false;
-        $testSegment = substr( $isbnNr, 3, 5 );
+        $testSegment = substr( (string) $isbnNr, 3, 5 );
         if ( is_numeric( $testSegment ) )
         {
-            $conditions = array( 'from_number' => array( '<=', $testSegment ),
-                                 'to_number' => array( '>=', $testSegment ) );
+            $conditions = ['from_number' => ['<=', $testSegment], 'to_number' => ['>=', $testSegment]];
             $groupRangeArray = eZPersistentObject::fetchObjectList( eZISBNGroupRange::definition(),
                                                                     null, $conditions );
-            if ( count( $groupRangeArray ) == 1 )
+            if ( count( (array) $groupRangeArray ) == 1 )
             {
                 $groupRange = $groupRangeArray[0];
             }

@@ -26,19 +26,7 @@ class eZConfirmOrderHandler
     static function instance()
     {
         $confirmOrderHandler = null;
-        if ( eZExtension::findExtensionType( array( 'ini-name' => 'shopaccount.ini',
-                                                    'repository-group' => 'HandlerSettings',
-                                                    'repository-variable' => 'Repositories',
-                                                    'extension-group' => 'HandlerSettings',
-                                                    'extension-variable' => 'ExtensionRepositories',
-                                                    'type-group' => 'ConfirmOrderSettings',
-                                                    'type-variable' => 'Handler',
-                                                    'alias-group' => 'ConfirmOrderSettings',
-                                                    'alias-variable' => 'Alias',
-                                                    'subdir' => 'confirmorderhandlers',
-                                                    'type-directory' => false,
-                                                    'extension-subdir' => 'confirmorderhandlers',
-                                                    'suffix-name' => 'confirmorderhandler.php' ),
+        if ( eZExtension::findExtensionType( ['ini-name' => 'shopaccount.ini', 'repository-group' => 'HandlerSettings', 'repository-variable' => 'Repositories', 'extension-group' => 'HandlerSettings', 'extension-variable' => 'ExtensionRepositories', 'type-group' => 'ConfirmOrderSettings', 'type-variable' => 'Handler', 'alias-group' => 'ConfirmOrderSettings', 'alias-variable' => 'Alias', 'subdir' => 'confirmorderhandlers', 'type-directory' => false, 'extension-subdir' => 'confirmorderhandlers', 'suffix-name' => 'confirmorderhandler.php'],
                                              $out ) )
         {
             $filePath = $out['found-file-path'];

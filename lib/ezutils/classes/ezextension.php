@@ -21,14 +21,14 @@ class eZExtension
      *
      * @var string
      */
-    const CACHE_DIR = 'var/cache/';
+    final public const CACHE_DIR = 'var/cache/';
 
     /**
      * In memory cache for ordered extensions
      *
      * @var array
      */
-    protected static $activeExtensionsCache = array();
+    protected static $activeExtensionsCache = [];
 
     /**
      * return the base directory for extensions
@@ -64,7 +64,7 @@ class eZExtension
             $siteINI = eZINI::instance();
         }
 
-        $activeExtensions = array();
+        $activeExtensions = [];
         if ( !$extensionType || $extensionType === 'default' )
         {
             $activeExtensions = $siteINI->variable( 'ExtensionSettings', 'ActiveExtensions' );
@@ -126,7 +126,7 @@ class eZExtension
         }
         else
         {
-            $data = $phpCache->restore( array( 'activeExtensions' => 'activeExtensions' ) );
+            $data = $phpCache->restore( ['activeExtensions' => 'activeExtensions'] );
             self::$activeExtensionsCache[$cacheIdentifier] = $data['activeExtensions'];
         }
 
@@ -144,14 +144,14 @@ class eZExtension
     {
         $activeExtensionsSet = array_flip( $activeExtensions );
 
-        $dependencies = array();
+        $dependencies = [];
         foreach ( $activeExtensions as $extension )
         {
             $loadingOrderData = ezpExtension::getInstance( $extension )->getLoadingOrder();
 
             // The extension should appear even without dependencies to be taken into account
             if ( ! isset( $dependencies[$extension] ) )
-                $dependencies[$extension] = array();
+                $dependencies[$extension] = [];
 
             if ( isset( $loadingOrderData['after'] ) )
             {
@@ -281,7 +281,7 @@ class eZExtension
     */
     static function expandedPathList( $extensionList, $subdirectory = false )
     {
-        $pathList = array();
+        $pathList = [];
         $extensionBase = eZExtension::baseDirectory();
         foreach ( $extensionList as $extensionName )
         {
@@ -332,6 +332,9 @@ class eZExtension
     */
     static function findExtensionType( $parameters, &$out )
     {
+        $fileDir = null;
+        $filePath = null;
+        $fileName = null;
         $iniName = $parameters['ini-name'];
         $repositoryGroup = $parameters['repository-group'];
         $repositoryVariable = $parameters['repository-variable'];
@@ -368,7 +371,7 @@ class eZExtension
         }
 
         $baseDirectory = eZExtension::baseDirectory();
-        $repositoryDirectoryList = array();
+        $repositoryDirectoryList = [];
         $repositoryList = $ini->variable( $repositoryGroup, $repositoryVariable );
         $extensionDirectories = $ini->variable( $extensionGroup, $extensionVariable );
         foreach ( $repositoryList as $repository )
@@ -447,7 +450,7 @@ class eZExtension
         $base = eZExtension::baseDirectory() . '/';
         $base = preg_quote( $base, '/' );
         $pattern = '/'.$base.'([^\/]+)/';
-        if ( preg_match( $pattern, $path, $matches ) )
+        if ( preg_match( $pattern, (string) $path, $matches ) )
             return $matches[1];
         else
             false;
@@ -516,20 +519,20 @@ class eZExtension
             $aliasHandlers = $ini->variable( $aliasSection, $aliasVariable );
             if ( $aliasOptionalIndex !== null && isset( $aliasHandlers[ $aliasOptionalIndex ] ) )
             {
-                $handlers = array( $aliasHandlers[ $aliasOptionalIndex ], $handlers );
+                $handlers = [$aliasHandlers[ $aliasOptionalIndex ], $handlers];
             }
             else if ( isset( $aliasHandlers[ $handlers ] ) )
             {
-                $handlers = array( $aliasHandlers[ $handlers ], $handlers );
+                $handlers = [$aliasHandlers[ $handlers ], $handlers];
             }
             else
             {
-                $handlers = array( $handlers );
+                $handlers = [$handlers];
             }
         }
         else if ( !is_array( $handlers ) )
         {
-            $handlers = array( $handlers );
+            $handlers = [$handlers];
         }
 
         foreach( $handlers as $handler )
@@ -560,13 +563,13 @@ class eZExtension
                 // if callMethod is set, then call it so handler can decide if it is a valid handler
                 if ( $callMethod !== null )
                 {
-                    if ( !is_callable( array( $object, $callMethod ) ) )
+                    if ( !is_callable( [$object, $callMethod] ) )
                     {
                         eZDebug::writeNotice( 'Method ' . $callMethod . ' is not callable on class ' . $handler . " as defined in setting $iniFile [$iniSection] $iniVariable", __METHOD__ );
                         continue;
                     }
 
-                    if ( !call_user_func(array( $object, $callMethod ) ) )
+                    if ( !call_user_func([$object, $callMethod] ) )
                         continue;
                 }
                 return $object;
@@ -586,7 +589,7 @@ class eZExtension
      */
     public static function clearActiveExtensionsMemoryCache()
     {
-        self::$activeExtensionsCache = array();
+        self::$activeExtensionsCache = [];
     }
 
     /**

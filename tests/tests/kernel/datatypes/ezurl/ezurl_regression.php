@@ -44,7 +44,7 @@ class eZURLTypeRegression extends ezpDatabaseTestCase
         $ezurl = $link->dataMap['location'];
         $domNode = $ezurl->serialize( null );
 
-        $this->assertEquals( urlencode( $url ), $domNode->textContent );
+        static::assertEquals(urlencode( $url ), $domNode->textContent);
     }
 
     /**
@@ -87,7 +87,7 @@ class eZURLTypeRegression extends ezpDatabaseTestCase
         // content directly from the datatype.
         $unserializedUrl = $ezurl2->dataType()->objectAttributeContent( $ezurl2 );
 
-        $this->assertEquals( $url, $unserializedUrl );
+        static::assertEquals($url, $unserializedUrl);
     }
 
     /**
@@ -99,8 +99,8 @@ class eZURLTypeRegression extends ezpDatabaseTestCase
     private function createNewLinkObject( $url )
     {
         $link = new ezpObject( "link", 2 );
-        $link->name = __FUNCTION__ . mt_rand();
-        $link->location = array( "", $url );
+        $link->name = __FUNCTION__ . random_int(0, mt_getrandmax());
+        $link->location = ["", $url];
         $link->publish();
 
         return $link;

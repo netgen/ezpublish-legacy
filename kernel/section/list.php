@@ -15,12 +15,11 @@ $offset = $Params['Offset'];
 
 if( eZPreferences::value( 'admin_section_list_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_section_list_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_section_list_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -43,9 +42,9 @@ if ( $http->hasPostVariable( 'RemoveSectionButton' ) )
         {
             $sectionIDArray = $http->postVariable( 'SectionIDArray' );
 
-            $sections = array();
-            $sectionIDs = array();
-            $sectionsUnallowed = array();
+            $sections = [];
+            $sectionIDs = [];
+            $sectionsUnallowed = [];
             foreach ( $sectionIDArray as $sectionID )
             {
                 $section = eZSection::fetch( $sectionID );
@@ -71,10 +70,9 @@ if ( $http->hasPostVariable( 'RemoveSectionButton' ) )
                 $tpl->setVariable( 'allowed_sections', $sections );
                 $tpl->setVariable( 'unallowed_sections', $sectionsUnallowed );
 
-                $Result = array();
+                $Result = [];
                 $Result['content'] = $tpl->fetch( "design:section/confirmremove.tpl" );
-                $Result['path'] = array( array( 'url' => false,
-                                                'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ) );
+                $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )]];
                 return;
             }
         }
@@ -106,7 +104,7 @@ if ( $http->hasPostVariable( 'ConfirmRemoveSectionButton' ) )
                     // Clear content cache if needed
                     eZContentCacheManager::clearContentCacheIfNeededBySectionID( $sectionID );
                     $section->remove();
-                    ezpEvent::getInstance()->notify( 'content/section/cache', array( $sectionID ) );
+                    ezpEvent::getInstance()->notify( 'content/section/cache', [$sectionID] );
                 }
             }
             $db->commit();
@@ -118,7 +116,7 @@ if ( $http->hasPostVariable( 'ConfirmRemoveSectionButton' ) )
     }
 }
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $sectionArray = eZSection::fetchByOffset( $offset, $limit );
 $sectionCount = eZSection::sectionCount();
 
@@ -131,9 +129,8 @@ $tpl->setVariable( 'section_count', $sectionCount );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'allowed_assign_sections', $allowedAssignSectionList );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:section/list.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )]];
 
 ?>

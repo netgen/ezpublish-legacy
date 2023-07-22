@@ -29,17 +29,17 @@ class eZMutexRegression extends ezpTestCase
 
         $lockTS = $scriptMutex->lockTS();
 
-        $lockFileName = $this->readAttribute( $scriptMutex, 'FileName' );
+        $lockFileName = static::readAttribute($scriptMutex, 'FileName');
 
         if ( $lockTS === false && $scriptMutex->lock() )
         {
             $scriptMutex->setMeta( 'pid', getmypid() );
             $scriptMutex->unlock();
-            $this->assertFalse( file_exists( $lockFileName ), 'Mutex lock file was not removed.' );
+            static::assertFalse(file_exists( $lockFileName ), 'Mutex lock file was not removed.');
         }
         else
         {
-            $this->fail( "Unable to create a locking mutex. This might be the result of the failure of a previous test. Please remove the lock file $lockFileName from the file system and run the test again." );
+            static::fail("Unable to create a locking mutex. This might be the result of the failure of a previous test. Please remove the lock file $lockFileName from the file system and run the test again.");
         }
     }
 }

@@ -30,7 +30,7 @@ include_once( 'bin/php/ezwebincommon.php' );
 
 function execUpdateFunction( $funcName, $toVersion )
 {
-    $funcName = "$funcName" . "_" . preg_replace( "/[.-]/", "_", $toVersion );
+    $funcName = "$funcName" . "_" . preg_replace( "/[.-]/", "_", (string) $toVersion );
 
     if ( function_exists( $funcName ) )
     {
@@ -46,11 +46,7 @@ function upgradePackageListByFlowVersion( $version )
     {
         case '1.1-0':
             {
-                $packageList = array(   'ezflow_extension'
-                                      , 'ezflow_classes'
-                                      , 'ezwebin_extension'
-                                      , 'ezflow_design'
-                                      , 'ezflow_site' );
+                $packageList = ['ezflow_extension', 'ezflow_classes', 'ezwebin_extension', 'ezflow_design', 'ezflow_site'];
             } break;
         default:
             break;
@@ -82,49 +78,23 @@ function updateINI_1_1_0()
     showMessage2( "Updating INI-files..." );
 
     $siteaccessList = getUserInput( "Please specify the eZ Flow siteaccesses on your site (separated with space, for example eng nor): ");
-    $siteaccessList = explode( ' ', $siteaccessList );
+    $siteaccessList = explode( ' ', (string) $siteaccessList );
 
-    $translationSA = array();
+    $translationSA = [];
     foreach( $siteaccessList as $siteaccess )
     {
         if( !file_exists( 'settings/siteaccess/' . $siteaccess ) )
             continue;
 
         /* Update override.ini.append.php part */
-        $settings = array( 'full_silverlight' => array( 'Source' => 'node/view/full.tpl',
-                                                        'MatchFile' => 'full/silverlight.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'class_identifier' => 'silverlight' )  ),
-                           'line_silverlight' => array( 'Source' => 'node/view/line.tpl',
-                                                        'MatchFile' => 'line/silverlight.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'class_identifier' => 'silverlight' )  ),
-                           'edit_ezsubtreesubscription_forum_topic' => array( 'Source' => 'content/datatype/edit/ezsubtreesubscription.tpl',
-                                                                              'MatchFile' => 'datatype/edit/ezsubtreesubscription/forum_topic.tpl',
-                                                                              'Subdir' => 'templates',
-                                                                              'Match' => array( 'class_identifier' => 'forum_topic' )  ),
-                           'block_item_article' => array( 'Source' => 'node/view/block_item.tpl',
-                                                          'MatchFile' => 'block_item/article.tpl',
-                                                          'Subdir' => 'templates',
-                                                          'Match' => array( 'class_identifier' => 'article' ) ),
-                           'block_item_image' => array( 'Source' => 'node/view/block_item.tpl',
-                                                        'MatchFile' => 'block_item/image.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'class_identifier' => 'image' ) ),
-                           'dynamic_3_items1' => array( 'Source' => 'block/view/view.tpl',
-                                                        'MatchFile' => 'block/dynamic_3_items1.tpl',
-                                                        'Subdir' => 'templates',
-                                                        'Match' => array( 'type' => 'Dynamic3Items',
-                                                                          'view' => '3_items1' ) ) );
+        $settings = ['full_silverlight' => ['Source' => 'node/view/full.tpl', 'MatchFile' => 'full/silverlight.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'silverlight']], 'line_silverlight' => ['Source' => 'node/view/line.tpl', 'MatchFile' => 'line/silverlight.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'silverlight']], 'edit_ezsubtreesubscription_forum_topic' => ['Source' => 'content/datatype/edit/ezsubtreesubscription.tpl', 'MatchFile' => 'datatype/edit/ezsubtreesubscription/forum_topic.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'forum_topic']], 'block_item_article' => ['Source' => 'node/view/block_item.tpl', 'MatchFile' => 'block_item/article.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'article']], 'block_item_image' => ['Source' => 'node/view/block_item.tpl', 'MatchFile' => 'block_item/image.tpl', 'Subdir' => 'templates', 'Match' => ['class_identifier' => 'image']], 'dynamic_3_items1' => ['Source' => 'block/view/view.tpl', 'MatchFile' => 'block/dynamic_3_items1.tpl', 'Subdir' => 'templates', 'Match' => ['type' => 'Dynamic3Items', 'view' => '3_items1']]];
         $ini = eZINI::instance( 'override.ini', 'settings/siteaccess/' . $siteaccess, null, null, false, true );
         $ini->setReadOnlySettingsCheck( false );
         $ini->setVariables( $settings );
         $ini->save( false, '.append.php', false, false, 'settings/siteaccess/' . $siteaccess, false );
 
         /* Update menu.ini.append.php part */
-        $settings = array( 'SelectedMenu' => array( 'CurrentMenu' => 'DoubleTop',
-                                                    'TopMenu' => 'double_top',
-                                                    'LeftMenu' => '' ) );
+        $settings = ['SelectedMenu' => ['CurrentMenu' => 'DoubleTop', 'TopMenu' => 'double_top', 'LeftMenu' => '']];
 
         $ini = eZINI::instance( 'menu.ini', 'settings/siteaccess/' . $siteaccess, null, null, false, true );
         $ini->setReadOnlySettingsCheck( false );
@@ -133,48 +103,12 @@ function updateINI_1_1_0()
 
         /* Get site.ini for ContentObjectLocale code */
         $ini = eZINI::instance( 'site.ini', 'settings/siteaccess/' . $siteaccess, null, null, false, true );
-        $contentObjectLocale = explode( '-', $ini->variable( 'RegionalSettings', 'ContentObjectLocale' ) );
+        $contentObjectLocale = explode( '-', (string) $ini->variable( 'RegionalSettings', 'ContentObjectLocale' ) );
 
         $translationSA[$siteaccess] = ucfirst( $contentObjectLocale[0] );
     }
 
-    $settings = array( array( 'name' => 'site.ini',
-                              'settings' => array( 'RegionalSettings' => array( 'TranslationSA' => $translationSA ) ) ),
-                       array( 'name' => 'content.ini',
-                              'settings' => array( 'table' => array( 'CustomAttributes' => array( '0' => 'summary',
-                                                                                                  '1' => 'caption' ) ),
-                                                   'td' => array( 'CustomAttributes' => array( '0' => 'valign' ) ),
-                                                   'th' => array( 'CustomAttributes' => array( '0' => 'scope',
-                                                                                               '1' => 'abbr',
-                                                                                               '2' => 'valign' ) ),
-                                                   'CustomTagSettings' => array( 'AvailableCustomTags' => array( '0' => 'underline' ),
-                                                                                                                 'IsInline' => array( 'underline' => 'true') ),
-                                                   'embed-type_images' => array( 'AvailableClasses' => array() ) ) ),
-                       array( 'name' => 'ezoe_attributes.ini',
-                              'settings' => array( 'CustomAttribute_table_summary' => array( 'Name' => 'Summary (WAI)',
-                                                                                             'Required' => 'true' ),
-                                                   'CustomAttribute_scope' => array( 'Name' => 'Scope',
-                                                                                     'Title' => 'The scope attribute defines a way to associate header cells and data cells in a table.',
-                                                                                     'Type' => 'select',
-                                                                                     'Selection' => array( '0' => '',
-                                                                                                           'col' => 'Column',
-                                                                                                           'row' => 'Row' ) ),
-                                                   'CustomAttribute_valign' => array( 'Title' => 'Lets you define the vertical alignment of the table cell/ header.',
-                                                                                      'Type' => 'select',
-                                                                                      'Selection' => array( '0' => '',
-                                                                                                            'top' => 'Top',
-                                                                                                            'middle' => 'Middle',
-                                                                                                            'bottom' => 'Bottom',
-                                                                                                            'baseline' => 'Baseline' ) ),
-                                                   'Attribute_table_border' => array( 'Type' => 'htmlsize',
-                                                                                      'AllowEmpty' => 'true' ),
-                                                   'CustomAttribute_embed_offset' => array( 'Type' => 'int',
-                                                                                            'AllowEmpty' => 'true' ),
-                                                   'CustomAttribute_embed_limit' => array( 'Type' => 'int',
-                                                                                           'AllowEmpty' => 'true' ) ) ),
-                       array( 'name' => 'ezxml.ini',
-                              'settings' => array( 'TagSettings' => array( 'TagPresets' => array( '0' => '',
-                                                                                                  'mini' => 'Simple formatting' ) ) ) ) );
+    $settings = [['name' => 'site.ini', 'settings' => ['RegionalSettings' => ['TranslationSA' => $translationSA]]], ['name' => 'content.ini', 'settings' => ['table' => ['CustomAttributes' => ['0' => 'summary', '1' => 'caption']], 'td' => ['CustomAttributes' => ['0' => 'valign']], 'th' => ['CustomAttributes' => ['0' => 'scope', '1' => 'abbr', '2' => 'valign']], 'CustomTagSettings' => ['AvailableCustomTags' => ['0' => 'underline'], 'IsInline' => ['underline' => 'true']], 'embed-type_images' => ['AvailableClasses' => []]]], ['name' => 'ezoe_attributes.ini', 'settings' => ['CustomAttribute_table_summary' => ['Name' => 'Summary (WAI)', 'Required' => 'true'], 'CustomAttribute_scope' => ['Name' => 'Scope', 'Title' => 'The scope attribute defines a way to associate header cells and data cells in a table.', 'Type' => 'select', 'Selection' => ['0' => '', 'col' => 'Column', 'row' => 'Row']], 'CustomAttribute_valign' => ['Title' => 'Lets you define the vertical alignment of the table cell/ header.', 'Type' => 'select', 'Selection' => ['0' => '', 'top' => 'Top', 'middle' => 'Middle', 'bottom' => 'Bottom', 'baseline' => 'Baseline']], 'Attribute_table_border' => ['Type' => 'htmlsize', 'AllowEmpty' => 'true'], 'CustomAttribute_embed_offset' => ['Type' => 'int', 'AllowEmpty' => 'true'], 'CustomAttribute_embed_limit' => ['Type' => 'int', 'AllowEmpty' => 'true']]], ['name' => 'ezxml.ini', 'settings' => ['TagSettings' => ['TagPresets' => ['0' => '', 'mini' => 'Simple formatting']]]]];
     foreach ( $settings as $setting )
     {
         $iniName = $setting['name'];
@@ -198,30 +132,20 @@ function updateINI_1_1_0()
 
 // script initializing
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "\n" .
-                                                        "This script will upgrade eZ Flow." ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true,
-                                     'user' => true ) );
+$script = eZScript::instance( ['description' => ( "\n" .
+                                                        "This script will upgrade eZ Flow." ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true, 'user' => true] );
 $script->startup();
 
 $scriptOptions = $script->getOptions( "[to-version:][repository:][package:][package-dir:][url:][auto-mode:]",
                                       "",
-                                      array( 'to-version' => "Specify what upgrade path to use. \n" .
-                                                             " available options: '1.1-0' - upgrade 1.0-0 to 1.1-0",
-                                             'repository' => "Path to repository where unpacked(unarchived) packages are \n" .
-                                                         "placed. it's relative to 'var/[site.ini].[FileSettings].[StorageDir]/[package.ini].[RepositorySettings].[RepositoryDirectory]' \n".
-                                                         "(default is 'var/storage/packages/eZ-systems')",
-                                             'package' => "Package(s) to install, f.e. 'ezflow_classes'",
-                                             'package-dir' => "Path to directory with packed(ezpkg) packages(default is '/tmp/ezflow') ",
-                                             'url' => "URL to download packages, f.e. 'http://packages.ez.no/ezpublish/3.9'.\n" .
-                                                      "'package-dir' can be specified to store uploaded packages on local computer.\n" .
-                                                      "if 'package-dir' is not specified then default dir('/tmp/ezflow') will be used.",
-                                             'auto-mode' => "[on/off]. Do not ask what to do in case of confilicts. By default is 'on'"
-                                           ),
+                                      ['to-version' => "Specify what upgrade path to use. \n" .
+                                                             " available options: '1.1-0' - upgrade 1.0-0 to 1.1-0", 'repository' => "Path to repository where unpacked(unarchived) packages are \n" .
+                                                  "placed. it's relative to 'var/[site.ini].[FileSettings].[StorageDir]/[package.ini].[RepositorySettings].[RepositoryDirectory]' \n".
+                                                  "(default is 'var/storage/packages/eZ-systems')", 'package' => "Package(s) to install, f.e. 'ezflow_classes'", 'package-dir' => "Path to directory with packed(ezpkg) packages(default is '/tmp/ezflow') ", 'url' => "URL to download packages, f.e. 'http://packages.ez.no/ezpublish/3.9'.\n" .
+                                               "'package-dir' can be specified to store uploaded packages on local computer.\n" .
+                                               "if 'package-dir' is not specified then default dir('/tmp/ezflow') will be used.", 'auto-mode' => "[on/off]. Do not ask what to do in case of confilicts. By default is 'on'"],
                                       false,
-                                      array( 'user' => true )
+                                      ['user' => true]
                                      );
 
 
@@ -284,13 +208,13 @@ if ( !$packageList )
 }
 else
 {
-    $packageList = explode( ' ', $packageList );
+    $packageList = explode( ' ', (string) $packageList );
 }
 
 //
 // 'package-dir' option
 //
-$packageDir = $scriptOptions['package-dir'] ? $scriptOptions['package-dir'] : "/tmp/ezflow";
+$packageDir = $scriptOptions['package-dir'] ?: "/tmp/ezflow";
 
 //
 // 'url' option
@@ -317,7 +241,7 @@ if( $autoMode != 'off' )
                  "- installing of existing classes will be skipped;\n" .
                  "- all files(extesion, design, downloaded and imported packages) will be overwritten;" );
     $action = getUserInput( "Continue? [y/n]: ");
-    if( strpos( $action, 'y' ) !== 0 )
+    if( !str_starts_with((string) $action, 'y') )
         $script->shutdown( 0, 'Done' );
 }
 

@@ -19,14 +19,8 @@ class eZExtensionPackageCreator extends eZPackageCreationHandler
 {
     public function __construct( $id )
     {
-        $steps = array();
-        $steps[] = array( 'id' => 'extensionlist',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Extensions to include' ),
-                          'methods' => array( 'initialize' => 'initializeExtensionName',
-                                              'load' => 'loadExtensionName',
-                                              'validate' => 'validateExtensionName',
-                                              'commit' => 'commitExtensionName' ),
-                          'template' => 'extension.tpl' );
+        $steps = [];
+        $steps[] = ['id' => 'extensionlist', 'name' => ezpI18n::tr( 'kernel/package', 'Extensions to include' ), 'methods' => ['initialize' => 'initializeExtensionName', 'load' => 'loadExtensionName', 'validate' => 'validateExtensionName', 'commit' => 'commitExtensionName'], 'template' => 'extension.tpl'];
         $steps[] = $this->packageInformationStep();
         $steps[] = $this->packageMaintainerStep();
         $steps[] = $this->packageChangelogStep();
@@ -85,13 +79,12 @@ class eZExtensionPackageCreator extends eZPackageCreationHandler
 
     function validateExtensionName( $package, $http, $currentStepID, &$stepMap, &$persistentData, &$errorList )
     {
-        $extensionList = array();
+        $extensionList = [];
 
         if ( !$http->hasPostVariable( 'PackageExtensionNames' ) ||
-             count( $http->postVariable( 'PackageExtensionNames' ) ) == 0 )
+             (is_countable($http->postVariable( 'PackageExtensionNames' )) ? count( $http->postVariable( 'PackageExtensionNames' ) ) : 0) == 0 )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Extension list' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must select at least one extension' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Extension list' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must select at least one extension' )];
             return false;
         }
         return true;
@@ -108,7 +101,7 @@ class eZExtensionPackageCreator extends eZPackageCreationHandler
     function generatePackageInformation( &$packageInformation, $package, $http, $step, &$persistentData )
     {
         $extensionList = $persistentData['extensionlist'];
-        $extensionCount = count( $extensionList );
+        $extensionCount = is_countable($extensionList) ? count( $extensionList ) : 0;
 
         if ( $extensionCount == 1 )
         {

@@ -17,20 +17,20 @@
 
 class eZMultiPriceType extends eZDataType
 {
-    const DATA_TYPE_STRING = 'ezmultiprice';
-    const DEFAULT_CURRENCY_CODE_FIELD = 'data_text1';
-    const DEFAULT_CURRENCY_CODE_VARIABLE = '_ezmultiprice_currency_code_';
-    const INCLUDE_VAT_FIELD = 'data_int1';
-    const INCLUDE_VAT_VARIABLE = '_ezmultiprice_include_vat_';
-    const VAT_ID_FIELD = 'data_float1';
-    const VAT_ID_VARIABLE = '_ezmultiprice_vat_id_';
-    const INCLUDED_VAT = 1;
-    const EXCLUDED_VAT = 2;
+    final public const DATA_TYPE_STRING = 'ezmultiprice';
+    final public const DEFAULT_CURRENCY_CODE_FIELD = 'data_text1';
+    final public const DEFAULT_CURRENCY_CODE_VARIABLE = '_ezmultiprice_currency_code_';
+    final public const INCLUDE_VAT_FIELD = 'data_int1';
+    final public const INCLUDE_VAT_VARIABLE = '_ezmultiprice_include_vat_';
+    final public const VAT_ID_FIELD = 'data_float1';
+    final public const VAT_ID_VARIABLE = '_ezmultiprice_vat_id_';
+    final public const INCLUDED_VAT = 1;
+    final public const EXCLUDED_VAT = 2;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', 'Multi-price', 'Datatype name' ),
-                            array( 'serialize_supported' => true ) );
+                            ['serialize_supported' => true] );
     }
 
     /*!
@@ -59,12 +59,12 @@ class eZMultiPriceType extends eZDataType
             {
                 if( $contentObjectAttribute->validateIsRequired() || ( $value != '' ) )
                 {
-                    if ( !preg_match( "#^[0-9]+(.){0,1}[0-9]{0,2}$#", $value ) )
+                    if ( !preg_match( "#^[0-9]+(.){0,1}[0-9]{0,2}$#", (string) $value ) )
                     {
                         $contentObjectAttribute->setValidationError( ezpI18n::tr( 'kernel/classes/datatypes',
                                                                              "Invalid price for '%currencyCode' currency ",
                                                                              false,
-                                                                             array( '%currencyCode' => $currencyCode ) ) );
+                                                                             ['%currencyCode' => $currencyCode] ) );
                         return eZInputValidator::STATE_INVALID;
                     }
                 }
@@ -199,7 +199,7 @@ class eZMultiPriceType extends eZDataType
 
         if ( $contentObjectAttribute->attribute( 'data_text' ) != '' )
         {
-            list( $vatType, $vatExInc ) = explode( ',', $contentObjectAttribute->attribute( 'data_text' ), 2 );
+            [$vatType, $vatExInc] = explode( ',', (string) $contentObjectAttribute->attribute( 'data_text' ), 2 );
 
             $multiprice->setAttribute( 'selected_vat_type', $vatType );
             $multiprice->setAttribute( 'is_vat_included', $vatExInc );
@@ -274,12 +274,8 @@ class eZMultiPriceType extends eZDataType
     function contentActionList( $classAttribute )
     {
         $actionList = parent::contentActionList( $classAttribute );
-        $actionList[] = array( 'name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to basket' ),
-                               'action' => 'ActionAddToBasket'
-        );
-        $actionList[] = array( 'name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to wish list' ),
-                               'action' => 'ActionAddToWishList'
-        );
+        $actionList[] = ['name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to basket' ), 'action' => 'ActionAddToBasket'];
+        $actionList[] = ['name' => ezpI18n::tr( 'kernel/classes/datatypes', 'Add to wish list' ), 'action' => 'ActionAddToWishList'];
         return $actionList;
     }
 
@@ -308,7 +304,7 @@ class eZMultiPriceType extends eZDataType
 
         $priceList = $multiprice->attribute( 'price_list' );
 
-        $priceArray = explode( ',', $contentObjectAttribute->attribute( 'data_text' ) );
+        $priceArray = explode( ',', (string) $contentObjectAttribute->attribute( 'data_text' ) );
         foreach ( $priceList as $priceData )
         {
             $type = $priceData->attribute( 'type' );
@@ -322,7 +318,7 @@ class eZMultiPriceType extends eZDataType
             }
             else
                 $type = 'LIMIT';
-            $priceArray = array_merge(  $priceArray, array( $priceData->attribute( 'currency_code'), $priceData->attribute( 'value' ), $type ) );
+            $priceArray = array_merge(  $priceArray, [$priceData->attribute( 'currency_code'), $priceData->attribute( 'value' ), $type] );
         }
         return eZStringUtils::implodeStr( $priceArray, '|' );
     }
@@ -406,7 +402,7 @@ class eZMultiPriceType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $vatNode = $attributeParametersNode->getElementsByTagName( 'vat-included' )->item( 0 );
-        $vatIncluded = strtolower( $vatNode->getAttribute( 'is-set' ) ) == 'true';
+        $vatIncluded = strtolower( (string) $vatNode->getAttribute( 'is-set' ) ) == 'true';
         if ( $vatIncluded )
             $vatIncluded = self::INCLUDED_VAT;
         else
@@ -476,9 +472,7 @@ class eZMultiPriceType extends eZDataType
         if ( isset( $params['table_alias_suffix'] ) )
             $multipriceTableAlias .= $params['table_alias_suffix'];
 
-        $sql = array( 'from' => '',
-                      'where' => '',
-                      'sorting_field' => '' );
+        $sql = ['from' => '', 'where' => '', 'sorting_field' => ''];
 
         $sql['from'] =  "ezmultipricedata $multipriceTableAlias";
 

@@ -27,7 +27,6 @@ class eZBenchmarkCLIRunner extends eZBenchmarkRunner
     public function __construct()
     {
         parent::__construct();
-        $this->MaxMap = false;
     }
 
     /*!
@@ -94,7 +93,7 @@ class eZBenchmarkCLIRunner extends eZBenchmarkRunner
 
         if ( $this->MaxMap == false )
         {
-            $this->MaxMap = array();
+            $this->MaxMap = [];
             $this->MaxMap['time'] = $normalized['time'];
             $this->MaxMap['memory'] = $final['memory'];
         }
@@ -129,7 +128,7 @@ class eZBenchmarkCLIRunner extends eZBenchmarkRunner
 //         }
     }
 
-    var $MaxMap = array();
+    public $MaxMap = false;
 }
 
 ?>

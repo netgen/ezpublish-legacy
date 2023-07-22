@@ -11,12 +11,11 @@ class ezjscCacheManager
 {
     /**
      * Recursively expires the ezjscore public cache folder
-     * @param array $cacheItem
      */
     public static function clearCache( array $cacheItem )
     {
         eZClusterFileHandler::instance()->fileDeleteByDirList(
-            array( 'javascript', 'stylesheets' ),
+            ['javascript', 'stylesheets'],
             eZSys::cacheDirectory() . '/' . $cacheItem['path'], ''
         );
     }

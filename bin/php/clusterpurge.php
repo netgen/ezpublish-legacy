@@ -11,24 +11,16 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish cluster files purge\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish cluster files purge\n" .
                                                         "Physically purges files\n" .
                                                         "\n" .
-                                                        "./bin/php/clusterpurge.php --scopes=scope1,scope2" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+                                                        "./bin/php/clusterpurge.php --scopes=scope1,scope2" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[dry-run][iteration-sleep:][iteration-limit:][memory-monitoring][scopes:][expiry:]",
 "",
-array( 'dry-run' => 'Test mode, output the list of affected files without removing them',
-       'iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float. Default is one second.',
-       'iteration-limit' => 'Amount of items to remove in each iteration when performing a purge operation. Default is 100.',
-       'memory-monitoring' => 'Generates memory monitoring output. If set, memory usage will be logged in var/log/clusterpurge.log.',
-       'scopes' => 'Comma separated list of file types to purge. Possible values are: classattridentifiers, classidentifiers, content, expirycache, statelimitations, user-info-cache, viewcache, wildcard-cache-index, image, binaryfile, media.',
-       'expiry' => 'Number of days since the file was expired. Only files older than this will be purged. Default is 30, minimum is 1.' ) );
+['dry-run' => 'Test mode, output the list of affected files without removing them', 'iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float. Default is one second.', 'iteration-limit' => 'Amount of items to remove in each iteration when performing a purge operation. Default is 100.', 'memory-monitoring' => 'Generates memory monitoring output. If set, memory usage will be logged in var/log/clusterpurge.log.', 'scopes' => 'Comma separated list of file types to purge. Possible values are: classattridentifiers, classidentifiers, content, expirycache, statelimitations, user-info-cache, viewcache, wildcard-cache-index, image, binaryfile, media.', 'expiry' => 'Number of days since the file was expired. Only files older than this will be purged. Default is 30, minimum is 1.'] );
 $sys = eZSys::instance();
 
 $script->initialize();
@@ -47,7 +39,7 @@ if ( $options['dry-run'] )
 
 if ( $options['iteration-sleep'] )
 {
-    $purgeHandler->optIterationSleep = (int)( $options['iteration-sleep'] * 1000000 );
+    $purgeHandler->optIterationSleep = (int)( $options['iteration-sleep'] * 1_000_000 );
 }
 
 if ( $options['iteration-limit'] )
@@ -62,7 +54,7 @@ if ( $options['memory-monitoring'] )
 
 if ( $options['scopes'] )
 {
-    $purgeHandler->optScopes = explode( ',', $options['scopes'] );
+    $purgeHandler->optScopes = explode( ',', (string) $options['scopes'] );
 }
 
 if ( $options['expiry'] )

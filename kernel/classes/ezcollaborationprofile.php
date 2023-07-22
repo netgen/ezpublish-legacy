@@ -18,57 +18,20 @@ class eZCollaborationProfile extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'user_id' => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         'main_group' => array( 'name' => 'MainGroup',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZCollaborationGroup',
-                                                                'foreign_attribute' => 'id',
-                                                                'multiplicity' => '1..*' ),
-                                         'data_text1' => array( 'name' => 'DataText1',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZCollaborationProfile',
-                      'name' => 'ezcollab_profile' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'user_id' => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'main_group' => ['name' => 'MainGroup', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZCollaborationGroup', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'data_text1' => ['name' => 'DataText1', 'datatype' => 'text', 'default' => '', 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id'], 'increment_key' => 'id', 'class_name' => 'eZCollaborationProfile', 'name' => 'ezcollab_profile'];
     }
 
     static function create( $userID, $mainGroup = 0 )
     {
         $date_time = time();
-        $row = array( 'id' => null,
-                      'user_id' => $userID,
-                      'main_group' => $mainGroup,
-                      'created' => $date_time,
-                      'modified' => $date_time );
+        $row = ['id' => null, 'user_id' => $userID, 'main_group' => $mainGroup, 'created' => $date_time, 'modified' => $date_time];
         $newCollaborationProfile = new eZCollaborationProfile( $row );
         return $newCollaborationProfile;
     }
 
     static function fetch( $id, $asObject = true )
     {
-        $conditions = array( "id" => $id );
+        $conditions = ["id" => $id];
         return eZPersistentObject::fetchObject( eZCollaborationProfile::definition(),
                                                 null,
                                                 $conditions,
@@ -77,7 +40,7 @@ class eZCollaborationProfile extends eZPersistentObject
 
     static function fetchByUser( $userID, $asObject = true )
     {
-        $conditions = array( "user_id" => $userID );
+        $conditions = ["user_id" => $userID];
         return eZPersistentObject::fetchObject( eZCollaborationProfile::definition(),
                                                 null,
                                                 $conditions,

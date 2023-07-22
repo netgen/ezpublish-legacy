@@ -25,7 +25,7 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
     {
         // Verify that the clusterClass for each implementation is properly defined
         if ( $this->clusterClass === false )
-            $this->markTestSkipped( "Test class " . get_class( $this ) . " does not provide the clusterClass property" );
+            static::markTestSkipped("Test class " . static::class . " does not provide the clusterClass property");
 
         return parent::setup();
     }
@@ -33,16 +33,15 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
     /**
      * Helper function that creates a cluster file
      * @param string $path
-     * @param mixed $contents
      * @param array $params Extra parameters. Possible keys: scope, datatype.
      */
-    protected function createFile( $path, $contents = false, $params = array() )
+    protected function createFile( $path, mixed $contents = false, $params = [] )
     {
         if ( $contents === false )
             $contents = md5( time() );
 
-        $scope = isset( $params['scope'] ) ? $params['scope'] : false;
-        $datatype = isset( $params['datatype'] ) ? $params['datatype'] : false;
+        $scope = $params['scope'] ?? false;
+        $datatype = $params['datatype'] ?? false;
 
         $ch = eZClusterFileHandler::instance( $path );
         $ch->storeContents( $contents, $scope, $datatype );
@@ -57,12 +56,12 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
      *        Path to the local file. Give as many as you like (variable params)
      *        Can also be an array of path
      */
-    protected static function deleteLocalFiles( $path )
+    protected static function deleteLocalFiles( mixed $path )
     {
         foreach( func_get_args() as $item )
         {
             if ( !is_array( $item ) )
-                $item = array( $item );
+                $item = [$item];
             foreach( $item as $path )
             {
                 if ( file_exists( $path ) )
@@ -299,12 +298,12 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
     public function testProcessCacheOne()
     {
         $path = 'var/tests/'  . __FUNCTION__ . '/cache.txt';
-        $extradata = array( 'content' => array( __METHOD__, 2, 3, 4 ) );
+        $extradata = ['content' => [__METHOD__, 2, 3, 4]];
 
         $ch = eZClusterFileHandler::instance( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
-            array( $this, 'processCacheGenerateCallback' ),
+            $this->processCacheRetrieveCallback(...),
+            $this->processCacheGenerateCallback(...),
             null, null, $extradata );
         $ch->loadMetaData( true );
         self::assertEquals( $extradata['content'], $result );
@@ -330,9 +329,9 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
 
         $ch = eZClusterFileHandler::instance( $path );
         $result = $ch->processCache(
-            array( $this, 'processCacheRetrieveCallback' ),
+            $this->processCacheRetrieveCallback(...),
             null,
-            null, null, array() );
+            null, null, [] );
         $ch->loadMetaData( true );
         self::assertEquals( $expected, $result );
         $ch->abortCacheGeneration();
@@ -350,12 +349,7 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
         /** Add random content ?
         * Idea: use extra data to carry options around from {@link testProcessCache}
         */
-        return array(
-            'content' => $extraData['content'],
-            'scope' => 'test',
-            'datatype' => 'text/plain',
-            'store' => true // required because eZFS2 doesn't store by default. See the todo at the end of the processCache method.
-        );
+        return ['content' => $extraData['content'], 'scope' => 'test', 'datatype' => 'text/plain', 'store' => true];
     }
 
     /**
@@ -584,11 +578,11 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
     public function testFileDeleteByDirList()
     {
         // Create a set of files in 3 different folders that will be deleted
-        $folders = array( 'folder1', 'folder2', 'folder3' );
+        $folders = ['folder1', 'folder2', 'folder3'];
         $prefix = 'var/tests/' . __FUNCTION__;
         $deleteSuffix = 'fileToDelete';
         $keepSuffix = 'fileToKeep';
-        $deleteFiles = $keepFiles = array();
+        $deleteFiles = $keepFiles = [];
 
         foreach( $folders as $folder )
         {
@@ -651,7 +645,7 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
     {
         // Create a set of files in a directory
         $directory = 'var/tests/' . __FUNCTION__;
-        $files = array();
+        $files = [];
 
         for( $i = 0; $i < 20; $i++ )
         {
@@ -680,8 +674,8 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
         $suffix2 = 'otherfile';
         $prefix1 = "{$prefix}/{$suffix1}";
         $prefix2 = "{$prefix}/{$suffix2}";
-        $fileset1 = array();
-        $fileset2 = array();
+        $fileset1 = [];
+        $fileset2 = [];
 
         // Create a set of files
         for( $i = 1; $i <= 10; $i++ )
@@ -718,7 +712,7 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
             self::assertTrue( $ch->fileExists( $file ), "$file no longer exists" );
         }
 
-        $this->deleteLocalFiles( $fileset1, $fileset2 );
+        static::deleteLocalFiles($fileset1, $fileset2);
     }
 
     /**
@@ -932,6 +926,8 @@ abstract class eZClusterFileHandlerAbstractTest extends ezpDatabaseTestCase
 
     public function testPurgeMultipleFiles()
     {
+        $files = [];
+        $otherFiles = [];
         $basePath = 'var/tests/' . __FUNCTION__;
 
         // create multiple files in a folder for deletion

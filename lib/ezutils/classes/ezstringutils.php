@@ -19,11 +19,11 @@ class eZStringUtils
     static function  explodeStr( $str, $delimiter = '|' )
     {
         $offset = 0;
-        $array = array();
+        $array = [];
 
-        while( ( $pos = strpos( $str, $delimiter, $offset )  ) !== false )
+        while( ( $pos = strpos( (string) $str, (string) $delimiter, $offset )  ) !== false )
         {
-            $strPart = substr( $str, 0, $pos );
+            $strPart = substr( (string) $str, 0, $pos );
             if ( preg_match( '/(\\\\+)$/', $strPart, $matches ) )
             {
                 if ( strlen( $matches[0] ) % 2 !== 0 )
@@ -33,11 +33,11 @@ class eZStringUtils
                 }
             }
             $array[] = str_replace( '\\\\', '\\', str_replace("\\$delimiter", $delimiter, $strPart ) );
-            $str = substr( $str, $pos + 1 );
+            $str = substr( (string) $str, $pos + 1 );
             $offset = 0;
 
         }
-        $array[] = str_replace( '\\\\', '\\', str_replace("\\$delimiter", $delimiter, $str ) );
+        $array[] = str_replace( '\\\\', '\\', str_replace("\\$delimiter", $delimiter, (string) $str ) );
         return $array;
     }
 
@@ -46,7 +46,7 @@ class eZStringUtils
         $str = '';
         foreach ( $values as $key => $value )
         {
-            $values[$key] = str_replace( $delimiter, "\\$delimiter", str_replace( '\\', '\\\\', $value ) );
+            $values[$key] = str_replace( $delimiter, "\\$delimiter", str_replace( '\\', '\\\\', (string) $value ) );
         }
         return implode( $delimiter, $values );
     }

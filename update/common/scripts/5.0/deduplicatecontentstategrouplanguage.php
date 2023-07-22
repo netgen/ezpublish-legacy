@@ -15,15 +15,10 @@ set_time_limit( 0 );
 
 $cli = eZCLI::instance();
 $script = eZScript::instance(
-    array(
-        'description' => 'Deduplicates content object state group language ' .
-            'records. See issue http://issues.ez.no/19169.',
-        'use-session' => false,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => 'Deduplicates content object state group language ' .
+        'records. See issue http://issues.ez.no/19169.', 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
 );
-$options = $script->getOptions( '', '', array( '-q' => 'Quiet mode' ) );
+$options = $script->getOptions( '', '', ['-q' => 'Quiet mode'] );
 
 $cli = eZCLI::instance();
 

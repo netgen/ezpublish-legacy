@@ -10,12 +10,12 @@
 
 class ezpHttpResponseCodes
 {
-    const OK = 200;
-    const BAD_REQUEST = 400;
-    const UNAUTHORIZED = 401;
-    const FORBIDDEN = 403;
-    const NOT_FOUND = 404;
-    const METHOD_NOT_ALLOWED = 405;
-    const SERVER_ERROR = 500;
+    final public const OK = 200;
+    final public const BAD_REQUEST = 400;
+    final public const UNAUTHORIZED = 401;
+    final public const FORBIDDEN = 403;
+    final public const NOT_FOUND = 404;
+    final public const METHOD_NOT_ALLOWED = 405;
+    final public const SERVER_ERROR = 500;
 }
 ?>

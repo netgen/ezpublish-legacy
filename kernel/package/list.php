@@ -18,7 +18,7 @@ if ( $module->isCurrentAction( 'InstallPackage' ) )
     return $module->redirectToView( 'upload' );
 }
 
-$removeList = array();
+$removeList = [];
 if ( $module->isCurrentAction( 'RemovePackage' ) or
      $module->isCurrentAction( 'ConfirmRemovePackage' ) )
 {
@@ -58,16 +58,15 @@ if ( $module->isCurrentAction( 'CreatePackage' ) )
 
 $tpl = eZTemplate::factory();
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 
 $tpl->setVariable( 'module_action', $module->currentAction() );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'remove_list', $removeList );
 $tpl->setVariable( 'repository_id', $repositoryID );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:package/list.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/package', 'Packages' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/package', 'Packages' )]];
 
 ?>

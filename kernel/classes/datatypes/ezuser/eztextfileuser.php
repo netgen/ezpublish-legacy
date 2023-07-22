@@ -36,6 +36,11 @@ class eZTextFileUser extends eZUser
     */
     static function loginUser( $login, $password, $authenticationMatch = false )
     {
+        $isEnabled = null;
+        $canLogin = null;
+        $userRow = [];
+        $UserGroupType = null;
+        $UserGroup = null;
         $http = eZHTTPTool::instance();
         $db = eZDB::instance();
 
@@ -45,7 +50,7 @@ class eZTextFileUser extends eZUser
         $loginEscaped = $db->escapeString( $login );
         $passwordEscaped = $db->escapeString( $password );
 
-        $loginArray = array();
+        $loginArray = [];
         if ( $authenticationMatch & eZUser::AUTHENTICATE_LOGIN )
             $loginArray[] = "login='$loginEscaped'";
         if ( $authenticationMatch & eZUser::AUTHENTICATE_EMAIL )
@@ -117,7 +122,7 @@ class eZTextFileUser extends eZUser
                     $userSetting = eZUserSetting::fetch( $userID );
                     $isEnabled = $userSetting->attribute( "is_enabled" );
                     if ( $hashType != eZUser::hashType() and
-                         strtolower( $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
+                         strtolower( (string) $ini->variable( 'UserSettings', 'UpdateHash' ) ) == 'true' )
                     {
                         $hashType = eZUser::hashType();
                         $hash = eZUser::createHash( $login, $password, eZUser::site(),
@@ -257,10 +262,7 @@ class eZTextFileUser extends eZUser
 
                             $contentObjectID = $contentObject->attribute( 'id' );
                             $userID = $contentObjectID;
-                            $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $contentObjectID,
-                                                                               'contentobject_version' => 1,
-                                                                               'parent_node' => $defaultUserPlacement,
-                                                                               'is_main' => 1 ) );
+                            $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $contentObjectID, 'contentobject_version' => 1, 'parent_node' => $defaultUserPlacement, 'is_main' => 1] );
                             $nodeAssignment->store();
                             $version = $contentObject->version( 1 );
                             $version->setAttribute( 'modified', time() );
@@ -289,8 +291,7 @@ class eZTextFileUser extends eZUser
                             // Reset number of failed login attempts
                             eZUser::setFailedLoginAttempts( $userID, 0 );
 
-                            $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $contentObjectID,
-                                                                                                         'version' => 1 ) );
+                            $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $contentObjectID, 'version' => 1] );
 
                             $db->commit();
 
@@ -328,8 +329,7 @@ class eZTextFileUser extends eZUser
                                 $newVersion->assignToNode( $defaultUserPlacement, 1 );
                                 $newVersion->removeAssignment( $parentNodeID );
                                 $newVersionNr = $newVersion->attribute( 'version' );
-                                $operationResult = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $userID,
-                                                                                                             'version' => $newVersionNr ) );
+                                $operationResult = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $userID, 'version' => $newVersionNr] );
                             }
 
                             eZUser::updateLastVisit( $userID );

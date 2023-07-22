@@ -16,14 +16,14 @@
 
 class eZPDFTable extends Cezpdf
 {
-    const NEWLINE = '<C:callNewLine>';
-    const SPACE = '<C:callSpace>';
-    const TAB = '<C:callTab>';
+    final public const NEWLINE = '<C:callNewLine>';
+    final public const SPACE = '<C:callSpace>';
+    final public const TAB = '<C:callTab>';
 
-    const PAGENUM = '#page';
-    const TOTAL_PAGENUM = '#total';
-    const HEADER_LEVEL = '#level';
-    const HEADER_LEVEL_INDEX = '#indexLevel';
+    final public const PAGENUM = '#page';
+    final public const TOTAL_PAGENUM = '#total';
+    final public const HEADER_LEVEL = '#level';
+    final public const HEADER_LEVEL_INDEX = '#indexLevel';
 
     /**
      * Constructor
@@ -36,17 +36,10 @@ class eZPDFTable extends Cezpdf
     function __construct($paper='a4',$orientation='portrait')
     {
         parent::__construct( $paper, $orientation );
-        $this->TOC = array();
-        $this->KeywordArray = array();
-        $this->PageCounter = array();
         $this->initFrameMargins();
 
-        $this->ez['textStack'] = array();
-
-        $this->PreStack = array();
-        $this->DocSpecification = array();
+        $this->ez['textStack'] = [];
         $this->pushStack();
-        $this->FrontpageID = null;
     }
 
     /**
@@ -65,20 +58,12 @@ class eZPDFTable extends Cezpdf
      */
     function initFrameMargins()
     {
-        $this->ezFrame = array();
+        $this->ezFrame = [];
 
         $config = eZINI::instance( 'pdf.ini' );
 
-        $this->ezFrame['header'] = array( 'y0' => $this->ez['pageHeight'],
-                                          'leftMargin' => $config->variable( 'Header', 'LeftMargin' ),
-                                          'rightMargin' => $config->variable( 'Header', 'RightMargin' ),
-                                          'topMargin' => $config->variable( 'Header', 'TopMargin' ),
-                                          'bottomMargin' => $config->variable( 'Header', 'BottomMargin' ) );
-        $this->ezFrame['footer'] = array( 'y0' => $this->ez['bottomMargin'],
-                                          'leftMargin' => $config->variable( 'Footer', 'LeftMargin' ),
-                                          'rightMargin' => $config->variable( 'Footer', 'RightMargin' ),
-                                          'topMargin' => $config->variable( 'Footer', 'TopMargin' ),
-                                          'bottomMargin' => $config->variable( 'Footer', 'BottomMargin' ) );
+        $this->ezFrame['header'] = ['y0' => $this->ez['pageHeight'], 'leftMargin' => $config->variable( 'Header', 'LeftMargin' ), 'rightMargin' => $config->variable( 'Header', 'RightMargin' ), 'topMargin' => $config->variable( 'Header', 'TopMargin' ), 'bottomMargin' => $config->variable( 'Header', 'BottomMargin' )];
+        $this->ezFrame['footer'] = ['y0' => $this->ez['bottomMargin'], 'leftMargin' => $config->variable( 'Footer', 'LeftMargin' ), 'rightMargin' => $config->variable( 'Footer', 'RightMargin' ), 'topMargin' => $config->variable( 'Footer', 'TopMargin' ), 'bottomMargin' => $config->variable( 'Footer', 'BottomMargin' )];
     }
 
     /**
@@ -166,6 +151,17 @@ class eZPDFTable extends Cezpdf
      */
     function ezTable(&$data,$cols='',$title='',$options='')
     {
+        $colName = null;
+        $realColCount = null;
+        $dx = null;
+        $movedOnce = null;
+        $textObjectId = null;
+        $pageStart = null;
+        $columnStart = null;
+        $row_orig = null;
+        $y_orig = null;
+        $y0_orig = null;
+        $y1_orig = null;
         if (!is_array($data)){
             return;
         }
@@ -174,14 +170,12 @@ class eZPDFTable extends Cezpdf
 
         // Get total column count and column indexes
         if (!is_array($cols)){
-            // take the columns from the first row of the data set
-            reset($data);
-            $k=key($data);
+            $k=array_key_first($data);
             $v=current($data);
             if (!is_array($v)){
                 return;
             }
-            $cols=array();
+            $cols=[];
 
             $realCount = 0;
             for ( $c = 0; $c < count($v); $c++ )
@@ -202,39 +196,10 @@ class eZPDFTable extends Cezpdf
         }
 
         if (!is_array($options)){
-            $options=array();
+            $options=[];
         }
 
-        $defaults = array(
-            'cellPadding' => 0,
-            'shaded' => 0,
-            'showLines' => 1,
-            'shadeCol' => eZMath::rgbToCMYK2( 0.8, 0.8, 0.8 ),
-            'shadeCol2' => eZMath::rgbToCMYK2( 0.7, 0.7, 0.7 ),
-            'repeatTableHeader' => 0,
-            'fontSize' => 10,
-            'titleGap' => 5,
-            'lineCol' => array( 0, 0, 0 ),
-            'gap' => 5,
-            'xPos' => 'centre',
-            'xOrientation' => 'centre',
-            'showHeadings' => 1,
-            'textCol' => eZMath::rgbToCMYK2( 0, 0, 0 ),
-            'titleTextCMYK' => eZMath::rgbToCMYK2( 0, 0, 0 ),
-            'width' => 0,
-            'maxWidth' => 0,
-            'cols' => array(),
-            'minRowSpace' => -100,
-            'rowGap' => 2,
-            'colGap' => 5,
-            'innerLineThickness' => 1,
-            'outerLineThickness' => 1,
-            'splitRows' => 0,
-            'protectRows'=> 1,
-            'firstRowTitle' => false,
-            'titleFontSize' => 10,
-            'test' => 0,
-            'yBottom' => 0 );
+        $defaults = ['cellPadding' => 0, 'shaded' => 0, 'showLines' => 1, 'shadeCol' => eZMath::rgbToCMYK2( 0.8, 0.8, 0.8 ), 'shadeCol2' => eZMath::rgbToCMYK2( 0.7, 0.7, 0.7 ), 'repeatTableHeader' => 0, 'fontSize' => 10, 'titleGap' => 5, 'lineCol' => [0, 0, 0], 'gap' => 5, 'xPos' => 'centre', 'xOrientation' => 'centre', 'showHeadings' => 1, 'textCol' => eZMath::rgbToCMYK2( 0, 0, 0 ), 'titleTextCMYK' => eZMath::rgbToCMYK2( 0, 0, 0 ), 'width' => 0, 'maxWidth' => 0, 'cols' => [], 'minRowSpace' => -100, 'rowGap' => 2, 'colGap' => 5, 'innerLineThickness' => 1, 'outerLineThickness' => 1, 'splitRows' => 0, 'protectRows'=> 1, 'firstRowTitle' => false, 'titleFontSize' => 10, 'test' => 0, 'yBottom' => 0];
 
         foreach($defaults as $key=>$value){
             if (is_array($value)){
@@ -250,15 +215,15 @@ class eZPDFTable extends Cezpdf
         $options['gap']=2*$options['colGap'];
         $middle = ($this->ez['pageWidth']- $this->rightMargin() - $this->leftMargin() )/2+$this->leftMargin();
         // figure out the maximum widths of the text within each column
-        $maxWidth = array();
-        $minWidth = array();
+        $maxWidth = [];
+        $minWidth = [];
 
         $maxRowCount = 0;
         // find the maximum cell widths based on the data
         foreach ( $data as $rowCount=>$row)
         {
             $realColCount = 0;
-            for( $columnCount = 0; $columnCount < count( $row ); $columnCount++ )
+            for( $columnCount = 0; $columnCount < (is_countable($row) ? count( $row ) : 0); $columnCount++ )
             {
                 $wMax = 0; // total maximum width of table column
                 $wMix = 0; // minimum width of table column
@@ -296,7 +261,7 @@ class eZPDFTable extends Cezpdf
                 {
                     if ( !isset( $maxWidth[$colSpan] ) )
                     {
-                        $maxWidth[$colSpan] = array();
+                        $maxWidth[$colSpan] = [];
                     }
                     $maxWidth[$colSpan][$realColCount] = $wMax;
                 }
@@ -312,7 +277,7 @@ class eZPDFTable extends Cezpdf
                 {
                     if ( !isset( $minWidth[$colSpan] ) )
                     {
-                        $minWidth[$colSpan] = array();
+                        $minWidth[$colSpan] = [];
                     }
                     $minWidth[$colSpan][$realColCount] = $wMin;
                 }
@@ -342,9 +307,9 @@ class eZPDFTable extends Cezpdf
         }
 
         // Scale column widths
-        $pos=array();
-        $columnWidths = array();
-        $minWidthArray = array();
+        $pos=[];
+        $columnWidths = [];
+        $minWidthArray = [];
         for ( $offset = 0; $offset < count( $cols ); ++$offset )
         {
             $columnWidths[$offset] = 0;
@@ -443,22 +408,12 @@ class eZPDFTable extends Cezpdf
             }
         }
 
-        // now adjust the table to the correct location across the page
-        switch ($options['xPos']){
-            case 'left':
-                $xref = $this->leftMargin();
-            break;
-            case 'right':
-                $xref = $this->ez['pageWidth'] - $this->rightMargin();
-            break;
-            case 'centre':
-            case 'center':
-                $xref = $middle;
-            break;
-            default:
-                $xref = $options['xPos'];
-            break;
-        }
+        $xref = match ($options['xPos']) {
+            'left' => $this->leftMargin(),
+            'right' => $this->ez['pageWidth'] - $this->rightMargin(),
+            'centre', 'center' => $middle,
+            default => $options['xPos'],
+        };
         switch ($options['xOrientation']){
             case 'left':
             case 'right':
@@ -558,11 +513,11 @@ class eZPDFTable extends Cezpdf
             $cnt=0;
             $newPage=0;
             $newPageLine = 0;
-            $tableHeaderRow = array();
+            $tableHeaderRow = [];
             $maxRowCount = count( $data );
             $oldRowCount = -1;
 
-            $leftOvers=array();
+            $leftOvers=[];
 
             for ( $rowCount = 0; $rowCount < $maxRowCount; ++$rowCount )
             {
@@ -669,16 +624,16 @@ class eZPDFTable extends Cezpdf
                         // text will be placed in $leftOvers
                         $newPage=0;
                         if ( $resetLeftOvers )
-                            $leftOvers=array();
+                            $leftOvers=[];
 
                         $realColumnCount = 0;
 
-                        $bgTitleX = 2147483647;
-                        $bgTitleY = -2147483647;
+                        $bgTitleX = 2_147_483_647;
+                        $bgTitleY = -2_147_483_647;
                         $bgTitleW = 0;
                         $bgTitleH = 0;
 
-                        for ( $columnCount = 0; $columnCount < count ( $row ); $columnCount++ )
+                        for ( $columnCount = 0; $columnCount < (is_countable($row) ? count ( $row ) : 0); $columnCount++ )
                         {
                             // Get colSpan
                             if ( isset( $options['cellData'][$realColumnCount.','.$rowCount]['size'] ) )
@@ -694,7 +649,7 @@ class eZPDFTable extends Cezpdf
                             $colNewPage=0;
 
                             $row[$columnCount] = $this->fixWhitespace( $row[$columnCount] );
-                            $lines = explode("\n",$row[$columnCount]);
+                            $lines = explode("\n",(string) $row[$columnCount]);
                             $this->y -= $options['rowGap'] + $options['cellPadding'];
                             $this->setXOffset( $pos[$realColumnCount] );
                             $leftMargin = $this->ez['leftMargin'];
@@ -705,7 +660,7 @@ class eZPDFTable extends Cezpdf
                                 $line = $this->ezProcessText($line);
                                 $start=1;
 
-                                while (strlen($line) || $start){
+                                while (strlen((string) $line) || $start){
                                     $start=0;
                                     if (!$colNewPage){
                                         $this->y-=$height;
@@ -889,7 +844,7 @@ class eZPDFTable extends Cezpdf
                                     // draw inner lines
                                     $this->line( $x0-$options['gap']/2, $y+$decender+$height-$maxRowHeight, $x1-$options['gap']/2, $y+$decender+$height-$maxRowHeight );
 
-                                    for ( $posOffset = 0; $posOffset < count( $pos ) - 2; )
+                                    for ( $posOffset = 0; $posOffset < (is_countable($pos) ? count( $pos ) : 0) - 2; )
                                     {
                                         $colSpan = 1;
                                         if ( isset( $options['cellData'][$posOffset.','.$rowCount]['size'] ) )
@@ -1030,13 +985,13 @@ class eZPDFTable extends Cezpdf
                                      $marginWidth,
                                      $minWidthArray,
                                      $totalWidth,
-                                     $fixedSizeArray = array() )
+                                     $fixedSizeArray = [] )
     {
         $newWidth = 0;
         if ( $options['width'] && $totalWidth>0 ){
             $newCleanWidth = $options['width'] - $marginWidth;
             $t = 0;
-            $pos = array();
+            $pos = [];
             foreach ( $columnWidthArray as $count => $width )
             {
                 $pos[$count] = $t;
@@ -1050,7 +1005,7 @@ class eZPDFTable extends Cezpdf
                 $newWidth = round( $newCleanWidth/$totalWidth * $columnWidthArray[$count] );
 
                 if ( $newWidth < $minWidthArray[$count] &&
-                     count( $fixedSizeArray ) < count( $columnWidthArray ) )
+                     (is_countable($fixedSizeArray) ? count( $fixedSizeArray ) : 0) < (is_countable($columnWidthArray) ? count( $columnWidthArray ) : 0) )
                 {
                     $fixedSizeArray[(string)$count] = $minWidthArray[$count];
 
@@ -1076,7 +1031,7 @@ class eZPDFTable extends Cezpdf
         $x1=0;
         $this->setStrokeColorRGB($col[0],$col[1],$col[2]);
         $cnt=0;
-        $n = count($pos);
+        $n = is_countable($pos) ? count($pos) : 0;
         foreach($pos as $x){
             $cnt++;
             if ($cnt==1 || $cnt==$n){
@@ -1103,7 +1058,7 @@ class eZPDFTable extends Cezpdf
      */
     function callAnchor( $info )
     {
-        $paramArray = explode( ':', $info['p'] );
+        $paramArray = explode( ':', (string) $info['p'] );
 
         $this->addDestination( $paramArray[0], $paramArray[1], $this->yOffset() + $this->getFontHeight( $this->fontSize ) );
     }
@@ -1113,7 +1068,7 @@ class eZPDFTable extends Cezpdf
      */
     function callHeader( $params )
     {
-        $options = array();
+        $options = [];
 
         if ( isset( $params['size'] ) )
         {
@@ -1143,13 +1098,13 @@ class eZPDFTable extends Cezpdf
      */
     function callImage( $info )
     {
-        $params = array();
+        $params = [];
         $leftMargin = false;
         $rightMargin = false;
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
-        $filename = rawurldecode( $params['src'] );
+        $filename = rawurldecode( (string) $params['src'] );
 
         $mimetype = eZMimeType::findByFileContents( $filename );
 
@@ -1169,18 +1124,17 @@ class eZPDFTable extends Cezpdf
         {
             $newWidth = (int)( $params['width'] * ( (int)$params['dpi'] / 72 ) );
             $newHeight = (int)( $params['height'] * ( (int)$params['dpi'] / 72 ) );
-            $newFilename = eZSys::cacheDirectory() . '/' . md5( mt_rand() ) . '.jpg';
+            $newFilename = eZSys::cacheDirectory() . '/' . md5( random_int(0, mt_getrandmax()) ) . '.jpg';
             while( file_exists( $newFilename ) )
             {
-                $newFilename = eZSys::cacheDirectory() . '/' . md5( mt_rand() ) . '.jpg';
+                $newFilename = eZSys::cacheDirectory() . '/' . md5( random_int(0, mt_getrandmax()) ) . '.jpg';
             }
 
             $img = eZImageManager::factory();
             $newImg = $img->convert( $filename,
                                      $newFilename,
                                      false,
-                                     array( 'filters' => array( array( 'name' => 'geometry/scaledownonly',
-                                                                       'data' => array( $newWidth, $newHeight ) ) ) ) );
+                                     ['filters' => [['name' => 'geometry/scaledownonly', 'data' => [$newWidth, $newHeight]]]] );
             $filename = $newFilename['url'];
         }
 
@@ -1259,10 +1213,10 @@ class eZPDFTable extends Cezpdf
         {
             case 'image/gif':
             {
-                $newFilename = eZSys::cacheDirectory() . '/' . md5( mt_rand() ) . '.jpg';
+                $newFilename = eZSys::cacheDirectory() . '/' . md5( random_int(0, mt_getrandmax()) ) . '.jpg';
                 while( file_exists( $newFilename ) )
                 {
-                    $newFilename = eZSys::cacheDirectory() . '/' . md5( mt_rand() ) . '.jpg';
+                    $newFilename = eZSys::cacheDirectory() . '/' . md5( random_int(0, mt_getrandmax()) ) . '.jpg';
                 }
                 $newMimetype = eZMimeType::findByURL( $newFilename );
 
@@ -1270,7 +1224,7 @@ class eZPDFTable extends Cezpdf
                 $newImg = $img->convert( $mimetype,
                                          $newMimetype,
                                          false,
-                                         array() );
+                                         [] );
                 $this->addJpegFromFile( $newMimetype['url'],
                                         $xOffset,
                                         $yOffset,
@@ -1315,7 +1269,7 @@ class eZPDFTable extends Cezpdf
             $this->y -= $params['height'] + $this->lineHeight();
         }
 
-        return array( 'y' => $params['height'] + $this->lineHeight() );
+        return ['y' => $params['height'] + $this->lineHeight()];
     }
 
 
@@ -1324,18 +1278,18 @@ class eZPDFTable extends Cezpdf
      */
     function callKeyword( $info )
     {
-        $keyWord = $this->fixWhitespace( rawurldecode( $info['p'] ) );
+        $keyWord = $this->fixWhitespace( rawurldecode( (string) $info['p'] ) );
         $page = $this->ezWhatPageNumber($this->ezGetCurrentPageNumber());
 
         if ( !isset( $this->KeywordArray[$keyWord] ) )
         {
-            $this->KeywordArray[$keyWord] = array();
+            $this->KeywordArray[$keyWord] = [];
         }
 
         if ( !isset( $this->KeywordArray[$keyWord][(string)$page] ) )
         {
             $label = $info['p'] .':'. $page;
-            $this->KeywordArray[$keyWord][(string)$page] = array( 'label' => $label );
+            $this->KeywordArray[$keyWord][(string)$page] = ['label' => $label];
 
             $this->addDestination( 'keyword:'.$label,
                                    'FitH',
@@ -1348,16 +1302,13 @@ class eZPDFTable extends Cezpdf
      */
     function callInsertTOC( $info )
     {
-        $params = explode( ',', $info['p'] );
+        $params = explode( ',', (string) $info['p'] );
 
         $label = $params[0];
         $level = $params[1];
 
-        $tocCount = count( $this->TOC );
-        $this->TOC[] = array( 'label' => $this->fixWhitespace( rawurldecode( $label ) ),
-                              'localPageNumber' => $this->ezWhatPageNumber( $this->ezGetCurrentPageNumber() ),
-                              'level' => $level,
-                              'pageNumber' => $this->ezGetCurrentPageNumber() );
+        $tocCount = is_countable($this->TOC) ? count( $this->TOC ) : 0;
+        $this->TOC[] = ['label' => $this->fixWhitespace( rawurldecode( $label ) ), 'localPageNumber' => $this->ezWhatPageNumber( $this->ezGetCurrentPageNumber() ), 'level' => $level, 'pageNumber' => $this->ezGetCurrentPageNumber()];
         $this->addDestination( 'toc'. $tocCount,
                                'FitH',
                                $this->yOffset() + $this->getFontHeight( $this->fontSize() ) );
@@ -1368,14 +1319,14 @@ class eZPDFTable extends Cezpdf
      */
     function callTOC( $info )
     {
-        $params = array();
+        $params = [];
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
-        $sizes = isset( $params['size'] ) ? explode( ',', $params['size'] ) : '';
-        $indents = isset( $params['indent'] ) ? explode( ',', $params['indent'] ) : '';
-        $dots = isset( $params['dots'] ) ? $params['dots'] : '';
-        $contentText = isset( $params['contentText'] ) ? $params['contentText'] : ezpI18n::tr( 'lib/ezpdf/classes', 'Contents', 'Table of contents' );
+        $sizes = isset( $params['size'] ) ? explode( ',', (string) $params['size'] ) : '';
+        $indents = isset( $params['indent'] ) ? explode( ',', (string) $params['indent'] ) : '';
+        $dots = $params['dots'] ?? '';
+        $contentText = $params['contentText'] ?? ezpI18n::tr( 'lib/ezpdf/classes', 'Contents', 'Table of contents' );
 
         $this->insertTOC( $sizes, $indents, $dots, $contentText );
     }
@@ -1392,27 +1343,27 @@ class eZPDFTable extends Cezpdf
     {
         $this->ezNewPage();
         $fontSize = $this->fontSize();
-        Cezpdf::ezText( ezpI18n::tr( 'lib/ezpdf/classes', 'Index', 'Keyword index name' ) . '<C:callInsertTOC:Index,1>'."\n", 26, array('justification'=>'centre'));
+        Cezpdf::ezText( ezpI18n::tr( 'lib/ezpdf/classes', 'Index', 'Keyword index name' ) . '<C:callInsertTOC:Index,1>'."\n", 26, ['justification'=>'centre']);
 
-        if ( count( $this->KeywordArray ) == 0 )
+        if ( (is_countable($this->KeywordArray) ? count( $this->KeywordArray ) : 0) == 0 )
             return;
 
         ksort( $this->KeywordArray );
         reset( $this->KeywordArray );
 
-        $this->ezColumnsStart( array( 'num' => 2 ) );
+        $this->ezColumnsStart( ['num' => 2] );
 
         foreach( array_keys( $this->KeywordArray ) as $keyWord )
         {
             Cezpdf::ezText( $keyWord,
                             $fontSize,
-                            array( 'justification' => 'left' ) );
+                            ['justification' => 'left'] );
 
             foreach( array_keys( $this->KeywordArray[$keyWord] ) as $page )
             {
                 Cezpdf::ezText( '<c:ilink:keyword:'. $this->KeywordArray[$keyWord][$page]['label'] .'> '. $page .'</c:ilink>',
                                 $fontSize,
-                                array( 'justification' => 'right' ) );
+                                ['justification' => 'right'] );
             }
         }
 
@@ -1429,8 +1380,8 @@ class eZPDFTable extends Cezpdf
      \param content text
      \param level, how many header levels to generate toc form
     */
-    function insertTOC( $sizeArray = array( 20, 18, 16, 14, 12 ),
-                        $indentArray = array( 0, 4, 6, 8, 10 ),
+    function insertTOC( $sizeArray = [20, 18, 16, 14, 12],
+                        $indentArray = [0, 4, 6, 8, 10],
                         $dots = true,
                         $contentText = '',
                         $level = 3 )
@@ -1440,7 +1391,7 @@ class eZPDFTable extends Cezpdf
 
         $this->ezInsertMode(1,1,'before');
         $this->ezNewPage();
-        Cezpdf::ezText( $contentText ."\n", 26, array('justification'=>'centre'));
+        Cezpdf::ezText( $contentText ."\n", 26, ['justification'=>'centre']);
 
         foreach($this->TOC as $k=>$v){
             if ( $v['level'] <= $level )
@@ -1449,8 +1400,7 @@ class eZPDFTable extends Cezpdf
                 {
                     Cezpdf::ezText( '<c:ilink:toc'. $k .'>'. $v['label'] .'</c:ilink>',
                                     $sizeArray[$v['level']-1],
-                                    array( 'left' => $indentArray[$v['level']-1],
-                                           'right' => 100 ) );
+                                    ['left' => $indentArray[$v['level']-1], 'right' => 100] );
                     Cezpdf::ezText( '<C:dots:'. $sizeArray[$v['level']-1].$v['localPageNumber'] .'>',
                                     $sizeArray[$v['level']-1] );
                     Cezpdf::ezText( "\n", $sizeArray[$v['level']-1] );
@@ -1459,10 +1409,10 @@ class eZPDFTable extends Cezpdf
                 {
                     Cezpdf::ezText( '<c:ilink:toc'. $k .'>'.$v['label'].'</c:ilink>',
                                     $sizeArray[$v['level']-1],
-                                    array( 'left' => $indentArray[$v['level']-1] ) );
+                                    ['left' => $indentArray[$v['level']-1]] );
                     Cezpdf::ezText( '<c:ilink:toc'. $k .'>'. $v['localPageNumber'] .'</c:ilink>',
                                     $sizeArray[$v['level']-1],
-                                    array( 'justification' => 'right' ) );
+                                    ['justification' => 'right'] );
                 }
             }
         }
@@ -1475,13 +1425,13 @@ class eZPDFTable extends Cezpdf
     {
         // draw a dotted line over to the right and put on a page number
         $tmp = $info['p'];
-        $size = substr($tmp, 0, 2);
+        $size = substr((string) $tmp, 0, 2);
         $thick=1;
-        $lbl = substr($tmp,2);
+        $lbl = substr((string) $tmp,2);
         $xpos = $this->ez['pageWidth'] - $this->rightMargin() - $this->leftMargin();
 
         $this->saveState();
-        $this->setLineStyle($thick,'round','',array(0,10));
+        $this->setLineStyle($thick,'round','',[0, 10]);
         $this->line($xpos,$info['y'],$info['x']+5,$info['y']);
         $this->restoreState();
         $this->addText($xpos+5,$info['y'],$size,$lbl);
@@ -1493,12 +1443,12 @@ class eZPDFTable extends Cezpdf
      */
     function callFont( $params )
     {
-        $options = array();
+        $options = [];
 
-        $keyArray = array ( 'c', 'm', 'y', 'k' );
+        $keyArray = ['c', 'm', 'y', 'k'];
         if ( isset( $params['cmyk'] ) )
         {
-            $params['cmyk'] = explode( ',', $params['cmyk'] );
+            $params['cmyk'] = explode( ',', (string) $params['cmyk'] );
             foreach ( array_keys( $params['cmyk'] ) as $key )
             {
                 $options['cmyk'][$keyArray[$key]] = $params['cmyk'][$key];
@@ -1528,30 +1478,26 @@ class eZPDFTable extends Cezpdf
 
     function fixWhitespace( &$text )
     {
-        $text = str_replace( array( self::SPACE,
-                                    self::TAB,
-                                    self::NEWLINE ),
-                             array( ' ',
-                                    "\t",
-                                    "\n" ),
-                             $text );
+        $text = str_replace( [self::SPACE, self::TAB, self::NEWLINE],
+                             [' ', "\t", "\n"],
+                             (string) $text );
         return $text;
     }
 
     /**
      * Function overriding the default ezText function for doing preprocessing of text
      */
-    function ezText( $text, $size=0, $options=array(), $test=0)
+    function ezText( $text, $size=0, $options=[], $test=0)
     {
-        $text = eZPDFTable::fixWhitespace( $text );
+        $text = (new eZPDFTable())->fixWhitespace($text);
 
-        $textLen = strlen( $text );
+        $textLen = strlen( (string) $text );
         $newText = '';
         for ( $offSet = 0; $offSet < $textLen; $offSet++ )
         {
             if ( $text[$offSet] == '<' )
             {
-                if ( strcmp( substr($text, $offSet+1, strlen( 'ezCall' ) ), 'ezCall' ) == 0 ) // ez library preprocessing call.
+                if ( strcmp( substr((string) $text, $offSet+1, strlen( 'ezCall' ) ), 'ezCall' ) == 0 ) // ez library preprocessing call.
                 {
                     $newTextLength = strlen( $newText );
                     if ( $newTextLength > 0 && $newText[$newTextLength - 1] == "\n" )
@@ -1566,24 +1512,24 @@ class eZPDFTable extends Cezpdf
                         $newText = '';
                     }
 
-                    $params = array();
+                    $params = [];
                     $funcName = '';
 
-                    $offSet = eZPDFTable::extractFunction( $text, $offSet, $funcName, $params, 'ezCall' );
+                    $offSet = (new eZPDFTable())->extractFunction($text, $offSet, $funcName, $params, 'ezCall');
 
                     $newText .= $this->$funcName( $params );
 
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( '/ezCall' ) ), '/ezCall' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( '/ezCall' ) ), '/ezCall' ) == 0 )
                 {
                     $this->addDocSpecification( $newText );
                     array_pop( $this->PreStack );
-                    $offSet = strpos( $text, '>', $offSet );
+                    $offSet = strpos( (string) $text, '>', $offSet );
                     $newText = '';
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( 'ezGroup' ) ), 'ezGroup' ) == 0 ) // special call for processing whole text group, used by extends table.
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( 'ezGroup' ) ), 'ezGroup' ) == 0 ) // special call for processing whole text group, used by extends table.
                 {
                     $newTextLength = strlen( $newText );
                     if ( $newTextLength > 0 && $newText[$newTextLength - 1] == "\n" )
@@ -1598,18 +1544,18 @@ class eZPDFTable extends Cezpdf
                         $newText = '';
                     }
 
-                    $params = array();
+                    $params = [];
                     $funcName = '';
 
-                    $offSet = eZPDFTable::extractFunction( $text, $offSet, $funcName, $params, 'ezGroup' );
+                    $offSet = (new eZPDFTable())->extractFunction($text, $offSet, $funcName, $params, 'ezGroup');
                     $offSet++;
-                    $endGroup = strpos( $text, '</ezGroup:', $offSet );
-                    $groupText = substr( $text, $offSet, $endGroup - $offSet );
+                    $endGroup = strpos( (string) $text, '</ezGroup:', $offSet );
+                    $groupText = substr( (string) $text, $offSet, $endGroup - $offSet );
                     $groupText = urldecode( $groupText );
 
                     $this->$funcName( $params, $groupText );
 
-                    $offSet = strpos( $text, '>', $endGroup );
+                    $offSet = strpos( (string) $text, '>', $endGroup );
                     continue;
                 }
             }
@@ -1633,7 +1579,7 @@ class eZPDFTable extends Cezpdf
     */
     function fixupTableCellText( $text )
     {
-        $text = preg_replace( "/^" . self::NEWLINE . "/i", "", $text );
+        $text = preg_replace( "/^" . self::NEWLINE . "/i", "", (string) $text );
         $text = preg_replace( "/" . self::NEWLINE . "$/i", "", $text );
         return preg_replace( "'<[\/]*?ezCall:[^<>]*?>'si", "", $text );
     }
@@ -1645,12 +1591,16 @@ class eZPDFTable extends Cezpdf
     */
     function callRectangle( $info )
     {
-        $params = array();
+        $x1 = null;
+        $y1 = null;
+        $x2 = null;
+        $y2 = null;
+        $params = [];
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
-        $keyArray = array ( 'c', 'm', 'y', 'k' );
-        $cmykColor = explode( ',', $params['cmyk'] );
+        $keyArray = ['c', 'm', 'y', 'k'];
+        $cmykColor = explode( ',', (string) $params['cmyk'] );
 
         foreach ( array_keys( $cmykColor ) as $key )
         {
@@ -1727,9 +1677,9 @@ class eZPDFTable extends Cezpdf
     */
     function callSetMargin( $info )
     {
-        $options = array();
+        $options = [];
 
-        eZPDFTable::extractParameters( $info['p'], 0, $options, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $options, true);
 
         if ( isset( $options['left'] ) )
         {
@@ -1782,7 +1732,7 @@ class eZPDFTable extends Cezpdf
             $this->y = (float)$options['y'];
         }
 
-        return array( 'x' => $this->xOffset() );
+        return ['x' => $this->xOffset()];
     }
 
     /*!
@@ -1790,13 +1740,13 @@ class eZPDFTable extends Cezpdf
     */
     function callCircle( $info )
     {
-        $params = array();
+        $params = [];
         $forceYPos = true;
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
-        $keyArray = array ( 'c', 'm', 'y', 'k' );
-        $cmykColor = explode( ',', $params['cmyk'] );
+        $keyArray = ['c', 'm', 'y', 'k'];
+        $cmykColor = explode( ',', (string) $params['cmyk'] );
 
         foreach ( array_keys( $cmykColor ) as $key )
         {
@@ -1846,11 +1796,11 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['indent'] ) )
         {
-            return array( 'x' => $params['x'] + $params['radius'] * 2 + $params['indent'] );
+            return ['x' => $params['x'] + $params['radius'] * 2 + $params['indent']];
         }
         else
         {
-            return array( 'x' => $params['x'] + $params['radius'] * 2 );
+            return ['x' => $params['x'] + $params['radius'] * 2];
         }
 
     }
@@ -1862,13 +1812,13 @@ class eZPDFTable extends Cezpdf
     */
     function callFilledRectangle( $info )
     {
-        $params = array();
+        $params = [];
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
-        $keyArray = array ( 'c', 'm', 'y', 'k' );
-        $cmykTop = explode( ',', $params['cmykTop'] );
-        $cmykBottom = explode( ',', $params['cmykBottom'] );
+        $keyArray = ['c', 'm', 'y', 'k'];
+        $cmykTop = explode( ',', (string) $params['cmykTop'] );
+        $cmykBottom = explode( ',', (string) $params['cmykBottom'] );
 
         foreach ( array_keys( $cmykBottom ) as $key )
         {
@@ -1889,9 +1839,9 @@ class eZPDFTable extends Cezpdf
     */
     function callBlockFrame( $params, $text )
     {
-        if ( strlen( $text ) > 0 )
+        if ( strlen( (string) $text ) > 0 )
         {
-            $this->addDocSpecFunction( 'ezInsertBlockFrame', array( $text, $params) );
+            $this->addDocSpecFunction( 'ezInsertBlockFrame', [$text, $params] );
         }
     }
 
@@ -1903,9 +1853,9 @@ class eZPDFTable extends Cezpdf
     */
     function callFrame( $params, $text )
     {
-        if ( strlen( $text ) > 0 )
+        if ( strlen( (string) $text ) > 0 )
         {
-            $this->addDocSpecFunction( 'ezInsertFrame', array( $this->fixWhitespace( $text ), $params) );
+            $this->addDocSpecFunction( 'ezInsertFrame', [$this->fixWhitespace( $text ), $params] );
         }
     }
 
@@ -1914,7 +1864,7 @@ class eZPDFTable extends Cezpdf
     */
     function callLine( $params, $text )
     {
-        $this->addDocSpecFunction( 'ezInsertLine', array( $params ) );
+        $this->addDocSpecFunction( 'ezInsertLine', [$params] );
     }
 
     /*!
@@ -1922,8 +1872,8 @@ class eZPDFTable extends Cezpdf
     */
     function callDrawLine( $info )
     {
-        $params = array();
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        $params = [];
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
         $this->setLineStyle( $params['thickness'] );
         $this->line( $params['x1'], $params['y1'], $params['x2'], $params['y2'] );
@@ -1936,8 +1886,8 @@ class eZPDFTable extends Cezpdf
     */
     function callFrameMargins( $info )
     {
-        $params = array();
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        $params = [];
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
         if( isset( $this->ezFrame[$params['identifier']] ) )
         {
@@ -1990,9 +1940,9 @@ class eZPDFTable extends Cezpdf
             } break;
         }
 
-        $text = str_replace( array( ' ', "\t", "\r\n", "\n" ),
+        $text = str_replace( [' ', "\t", "\r\n", "\n"],
                              '',
-                             urldecode( $text ) );
+                             urldecode( (string) $text ) );
 
         foreach ( $this->ezPages as $pageNum => $pageID )
         {
@@ -2028,7 +1978,7 @@ class eZPDFTable extends Cezpdf
                       $pageNum % 2 == 0 )
                 continue;
 
-            if ( strstr( $frameText, self::PAGENUM ) !== false )
+            if ( str_contains( $frameText, self::PAGENUM ) )
             {
                 foreach ( array_keys( $this->PageCounter ) as $identifier )
                 {
@@ -2039,7 +1989,7 @@ class eZPDFTable extends Cezpdf
                                                   $this->ezWhatPageNumber( $pageNum, $identifier ),
                                                   $frameText );
 
-                        if ( strstr( $frameText, self::TOTAL_PAGENUM ) !== false )
+                        if ( str_contains( $frameText, self::TOTAL_PAGENUM ) )
                         {
                             $frameText = str_replace( self::TOTAL_PAGENUM,
                                                       $this->PageCounter[$identifier]['stop'] - $this->PageCounter[$identifier]['start'] + 1,
@@ -2051,14 +2001,14 @@ class eZPDFTable extends Cezpdf
 
             for( $levelCount = 0; $levelCount < 9; $levelCount++ )
             {
-                if ( strstr( $frameText, self::HEADER_LEVEL.$levelCount ) !== false )
+                if ( str_contains( $frameText, self::HEADER_LEVEL.$levelCount ) )
                 {
                     $frameText = str_replace( self::HEADER_LEVEL.$levelCount,
                                               $this->headerLabel( $pageNum, $levelCount ),
                                               $frameText );
                 }
 
-                if ( strstr( $frameText, self::HEADER_LEVEL_INDEX.$levelCount ) !== false )
+                if ( str_contains( $frameText, self::HEADER_LEVEL_INDEX.$levelCount ) )
                 {
                     $frameText = str_replace( self::HEADER_LEVEL_INDEX.$levelCount,
                                               $this->headerIndex( $pageNum, $levelCount ),
@@ -2099,23 +2049,11 @@ class eZPDFTable extends Cezpdf
             $justification = $textParameters['justification'];
         }
 
-        switch( $textParameters['location'] )
-        {
-            case 'footer':
-            {
-                $frameCoords =& $this->ezFrame['footer'];
-            } break;
-
-            case 'frame_header':
-            {
-                $frameCoords =& $this->ezFrame['header'];
-            } break;
-
-            default:
-            {
-                $frameCoords =& $this->ezFrame[0];
-            } break;
-        }
+        match ($textParameters['location']) {
+            'footer' => $frameCoords =& $this->ezFrame['footer'],
+            'frame_header' => $frameCoords =& $this->ezFrame['header'],
+            default => $frameCoords =& $this->ezFrame[0],
+        };
 
         foreach ( $this->ezPages as $pageNum => $pageID )
         {
@@ -2131,7 +2069,7 @@ class eZPDFTable extends Cezpdf
                 continue;
 
             $countIdentifier = '';
-            if ( strstr( $frameText, self::PAGENUM ) !== false )
+            if ( str_contains( (string) $frameText, self::PAGENUM ) )
             {
                 foreach ( array_keys( $this->PageCounter ) as $identifier )
                 {
@@ -2140,9 +2078,9 @@ class eZPDFTable extends Cezpdf
                     {
                         $frameText = str_replace( self::PAGENUM,
                                                   $this->ezWhatPageNumber( $pageNum, $identifier ),
-                                                  $frameText );
+                                                  (string) $frameText );
 
-                        if ( strstr( $frameText, self::TOTAL_PAGENUM ) !== false )
+                        if ( str_contains( $frameText, self::TOTAL_PAGENUM ) )
                         {
                             $frameText = str_replace( self::TOTAL_PAGENUM,
                                                       $this->PageCounter[$identifier]['stop'] - $this->PageCounter[$identifier]['start'] + 1,
@@ -2154,18 +2092,18 @@ class eZPDFTable extends Cezpdf
 
             for( $levelCount = 0; $levelCount < 9; $levelCount++ )
             {
-                if ( strstr( $frameText, self::HEADER_LEVEL.$levelCount ) !== false )
+                if ( str_contains( (string) $frameText, self::HEADER_LEVEL.$levelCount ) )
                 {
                     $frameText = str_replace( self::HEADER_LEVEL.$levelCount,
                                               $this->headerLabel( $pageNum, $levelCount ),
-                                              $frameText );
+                                              (string) $frameText );
                 }
 
-                if ( strstr( $frameText, self::HEADER_LEVEL_INDEX.$levelCount ) !== false )
+                if ( str_contains( (string) $frameText, self::HEADER_LEVEL_INDEX.$levelCount ) )
                 {
                     $frameText = str_replace( self::HEADER_LEVEL_INDEX.$levelCount,
                                               $this->headerIndex( $pageNum, $levelCount ),
-                                              $frameText );
+                                              (string) $frameText );
                 }
             }
 
@@ -2181,17 +2119,17 @@ class eZPDFTable extends Cezpdf
 
             $this->reopenObject($pageID);
 
-            $lines = explode( "\n", $frameText );
+            $lines = explode( "\n", (string) $frameText );
             foreach ( array_keys( $lines ) as $key )
             {
                 $start=1;
                 $line = $lines[$key];
-                while (strlen($line) || $start){
+                while (strlen((string) $line) || $start){
                     $start = 0;
                     $textInfo = $this->addTextWrap( $xOffset, $yOffset, $pageWidth, $size, $line, $justification );
                     $line = $textInfo['text'];
 
-                    if ( strlen( $line ) )
+                    if ( strlen( (string) $line ) )
                     {
                         $yOffset -= $this->getFontHeight( $size );
                     }
@@ -2212,7 +2150,7 @@ class eZPDFTable extends Cezpdf
      */
     function callFrontpage( $params, $text )
     {
-        $this->addDocSpecFunction( 'insertFrontpage', array( $params, $text ) );
+        $this->addDocSpecFunction( 'insertFrontpage', [$params, $text] );
     }
 
     /*!
@@ -2239,8 +2177,7 @@ class eZPDFTable extends Cezpdf
         $text = $this->fixWhitespace( $text );
         $this->setXOffset( 0 );
 
-        Cezpdf::ezText( $text, $params['size'], array( 'justification' => $params['justification'],
-                                                       'top_margin' => $params['top_margin'] ) );
+        Cezpdf::ezText( $text, $params['size'], ['justification' => $params['justification'], 'top_margin' => $params['top_margin']] );
 
         $this->setFontSize( $fontSize );
 
@@ -2259,19 +2196,19 @@ class eZPDFTable extends Cezpdf
      */
     function callTable( $params, $text )
     {
-        $textLen = strlen( $text );
-        $tableData = array();
-        $cellData = array();
+        $textLen = strlen( (string) $text );
+        $tableData = [];
+        $cellData = [];
         $showLines = 2;
         $rowCount = 0;
         $columnCount = 0;
 
         $columnText = '';
 
-        $keyArray = array ( 'c', 'm', 'y', 'k' );
+        $keyArray = ['c', 'm', 'y', 'k'];
         if ( isset( $params['titleCellCMYK'] ) )
         {
-            $params['titleCellCMYK'] = explode( ',', $params['titleCellCMYK'] );
+            $params['titleCellCMYK'] = explode( ',', (string) $params['titleCellCMYK'] );
             foreach ( array_keys( $params['titleCellCMYK'] ) as $key )
             {
                 $params['titleCellCMYK'][$keyArray[$key]] = $params['titleCellCMYK'][$key];
@@ -2281,7 +2218,7 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['cellCMYK'] ) )
         {
-            $params['cellCMYK'] = explode( ',', $params['cellCMYK'] );
+            $params['cellCMYK'] = explode( ',', (string) $params['cellCMYK'] );
             foreach ( array_keys( $params['cellCMYK'] ) as $key )
             {
                 $params['cellCMYK'][$keyArray[$key]] = $params['cellCMYK'][$key];
@@ -2294,7 +2231,7 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['textCMYK'] ) )
         {
-            $params['textCMYK'] = explode( ',', $params['textCMYK'] );
+            $params['textCMYK'] = explode( ',', (string) $params['textCMYK'] );
             foreach ( array_keys( $params['textCMYK'] ) as $key )
             {
                 $params['textCMYK'][$keyArray[$key]] = $params['textCMYK'][$key];
@@ -2305,7 +2242,7 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['titleTextCMYK'] ) )
         {
-            $params['titleTextCMYK'] = explode( ',', $params['titleTextCMYK'] );
+            $params['titleTextCMYK'] = explode( ',', (string) $params['titleTextCMYK'] );
             foreach ( array_keys( $params['titleTextCMYK'] ) as $key )
             {
                 $params['titleTextCMYK'][$keyArray[$key]] = $params['titleTextCMYK'][$key];
@@ -2323,23 +2260,23 @@ class eZPDFTable extends Cezpdf
         {
             if ( $text[$offSet] == '<' )
             {
-                if ( strcmp( substr($text, $offSet+1, strlen( 'tr' ) ), 'tr' ) == 0 )
+                if ( strcmp( substr((string) $text, $offSet+1, strlen( 'tr' ) ), 'tr' ) == 0 )
                 {
-                    $tableData[] = array();
+                    $tableData[] = [];
                     $offSet++;
                     $offSet += strlen( 'tr' );
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( 'td' ) ), 'td' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( 'td' ) ), 'td' ) == 0 )
                 {
-                    $tdParams = array();
+                    $tdParams = [];
                     $offSet++;
                     $offSet += strlen( 'td' );
-                    $offSet = eZPDFTable::extractParameters( $text, $offSet, $tdParams );
+                    $offSet = (new eZPDFTable())->extractParameters($text, $offSet, $tdParams);
 
-                    if ( count( $tdParams ) > 0 )
+                    if ( (is_countable($tdParams) ? count( $tdParams ) : 0) > 0 )
                     {
-                        $cellData[$columnCount. ',' .$rowCount] = array();
+                        $cellData[$columnCount. ',' .$rowCount] = [];
                         if ( isset( $tdParams['colspan'] ) )
                         {
                             $cellData[$columnCount. ',' .$rowCount]['size'] = (int)$tdParams['colspan'];
@@ -2355,14 +2292,14 @@ class eZPDFTable extends Cezpdf
                     }
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( 'th' ) ), 'th' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( 'th' ) ), 'th' ) == 0 )
                 {
-                    $thParams = array();
+                    $thParams = [];
                     $offSet++;
                     $offSet += strlen( 'th' );
-                    $offSet = eZPDFTable::extractParameters( $text, $offSet, $thParams );
+                    $offSet = (new eZPDFTable())->extractParameters($text, $offSet, $thParams);
 
-                    $cellData[$columnCount. ',' .$rowCount] = array();
+                    $cellData[$columnCount. ',' .$rowCount] = [];
                     $cellData[$columnCount.','.$rowCount]['title'] = true;
                     if ( isset( $thParams['colspan'] ) )
                     {
@@ -2378,7 +2315,7 @@ class eZPDFTable extends Cezpdf
                     }
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( '/tr' ) ), '/tr' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( '/tr' ) ), '/tr' ) == 0 )
                 {
                     $rowCount++;
                     $columnCount = 0;
@@ -2386,11 +2323,11 @@ class eZPDFTable extends Cezpdf
                     $offSet += strlen( '/tr' );
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( '/td' ) ), '/td' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( '/td' ) ), '/td' ) == 0 )
                 {
                     if ( $columnCount == 0 )
                     {
-                        $tableData[$rowCount] = array();
+                        $tableData[$rowCount] = [];
                     }
                     $tableData[$rowCount][$columnCount] = $columnText;
                     $columnText = '';
@@ -2399,11 +2336,11 @@ class eZPDFTable extends Cezpdf
                     $offSet += strlen( '/td' );
                     continue;
                 }
-                else if ( strcmp( substr($text, $offSet+1, strlen( '/th' ) ), '/th' ) == 0 )
+                else if ( strcmp( substr((string) $text, $offSet+1, strlen( '/th' ) ), '/th' ) == 0 )
                 {
                     if ( $columnCount == 0 )
                     {
-                        $tableData[$rowCount] = array();
+                        $tableData[$rowCount] = [];
                     }
                     $tableData[$rowCount][$columnCount] = $columnText;
                     $columnText = '';
@@ -2415,9 +2352,8 @@ class eZPDFTable extends Cezpdf
             }
             $columnText .= $text[$offSet];
         }
-        $this->addDocSpecFunction( 'ezTable', array( &$tableData, '', '', array_merge( array( 'cellData' => $cellData,
-                                                                                             'showLines' => $showLines ),
-                                                                                      $params ) ) );
+        $this->addDocSpecFunction( 'ezTable', [&$tableData, '', '', array_merge( ['cellData' => $cellData, 'showLines' => $showLines],
+                                                                                      $params )] );
     }
 
     /**
@@ -2434,14 +2370,14 @@ class eZPDFTable extends Cezpdf
     {
         $offSet++;
         $offSet += strlen( $type.':' );
-        $funcEnd = strpos( $text, ':', $offSet );
-        if ( $funcEnd === false || strpos( $text, '>', $offSet ) < $funcEnd )
+        $funcEnd = strpos( (string) $text, ':', $offSet );
+        if ( $funcEnd === false || strpos( (string) $text, '>', $offSet ) < $funcEnd )
         {
-            $funcEnd = strpos( $text, '>', $offSet );
+            $funcEnd = strpos( (string) $text, '>', $offSet );
         }
-        $functionName = substr( $text, $offSet, $funcEnd - $offSet );
+        $functionName = substr( (string) $text, $offSet, $funcEnd - $offSet );
 
-        return eZPDFTable::extractParameters( $text, $funcEnd, $parameters );
+        return (new eZPDFTable())->extractParameters($text, $funcEnd, $parameters);
     }
 
     /**
@@ -2455,25 +2391,25 @@ class eZPDFTable extends Cezpdf
      */
     function extractParameters( &$text, $offSet, &$parameters, $skipFirstChar=false )
     {
-        $endOffset = strpos( $text, '>', $offSet );
+        $endOffset = strpos( (string) $text, '>', $offSet );
         if ( $endOffset === false )
         {
-            $endOffset = strlen( $text );
+            $endOffset = strlen( (string) $text );
         }
 
         if ( $skipFirstChar === false )
             $offSet++;
         while ( $offSet < $endOffset )
         {
-            $nameEnd = strpos( $text, ':', $offSet );
-            $valueEnd = strpos( $text, ':', $nameEnd+1 );
+            $nameEnd = strpos( (string) $text, ':', $offSet );
+            $valueEnd = strpos( (string) $text, ':', $nameEnd+1 );
             if ( $valueEnd > $endOffset || $valueEnd === false )
             {
                 $valueEnd = $endOffset;
             }
-            $paramName = substr( $text, $offSet, $nameEnd-$offSet);
+            $paramName = substr( (string) $text, $offSet, $nameEnd-$offSet);
             ++$nameEnd;
-            $paramValue = substr( $text, $nameEnd, $valueEnd-$nameEnd );
+            $paramValue = substr( (string) $text, $nameEnd, $valueEnd-$nameEnd );
             $parameters[$paramName] = $paramValue;
             $offSet = ++$valueEnd;
         }
@@ -2488,6 +2424,7 @@ class eZPDFTable extends Cezpdf
     */
     function outputDocSpecification()
     {
+        $return = null;
         foreach( array_keys( $this->DocSpecification ) as $key )
         {
             $outputElement =& $this->DocSpecification[$key];
@@ -2515,13 +2452,13 @@ class eZPDFTable extends Cezpdf
 
             if ( isset( $outputElement['isFunction'] ) && $outputElement['isFunction'] === true )
             {
-                $return = call_user_func_array( array( &$this, $outputElement['functionName'] ), $outputElement['parameters'] );
+                $return = call_user_func_array( [&$this, $outputElement['functionName']], $outputElement['parameters'] );
             }
             else
             {
                 $return = Cezpdf::ezText( $outputElement['text'],
                                           $size,
-                                          array( 'justification' => $documentSpec['justification'] ) );
+                                          ['justification' => $documentSpec['justification']] );
             }
         }
         return $return;
@@ -2532,7 +2469,7 @@ class eZPDFTable extends Cezpdf
     */
     function callTextBox( $params, $text )
     {
-        $this->addDocSpecFunction( 'insertTextBox', array( $params, $text ) );
+        $this->addDocSpecFunction( 'insertTextBox', [$params, $text] );
     }
 
     function insertTextBox( $params, $text )
@@ -2547,8 +2484,8 @@ class eZPDFTable extends Cezpdf
         $marginText .= ':right:' . ( $this->ez['pageWidth'] - $params['width'] - $params['x'] );
         $marginText .= '>';
         $marginText .= '<ezCall:callText';
-        $marginText .= ':size:' . ( isset( $params['size'] ) ? $params['size'] : $this->fontSize() );
-        $marginText .= ':justification:' . ( isset( $params['align'] ) ? $params['align'] : 'left' );
+        $marginText .= ':size:' . ( $params['size'] ?? $this->fontSize() );
+        $marginText .= ':justification:' . ( $params['align'] ?? 'left' );
         $marginText .= '>';
 
         $this->ezText( $marginText . $text . '</ezCall:callText>' );
@@ -2561,7 +2498,7 @@ class eZPDFTable extends Cezpdf
     */
     function callTextFrame( $params, $text )
     {
-        $this->addDocSpecFunction( 'insertTextFrame', array( $params, $text ) );
+        $this->addDocSpecFunction( 'insertTextFrame', [$params, $text] );
     }
 
     /*!
@@ -2583,10 +2520,10 @@ class eZPDFTable extends Cezpdf
             $this->selectFont( $params['fontName'] );
         }
 
-        $cmykKeys = array( 'c', 'm', 'y', 'k' );
+        $cmykKeys = ['c', 'm', 'y', 'k'];
         if ( isset( $params ['frameCMYK'] ) )
         {
-            $params['frameCMYK'] = explode( ',', $params['frameCMYK'] );
+            $params['frameCMYK'] = explode( ',', (string) $params['frameCMYK'] );
             foreach ( $cmykKeys as $oldKey => $newKey )
             {
                 $params['frameCMYK'][$newKey] = $params['frameCMYK'][$oldKey];
@@ -2595,7 +2532,7 @@ class eZPDFTable extends Cezpdf
         }
         if ( isset( $params['textCMYK'] ) )
         {
-            $params['textCMYK'] = explode( ',', $params['textCMYK'] );
+            $params['textCMYK'] = explode( ',', (string) $params['textCMYK'] );
             foreach ( $cmykKeys as $oldKey => $newKey )
             {
                 $params['textCMYK'][$newKey] = $params['textCMYK'][$oldKey];
@@ -2687,7 +2624,7 @@ class eZPDFTable extends Cezpdf
      */
     function callText( $params )
     {
-        $options = array();
+        $options = [];
 
         if ( isset( $params['font'] ) )
         {
@@ -2706,9 +2643,9 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['cmyk'] ) )
         {
-            $keyArray = array ( 'c', 'm', 'y', 'k' );
-            $options['cmyk'] = array();
-            $params['cmyk'] = explode( ',', $params['cmyk'] );
+            $keyArray = ['c', 'm', 'y', 'k'];
+            $options['cmyk'] = [];
+            $params['cmyk'] = explode( ',', (string) $params['cmyk'] );
             foreach ( array_keys( $params['cmyk'] ) as $key )
             {
                 $options['cmyk'][$keyArray[$key]] = $params['cmyk'][$key];
@@ -2727,18 +2664,7 @@ class eZPDFTable extends Cezpdf
     */
     function pushStack( $continous = true)
     {
-        $docSpecArray = array( 'DocSpec' => $this->DocSpecification,
-                               'PreStack' => $this->PreStack,
-                               'LeftMarginArray' => $this->LeftMarginArray,
-                               'RightMarginArray' => $this->RightMarginArray,
-                               'LeftMargin' => $this->ez['leftMargin'],
-                               'RightMargin' => $this->ez['rightMargin'],
-                               'TopMargin' => $this->ez['topMargin'],
-                               'BottomMargin' => $this->ez['bottomMargin'],
-                               'LineSpace' => $this->ez['lineSpace'],
-                               'Continous' => $continous,
-                               'FontSize' => $this->fontSize(),
-                               'Justification' => $this->justification() );
+        $docSpecArray = ['DocSpec' => $this->DocSpecification, 'PreStack' => $this->PreStack, 'LeftMarginArray' => $this->LeftMarginArray, 'RightMarginArray' => $this->RightMarginArray, 'LeftMargin' => $this->ez['leftMargin'], 'RightMargin' => $this->ez['rightMargin'], 'TopMargin' => $this->ez['topMargin'], 'BottomMargin' => $this->ez['bottomMargin'], 'LineSpace' => $this->ez['lineSpace'], 'Continous' => $continous, 'FontSize' => $this->fontSize(), 'Justification' => $this->justification()];
         if ( $continous )
         {
             $docSpecArray['YPos'] = $this->yOffset();
@@ -2747,11 +2673,8 @@ class eZPDFTable extends Cezpdf
 
         $this->DocSpecStack[] = $docSpecArray;
 
-        $this->PreStack = array( array( 'justification' => $this->justification(),
-                                        'fontSize' => $this->fontSize(),
-                                        'fontName' => 'lib/ezpdf/classes/fonts/Helvetica',
-                                        'cmyk' => eZMath:: rgbToCMYK2( 0, 0, 0 ) ) );
-        $this->DocSpecification = array();
+        $this->PreStack = [['justification' => $this->justification(), 'fontSize' => $this->fontSize(), 'fontName' => 'lib/ezpdf/classes/fonts/Helvetica', 'cmyk' => eZMath:: rgbToCMYK2( 0, 0, 0 )]];
+        $this->DocSpecification = [];
     }
 
     /*!
@@ -2787,8 +2710,7 @@ class eZPDFTable extends Cezpdf
     function addDocSpecification( $text )
     {
         $docSpec = array_pop( $this->PreStack );
-        $this->DocSpecification[] = array ( 'docSpec' => $docSpec,
-                                            'text' => $text );
+        $this->DocSpecification[] = ['docSpec' => $docSpec, 'text' => $text];
         $this->PreStack[] = $docSpec;
     }
 
@@ -2800,10 +2722,7 @@ class eZPDFTable extends Cezpdf
     function addDocSpecFunction( $functionName, $parameters )
     {
         $docSpec = array_pop( $this->PreStack );
-        $this->DocSpecification[] = array ( 'docSpec' => $docSpec,
-                                            'isFunction' => true,
-                                            'functionName' => $functionName,
-                                            'parameters' => $parameters );
+        $this->DocSpecification[] = ['docSpec' => $docSpec, 'isFunction' => true, 'functionName' => $functionName, 'parameters' => $parameters];
         $this->PreStack[] = $docSpec;
     }
 
@@ -2816,9 +2735,9 @@ class eZPDFTable extends Cezpdf
      * - fontSize
      * - fontName
      */
-    function addToPreStack( $options=array() )
+    function addToPreStack( $options=[] )
     {
-        $currentElement = array();
+        $currentElement = [];
 
         $prevElement = array_pop( $this->PreStack );
 
@@ -2867,8 +2786,8 @@ class eZPDFTable extends Cezpdf
     */
     function callFrameLine( $info )
     {
-        $parameters = array();
-        eZPDFTable::extractParameters( $info['p'], 0, $parameters, true );
+        $parameters = [];
+        (new eZPDFTable())->extractParameters($info['p'], 0, $parameters, true);
 
         $location = $parameters['location'];
         $yOffset = $parameters['margin'];
@@ -2920,9 +2839,9 @@ class eZPDFTable extends Cezpdf
     */
     function callStartPageCounter( $info )
     {
-        $params = array();
+        $params = [];
 
-        eZPDFTable::extractParameters( $info['p'], 0, $params, true );
+        (new eZPDFTable())->extractParameters($info['p'], 0, $params, true);
 
         $identifier = 'main';
         if ( isset( $params['identifier'] ) )
@@ -2932,7 +2851,7 @@ class eZPDFTable extends Cezpdf
 
         if ( isset( $params['start'] ) )
         {
-            $this->PageCounter[$identifier] = array();
+            $this->PageCounter[$identifier] = [];
             $this->PageCounter[$identifier]['start'] = $this->ezGetCurrentPageNumber();
         }
         if ( isset( $params['stop'] ) )
@@ -3022,20 +2941,20 @@ class eZPDFTable extends Cezpdf
         return ( $headerIndex != 0 ? $headerIndex : '' );
     }
 
-    public $TOC; // Table of content array
-    public $KeywordArray; // keyword array
-    public $PageCounter;
+    public $TOC = []; // Table of content array
+    public $KeywordArray = []; // keyword array
+    public $PageCounter = [];
 
-    public $FrontpageID; // Variable used to store reference to frontpage
+    public $FrontpageID = null; // Variable used to store reference to frontpage
 
     public $ezFrame; // array containing frame definitions
 
     /* Stack and array used for preprocessing document */
-    public $PreStack;
-    public $DocSpecification;
+    public $PreStack = [];
+    public $DocSpecification = [];
 
     /* Stack array for recursive ezText calls */
-    public $DocSpecStack = array();
+    public $DocSpecStack = [];
 }
 
 

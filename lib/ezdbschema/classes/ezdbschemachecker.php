@@ -31,13 +31,13 @@ class eZDbSchemaChecker
                - removed_indexes - A list of removed indexes in the table
                - changed_indexes - A list of indexes that have changed definition
     */
-    static function diff( $schema1, $schema2 = array(), $schema1Type = false, $schema2Type = false )
+    static function diff( $schema1, $schema2 = [], $schema1Type = false, $schema2Type = false )
     {
         if ( !is_array( $schema1 ) )
         {
             return false;
         }
-        $diff = array();
+        $diff = [];
 
         foreach ( $schema2 as $name => $def )
         {
@@ -52,7 +52,7 @@ class eZDbSchemaChecker
             else
             {
                 $table_diff = eZDbSchemaChecker::diffTable( $schema1[$name], $def, $schema1Type, $schema2Type );
-                if ( count( $table_diff ) )
+                if ( is_countable($table_diff) ? count( $table_diff ) : 0 )
                 {
                     $diff['table_changes'][$name] = $table_diff;
                 }
@@ -95,7 +95,7 @@ class eZDbSchemaChecker
     */
     static function diffTable( $table1, $table2, $schema1Type, $schema2Type )
     {
-        $table_diff = array();
+        $table_diff = [];
 
         /* See if all the fields in table 1 exist in table 2 */
         foreach ( $table2['fields'] as $name => $def )
@@ -152,7 +152,7 @@ class eZDbSchemaChecker
                       $table2Indexes[$name]['removed'] )
             {
                 if ( isset( $table2Indexes[$name]['comments'] ) )
-                    $def['comments'] = array_merge( isset( $def['comments'] ) ? $def['comments'] : array(),
+                    $def['comments'] = array_merge( $def['comments'] ?? [],
                                                     $table2Indexes[$name]['comments'] );
                 $table_diff['removed_indexes'][$name] = $def;
             }
@@ -183,16 +183,16 @@ class eZDbSchemaChecker
         /* Type is always available */
         if ( $field1['type'] != $field2['type'] )
         {
-            return array( 'different-options' => array( 'type' ), 'field-def' => $field2 );
+            return ['different-options' => ['type'], 'field-def' => $field2];
         }
 
-        $test_fields = array( 'default', 'not_null' );
+        $test_fields = ['default', 'not_null'];
         
         // Ignore length for int types
         if ( $field1['type'] === $field2['type'] && $field1['type'] !== 'int' )
             $test_fields[] = 'length';
 
-        $different_options = array();
+        $different_options = [];
 
         foreach ( $test_fields as $test_field )
         {
@@ -214,7 +214,7 @@ class eZDbSchemaChecker
         }
 
         if ( $different_options )
-            return array( 'different-options' => $different_options, 'field-def' => $field2 );
+            return ['different-options' => $different_options, 'field-def' => $field2];
         else
             return false;
     }
@@ -233,7 +233,7 @@ class eZDbSchemaChecker
             return $index2;
         }
 
-        $test_fields = array( 'link_table' );
+        $test_fields = ['link_table'];
         foreach ( $test_fields as $test_field )
         {
             if ( isset($index1[$test_field] ) )
@@ -253,7 +253,7 @@ class eZDbSchemaChecker
             }
         }
 
-        $test_fields = array( 'fields', 'link_fields' );
+        $test_fields = ['fields', 'link_fields'];
         foreach ( $test_fields as $test_field )
         {
             if ( isset( $index1[$test_field] ) )

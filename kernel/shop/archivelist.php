@@ -50,21 +50,20 @@ if ( $http->hasPostVariable( 'UnarchiveButton' ) )
     }
 }
 
-$archiveArray = eZOrder::active( true, $offset, $limit, $sortField, $sortOrder, eZOrder::SHOW_ARCHIVED );
+$archiveArray = eZOrder::active( $offset, $limit, true, $sortField, $sortOrder, eZOrder::SHOW_ARCHIVED );
 $archiveCount = eZOrder::activeCount( eZOrder::SHOW_ARCHIVED );
 
 $tpl->setVariable( 'archive_list', $archiveArray );
 $tpl->setVariable( 'archive_list_count', $archiveCount );
 $tpl->setVariable( 'limit', $limit );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'sort_field', $sortField );
 $tpl->setVariable( 'sort_order', $sortOrder );
 
-$Result = array();
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Order list' ),
-                                'url' => false ) );
+$Result = [];
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Order list' ), 'url' => false]];
 
 $Result['content'] = $tpl->fetch( 'design:shop/archivelist.tpl' );
 ?>

@@ -41,10 +41,10 @@ class eZClassFunctionCollection
         }
         else
         {
-            $classes = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, array( 'name' => 'asc' ) );
+            $classes = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, ['name' => 'asc'] );
         }
 
-        return array( 'result' => $classes );
+        return ['result' => $classes];
     }
 
     function fetchClassList( $classFilter, $sortBy )
@@ -53,11 +53,11 @@ class eZClassFunctionCollection
         if ( $sortBy &&
              is_array( $sortBy ) &&
              count( $sortBy ) == 2 &&
-             in_array( $sortBy[0], array( 'id', 'name' ) ) )
+             in_array( $sortBy[0], ['id', 'name'] ) )
         {
-            $sorts = array( $sortBy[0] => ( $sortBy[1] )? 'asc': 'desc' );
+            $sorts = [$sortBy[0] => ( $sortBy[1] )? 'asc': 'desc'];
         }
-        $contentClassList = array();
+        $contentClassList = [];
         if ( is_array( $classFilter ) and count( $classFilter ) == 0)
         {
             $classFilter = false;
@@ -70,35 +70,32 @@ class eZClassFunctionCollection
                                                             $classFilter );
         }
         if ( $contentClassList === null )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $contentClassList );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $contentClassList];
     }
 
     function fetchLatestClassList( $offset, $limit )
     {
-        $contentClassList = array();
+        $contentClassList = [];
         $limitData = null;
         if ( $limit )
-            $limitData = array( 'offset' => $offset,
-                                'length' => $limit );
+            $limitData = ['offset' => $offset, 'length' => $limit];
         $contentClassList = eZContentClass::fetchList( 0, true, false,
-                                                        array( 'modified' => 'desc' ), null,
+                                                        ['modified' => 'desc'], null,
                                                         false, $limitData );
-        return array( 'result' => $contentClassList );
+        return ['result' => $contentClassList];
     }
 
     function fetchClassAttributeList( $classID )
     {
-        $contentClassAttributeList = array();
+        $contentClassAttributeList = [];
         if ( $contentClass = eZContentClass::fetch( $classID ) )
         {
             $contentClassAttributeList = $contentClass->fetchAttributes();
         }
         if ( $contentClassAttributeList === null )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $contentClassAttributeList );
+            return ['error' => ['error_type' => 'kernel', 'error_code' => eZError::KERNEL_NOT_FOUND]];
+        return ['result' => $contentClassAttributeList];
     }
 
     function fetchOverrideTemplateList( $classID )
@@ -106,7 +103,7 @@ class eZClassFunctionCollection
         $class = eZContentClass::fetch( $classID );
         $classIdentifier = $class->attribute( 'identifier' );
 
-        $result = array ();
+        $result = [];
 
         $ini = eZINI::instance();
 
@@ -125,20 +122,14 @@ class eZClassFunctionCollection
                         if( isset( $customMatch['conditions']['class_identifier'] ) &&
                             $customMatch['conditions']['class_identifier'] == $classIdentifier )
                         {
-                            $result[] = array( 'siteaccess' => $siteAccess,
-                                               'block'      => $customMatch['override_name'],
-                                               'source'     => $override['template'],
-                                               'target'     => $customMatch['match_file'] );
+                            $result[] = ['siteaccess' => $siteAccess, 'block'      => $customMatch['override_name'], 'source'     => $override['template'], 'target'     => $customMatch['match_file']];
                         }
 
                         if( isset( $customMatch['conditions']['class'] ) &&
                             $customMatch['conditions']['class'] == $classID )
                         {
 
-                            $result[] = array( 'siteaccess' => $siteAccess,
-                                               'block'      => $customMatch['override_name'],
-                                               'source'     => $override['template'],
-                                               'target'     => $customMatch['match_file'] );
+                            $result[] = ['siteaccess' => $siteAccess, 'block'      => $customMatch['override_name'], 'source'     => $override['template'], 'target'     => $customMatch['match_file']];
                         }
                     }
                 }
@@ -146,7 +137,7 @@ class eZClassFunctionCollection
 
         }
 
-        return array( 'result' => $result );
+        return ['result' => $result];
     }
 
 }

@@ -10,12 +10,9 @@
 require 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Country update script\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Country update script\n\n" .
                                                         "Upgrades db table in addition with upgrade from 3.9.2 to 3.9.3\n" .
-                                                        "Fixes bug with aplying VAT rules" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+                                                        "Fixes bug with aplying VAT rules" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 $script->startup();
 
 $options = $script->getOptions(  );

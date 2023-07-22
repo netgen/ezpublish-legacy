@@ -13,7 +13,7 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish DB file verifier\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish DB file verifier\n\n" .
                                                         "Checks the database update files and gives a report on them.\n" .
                                                         "It will show which files are missing and which should not be present.\n" .
                                                         "\n" .
@@ -26,25 +26,20 @@ $script = eZScript::instance( array( 'description' => ( "eZ Publish DB file veri
                                                         "\n" .
                                                         "Example output:\n" .
                                                         "  checkdbfiles.php\n" .
-                                                        "  ? update/database/mysql/3.5/dbupdate-3.5.0-to-3.5.1.sql" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+                                                        "  ? update/database/mysql/3.5/dbupdate-3.5.0-to-3.5.1.sql" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[no-verify-branches][export-path:]",
                                 "",
-                                array( 'no-verify-branches' => "Do not verify the content of the files with previous branches (To avoid SVN usage)",
-                                       'export-path' => "Directory to use for doing SVN exports."
-                                       ) );
+                                ['no-verify-branches' => "Do not verify the content of the files with previous branches (To avoid SVN usage)", 'export-path' => "Directory to use for doing SVN exports."] );
 $script->initialize();
 
-$dbTypes = array();
+$dbTypes = [];
 $dbTypes[] = 'mysql';
 $dbTypes[] = 'postgresql';
 
-$branches = array();
+$branches = [];
 $branches[] = '4.1';
 $branches[] = '4.2';
 $branches[] = '4.3';
@@ -60,89 +55,24 @@ $lowestExportVersion = '4.3';
 ***       the various eZ Publish branches.
 *********************************************************/
 
-$versions = array();
-$versions41 = array( 'unstable' => array(  array( '4.0.0',       '4.1.0alpha1' ),
-                                           array( '4.1.0alpha1', '4.1.0alpha2' ),
-                                           array( '4.1.0alpha2', '4.1.0beta1' ),
-                                           array( '4.1.0beta1', '4.1.0rc1' ),
-                                           array( '4.1.0rc1', '4.1.0' )
-                                        ),
-                     'unstable_subdir' => 'unstable',
-                     'stable' => array( array( '4.0.0', '4.1.0' ) ) );
-$versions42 = array( 'unstable' => array( array( '4.1.0',   '4.2.0alpha1' ),
-                                          array( '4.2.0alpha1', '4.2.0beta1' ),
-                                          array( '4.2.0beta1', '4.2.0rc1' ),
-                                          array( '4.2.0rc1', '4.2.0rc2' ),
-                                          array( '4.2.0rc2', '4.2.0' ),
-                                        ),
-                     'unstable_subdir' => 'unstable',
-                     'stable' => array( array( '4.1.0', '4.2.0' ) )
-                    );
+$versions = [];
+$versions41 = ['unstable' => [['4.0.0', '4.1.0alpha1'], ['4.1.0alpha1', '4.1.0alpha2'], ['4.1.0alpha2', '4.1.0beta1'], ['4.1.0beta1', '4.1.0rc1'], ['4.1.0rc1', '4.1.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.0.0', '4.1.0']]];
+$versions42 = ['unstable' => [['4.1.0', '4.2.0alpha1'], ['4.2.0alpha1', '4.2.0beta1'], ['4.2.0beta1', '4.2.0rc1'], ['4.2.0rc1', '4.2.0rc2'], ['4.2.0rc2', '4.2.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.1.0', '4.2.0']]];
 
-$versions43 = array( 'unstable' => array( array( '4.2.0', '4.3.0alpha1' ),
-                                          array( '4.3.0alpha1', '4.3.0beta1' ),
-                                          array( '4.3.0beta1', '4.3.0beta2' ),
-                                          array( '4.3.0beta2', '4.3.0rc1' ),
-                                          array( '4.3.0rc1', '4.3.0' ),
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.2.0', '4.3.0' ) ),
-           );
+$versions43 = ['unstable' => [['4.2.0', '4.3.0alpha1'], ['4.3.0alpha1', '4.3.0beta1'], ['4.3.0beta1', '4.3.0beta2'], ['4.3.0beta2', '4.3.0rc1'], ['4.3.0rc1', '4.3.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.2.0', '4.3.0']]];
 
-$versions44 = array( 'unstable' => array( array( '4.3.0', '4.4.0alpha1' ),
-                                         array( '4.4.0alpha1', '4.4.0alpha2' ),
-                                         array( '4.4.0alpha2', '4.4.0alpha3' ),
-                                         array( '4.4.0alpha3', '4.4.0alpha4' ),
-                                         array( '4.4.0alpha4', '4.4.0alpha5' ),
-                                         array( '4.4.0alpha5', '4.4.0beta1' ),
-                                         array( '4.4.0beta1', '4.4.0beta2' ),
-                                         array( '4.4.0beta2', '4.4.0beta3' ),
-                                         array( '4.4.0beta3', '4.4.0' ),
+$versions44 = ['unstable' => [['4.3.0', '4.4.0alpha1'], ['4.4.0alpha1', '4.4.0alpha2'], ['4.4.0alpha2', '4.4.0alpha3'], ['4.4.0alpha3', '4.4.0alpha4'], ['4.4.0alpha4', '4.4.0alpha5'], ['4.4.0alpha5', '4.4.0beta1'], ['4.4.0beta1', '4.4.0beta2'], ['4.4.0beta2', '4.4.0beta3'], ['4.4.0beta3', '4.4.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.3.0', '4.4.0']]];
 
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.3.0', '4.4.0' ) ),
-           );
+$versions45 = ['unstable' => [['4.4.0', '4.5.0alpha1'], ['4.5.0alpha1', '4.5.0beta1'], ['4.5.0beta1', '4.5.0beta2'], ['4.5.0beta2', '4.5.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.4.0', '4.5.0']]];
 
-$versions45 = array( 'unstable' => array( array( '4.4.0', '4.5.0alpha1' ),
-                                          array( '4.5.0alpha1', '4.5.0beta1' ),
-                                          array( '4.5.0beta1', '4.5.0beta2' ),
-                                          array( '4.5.0beta2', '4.5.0' ),
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.4.0', '4.5.0' ) ),
-           );
+$versions46 = ['unstable' => [['4.5.0', '4.6.0alpha1'], ['4.6.0alpha1', '4.6.0beta1'], ['4.6.0beta1', '4.6.0rc1'], ['4.6.0rc1', '4.6.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.5.0', '4.6.0']]];
 
-$versions46 = array( 'unstable' => array( array( '4.5.0', '4.6.0alpha1' ),
-                                          array( '4.6.0alpha1', '4.6.0beta1' ),
-                                          array( '4.6.0beta1', '4.6.0rc1' ),
-                                          array( '4.6.0rc1', '4.6.0' ),
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.5.0', '4.6.0' ) ),
-           );
+$versions47 = ['unstable' => [['4.6.0', '4.7.0alpha1'], ['4.7.0alpha1', '4.7.0beta1'], ['4.7.0beta1', '4.7.0rc1'], ['4.7.0rc1', '4.7.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.6.0', '4.7.0']]];
 
-$versions47 = array( 'unstable' => array( array( '4.6.0', '4.7.0alpha1' ),
-                                          array( '4.7.0alpha1', '4.7.0beta1' ),
-                                          array( '4.7.0beta1', '4.7.0rc1' ),
-                                          array( '4.7.0rc1', '4.7.0' ),
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.6.0', '4.7.0' ) ),
-           );
-
-$versions50 = array( 'unstable' => array( array( '4.7.0', '5.0.0alpha1' ),
-                                          array( '5.0.0alpha1', '5.0.0' ),
-                    ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '4.7.0', '5.0.0' ) ),
-           );
+$versions50 = ['unstable' => [['4.7.0', '5.0.0alpha1'], ['5.0.0alpha1', '5.0.0']], 'unstable_subdir' => 'unstable', 'stable' => [['4.7.0', '5.0.0']]];
 
 // Note: DB updates are kept in base sql file regardless of state as of 5.1
-$versions51 = array( 'unstable' => array( ),
-             'unstable_subdir' => 'unstable',
-             'stable' => array( array( '5.0.0', '5.1.0' ) ),
-           );
+$versions51 = ['unstable' => [], 'unstable_subdir' => 'unstable', 'stable' => [['5.0.0', '5.1.0']]];
 
 
 $versions['4.1'] = $versions41;
@@ -155,11 +85,11 @@ $versions['4.7'] = $versions47;
 $versions['5.0'] = $versions50;
 $versions['5.1'] = $versions51;
 
-$fileList = array();
-$missingFileList = array();
-$conflictFileList = array();
-$exportMissingFileList = array();
-$scannedDirs = array();
+$fileList = [];
+$missingFileList = [];
+$conflictFileList = [];
+$exportMissingFileList = [];
+$scannedDirs = [];
 
 function handleVersionList( $basePath, $subdir,
                             &$fileList, &$missingFileList, &$conflictFileList, &$scannedDirs,
@@ -195,7 +125,7 @@ function handleVersionList( $basePath, $subdir,
         $to = $versionEntry[1];
         $dir = $updatePath;
         $file = $dir . '/dbupdate-' . $from . '-to-' . $to . '.sql';
-        $fileList = array_diff( $fileList, array( $file ) );
+        $fileList = array_diff( $fileList, [$file] );
         if ( !file_exists( $file ) )
         {
             $missingFileList[] = $file;
@@ -203,7 +133,7 @@ function handleVersionList( $basePath, $subdir,
         if ( $useInfoFiles )
         {
             $infoFile = $dir . '/dbupdate-' . $from . '-to-' . $to . '.info';
-            $fileList = array_diff( $fileList, array( $infoFile ) );
+            $fileList = array_diff( $fileList, [$infoFile] );
             if ( !file_exists( $infoFile ) )
             {
                 $missingFileList[] = $infoFile;
@@ -383,12 +313,12 @@ foreach ( $dbTypes as $dbType )
     }
 }
 
-if ( count( $missingFileList ) > 0 or
-     count( $exportMissingFileList ) > 0 or
-     count( $fileList ) > 0 or
-     count( $conflictFileList ) > 0 )
+if ( (is_countable($missingFileList) ? count( $missingFileList ) : 0) > 0 or
+     (is_countable($exportMissingFileList) ? count( $exportMissingFileList ) : 0) > 0 or
+     (is_countable($fileList) ? count( $fileList ) : 0) > 0 or
+     (is_countable($conflictFileList) ? count( $conflictFileList ) : 0) > 0 )
 {
-    if ( count( $fileList ) > 0 )
+    if ( (is_countable($fileList) ? count( $fileList ) : 0) > 0 )
     {
         foreach ( $fileList as $file )
         {
@@ -396,7 +326,7 @@ if ( count( $missingFileList ) > 0 or
         }
     }
 
-    if ( count( $missingFileList ) > 0 )
+    if ( (is_countable($missingFileList) ? count( $missingFileList ) : 0) > 0 )
     {
         foreach ( $missingFileList as $file )
         {
@@ -404,7 +334,7 @@ if ( count( $missingFileList ) > 0 or
         }
     }
 
-    if ( count( $exportMissingFileList ) > 0 )
+    if ( (is_countable($exportMissingFileList) ? count( $exportMissingFileList ) : 0) > 0 )
     {
         foreach ( $exportMissingFileList as $file )
         {
@@ -412,7 +342,7 @@ if ( count( $missingFileList ) > 0 or
         }
     }
 
-    if ( count( $conflictFileList ) > 0 )
+    if ( (is_countable($conflictFileList) ? count( $conflictFileList ) : 0) > 0 )
     {
         foreach ( $conflictFileList as $file )
         {

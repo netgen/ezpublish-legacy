@@ -81,25 +81,24 @@ This is a <emphasize>block</emphasize> of text.
 
 class eZXMLTextType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezxmltext";
-    const COLS_FIELD = 'data_int1';
-    const COLS_VARIABLE = '_ezxmltext_cols_';
+    final public const DATA_TYPE_STRING = "ezxmltext";
+    final public const COLS_FIELD = 'data_int1';
+    final public const COLS_VARIABLE = '_ezxmltext_cols_';
 
     // Tag support preset
-    const TAG_PRESET_FIELD = 'data_text2';
-    const TAG_PRESET_VARIABLE = '_ezxmltext_tagpreset_';
+    final public const TAG_PRESET_FIELD = 'data_text2';
+    final public const TAG_PRESET_VARIABLE = '_ezxmltext_tagpreset_';
 
     // The timestamp of the format for eZ Publish 3.0.
-    const VERSION_30_TIMESTAMP = 1045487555;
+    final public const VERSION_30_TIMESTAMP = 1_045_487_555;
     // Contains the timestamp of the current xml format, if the stored
     // timestamp is less than this it needs to be upgraded until it is correct.
-    const VERSION_TIMESTAMP = 1045487555; // AS 21-09-2007: should be the same as VERSION_30_TIMESTAMP
+    final public const VERSION_TIMESTAMP = 1_045_487_555; // AS 21-09-2007: should be the same as VERSION_30_TIMESTAMP
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "XML block", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
-        $this->deletedStoredObjectAttribute = array();
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -162,7 +161,7 @@ class eZXMLTextType extends eZDataType
         // eZContentObject->fetchAttributesByIdentifier() to get the data
         $identifier = $contentObjectAttribute->attribute( 'contentclass_attribute_identifier' );
 
-        $attributeArray = $object->fetchAttributesByIdentifier( array( $identifier ),
+        $attributeArray = $object->fetchAttributesByIdentifier( [$identifier],
                                                                 $currentVersion->attribute( 'version' ),
                                                                 $languageList );
 
@@ -175,7 +174,7 @@ class eZXMLTextType extends eZDataType
                 continue;
 
             // urls
-            $urlIdArray = array();
+            $urlIdArray = [];
             foreach ( $dom->getElementsByTagName( 'link' ) as $link )
             {
                 // We are looking for external 'http://'-style links, not the internal
@@ -220,12 +219,11 @@ class eZXMLTextType extends eZDataType
 
     /**
      * Extracts ids of embedded/linked objects in an eZXML DOMNodeList
-     * @param DOMNodeList $domNodeList
      * @return array
      */
     private function getRelatedObjectList( DOMNodeList $domNodeList )
     {
-        $embeddedObjectIdArray = array();
+        $embeddedObjectIdArray = [];
         foreach( $domNodeList as $embed )
         {
             if ( $embed->hasAttribute( 'object_id' ) )
@@ -403,7 +401,7 @@ class eZXMLTextType extends eZDataType
 
         $dom = new DOMDocument( '1.0', 'utf-8' );
         $text = eZXMLTextType::rawXMLText( $contentObjectAttribute );
-        if ( trim( $text ) == '' )
+        if ( trim( (string) $text ) == '' )
         {
             return $metaData;
         }
@@ -522,8 +520,7 @@ class eZXMLTextType extends eZDataType
     */
     function templateList()
     {
-        return array( array( 'regexp',
-                             '#^content/datatype/[a-zA-Z]+/ezxmltags/#' ) );
+        return [['regexp', '#^content/datatype/[a-zA-Z]+/ezxmltags/#']];
     }
 
     function serializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
@@ -696,7 +693,7 @@ class eZXMLTextType extends eZDataType
         $embeds = $doc->getElementsByTagName( 'embed' );
         $embedsInline = $doc->getElementsByTagName( 'embed-inline' );
 
-        $modified = array();
+        $modified = [];
         $modified[] = eZXMLTextType::transformRemoteLinksToLinks( $links, $objectAttribute );
         $modified[] = eZXMLTextType::transformRemoteLinksToLinks( $objects, $objectAttribute );
         $modified[] = eZXMLTextType::transformRemoteLinksToLinks( $embeds, $objectAttribute );
@@ -788,14 +785,13 @@ class eZXMLTextType extends eZDataType
         if ( $version == null )
         {
             eZPersistentObject::removeObject( eZURLObjectLink::definition(),
-                                              array( 'contentobject_attribute_id' => $contentObjectAttributeID ) );
+                                              ['contentobject_attribute_id' => $contentObjectAttributeID] );
 
         }
         else
         {
             eZPersistentObject::removeObject( eZURLObjectLink::definition(),
-                                              array( 'contentobject_attribute_id' => $contentObjectAttributeID,
-                                                     'contentobject_attribute_version' => $version ) );
+                                              ['contentobject_attribute_id' => $contentObjectAttributeID, 'contentobject_attribute_version' => $version] );
         }
 
         /* Here we figure out which which URLs are not in use at all */
@@ -816,7 +812,7 @@ class eZXMLTextType extends eZDataType
         /* And if there are some, we delete them */
         if ( count( $res ) )
         {
-            $unusedUrlIDs = array();
+            $unusedUrlIDs = [];
             foreach ( $res as $record )
                 $unusedUrlIDs[] = $record['id'];
             $unusedUrlIDString = implode( ', ', $unusedUrlIDs );
@@ -852,14 +848,14 @@ class eZXMLTextType extends eZDataType
         $xmlText = eZXMLTextType::domString( $doc );
         $db = eZDB::instance();
         $xmlText = "'" . $db->escapeString( $xmlText ) . "'";
-        return array( 'data_text' => $xmlText );
+        return ['data_text' => $xmlText];
     }
 
     /**
      * List of fully deleted object attributes by id, used to know when we don't need to perform additional url cleanup
      * @var array
      */
-    protected $deletedStoredObjectAttribute;
+    protected $deletedStoredObjectAttribute = [];
 }
 
 eZDataType::register( eZXMLTextType::DATA_TYPE_STRING, "eZXMLTextType" );

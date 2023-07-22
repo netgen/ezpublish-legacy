@@ -15,7 +15,7 @@ $ini = eZINI::instance( 'content.ini' );
 $draftsCleanUpLimit = $ini->hasVariable( 'VersionManagement', 'DraftsCleanUpLimit' ) ?
                          $ini->variable( 'VersionManagement', 'DraftsCleanUpLimit' ) : 0;
 $durationSetting = $ini->hasVariable( 'VersionManagement', 'DraftsDuration' ) ?
-                      $ini->variable( 'VersionManagement', 'DraftsDuration' ) : array( 'days' => 90 );
+                      $ini->variable( 'VersionManagement', 'DraftsDuration' ) : ['days' => 90];
 
 $isDurationSet = false;
 $duration = 0;

@@ -61,7 +61,7 @@ class updateNodeAssignment
         //2. Delete the duplicated entries which have same contentobject_id, contentobject_version and is_main
         // The process of deleting duplicated entries deletes the old entries, keeps the latest entry in the
         // duplicated entry list.
-        $tempDeleteList = array();
+        $tempDeleteList = [];
 
         $duplicatedContentList = $db->arrayQuery( "SELECT contentobject_id, contentobject_version, is_main, parent_node
                                               FROM eznode_assignment
@@ -110,14 +110,11 @@ class updateNodeAssignment
 }
 
 require 'autoload.php';
-$script = eZScript::instance( array( 'description' => "eZ Publish node assignment update script. " .
+$script = eZScript::instance( ['description' => "eZ Publish node assignment update script. " .
                                            "This script will clean up unused node assignment entries because of bug 15478: " .
-                                           "node assignment is not removed when removing node from child list",
-                                    'use-session' => false,
-                                    'use-modules' => false,
-                                    'use-extensions' => true ) );
+                                           "node assignment is not removed when removing node from child list", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 $script->startup();
-$options = $script->getOptions( "", "", array( "-q" => "Quiet mode" ) );
+$options = $script->getOptions( "", "", ["-q" => "Quiet mode"] );
 $script->initialize();
 
 // execlude node whose parent_node = 1

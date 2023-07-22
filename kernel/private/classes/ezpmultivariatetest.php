@@ -19,8 +19,6 @@ class ezpMultivariateTest
 
     /**
      * Construct
-     *
-     * @param ezpMultivariateTestHandlerInterface $handler
      */
     public function __construct( ezpMultivariateTestHandlerInterface $handler  )
     {

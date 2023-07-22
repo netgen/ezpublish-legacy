@@ -24,7 +24,7 @@ class eZObjectRelationListDatatypeRegression extends ezpDatabaseTestCase
         $this->xxx = eZContentLanguage::addLanguage( 'xxx-XX', 'XXXX' );
         ezpINIHelper::setINISetting(
             'site.ini', 'RegionalSettings',
-            'SiteLanguageList', array( 'xxx-XX', 'eng-GB' )
+            'SiteLanguageList', ['xxx-XX', 'eng-GB']
         );
         eZContentLanguage::clearPrioritizedLanguages();
     }
@@ -54,15 +54,15 @@ class eZObjectRelationListDatatypeRegression extends ezpDatabaseTestCase
         $o1 = new ezpObject( 'article', 2, 14, 1, 'eng-GB' );
         $o1->title = 'Test_ENG';
         $o1->publish();
-        $o1->addTranslation( 'xxx-XX', array( 'title' => 'Test_XXX' ) );
+        $o1->addTranslation( 'xxx-XX', ['title' => 'Test_XXX'] );
 
         $o2 = new ezpObject( $classIdentifier, 2, 14, 1, 'xxx-XX' );
         $o2->test_name = 'name_';
-        $o2->test_relation = array( $o1->attribute( 'id' ) );
+        $o2->test_relation = [$o1->attribute( 'id' )];
         $o2->publish();
 
         // test O2's name
-        $this->assertEquals( 'name_Test_XXX', $o2->name );
+        static::assertEquals('name_Test_XXX', $o2->name);
         $o1->remove();
         $o2->remove();
     }

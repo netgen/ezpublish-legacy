@@ -17,13 +17,13 @@
 class ezpSessionHandlerDB extends ezpSessionHandler
 {
     // Seconds before timeout occurs that gc function stops to make sure request completes
-    const GC_TIMEOUT_MARGIN = 5;
+    final public const GC_TIMEOUT_MARGIN = 5;
 
     // Max execution time if php's setting evaluates to false, to avoid hitting http server timeout
-    const GC_MAX_EXECUTION_TIME = 300;
+    final public const GC_MAX_EXECUTION_TIME = 300;
 
     // Same as above when in CLI mode
-    const GC_MAX_EXECUTION_TIME_CLI = 3000;
+    final public const GC_MAX_EXECUTION_TIME_CLI = 3000;
 
     /**
      * Specifies how many sessions should be deleted pr iteration
@@ -101,7 +101,7 @@ class ezpSessionHandlerDB extends ezpSessionHandler
 
         if ( $db->bindingType() != eZDBInterface::BINDING_NO )
         {
-            $sessionData = $db->bindVariable( $sessionData, array( 'name' => 'data' ) );
+            $sessionData = $db->bindVariable( $sessionData, ['name' => 'data'] );
         }
         else
         {
@@ -134,14 +134,14 @@ class ezpSessionHandlerDB extends ezpSessionHandler
      */
     public function destroy( $sessionId )
     {
-        ezpEvent::getInstance()->notify( 'session/destroy', array( $sessionId ) );
+        ezpEvent::getInstance()->notify( 'session/destroy', [$sessionId] );
 
         $db = eZDB::instance();
         $escKey = $db->escapeString( $sessionId );
 
-        eZSession::triggerCallback( 'destroy_pre', array( $db, $sessionId, $escKey ) );
+        eZSession::triggerCallback( 'destroy_pre', [$db, $sessionId, $escKey] );
         $db->query( "DELETE FROM ezsession WHERE session_key='$escKey'" );
-        eZSession::triggerCallback( 'destroy_post', array( $db, $sessionId, $escKey ) );
+        eZSession::triggerCallback( 'destroy_post', [$db, $sessionId, $escKey] );
 
         return true;
     }
@@ -158,7 +158,7 @@ class ezpSessionHandlerDB extends ezpSessionHandler
         session_regenerate_id();
         $newSessionId = session_id();
 
-        ezpEvent::getInstance()->notify( 'session/regenerate', array( $oldSessionId, $newSessionId ) );
+        ezpEvent::getInstance()->notify( 'session/regenerate', [$oldSessionId, $newSessionId] );
 
         if ( $updateBackendData )
         {
@@ -171,12 +171,12 @@ class ezpSessionHandlerDB extends ezpSessionHandler
             $escOldKey = $db->escapeString( $oldSessionId );
             $escNewKey = $db->escapeString( $newSessionId );
             $escUserID = $db->escapeString( eZSession::userID() );
-            eZSession::triggerCallback( 'regenerate_pre', array( $db, $escNewKey, $escOldKey, $escUserID ) );
+            eZSession::triggerCallback( 'regenerate_pre', [$db, $escNewKey, $escOldKey, $escUserID] );
 
             $db->query( "UPDATE ezsession SET session_key='$escNewKey', user_id='$escUserID' WHERE session_key='$escOldKey'" );
             $db->query( "UPDATE ezbasket SET session_id='$escNewKey' WHERE session_id='$escOldKey'" );
 
-            eZSession::triggerCallback( 'regenerate_post', array( $db, $escNewKey, $escOldKey, $escUserID ) );
+            eZSession::triggerCallback( 'regenerate_post', [$db, $escNewKey, $escOldKey, $escUserID] );
         }
         return true;
     }
@@ -189,10 +189,10 @@ class ezpSessionHandlerDB extends ezpSessionHandler
      */
     public function gc( $maxLifeTime )
     {
-        ezpEvent::getInstance()->notify( 'session/gc', array( $maxLifeTime ) );
+        ezpEvent::getInstance()->notify( 'session/gc', [$maxLifeTime] );
         $db = eZDB::instance();
         $gcCompleted = true;
-        eZSession::triggerCallback( 'gc_pre', array( $db, $maxLifeTime ) );
+        eZSession::triggerCallback( 'gc_pre', [$db, $maxLifeTime] );
 
         if ( $this->gcSessionsPrIteration )
         {
@@ -209,7 +209,7 @@ class ezpSessionHandlerDB extends ezpSessionHandler
             do
             {
                 $startTime = time();
-                $rows = $db->arrayQuery( 'SELECT session_key FROM ezsession WHERE expiration_time < ' . $maxLifeTime ,  array( 'offset' => 0, 'limit' => $this->gcSessionsPrIteration, 'column' => 'session_key' ) );
+                $rows = $db->arrayQuery( 'SELECT session_key FROM ezsession WHERE expiration_time < ' . $maxLifeTime ,  ['offset' => 0, 'limit' => $this->gcSessionsPrIteration, 'column' => 'session_key'] );
                 if ( $rows )
                 {
                     $keyINString = '\'' . implode( '\', \'', $rows ) . '\'';// generateSQLINStatement does not add quotes when casting to string
@@ -231,7 +231,7 @@ class ezpSessionHandlerDB extends ezpSessionHandler
             $db->query( 'DELETE FROM ezsession WHERE expiration_time < ' . $maxLifeTime );
         }
 
-        eZSession::triggerCallback( 'gc_post', array( $db, $maxLifeTime ) );
+        eZSession::triggerCallback( 'gc_post', [$db, $maxLifeTime] );
         return $gcCompleted;
     }
 
@@ -242,12 +242,12 @@ class ezpSessionHandlerDB extends ezpSessionHandler
      */
     public function cleanup()
     {
-        ezpEvent::getInstance()->notify( 'session/cleanup', array() );
+        ezpEvent::getInstance()->notify( 'session/cleanup', [] );
         $db = eZDB::instance();
 
-        eZSession::triggerCallback( 'cleanup_pre', array( $db ) );
+        eZSession::triggerCallback( 'cleanup_pre', [$db] );
         $db->query( 'TRUNCATE TABLE ezsession' );
-        eZSession::triggerCallback( 'cleanup_post', array( $db ) );
+        eZSession::triggerCallback( 'cleanup_post', [$db] );
 
         return true;
     }

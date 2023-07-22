@@ -64,7 +64,7 @@ class eZSOAPServer
 
         header( "SOAPServer: eZ soap" );
         header( "Content-Type: text/xml; charset=\"UTF-8\"" );
-        Header( "Content-Length: " . strlen( $payload ) );
+        Header( "Content-Length: " . strlen( (string) $payload ) );
 
         if ( ob_get_length() )
             ob_end_clean();
@@ -104,6 +104,8 @@ class eZSOAPServer
     */
     function processRequest()
     {
+        $functionName = null;
+        $namespaceURI = null;
         if ( $_SERVER["REQUEST_METHOD"] != "POST" )
         {
             print( "Error: this web page does only understand POST methods" );
@@ -138,14 +140,14 @@ class eZSOAPServer
             $functionName = $requestNode->localName;
             $namespaceURI = $requestNode->namespaceURI;
 
-            $params = array();
+            $params = [];
             // check parameters
             foreach ( $requestNode->childNodes as $parameterNode )
             {
                 $params[] = eZSOAPResponse::decodeDataTypes( $parameterNode );
             }
 
-            list( $objectName, $objectFunctionName ) = preg_split('/::/', $functionName, 2, PREG_SPLIT_NO_EMPTY);
+            [$objectName, $objectFunctionName] = preg_split('/::/', $functionName, 2, PREG_SPLIT_NO_EMPTY);
             if ( !$objectFunctionName and in_array( $functionName, $this->FunctionList ) &&
                  function_exists( $functionName ) )
             {
@@ -172,7 +174,7 @@ class eZSOAPServer
                     else
                     {
                         $this->showResponse( $functionName, $namespaceURI,
-                                             call_user_func_array( array( $object, $objectFunctionName ), $params ) );
+                                             call_user_func_array( [$object, $objectFunctionName], $params ) );
                     }
                 }
             }
@@ -199,7 +201,7 @@ class eZSOAPServer
 
       Returns false if the function could not be registered.
     */
-    function registerFunction( $name, $params=array() )
+    function registerFunction( $name, $params=[] )
     {
         $this->FunctionList[] = $name;
     }
@@ -212,8 +214,8 @@ class eZSOAPServer
     */
     function stripHTTPHeader( $data )
     {
-        $start = strpos( $data, "<?xml version=\"1.0\"?>" );
-        return substr( $data, $start, strlen( $data ) - $start );
+        $start = strpos( (string) $data, "<?xml version=\"1.0\"?>" );
+        return substr( (string) $data, $start, strlen( (string) $data ) - $start );
     }
 
     /// Contains a list over registered functions

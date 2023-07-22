@@ -17,16 +17,18 @@
 
 class eZTemplateCacheFunction
 {
-    const DEFAULT_TTL = 7200; // 2 hours = 60*60*2
-
+    final public const DEFAULT_TTL = 7200; // 2 hours = 60*60*2
     /**
      * Initializes the object with names.
      *
-     * @param string $blockName
+     * @param string $BlockName
      */
-    public function __construct( $blockName = 'cache-block' )
+    public function __construct(
+        /// \privatesection
+        /// Name of the function
+        public $BlockName = 'cache-block'
+    )
     {
-        $this->BlockName = $blockName;
     }
 
     /*!
@@ -35,21 +37,18 @@ class eZTemplateCacheFunction
     */
     function functionList()
     {
-        return array( $this->BlockName );
+        return [$this->BlockName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->BlockName => array( 'parameters' => true,
-                                                 'static' => false,
-                                                 'transform-children' => true,
-                                                 'tree-transformation' => true,
-                                                 'transform-parameters' => true ) );
+        return [$this->BlockName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
                                          $tpl, $parameters, $privateData )
     {
+        $nodeID = null;
         $ini = eZINI::instance();
         $children = eZTemplateNodeTool::extractFunctionNodeChildren( $node );
         if ( $ini->variable( 'TemplateSettings', 'TemplateCache' ) != 'enabled' )
@@ -60,7 +59,7 @@ class eZTemplateCacheFunction
         $functionPlacement = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
         $placementKeyString = eZTemplateCacheBlock::placementString( $functionPlacement );
 
-        $newNodes = array();
+        $newNodes = [];
         $ignoreContentExpiry = false;
 
         if ( isset( $parameters['expiry'] ) )
@@ -72,7 +71,7 @@ class eZTemplateCacheFunction
             }
             else
             {
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['expiry'], false, array(), 'localExpiry' );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['expiry'], false, [], 'localExpiry' );
                 $ttlCode = "( \$localExpiry > 0 ? \$localExpiry : null )";
             }
         }
@@ -112,8 +111,8 @@ class eZTemplateCacheFunction
         {
             $placementKeyStringText = eZPHPCreator::variableText( $placementKeyString, 0, 0, false );
             $accessNameText = eZPHPCreator::variableText( $accessName, 0, 0, false );
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $keysData, false, array(), 'cacheKeys' );
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $subtreeExpiryData, false, array(), 'subtreeExpiry' );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $keysData, false, [], 'cacheKeys' );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $subtreeExpiryData, false, [], 'subtreeExpiry' );
 
             $code = "\$cacheKeys = array( \$cacheKeys, $placementKeyStringText, $accessNameText );\n";
             $cachePathText = "\$cachePath";
@@ -121,7 +120,7 @@ class eZTemplateCacheFunction
         else
         {
             $nodeID = $subtreeValue ? eZTemplateCacheBlock::decodeNodeID( $subtreeValue ) : false;
-            $cachePath = eZTemplateCacheBlock::cachePath( eZTemplateCacheBlock::keyString( array( $placementKeyString, $accessName ) ), $nodeID );
+            $cachePath = eZTemplateCacheBlock::cachePath( eZTemplateCacheBlock::keyString( [$placementKeyString, $accessName] ), $nodeID );
             $code = "";
             $cachePathText = eZPHPCreator::variableText( $cachePath, 0, 0, false );
         }
@@ -130,7 +129,7 @@ class eZTemplateCacheFunction
 
         $code = '';
 
-        $codePlacementHash = md5( $placementKeyString );
+        $codePlacementHash = md5( (string) $placementKeyString );
         if ( $hasKeys )
         {
             $code .= "list(\$cacheHandler_{$codePlacementHash}, \$contentData) =\n  eZTemplateCacheBlock::retrieve( \$cacheKeys, \$subtreeExpiry, $ttlCode, " . ($ignoreContentExpiry ? "false" : "true") . " );\n";
@@ -144,26 +143,26 @@ class eZTemplateCacheFunction
             "if ( !( \$contentData instanceof eZClusterFileFailure ) )\n" .
             "{\n";
 
-        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( $code, array( 'spacing' => 0 ) );
-        $newNodes[] = eZTemplateNodeTool::createWriteToOutputVariableNode( 'contentData', array( 'spacing' => 4 ) );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( $code, ['spacing' => 0] );
+        $newNodes[] = eZTemplateNodeTool::createWriteToOutputVariableNode( 'contentData', ['spacing' => 4] );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "    unset( \$contentData );\n" .
                                                                "}\n" .
                                                                "else\n" .
                                                                "{\n" .
                                                                "    unset( \$contentData );" );
 
-        $newNodes[] = eZTemplateNodeTool::createOutputVariableIncreaseNode( array( 'spacing' => 4 ) );
+        $newNodes[] = eZTemplateNodeTool::createOutputVariableIncreaseNode( ['spacing' => 4] );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode( 4 );
         $newNodes = array_merge( $newNodes, $children );
         $newNodes[] = eZTemplateNodeTool::createSpacingDecreaseNode( 4 );
-        $newNodes[] = eZTemplateNodeTool::createAssignFromOutputVariableNode( 'cachedText', array( 'spacing' => 4 ) );
+        $newNodes[] = eZTemplateNodeTool::createAssignFromOutputVariableNode( 'cachedText', ['spacing' => 4] );
 
         $code =
             "\$cacheHandler_{$codePlacementHash}->storeCache( array( 'scope' => 'template-block', 'binarydata' => \$cachedText ) );\n";
 
-        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( $code, array( 'spacing' => 4 ) );
-        $newNodes[] = eZTemplateNodeTool::createOutputVariableDecreaseNode( array( 'spacing' => 4 ) );
-        $newNodes[] = eZTemplateNodeTool::createWriteToOutputVariableNode( 'cachedText', array( 'spacing' => 4 ) );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( $code, ['spacing' => 4] );
+        $newNodes[] = eZTemplateNodeTool::createOutputVariableDecreaseNode( ['spacing' => 4] );
+        $newNodes[] = eZTemplateNodeTool::createWriteToOutputVariableNode( 'cachedText', ['spacing' => 4] );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "    unset( \$cachedText, \$cacheHandler_{$codePlacementHash} );\n}\n" );
 
         return $newNodes;
@@ -182,16 +181,13 @@ class eZTemplateCacheFunction
                 $ini = eZINI::instance();
                 if ( $ini->variable( 'TemplateSettings', 'TemplateCache' ) != 'enabled' )
                 {
-                    $text = eZTemplateCacheFunction::processUncached( $tpl, $functionChildren,
-                                                                      $rootNamespace, $currentNamespace );
+                    $text = (new eZTemplateCacheFunction())->processUncached($tpl, $functionChildren, $rootNamespace, $currentNamespace);
                     $textElements[] = $text;
                     return;
                 }
                 else
                 {
-                    $text = eZTemplateCacheFunction::processCachedPreprocess( $tpl,  $functionChildren,
-                                                                              $functionParameters, $functionPlacement,
-                                                                              $rootNamespace, $currentNamespace );
+                    $text = (new eZTemplateCacheFunction())->processCachedPreprocess($tpl, $functionChildren, $functionParameters, $functionPlacement, $rootNamespace, $currentNamespace);
                     $textElements[] = $text;
                 }
             } break;
@@ -229,8 +225,7 @@ class eZTemplateCacheFunction
 
         $placementString = eZTemplateCacheBlock::placementString( $functionPlacement );
 
-        return eZTemplateCacheFunction::processCached( $tpl, $functionChildren, $rootNamespace, $currentNamespace,
-                                                       $placementString, $keys, $subtreeExpiry, $expiry, $ignoreContentExpiry );
+        return (new eZTemplateCacheFunction())->processCached($tpl, $functionChildren, $rootNamespace, $currentNamespace, $placementString, $keys, $subtreeExpiry, $expiry, $ignoreContentExpiry);
     }
 
     function processCached( $tpl, $functionChildren, $rootNamespace, $currentNamespace,
@@ -242,11 +237,11 @@ class eZTemplateCacheFunction
             $accessName = $GLOBALS['eZCurrentAccess']['name'];
         if ( $keys === null )
         {
-            $keyArray = array( $placementString, $accessName );
+            $keyArray = [$placementString, $accessName];
         }
         else
         {
-            $keyArray = array( $keys, $placementString, $accessName );
+            $keyArray = [$keys, $placementString, $accessName];
         }
 
         $nodeID = $subtreeExpiry ? eZTemplateCacheBlock::decodeNodeID( $subtreeExpiry ) : false;
@@ -273,12 +268,9 @@ class eZTemplateCacheFunction
 
         // Check if we can restore
         $cacheFile = eZClusterFileHandler::instance( $phpPath );
-        $args = array( "tpl" => $tpl,
-                       "functionChildren" => $functionChildren,
-                       "rootNamespace" => $rootNamespace,
-                       "currentNamespace" => $currentNamespace );
-        return $cacheFile->processCache( array( 'eZTemplateCacheBlock', 'retrieveContent' ),
-                                         array( $this, 'generateProcessedContent' ),
+        $args = ["tpl" => $tpl, "functionChildren" => $functionChildren, "rootNamespace" => $rootNamespace, "currentNamespace" => $currentNamespace];
+        return $cacheFile->processCache( ['eZTemplateCacheBlock', 'retrieveContent'],
+                                         $this->generateProcessedContent(...),
                                          $ttl,
                                          $globalExpiryTime,
                                          $args );
@@ -286,11 +278,13 @@ class eZTemplateCacheFunction
 
     function generateProcessedContent( $fname, $args )
     {
+        $tpl = null;
+        $functionChildren = null;
+        $rootNamespace = null;
+        $currentNamespace = null;
         extract( $args );
-        $content = eZTemplateCacheFunction::processUncached( $tpl, $functionChildren, $rootNamespace, $currentNamespace );
-        return array( 'scope'      => 'template-block',
-                      'content'    => $content,
-                      'binarydata' => $content );
+        $content = (new eZTemplateCacheFunction())->processUncached($tpl, $functionChildren, $rootNamespace, $currentNamespace);
+        return ['scope'      => 'template-block', 'content'    => $content, 'binarydata' => $content];
     }
 
     /*!
@@ -302,7 +296,7 @@ class eZTemplateCacheFunction
     {
         $children = $functionChildren;
 
-        $childTextElements = array();
+        $childTextElements = [];
         if ( is_array( $children ) )
         {
             foreach ( array_keys( $children ) as $childKey )
@@ -322,10 +316,6 @@ class eZTemplateCacheFunction
     {
         return true;
     }
-
-    /// \privatesection
-    /// Name of the function
-    public $BlockName;
 }
 
 ?>

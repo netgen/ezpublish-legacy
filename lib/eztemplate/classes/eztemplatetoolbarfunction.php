@@ -19,11 +19,10 @@ class eZTemplateToolbarFunction
     /**
      * Initializes the object with names.
      *
-     * @param string $blockName
+     * @param string $BlockName
      */
-    public function __construct( $blockName = 'tool_bar' )
+    public function __construct(public $BlockName = 'tool_bar')
     {
-        $this->BlockName = $blockName;
     }
 
     /*!
@@ -32,21 +31,18 @@ class eZTemplateToolbarFunction
     */
     function functionList()
     {
-        return array( $this->BlockName );
+        return [$this->BlockName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->BlockName => array( 'parameters' => true,
-                                                 'static' => false,
-                                                 'transform-children' => false,
-                                                 'tree-transformation' => true,
-                                                 'transform-parameters' => true ) );
+        return [$this->BlockName => ['parameters' => true, 'static' => false, 'transform-children' => false, 'tree-transformation' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
                                          $tpl, $parameters, $privateData )
     {
+        $newNodes = [];
         if ( $functionName != $this->BlockName )
             return false;
 
@@ -82,9 +78,9 @@ class eZTemplateToolbarFunction
             $toolbarName = "Toolbar_" . $toolbarPosition;
             $toolArray = $toolbarIni->variable( $toolbarName, 'Tool' );
             if ( !is_array( $toolArray ) )
-                $toolArray = array();
+                $toolArray = [];
 
-            $newNodes = array();
+            $newNodes = [];
             foreach ( array_keys( $toolArray ) as $toolKey )
             {
                 $tool = $toolArray[$toolKey];
@@ -128,7 +124,7 @@ class eZTemplateToolbarFunction
                 $uniqID = md5( uniqid('inc') );
                 $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$oldRestoreIncludeArray" . "_$uniqID = isset( \$restoreIncludeArray ) ? \$restoreIncludeArray : array();\n".
                                                                        "\$restoreIncludeArray = array();\n");
-                $variableList = array();
+                $variableList = [];
                 foreach ( array_keys( $parameters ) as $parameterName )
                 {
                     if ( $parameterName == 'name' or
@@ -140,12 +136,12 @@ class eZTemplateToolbarFunction
                                                                            "elseif ( !isset( \$vars['']['$parameterName'] ) ) \n".
                                                                            "    \$restoreIncludeArray[] = array( '', '$parameterName', 'unset' );\n" );
 
-                    $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, array(),
-                                                                          array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName ) );
+                    $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, [],
+                                                                          [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName] );
                     $variableList[] = $parameterName;
                 }
 
-                $actionParameters = array();
+                $actionParameters = [];
                 if ( $toolbarIni->hasGroup( "Tool_" . $tool ) )
                 {
                     $actionParameters = $toolbarIni->group( "Tool_" . $tool );
@@ -157,33 +153,33 @@ class eZTemplateToolbarFunction
                 foreach ( array_keys( $actionParameters ) as $key )
                 {
                     $itemValue = $actionParameters[$key];
-                    $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $itemValue, false, array(),
-                                                                          array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $key ) );
+                    $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $itemValue, false, [],
+                                                                          [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $key] );
                     $variableList[] = $key;
                 }
 
                 // Add parameter tool_id and offset
                 $toolIDValue =  "Tool_" . $toolbarPosition . "_" . $tool . "_" . $placement;
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $toolIDValue, false, array(),
-                                                                      array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "tool_id" ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $toolIDValue, false, [],
+                                                                      [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "tool_id"] );
                 $variableList[] = "tool_id";
 
                 $toolOffset = $placement;
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $toolOffset, false, array(),
-                                                                      array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "offset" ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $toolOffset, false, [],
+                                                                      [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "offset"] );
                 $variableList[] = "offset";
 
                 // Add parameter first, last and placement
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $firstValue, false, array(),
-                                                                      array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "first" ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $firstValue, false, [],
+                                                                      [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "first"] );
                 $variableList[] = "first";
 
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $lastValue, false, array(),
-                                                                      array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "last" ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $lastValue, false, [],
+                                                                      [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "last"] );
                 $variableList[] = "last";
 
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $placementValue, false, array(),
-                                                                      array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "placement" ) );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $placementValue, false, [],
+                                                                      [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, "placement"] );
                 $variableList[] = "placement";
 
                 $newNodes = array_merge( $newNodes, $includeNodes );
@@ -227,8 +223,8 @@ class eZTemplateToolbarFunction
                 if ( isset( $functionParameters["name"] ) )
                 {
                     reset( $params );
-                    $whatParamsShouldBeUnset = array();
-                    $whatParamsShouldBeReplaced = array();
+                    $whatParamsShouldBeUnset = [];
+                    $whatParamsShouldBeReplaced = [];
                     while ( ( $key = key( $params ) ) !== null )
                     {
                         $item =& $params[$key];
@@ -256,17 +252,17 @@ class eZTemplateToolbarFunction
                         next( $params );
                     }
                     $toolbarPosition = $tpl->elementValue( $functionParameters["name"], $rootNamespace, $currentNamespace, $functionPlacement );
-                    $definedVariables = array();
+                    $definedVariables = [];
                     $toolbarName = "Toolbar_" . $toolbarPosition;
                     $toolArray = $toolbarIni->variable( $toolbarName, 'Tool' );
 
                     if ( !is_array( $toolArray ) )
-                        $toolArray = array();
+                        $toolArray = [];
 
-                    $actionParameters = array();
+                    $actionParameters = [];
                     foreach ( array_keys( $toolArray ) as $toolKey )
                     {
-                        $definedVariables = array();
+                        $definedVariables = [];
                         $tool = $toolArray[$toolKey];
                         $placement = $toolKey + 1;
                         if ( $toolbarIni->hasGroup( "Tool_" . $tool ) )
@@ -352,8 +348,6 @@ class eZTemplateToolbarFunction
     {
         return false;
     }
-
-    public $BlockName;
 }
 
 ?>

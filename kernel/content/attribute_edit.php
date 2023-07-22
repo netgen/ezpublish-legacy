@@ -37,7 +37,7 @@ if ( !isset( $FromLanguage ) or
      strlen( $FromLanguage ) == 0 )
     $FromLanguage = false;
 
-if ( $Module->runHooks( 'pre_fetch', array( $ObjectID, $EditVersion, $EditLanguage, $FromLanguage ) ) )
+if ( $Module->runHooks( 'pre_fetch', [$ObjectID, $EditVersion, $EditLanguage, $FromLanguage] ) )
     return;
 
 $object = eZContentObject::fetch( $ObjectID );
@@ -54,7 +54,7 @@ $attributeDataBaseName = 'ContentObjectAttribute';
 $class = eZContentClass::fetch( $classID );
 $contentObjectAttributes = $version->contentObjectAttributes( $EditLanguage );
 if ( $contentObjectAttributes === null or
-     count( $contentObjectAttributes ) == 0 )
+     (is_countable($contentObjectAttributes) ? count( $contentObjectAttributes ) : 0) == 0 )
 {
     $contentObjectAttributes = $version->contentObjectAttributes();
     $EditLanguage = $version->initialLanguageCode();
@@ -77,11 +77,9 @@ if ( $FromLanguage !== false )
 
 $http = eZHTTPTool::instance();
 
-$validation = array( 'processed' => false,
-                     'attributes' => array(),
-                     'placement' => array( ) );
+$validation = ['processed' => false, 'attributes' => [], 'placement' => []];
 
-if ( $Module->runHooks( 'post_fetch', array( $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$validation ) ) )
+if ( $Module->runHooks( 'post_fetch', [$class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$validation] ) )
     return;
 
 // Checking if user chose placement of object from browse page (when restoring from the TRASH),
@@ -114,7 +112,7 @@ $assignments = $version->attribute( 'parent_nodes' );
 $assignedNodes = $object->attribute( 'assigned_nodes' );
 
 // Figure out how many locations it has (or will get)
-$locationIDList = array();
+$locationIDList = [];
 foreach ( $assignedNodes as $node )
 {
     $locationIDList[$node->attribute( 'parent_node_id' )] = true;
@@ -150,7 +148,7 @@ if ( $locationCount < 1 && $Module->isCurrentAction( 'Publish' ) )
 
 // Custom Action Code Start
 $customAction = false;
-$customActionAttributeArray = array();
+$customActionAttributeArray = [];
 // Check for custom actions
 if ( $http->hasPostVariable( "CustomActionButton" ) )
 {
@@ -159,41 +157,42 @@ if ( $http->hasPostVariable( "CustomActionButton" ) )
     {
         $customActionString = $customActionKey;
 
-        if ( preg_match( "#^([0-9]+)_(.*)$#", $customActionString, $matchArray ) )
+        if ( preg_match( "#^([0-9]+)_(.*)$#", (string) $customActionString, $matchArray ) )
         {
             $customActionAttributeID = $matchArray[1];
             $customAction = $matchArray[2];
-            $customActionAttributeArray[$customActionAttributeID] = array( 'id' => $customActionAttributeID,
-                                                                           'value' => $customAction );
+            $customActionAttributeArray[$customActionAttributeID] = ['id' => $customActionAttributeID, 'value' => $customAction];
         }
     }
 }
 
 eZContentObjectEditHandler::initialize();
 
-$storeActions = array( 'Preview',
-                       'Translate',
-                       'TranslateLanguage',
-                       'VersionEdit',
-                       'Apply',
-                       'Publish',
-                       'Store',
-                       'StoreExit',
-//                      'Discard',
-//                      'CustomAction',
-                       'EditLanguage',
-                       'FromLanguage',
-                       'BrowseForObjects',
-                       'UploadFileRelation',
-                       'NewObject',
-                       'BrowseForNodes',
-                       'BrowseForPrimaryNodes',
-                       'RemoveAssignments',
-                       'DeleteRelation',
-                       'DeleteNode',
-                       'SectionEdit',
-                       'StateEdit',
-                       'MoveNode' );
+$storeActions = [
+    'Preview',
+    'Translate',
+    'TranslateLanguage',
+    'VersionEdit',
+    'Apply',
+    'Publish',
+    'Store',
+    'StoreExit',
+    //                      'Discard',
+    //                      'CustomAction',
+    'EditLanguage',
+    'FromLanguage',
+    'BrowseForObjects',
+    'UploadFileRelation',
+    'NewObject',
+    'BrowseForNodes',
+    'BrowseForPrimaryNodes',
+    'RemoveAssignments',
+    'DeleteRelation',
+    'DeleteNode',
+    'SectionEdit',
+    'StateEdit',
+    'MoveNode',
+];
 $storingAllowed = ( in_array( $Module->currentAction(), $storeActions ) ||
                     eZContentObjectEditHandler::isStoreAction() );
 if ( $http->hasPostVariable( 'CustomActionButton' ) )
@@ -203,7 +202,7 @@ $hasObjectInput = true;
 if ( $http->hasPostVariable( 'HasObjectInput' ) )
     $hasObjectInput =  $http->postVariable( 'HasObjectInput' );
 
-$contentObjectDataMap = array();
+$contentObjectDataMap = [];
 foreach ( $contentObjectAttributes as $contentObjectAttribute )
 {
     $contentObjectAttributeIdentifier = $contentObjectAttribute->attribute( 'contentclass_attribute_identifier' );
@@ -213,7 +212,7 @@ foreach ( $contentObjectAttributes as $contentObjectAttribute )
 // These variables will be modified according to validation
 $inputValidated = true;
 $requireFixup = false;
-$validatedAttributes = array();
+$validatedAttributes = [];
 
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' )
 {
@@ -232,11 +231,11 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' )
         switch ( $last )
         {
             case 'g':
-                $postMaxSizeBytes *= 1073741824; // = 1024 * 1024 * 1024
+                $postMaxSizeBytes *= 1_073_741_824; // = 1024 * 1024 * 1024
                 $postMaxSizeUnit = 'Gb';
                 break;
             case 'm':
-                $postMaxSizeBytes *= 1048576; // = 1024 * 1024
+                $postMaxSizeBytes *= 1_048_576; // = 1024 * 1024
                 $postMaxSizeUnit = 'Mb';
                 break;
             case 'k':
@@ -247,10 +246,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' )
         if ( (int)$_SERVER['CONTENT_LENGTH'] > $postMaxSizeBytes &&  // This is not 100% acurrate as $_SERVER['CONTENT_LENGTH'] doesn't only count post data but also other things
             count( $_POST ) === 0 )                                 // Therefore we also check if request got no post variables.
         {
-            $validation['attributes'][] = array( 'id' => '1',
-                                                 'identified' => 'generalid',
-                                                 'name' => ezpI18n::tr( 'kernel/content', 'Error' ),
-                                                 'description' => ezpI18n::tr( 'kernel/content', 'The request sent to the server was too big to be accepted. This probably means that you uploaded a file which was too big. The maximum allowed request size is %max_size_string.', null, array( '%max_size_string' => "$postMaxSize $postMaxSizeUnit" ) ) );
+            $validation['attributes'][] = ['id' => '1', 'identified' => 'generalid', 'name' => ezpI18n::tr( 'kernel/content', 'Error' ), 'description' => ezpI18n::tr( 'kernel/content', 'The request sent to the server was too big to be accepted. This probably means that you uploaded a file which was too big. The maximum allowed request size is %max_size_string.', null, ['%max_size_string' => "$postMaxSize $postMaxSizeUnit"] )];
             $validation['processed'] = true;
         }
     }
@@ -259,7 +255,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' )
 if ( $storingAllowed && $hasObjectInput)
 {
     // Disable checking 'is_required' flag for some actions.
-    $validationParameters = array( 'skip-isRequired' => false );
+    $validationParameters = ['skip-isRequired' => false];
     if ( $Module->isCurrentAction( 'Store' ) ||             // 'store draft'
          $http->hasPostVariable( 'CustomActionButton' ) )   // 'custom action' like 'Find object' for 'object relation' datatype.
     {
@@ -276,7 +272,7 @@ if ( $storingAllowed && $hasObjectInput)
     if ( $validationResult['require-fixup'] )
         $object->fixupInput( $contentObjectAttributes, $attributeDataBaseName );
 
-    $validation['custom_rules'] = array();
+    $validation['custom_rules'] = [];
     $customValidationResult = eZContentObjectEditHandler::validateInputHandlers( $Module, $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, $validationParameters );
     if ( $customValidationResult['warnings'] )
         $validation['custom_rules'] = $customValidationResult['warnings'];
@@ -288,12 +284,11 @@ if ( $storingAllowed && $hasObjectInput)
 
     // If no redirection uri we assume it's content/edit
     if ( !isset( $currentRedirectionURI ) )
-        $currentRedirectionURI = $Module->redirectionURI( 'content', 'edit', array( $ObjectID, $EditVersion, $EditLanguage ) );
+        $currentRedirectionURI = $Module->redirectionURI( 'content', 'edit', [$ObjectID, $EditVersion, $EditLanguage] );
 
     $fetchResult = $object->fetchInput( $contentObjectAttributes, $attributeDataBaseName,
                                         $customActionAttributeArray,
-                                        array( 'module' => $Module,
-                                               'current-redirection-uri' => $currentRedirectionURI ) );
+                                        ['module' => $Module, 'current-redirection-uri' => $currentRedirectionURI] );
     $attributeInputMap = $fetchResult['attribute-input-map'];
     if ( $Module->isCurrentAction( 'Discard' ) )
         $inputValidated = true;
@@ -307,7 +302,7 @@ if ( $storingAllowed && $hasObjectInput)
     {
         if ( $inputValidated )
         {
-            if ( $Module->runHooks( 'pre_commit', array( $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage ) ) )
+            if ( $Module->runHooks( 'pre_commit', [$class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage] ) )
                 return;
             $version->setAttribute( 'status', eZContentObjectVersion::STATUS_DRAFT );
         }
@@ -323,7 +318,7 @@ if ( $storingAllowed && $hasObjectInput)
         $db->commit();
         ezpEvent::getInstance()->notify(
             'content/cache/version',
-            array( $object->attribute( 'id' ), $version->attribute( 'version' ) )
+            [$object->attribute( 'id' ), $version->attribute( 'version' )]
         );
     }
 
@@ -338,20 +333,19 @@ if ( $storingAllowed && $hasObjectInput)
 elseif ( $storingAllowed )
 {
     if ( !isset( $currentRedirectionURI ) )
-        $currentRedirectionURI = $Module->redirectionURI( 'content', 'edit', array( $ObjectID, $EditVersion, $EditLanguage ) );
+        $currentRedirectionURI = $Module->redirectionURI( 'content', 'edit', [$ObjectID, $EditVersion, $EditLanguage] );
     eZContentObject::recursionProtectionStart();
     foreach( $contentObjectAttributes as $contentObjectAttribute )
     {
         $object->handleCustomHTTPActions( $contentObjectAttribute,  $attributeDataBaseName,
                                           $customActionAttributeArray,
-                                          array( 'module' => $Module,
-                                                 'current-redirection-uri' => $currentRedirectionURI ) );
+                                          ['module' => $Module, 'current-redirection-uri' => $currentRedirectionURI] );
         $contentObjectAttribute->setContent( $contentObjectAttribute->attribute( 'content' ) );
     }
     eZContentObject::recursionProtectionEnd();
 }
 
-$invalidNodeAssignmentList = array();
+$invalidNodeAssignmentList = [];
 if ( $Module->isCurrentAction( 'Publish' ) )
 {
     $mainFound = false;
@@ -363,7 +357,7 @@ if ( $Module->isCurrentAction( 'Publish' ) )
         // Check that node assignment node exists.
         if ( !$assignments[$key]->attribute( 'parent_node_obj' ) )
         {
-            $validation[ 'placement' ][] = array( 'text' => ezpI18n::tr( 'kernel/content', 'A node in the node assignment list has been deleted.' ) );
+            $validation[ 'placement' ][] = ['text' => ezpI18n::tr( 'kernel/content', 'A node in the node assignment list has been deleted.' )];
             $validation[ 'processed' ] = true;
             $inputValidated = false;
             $invalidNodeAssignmentList[] = $assignments[$key]->attribute( 'parent_node' );
@@ -380,11 +374,11 @@ if ( $Module->isCurrentAction( 'Publish' ) )
         }
     }
     $db->commit();
-    if ( !$mainFound and count( $assignments ) > 0 )
+    if ( !$mainFound and (is_countable($assignments) ? count( $assignments ) : 0) > 0 )
     {
         if( eZPreferences::value( 'admin_edit_show_locations' ) == '0' )
         {
-            $validation[ 'placement' ][] = array( 'text' => ezpI18n::tr( 'kernel/content', 'No main node selected, please select one.' ) );
+            $validation[ 'placement' ][] = ['text' => ezpI18n::tr( 'kernel/content', 'No main node selected, please select one.' )];
             $validation[ 'processed' ] = true;
             $inputValidated = false;
             eZDebugSetting::writeDebug( 'kernel-content-edit', "placement is not validated" );
@@ -401,7 +395,7 @@ if ( $inputValidated == true )
 {
     if ( $validatedAttributes == null )
     {
-        if ( $Module->runHooks( 'action_check', array( $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$Result  ) ) )
+        if ( $Module->runHooks( 'action_check', [$class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$Result] ) )
             return;
     }
 }
@@ -409,7 +403,7 @@ else if ( $http->hasPostVariable( 'PublishAfterConflict' ) )
 {
     if ( $http->postVariable( 'PublishAfterConflict' ) == 1 )
     {
-        if ( $Module->runHooks( 'action_check', array( $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$Result  ) ) )
+        if ( $Module->runHooks( 'action_check', [$class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $FromLanguage, &$Result] ) )
             return;
     }
 }
@@ -439,12 +433,7 @@ foreach ( $assignments as $assignment )
     }
 }
 
-$res->setKeys( array( array( 'object', $object->attribute( 'id' ) ),
-                      array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                      array( 'class', $class->attribute( 'id' ) ),
-                      array( 'class_identifier', $class->attribute( 'identifier' ) ),
-                      array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) )
-                      ) );
+$res->setKeys( [['object', $object->attribute( 'id' )], ['remote_id', $object->attribute( 'remote_id' )], ['class', $class->attribute( 'id' )], ['class_identifier', $class->attribute( 'identifier' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )]] );
 
 if ( $mainAssignment )
 {
@@ -457,8 +446,7 @@ if ( $mainAssignment )
             $parentClass = $parentObject->attribute( 'content_class' );
             if ( $parentClass )
             {
-                $res->setKeys( array( array( 'parent_class', $parentClass->attribute( 'id' ) ),
-                                      array( 'parent_class_identifier', $parentClass->attribute( 'identifier' ) ) ) );
+                $res->setKeys( [['parent_class', $parentClass->attribute( 'id' )], ['parent_class_identifier', $parentClass->attribute( 'identifier' )]] );
             }
         }
     }
@@ -476,8 +464,7 @@ if ( $OmitSectionSetting !== true )
         $sectionIdentifier = $section->attribute( 'identifier' );
     }
 
-    $res->setKeys( array( array( 'section', $object->attribute( 'section_id' ) ),
-                          array( 'section_identifier', $sectionIdentifier ) ) );
+    $res->setKeys( [['section', $object->attribute( 'section_id' )], ['section_identifier', $sectionIdentifier]] );
 }
 
 $object->setCurrentLanguage( $EditLanguage );
@@ -489,7 +476,7 @@ $tpl->setVariable( 'content_version', $version );
 $tpl->setVariable( 'http', $http );
 $tpl->setVariable( 'content_attributes', $contentObjectAttributes );
 $tpl->setVariable( 'from_content_attributes', $fromContentObjectAttributes );
-$tpl->setVariable( 'from_content_attributes_grouped_data_map', $fromContentObjectAttributes ? eZContentObject::createGroupedDataMap( $fromContentObjectAttributes ) : array() );
+$tpl->setVariable( 'from_content_attributes_grouped_data_map', $fromContentObjectAttributes ? eZContentObject::createGroupedDataMap( $fromContentObjectAttributes ) : [] );
 $tpl->setVariable( 'is_translating_content', $isTranslatingContent );
 $tpl->setVariable( 'content_attributes_data_map', $contentObjectDataMap );
 $tpl->setVariable( 'content_attributes_grouped_data_map', eZContentObject::createGroupedDataMap( $contentObjectAttributes ) );
@@ -506,7 +493,7 @@ $tpl->setVariable( "location_ui_enabled", $objectIsDraft );
 $tpl->setVariable( "object_is_draft", $objectIsDraft );
 
 
-if ( $Module->runHooks( 'pre_template', array( $class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $tpl, $FromLanguage ) ) )
+if ( $Module->runHooks( 'pre_template', [$class, $object, $version, $contentObjectAttributes, $EditVersion, $EditLanguage, $tpl, $FromLanguage] ) )
     return;
 
 $templateName = 'design:content/edit.tpl';
@@ -520,14 +507,14 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
 // $viewParameters contains $UserParameters only
 $viewParameters = $UserParameters;
 // "view_parameters" is available also in edit.tpl's templates
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( $templateName );
 $Result['view_parameters'] = $viewParameters;
 // $Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Content' ),
@@ -537,8 +524,8 @@ $Result['view_parameters'] = $viewParameters;
 //                          array( 'text' => $object->attribute( 'name' ),
 //                                 'url' => false ) );
 
-$path = array();
-$titlePath = array();
+$path = [];
+$titlePath = [];
 
 $hasPath = false;
 if ( $mainAssignment )
@@ -550,24 +537,15 @@ if ( $mainAssignment )
 
         foreach ( $parents as $parent )
         {
-            $path[] = array( 'text' => $parent->attribute( 'name' ),
-                             'url' => '/content/view/full/' . $parent->attribute( 'node_id' ),
-                             'url_alias' => $parent->attribute( 'url_alias' ),
-                             'node_id' => $parent->attribute( 'node_id' )
-                             );
+            $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/view/full/' . $parent->attribute( 'node_id' ), 'url_alias' => $parent->attribute( 'url_alias' ), 'node_id' => $parent->attribute( 'node_id' )];
         }
 
         if ( $parentNode->attribute( 'name' ) != null )
         {
-            $path[] = array( 'text' => $parentNode->attribute( 'name' ),
-                             'url' => '/content/view/full/' . $parentNode->attribute( 'node_id' ),
-                             'url_alias' => $parentNode->attribute( 'url_alias' ),
-                             'node_id' => $parentNode->attribute( 'node_id' ) );
+            $path[] = ['text' => $parentNode->attribute( 'name' ), 'url' => '/content/view/full/' . $parentNode->attribute( 'node_id' ), 'url_alias' => $parentNode->attribute( 'url_alias' ), 'node_id' => $parentNode->attribute( 'node_id' )];
         }
 
-        $objectPathElement = array( 'text' => $object->attribute( 'name' ),
-                                    'url' => false,
-                                    'url_alias' => false );
+        $objectPathElement = ['text' => $object->attribute( 'name' ), 'url' => false, 'url_alias' => false];
         $existingNode = $object->attribute( 'main_node' );
         if ( $existingNode )
         {
@@ -588,23 +566,15 @@ if ( !$hasPath )
 
         foreach ( $parents as $parent )
         {
-            $path[] = array( 'text' => $parent->attribute( 'name' ),
-                             'url' => '/content/view/full/' . $parent->attribute( 'node_id' ),
-                             'url_alias' => $parent->attribute( 'url_alias' ),
-                             'node_id' => $parent->attribute( 'node_id' )
-                             );
+            $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/view/full/' . $parent->attribute( 'node_id' ), 'url_alias' => $parent->attribute( 'url_alias' ), 'node_id' => $parent->attribute( 'node_id' )];
         }
-        $path[] = array( 'text' => $existingNode->attribute( 'name' ),
-                         'url' => '/content/view/full/' . $existingNode->attribute( 'node_id' ),
-                         'url_alias' => $existingNode->attribute( 'url_alias' ),
-                         'node_id' => $existingNode->attribute( 'node_id' ) );
+        $path[] = ['text' => $existingNode->attribute( 'name' ), 'url' => '/content/view/full/' . $existingNode->attribute( 'node_id' ), 'url_alias' => $existingNode->attribute( 'url_alias' ), 'node_id' => $existingNode->attribute( 'node_id' )];
         $hasPath = true;
     }
 }
 if ( !$hasPath )
 {
-    $path[] = array( 'text' => $object->attribute( 'name' ),
-                     'url' => false );
+    $path[] = ['text' => $object->attribute( 'name' ), 'url' => false];
 }
 
 $Result['path'] = $path;

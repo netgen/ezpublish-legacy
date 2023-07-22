@@ -21,7 +21,7 @@ class ezpRestJsonView extends ezcMvcView
 
     public function createZones( $layout )
     {
-        $zones = array();
+        $zones = [];
         $zones[] = new ezcMvcJsonViewHandler( 'content' );
         return $zones;
     }

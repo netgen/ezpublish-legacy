@@ -51,12 +51,12 @@ class eZUserOperationCollection
             {
                 eZUserAccountKey::removeByUserID( $userID );
             }
-            return array( 'status' => true );
+            return ['status' => true];
         }
         else
         {
             eZDebug::writeError( "Failed to change settings of user $userID ", __METHOD__ );
-            return array( 'status' => false );
+            return ['status' => false];
         }
     }
 
@@ -87,14 +87,12 @@ class eZUserOperationCollection
             // Disable user account and send verification mail to the user
 
             // Create enable account hash and send it to the newly registered user
-            $hash = md5( mt_rand() . time() . $userID );
+            $hash = md5( random_int(0, mt_getrandmax()) . time() . $userID );
 
             if ( eZOperationHandler::operationIsAvailable( 'user_activation' ) )
             {
                 $operationResult = eZOperationHandler::execute( 'user',
-                                                                'activation', array( 'user_id'    => $userID,
-                                                                                     'user_hash'  => $hash,
-                                                                                     'is_enabled' => false ) );
+                                                                'activation', ['user_id'    => $userID, 'user_hash'  => $hash, 'is_enabled' => false] );
             }
             else
             {
@@ -118,7 +116,7 @@ class eZUserOperationCollection
             // try to call the verify user class with function verifyUser
             $user = eZContentObject::fetch( $userID );
             if ( $verifyUserTypeClass && method_exists( $verifyUserTypeClass, 'verifyUser' ) )
-                $sendUserMail  = call_user_func( array( $verifyUserTypeClass, 'verifyUser' ), $user, $tpl );
+                $sendUserMail  = call_user_func( [$verifyUserTypeClass, 'verifyUser'], $user, $tpl );
             else
                 eZDebug::writeWarning( "Unknown VerifyUserType '$verifyUserType'", 'user/register' );
         }
@@ -153,7 +151,7 @@ class eZUserOperationCollection
             $mail->setBody( $templateResult );
             $mailResult = eZMailTransport::send( $mail );
         }
-        return array( 'status' => eZModuleOperationInfo::STATUS_CONTINUE );
+        return ['status' => eZModuleOperationInfo::STATUS_CONTINUE];
     }
 
 
@@ -164,12 +162,12 @@ class eZUserOperationCollection
         if( $user->attribute( 'is_enabled' ) )
         {
             eZDebugSetting::writeNotice( 'kernel-user',  'The user is enabled.', 'user register/check activation' );
-            return array( 'status' => eZModuleOperationInfo::STATUS_CONTINUE );
+            return ['status' => eZModuleOperationInfo::STATUS_CONTINUE];
         }
         else
         {
             eZDebugSetting::writeNotice( 'kernel-user',  'The user is not enabled.', 'user register/check activation' );
-            return array( 'status' => eZModuleOperationInfo::STATUS_HALTED );
+            return ['status' => eZModuleOperationInfo::STATUS_HALTED];
         }
     }
 
@@ -182,20 +180,20 @@ class eZUserOperationCollection
         if( $object->attribute( 'current_version' ) !== '1' )
         {
             eZDebug::writeError( 'Current version is wrong for the user object. User ID: ' . $userID , 'user/register' );
-            return array( 'status' => eZModuleOperationInfo::STATUS_CANCELLED );
+            return ['status' => eZModuleOperationInfo::STATUS_CANCELLED];
         }
         eZDebugSetting::writeNotice( 'kernel-user' , 'publishing user object', 'user register' );
         // if the object is already published, continue the operation
         if( $object->attribute( 'status' ) )
         {
             eZDebugSetting::writeNotice( 'kernel-user', 'User object publish is published.', 'user register' );
-            return array( 'status' => eZModuleOperationInfo::STATUS_CONTINUE );
+            return ['status' => eZModuleOperationInfo::STATUS_CONTINUE];
         }
-        $result = eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $userID, 'version' => 1 ) );
+        $result = eZOperationHandler::execute( 'content', 'publish', ['object_id' => $userID, 'version' => 1] );
         if( $result['status'] === eZModuleOperationInfo::STATUS_HALTED )
         {
             eZDebugSetting::writeNotice( 'kernel-user', 'User object publish is in pending.', 'user register' );
-            return array( 'status' => eZModuleOperationInfo::STATUS_HALTED );
+            return ['status' => eZModuleOperationInfo::STATUS_HALTED];
         }
         return $result;
     }
@@ -209,7 +207,7 @@ class eZUserOperationCollection
 
         if ( $ini->variable( 'UserSettings', 'EmailRegistrationInfo' ) === "disabled" )
         {
-            return array( 'status' => eZModuleOperationInfo::STATUS_CONTINUE );
+            return ['status' => eZModuleOperationInfo::STATUS_CONTINUE];
         }
 
         eZDebugSetting::writeNotice( 'Sending approval notification to the user.' , 'kernel-user', 'user register' );
@@ -241,7 +239,7 @@ class eZUserOperationCollection
         $mail->setBody( $templateResult );
         $mailResult = eZMailTransport::send( $mail );
 
-        return array( 'status' => eZModuleOperationInfo::STATUS_CONTINUE );
+        return ['status' => eZModuleOperationInfo::STATUS_CONTINUE];
     }
 
    /**
@@ -287,12 +285,12 @@ class eZUserOperationCollection
                 }
                 eZContentCacheManager::clearContentCacheIfNeeded( $userID );
             }
-            return array( 'status' => true );
+            return ['status' => true];
         }
         else
         {
             eZDebug::writeError( "Failed to activate user $userID (could not fetch)", __METHOD__ );
-            return array( 'status' => false );
+            return ['status' => false];
         }
     }
 
@@ -323,12 +321,12 @@ class eZUserOperationCollection
 			
             eZContentCacheManager::clearContentCacheIfNeeded( $userID );
 
-            return array( 'status' => true );
+            return ['status' => true];
         }
         else
         {
             eZDebug::writeError( "Failed to change password of user $userID (could not fetch user)", __METHOD__ );
-            return array( 'status' => false );
+            return ['status' => false];
         }
     }
 
@@ -369,12 +367,12 @@ class eZUserOperationCollection
         {
             $forgotPasswdObj = eZForgotPassword::createNew( $userID, $passwordHash, $time );
             $forgotPasswdObj->store();
-            return array( 'status' => true );
+            return ['status' => true];
         }
         else
         {
             eZDebug::writeError( "Failed to generate password hash for user $userID (could not fetch user)", __METHOD__ );
-            return array( 'status' => false );
+            return ['status' => false];
         }
     }
 
@@ -390,7 +388,7 @@ class eZUserOperationCollection
     static public function preferences( $key, $value )
     {
         eZPreferences::setValue( $key, $value );
-        return array( 'status' => true );
+        return ['status' => true];
     }
 }
 ?>

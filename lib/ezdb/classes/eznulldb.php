@@ -37,7 +37,7 @@ class eZNullDB extends eZDBInterface
     /*!
       Returns false.
     */
-    function arrayQuery( $sql, $params = array(), $server = false )
+    function arrayQuery( $sql, $params = [], $server = false )
     {
         return false;
     }

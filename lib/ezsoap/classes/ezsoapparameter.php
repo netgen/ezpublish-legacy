@@ -21,13 +21,15 @@ class eZSOAPParameter
     /**
      * Creates a new SOAP parameter object.
      *
-     * @param string $name
-     * @param mixed $value
+     * @param string $Name
      */
-    public function __construct( $name, $value)
+    public function __construct(
+        /// The name of the parameter
+        public $Name,
+        /// The parameter value
+        public mixed $Value
+    )
     {
-        $this->Name = $name;
-        $this->Value = $value;
     }
 
     /*!
@@ -61,12 +63,6 @@ class eZSOAPParameter
     {
         return $this->Value;
     }
-
-    /// The name of the parameter
-    public $Name;
-
-    /// The parameter value
-    public $Value;
 }
 
 ?>

@@ -17,24 +17,23 @@
 
 class eZFloatType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezfloat";
-    const MIN_FIELD = "data_float1";
-    const MIN_VARIABLE = "_ezfloat_min_float_value_";
-    const MAX_FIELD = "data_float2";
-    const MAX_VARIABLE = "_ezfloat_max_float_value_";
-    const DEFAULT_FIELD = "data_float3";
-    const DEFAULT_VARIABLE = "_ezfloat_default_value_";
-    const INPUT_STATE_FIELD = "data_float4";
-    const NO_MIN_MAX_VALUE = 0;
-    const HAS_MIN_VALUE = 1;
-    const HAS_MAX_VALUE = 2;
-    const HAS_MIN_MAX_VALUE = 3;
+    final public const DATA_TYPE_STRING = "ezfloat";
+    final public const MIN_FIELD = "data_float1";
+    final public const MIN_VARIABLE = "_ezfloat_min_float_value_";
+    final public const MAX_FIELD = "data_float2";
+    final public const MAX_VARIABLE = "_ezfloat_max_float_value_";
+    final public const DEFAULT_FIELD = "data_float3";
+    final public const DEFAULT_VARIABLE = "_ezfloat_default_value_";
+    final public const INPUT_STATE_FIELD = "data_float4";
+    final public const NO_MIN_MAX_VALUE = 0;
+    final public const HAS_MIN_VALUE = 1;
+    final public const HAS_MAX_VALUE = 2;
+    final public const HAS_MIN_MAX_VALUE = 3;
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Float", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_float' => 'value' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_float' => 'value']] );
         $this->FloatValidator = new eZFloatValidator();
     }
 
@@ -75,7 +74,7 @@ class eZFloatType extends eZDataType
             $locale = eZLocale::instance();
             $data = $locale->internalNumber( $data );
 
-            $data = str_replace(" ", "", $data);
+            $data = str_replace(" ", "", (string) $data);
 
             $contentObjectAttribute->setAttribute( "data_float", $data );
             return true;
@@ -182,7 +181,7 @@ class eZFloatType extends eZDataType
         if ( $http->hasPostVariable( $base . "_data_float_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_float_" . $contentObjectAttribute->attribute( "id" ) );
-            $data = str_replace(" ", "", $data );
+            $data = str_replace(" ", "", (string) $data );
 
             if ( !$contentObjectAttribute->validateIsRequired() &&  ( $data == "" ) )
             {
@@ -221,13 +220,13 @@ class eZFloatType extends eZDataType
             $locale = eZLocale::instance();
 
             $minValueValue = $http->postVariable( $minValueName );
-            $minValueValue = str_replace(" ", "", $minValueValue );
+            $minValueValue = str_replace(" ", "", (string) $minValueValue );
             $minValueValue = $locale->internalNumber( $minValueValue );
             $maxValueValue = $http->postVariable( $maxValueName );
-            $maxValueValue = str_replace(" ", "", $maxValueValue );
+            $maxValueValue = str_replace(" ", "", (string) $maxValueValue );
             $maxValueValue = $locale->internalNumber( $maxValueValue );
             $defaultValueValue = $http->postVariable( $defaultValueName );
-            $defaultValueValue = str_replace(" ", "", $defaultValueValue );
+            $defaultValueValue = str_replace(" ", "", (string) $defaultValueValue );
             $defaultValueValue = $locale->internalNumber( $defaultValueValue );
 
             $classAttribute->setAttribute( self::MIN_FIELD, $minValueValue );
@@ -271,13 +270,13 @@ class eZFloatType extends eZDataType
             $locale = eZLocale::instance();
 
             $minValueValue = $http->postVariable( $minValueName );
-            $minValueValue = str_replace(" ", "", $minValueValue );
+            $minValueValue = str_replace(" ", "", (string) $minValueValue );
             $minValueValue = $locale->internalNumber( $minValueValue );
             $maxValueValue = $http->postVariable( $maxValueName );
-            $maxValueValue = str_replace(" ", "", $maxValueValue );
+            $maxValueValue = str_replace(" ", "", (string) $maxValueValue );
             $maxValueValue = $locale->internalNumber( $maxValueValue );
             $defaultValueValue = $http->postVariable( $defaultValueName );
-            $defaultValueValue = str_replace(" ", "", $defaultValueValue );
+            $defaultValueValue = str_replace(" ", "", (string) $defaultValueValue );
             $defaultValueValue = $locale->internalNumber( $defaultValueValue );
 
             if ( ( $minValueValue == "" ) && ( $maxValueValue == "") ){
@@ -329,10 +328,10 @@ class eZFloatType extends eZDataType
             $locale = eZLocale::instance();
 
             $minValueValue = $http->postVariable( $minValueName );
-            $minValueValue = str_replace(" ", "", $minValueValue );
+            $minValueValue = str_replace(" ", "", (string) $minValueValue );
             $minValueValue = $locale->internalNumber( $minValueValue );
             $maxValueValue = $http->postVariable( $maxValueName );
-            $maxValueValue = str_replace(" ", "", $maxValueValue );
+            $maxValueValue = str_replace(" ", "", (string) $maxValueValue );
             $maxValueValue = $locale->internalNumber( $maxValueValue );
 
             if ($minValueValue > $maxValueValue)
@@ -419,11 +418,11 @@ class eZFloatType extends eZDataType
         $minValue = $attributeParametersNode->getElementsByTagName( 'min-value' )->item( 0 )->textContent;
         $maxValue = $attributeParametersNode->getElementsByTagName( 'max-value' )->item( 0 )->textContent;
 
-        if ( strlen( $minValue ) > 0 and strlen( $maxValue ) > 0 )
+        if ( strlen( (string) $minValue ) > 0 and strlen( (string) $maxValue ) > 0 )
             $minMaxState = self::HAS_MIN_MAX_VALUE;
-        else if ( strlen( $minValue ) > 0 )
+        else if ( strlen( (string) $minValue ) > 0 )
             $minMaxState = self::HAS_MIN_VALUE;
-        else if ( strlen( $maxValue ) > 0 )
+        else if ( strlen( (string) $maxValue ) > 0 )
             $minMaxState = self::HAS_MAX_VALUE;
         else
             $minMaxState = self::NO_MIN_MAX_VALUE;
@@ -444,10 +443,10 @@ class eZFloatType extends eZDataType
         $default = $classAttribute->attribute( 'data_float3' );
         if ( $default !== 0 )
         {
-            return array( 'data_float' => $default );
+            return ['data_float' => $default];
         }
 
-        return array();
+        return [];
     }
 
     /// \privatesection

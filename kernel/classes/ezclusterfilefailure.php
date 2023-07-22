@@ -18,7 +18,7 @@
  */
 class eZClusterFileFailure
 {
-    const FILE_EXPIRED = 1,
+    final public const FILE_EXPIRED = 1,
           FILE_CONTENT_GENERATE = 2,
           FILE_RETRIEVAL_FAILED = 3;
 
@@ -30,13 +30,11 @@ class eZClusterFileFailure
      * 2 - file contents must be manually generated
      * 3 - Failed to retrieve file from DFS
      *
-     * @param int $errno
-     * @param bool|string $message
+     * @param int $Errno
+     * @param bool|string $Message
      */
-    public function __construct( $errno, $message = false )
+    public function __construct(public $Errno, public $Message = false)
     {
-        $this->Errno = $errno;
-        $this->Message = $message;
     }
 
     /*!
@@ -54,8 +52,5 @@ class eZClusterFileFailure
     {
         return $this->Message;
     }
-
-    public $Errno;
-    public $Message;
 }
 ?>

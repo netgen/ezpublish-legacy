@@ -36,9 +36,10 @@ class eZTemplateTextOperatorRegression extends ezpDatabaseTestCase
      */
     public function testIssue15852()
     {
+        $result = null;
         set_error_handler( 'testErrorHandler' );
         $tpl = eZTemplate::factory();
-        $templateDirectory = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
+        $templateDirectory = __DIR__ . DIRECTORY_SEPARATOR;
 
         // Static variable test
         $templateFile = "file:$templateDirectory/eztemplatetextoperator_regression_testIssue15852_static.tpl";
@@ -50,16 +51,16 @@ class eZTemplateTextOperatorRegression extends ezpDatabaseTestCase
         catch( Exception $e )
         {
             restore_error_handler();
-            if ( strstr( $e->getMessage(), "str_repeat" ) !== false )
+            if ( str_contains( $e->getMessage(), "str_repeat" ) )
             {
-                $this->fail( 'Static variable, warning thrown: ' . $e->getMessage() );
+                static::fail('Static variable, warning thrown: ' . $e->getMessage());
             }
             else
             {
                 throw $e;
             }
         }
-        $this->assertEquals( "This is a string", $result, "The original, unindented string should have been returned" );
+        static::assertEquals("This is a string", $result, "The original, unindented string should have been returned");
 
         // Dynamic variable test
         $templateFile = "file:$templateDirectory/eztemplatetextoperator_regression_testIssue15852_dynamic.tpl";
@@ -73,9 +74,9 @@ class eZTemplateTextOperatorRegression extends ezpDatabaseTestCase
         catch ( Exception $e )
         {
             restore_error_handler();
-            if ( strstr( $e->getMessage(), "str_repeat" ) !== false )
+            if ( str_contains( $e->getMessage(), "str_repeat" ) )
             {
-                $this->fail( 'Dynamic variable, warning thrown: ' . $e->getMessage() );
+                static::fail('Dynamic variable, warning thrown: ' . $e->getMessage());
             }
             else
             {
@@ -83,13 +84,13 @@ class eZTemplateTextOperatorRegression extends ezpDatabaseTestCase
             }
         }
 
-        $this->assertEquals( "This is a string", $result, "The original, unindented string should have been returned" );
+        static::assertEquals("This is a string", $result, "The original, unindented string should have been returned");
 
         restore_error_handler();
     }
 }
 
-function testErrorHandler( $errno, $errstr, $errfile, $errline )
+function testErrorHandler( $errno, $errstr, $errfile, $errline ): never
 {
     throw new Exception( $errstr, $errno );
 }

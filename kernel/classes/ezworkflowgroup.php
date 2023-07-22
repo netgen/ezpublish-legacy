@@ -18,56 +18,13 @@ class eZWorkflowGroup extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true,
-                                                          'max_length' => 255 ),
-                                         "creator_id" => array( 'name' => "CreatorID",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "modifier_id" => array( 'name' => "ModifierID",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "modified" => array( 'name' => "Modified",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      "keys" => array( "id" ),
-                      'function_attributes' => array( 'creator' => 'creator',
-                                                      'modifier' => 'modifier' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZWorkflowGroup",
-                      "sort" => array( "name" => "asc" ),
-                      "name" => "ezworkflow_group" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true, 'max_length' => 255], "creator_id" => ['name' => "CreatorID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "modifier_id" => ['name' => "ModifierID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], "modified" => ['name' => "Modified", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["id"], 'function_attributes' => ['creator' => 'creator', 'modifier' => 'modifier'], "increment_key" => "id", "class_name" => "eZWorkflowGroup", "sort" => ["name" => "asc"], "name" => "ezworkflow_group"];
     }
 
     static function create( $user_id )
     {
         $date_time = time();
-        $row = array(
-            "id" => null,
-            "name" => "",
-            "creator_id" => $user_id,
-            "modifier_id" => $user_id,
-            "created" => $date_time,
-            "modified" => $date_time );
+        $row = ["id" => null, "name" => "", "creator_id" => $user_id, "modifier_id" => $user_id, "created" => $date_time, "modified" => $date_time];
         return new eZWorkflowGroup( $row );
     }
 
@@ -75,7 +32,7 @@ class eZWorkflowGroup extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZWorkflowGroup::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -93,7 +50,7 @@ class eZWorkflowGroup extends eZPersistentObject
     static function removeSelected ( $id )
     {
         eZPersistentObject::removeObject( eZWorkflowGroup::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
     }
 
     function creator()

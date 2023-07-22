@@ -51,10 +51,10 @@ class ezpSessionHandlerPHP extends ezpSessionHandler
 
     public function destroy( $sessionId )
     {
-        $_SESSION = array();
+        $_SESSION = [];
         session_destroy();
 
-        ezpEvent::getInstance()->notify( 'session/destroy', array( $sessionId ) );
+        ezpEvent::getInstance()->notify( 'session/destroy', [$sessionId] );
         return true;
     }
 
@@ -67,7 +67,7 @@ class ezpSessionHandlerPHP extends ezpSessionHandler
         session_regenerate_id( $updateBackendData );
         $newSessionId = session_id();
 
-        ezpEvent::getInstance()->notify( 'session/regenerate', array( $oldSessionId, $newSessionId ) );
+        ezpEvent::getInstance()->notify( 'session/regenerate', [$oldSessionId, $newSessionId] );
 
         if ( $updateBackendData )
         {
@@ -75,8 +75,8 @@ class ezpSessionHandlerPHP extends ezpSessionHandler
             $escOldKey = $db->escapeString( $oldSessionId );
             $escNewKey = $db->escapeString( $newSessionId );
             $escUserID = $db->escapeString( eZSession::userID() );
-            eZSession::triggerCallback( 'regenerate_pre', array( $db, $escNewKey, $escOldKey, $escUserID ) );
-            eZSession::triggerCallback( 'regenerate_post', array( $db, $escNewKey, $escOldKey, $escUserID ) );
+            eZSession::triggerCallback( 'regenerate_pre', [$db, $escNewKey, $escOldKey, $escUserID] );
+            eZSession::triggerCallback( 'regenerate_post', [$db, $escNewKey, $escOldKey, $escUserID] );
         }
         return true;
     }
@@ -86,10 +86,10 @@ class ezpSessionHandlerPHP extends ezpSessionHandler
      */
     public function gc( $maxLifeTime )
     {
-        ezpEvent::getInstance()->notify( 'session/gc', array( $maxLifeTime ) );
+        ezpEvent::getInstance()->notify( 'session/gc', [$maxLifeTime] );
         $db = eZDB::instance();
-        eZSession::triggerCallback( 'gc_pre', array( $db, $maxLifeTime ) );
-        eZSession::triggerCallback( 'gc_post', array( $db, $maxLifeTime ) );
+        eZSession::triggerCallback( 'gc_pre', [$db, $maxLifeTime] );
+        eZSession::triggerCallback( 'gc_post', [$db, $maxLifeTime] );
         return false;
     }
 
@@ -98,10 +98,10 @@ class ezpSessionHandlerPHP extends ezpSessionHandler
      */
     public function cleanup()
     {
-        ezpEvent::getInstance()->notify( 'session/cleanup', array() );
+        ezpEvent::getInstance()->notify( 'session/cleanup', [] );
         $db = eZDB::instance();
-        eZSession::triggerCallback( 'cleanup_pre', array( $db ) );
-        eZSession::triggerCallback( 'cleanup_post', array( $db ) );
+        eZSession::triggerCallback( 'cleanup_pre', [$db] );
+        eZSession::triggerCallback( 'cleanup_post', [$db] );
         return true;
     }
 

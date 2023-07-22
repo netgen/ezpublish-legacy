@@ -48,14 +48,14 @@ class eZINI
      *
      * @var string
      */
-    const CONFIG_CACHE_DIR = 'var/cache/ini/';
+    final public const CONFIG_CACHE_DIR = 'var/cache/ini/';
 
     /**
      * Constant integer to check against configuration cache format revision
      *
      * @var int
      */
-    const CONFIG_CACHE_REV = 2;
+    final public const CONFIG_CACHE_REV = 2;
 
 
     /**
@@ -64,7 +64,7 @@ class eZINI
      *
      * @var string
      */
-    const INJECTED_PATH = 'injected';
+    final public const INJECTED_PATH = 'injected';
 
     /**
      * Set EZP_INI_FILEMTIME_CHECK constant to false to improve performance by
@@ -89,7 +89,7 @@ class eZINI
      *
      * @var array(eZINI)
      */
-    static protected $instances = array();
+    static protected $instances = [];
 
     /**
      * Contains whether INI cache is globally enabled.
@@ -122,7 +122,7 @@ class eZINI
      * @see eZINI::variable()
      * @var array
      */
-    static protected $injectedSettings = array();
+    static protected $injectedSettings = [];
 
     /**
      * Settings injected at runtime that are merged with
@@ -136,7 +136,7 @@ class eZINI
      * @see eZINI::variable()
      * @var array
      */
-    static protected $injectedMergeSettings = array();
+    static protected $injectedMergeSettings = [];
 
     /**
      * Initialization of eZINI object
@@ -146,15 +146,17 @@ class eZINI
      * @param string $rootDir
      * @param null|bool $useTextCodec
      * @param null|bool $useCache
-     * @param null|bool $useLocalOverrides
-     * @param bool $directAccess
-     * @param bool $addArrayDefinition
+     * @param null|bool $UseLocalOverrides
+     * @param bool $DirectAccess
+     * @param bool $AddArrayDefinition
      * @param bool $load @since 4.5 Lets you disable automatic loading of ini values in
      *                   cases where changes on instance will be done first.
      */
-    public function __construct( $fileName = 'site.ini', $rootDir = '', $useTextCodec = null, $useCache = null, $useLocalOverrides = null, $directAccess = false, $addArrayDefinition = false, $load = true )
+    public function __construct( $fileName = 'site.ini', $rootDir = '', $useTextCodec = null, $useCache = null, /// true if the overrides should only be changed locally
+    public $UseLocalOverrides = null, /// If \c true then all file loads are done directly on the filename.
+    public $DirectAccess = false, /// If \c true empty element will be created in the beginning of array if it is defined in this ini file.
+    public $AddArrayDefinition = false, $load = true )
     {
-        $this->Charset = 'utf8';
         if ( $fileName == '' )
             $fileName = 'site.ini';
         if ( $rootDir !== false && $rootDir == '' )
@@ -173,9 +175,6 @@ class eZINI
         $this->FileName = $fileName;
         $this->RootDir = $rootDir;
         $this->UseCache = $useCache;
-        $this->DirectAccess = $directAccess;
-        $this->UseLocalOverrides = $useLocalOverrides;
-        $this->AddArrayDefinition = $addArrayDefinition;
 
         if ( self::$checkFileMtime === null )
         {
@@ -316,7 +315,7 @@ class eZINI
      * @param string parameter parameter name
      * @return bool True if the the parameter is set.
      */
-    static function parameterSet( $fileName = 'site.ini', $rootDir = 'settings', &$section, &$parameter )
+    static function parameterSet(&$section, &$parameter, $fileName = 'site.ini', $rootDir = 'settings')
     {
         if ( !eZINI::exists( $fileName, $rootDir ) )
             return false;
@@ -436,11 +435,11 @@ class eZINI
     {
         $iniFile = __DIR__ . "/../../../";
         if ( $this->RootDir !== false )
-            $iniFile .= eZDir::path( array( $this->RootDir, $this->FileName ) );
+            $iniFile .= eZDir::path( [$this->RootDir, $this->FileName] );
         else
-            $iniFile .= eZDir::path( array( $this->FileName ) );
+            $iniFile .= eZDir::path( [$this->FileName] );
 
-        $inputFiles = array();
+        $inputFiles = [];
 
         if ( $this->FileName === 'override.ini' )
         {
@@ -451,10 +450,10 @@ class eZINI
             $inputFiles[] = $iniFile;
 
         // try the same file name with '.append.php' replace with '.append'
-        if ( strpos($iniFile, '.append.php') !== false && preg_match('#^(.+.append).php$#i', $iniFile, $matches ) && file_exists( $matches[1] ) )
+        if ( str_contains($iniFile, '.append.php') && preg_match('#^(.+.append).php$#i', $iniFile, $matches ) && file_exists( $matches[1] ) )
             $inputFiles[] = $matches[1];
 
-        if ( strpos($iniFile, '.php') === false && file_exists ( $iniFile . '.php' ) )
+        if ( !str_contains($iniFile, '.php') && file_exists ( $iniFile . '.php' ) )
             $inputFiles[] = $iniFile . '.php';
 
         if ( $this->DirectAccess )
@@ -478,9 +477,9 @@ class eZINI
                 $overrideDir = $overrideDirItem[0];
                 $isGlobal = $overrideDirItem[1];
                 if ( $isGlobal )
-                    $overrideFile = eZDir::path( array( $overrideDir, $fileName ) );
+                    $overrideFile = eZDir::path( [$overrideDir, $fileName] );
                  else
-                    $overrideFile = eZDir::path( array( $rootDir, $overrideDir, $fileName ) );
+                    $overrideFile = eZDir::path( [$rootDir, $overrideDir, $fileName] );
 
                 if ( file_exists( $overrideFile . '.php' ) )
                 {
@@ -527,7 +526,7 @@ class eZINI
         {
             $cacheFileName .= '-placement:' . $placement;
         }
-        $filePreFix = explode( '.', $this->FileName);
+        $filePreFix = explode( '.', (string) $this->FileName);
         return $filePreFix[0] . '-' . md5( $cacheFileName ) . '.php';
     }
 
@@ -542,6 +541,7 @@ class eZINI
      */
     function loadCache( $reset = true, $placement = false )
     {
+        $iniFile = null;
         eZDebug::accumulatorStart( 'ini', 'Ini load', 'Load cache' );
         if ( $reset )
             $this->reset();
@@ -577,7 +577,7 @@ class eZINI
             {
                 eZDebug::accumulatorStart( 'ini_check_mtime', 'Ini load', 'Check MTime' );
                 $currentTime = time();
-                $cacheCreatedTime = strtotime( $data['created'] );
+                $cacheCreatedTime = strtotime( (string) $data['created'] );
                 $iniFile = $data['file'];// used by findInputFiles further down
                 $inputFiles = $data['files'];
                 foreach ( $inputFiles as $inputFile )
@@ -608,7 +608,7 @@ class eZINI
         if ( $data )// if we have cache data on this point, use it
         {
             $this->Charset = $data['charset'];
-            $this->ModifiedBlockValues = array();
+            $this->ModifiedBlockValues = [];
             if ( $placement )
                 $this->BlockValuesPlacement = $data['val'];
             else
@@ -622,7 +622,7 @@ class eZINI
                 eZDebug::accumulatorStart( 'ini_find_files', 'Ini load', 'Find INI Files' );
                 $this->findInputFiles( $inputFiles, $iniFile );
                 eZDebug::accumulatorStop( 'ini_find_files' );
-                if ( count( $inputFiles ) === 0 )
+                if ( (is_countable($inputFiles) ? count( $inputFiles ) : 0) === 0 )
                 {
                     eZDebug::accumulatorStop( 'ini' );
                     return false;
@@ -668,7 +668,7 @@ class eZINI
         }
 
         // Save the data to a temp cached file
-        $tmpCacheFile = $cachedFile . '_' . substr( md5( mt_rand() ), 0, 8 );
+        $tmpCacheFile = $cachedFile . '_' . substr( md5( random_int(0, mt_getrandmax()) ), 0, 8 );
         $fp = @fopen( $tmpCacheFile, "w" );
         if ( $fp === false )
         {
@@ -797,7 +797,7 @@ class eZINI
         else
             $this->Codec = null;
 
-        foreach ( explode( "\n", $contents ) as $line )
+        foreach ( explode( "\n", (string) $contents ) as $line )
         {
             if ( $line == '' or $line[0] == '#' )
                 continue;
@@ -831,7 +831,7 @@ class eZINI
                 }
                 else
                 {
-                    $this->BlockValues[$currentBlock][$varName] = array();
+                    $this->BlockValues[$currentBlock][$varName] = [];
 
                     // In direct access mode we create empty elements at the beginning of an array
                     // in case it is redefined in this ini file. So when we will save it, definition
@@ -911,8 +911,8 @@ class eZINI
                    $encapsulateInPHP = true )
     {
         $lineSeparator = eZSys::lineSeparator();
-        $pathArray = array();
-        $dirArray = array();
+        $pathArray = [];
+        $dirArray = [];
         if ( $fileName === false )
             $fileName = $this->FileName;
         if ( $useRootDir === true )
@@ -939,12 +939,12 @@ class eZINI
          * We choose 'xxx.append.php' in all cases except when
          * 'xxx.append' exists already and 'xxx.append.php' does not exist.
          */
-        if( strstr( $fileName, '.append' ) )
+        if( strstr( (string) $fileName, '.append' ) )
         {
-            $fnAppend    = preg_replace( '#\.php$#', '', $fileName );
+            $fnAppend    = preg_replace( '#\.php$#', '', (string) $fileName );
             $fnAppendPhp = $fnAppend.'.php';
-            $fpAppend    = eZDir::path( array_merge( $pathArray, array( $fnAppend ) ) );
-            $fpAppendPhp = eZDir::path( array_merge( $pathArray, array( $fnAppendPhp ) ) );
+            $fpAppend    = eZDir::path( array_merge( $pathArray, [$fnAppend] ) );
+            $fpAppendPhp = eZDir::path( array_merge( $pathArray, [$fnAppendPhp] ) );
             $fileName = ( file_exists( $fpAppend ) && !file_exists( $fpAppendPhp ) )
                        ? $fnAppend : $fnAppendPhp;
         }
@@ -957,9 +957,9 @@ class eZINI
         if ( !file_exists( $dirPath ) )
             eZDir::mkdir( $dirPath, octdec( '777' ), true );
 
-        $filePath = eZDir::path( array_merge( $pathArray, array( $fileName ) ) );
-        $originalFilePath = eZDir::path( array_merge( $pathArray, array( $originalFileName ) ) );
-        $backupFilePath = eZDir::path( array_merge( $pathArray, array( $backupFileName ) ) );
+        $filePath = eZDir::path( array_merge( $pathArray, [$fileName] ) );
+        $originalFilePath = eZDir::path( array_merge( $pathArray, [$originalFileName] ) );
+        $backupFilePath = eZDir::path( array_merge( $pathArray, [$backupFileName] ) );
 
         $fp = @fopen( $filePath, "w+");
         if ( !$fp )
@@ -1108,8 +1108,8 @@ class eZINI
     */
     function reset()
     {
-        $this->BlockValues = array();
-        $this->ModifiedBlockValues = array();
+        $this->BlockValues = [];
+        $this->ModifiedBlockValues = [];
     }
 
     /*!
@@ -1191,12 +1191,7 @@ class eZINI
      */
     static public function defaultOverrideDirs()
     {
-        static $def =  array(
-                'sa-extension' => array(),
-                'siteaccess' => array(),
-                'extension' => array(),
-                'override' => array( array( 'override', false ) )
-        );
+        static $def =  ['sa-extension' => [], 'siteaccess' => [], 'extension' => [], 'override' => [['override', false]]];
         return $def;
     }
 
@@ -1204,7 +1199,6 @@ class eZINI
      * Set the override directories witch raw override dir data, or within a scope if $scope is set,
      * see {@link eZINI::defaultOverrideDirs()} for how the raw data looks like.
      *
-     * @param array $newDirs
      * @param string|false $scope See {@link eZINI::defaultOverrideDirs()} for possible scope values
      */
     function setOverrideDirs( array $newDirs, $scope = false )
@@ -1305,7 +1299,7 @@ class eZINI
         $overrideOverwritten = false;
         if ( $identifier && isset( $dirs[$scope][$identifier] ) )
         {
-            $dirs[$scope][$identifier] = array( $dir, $globalDir );
+            $dirs[$scope][$identifier] = [$dir, $globalDir];
             $overrideOverwritten = true;
         }
         else
@@ -1313,9 +1307,9 @@ class eZINI
             // array_merge() is to be used below instead of the "+" operator because the
             // position of elements in this mixed hash/list is important!
             if ( $identifier )
-                $dirs[$scope] = array_merge( array( $identifier => array( $dir, $globalDir ) ), $dirs[$scope] );
+                $dirs[$scope] = array_merge( [$identifier => [$dir, $globalDir]], $dirs[$scope] );
             else
-                $dirs[$scope] = array_merge( array( array( $dir, $globalDir ) ), $dirs[$scope] );
+                $dirs[$scope] = array_merge( [[$dir, $globalDir]], $dirs[$scope] );
         }
 
         $this->CacheFile = false;
@@ -1349,15 +1343,15 @@ class eZINI
         $overrideOverwritten = false;
         if ( $identifier && isset( $dirs[$scope][$identifier] ) )
         {
-            $dirs[$scope][$identifier] = array( $dir, $globalDir );
+            $dirs[$scope][$identifier] = [$dir, $globalDir];
             $overrideOverwritten = true;
         }
         else
         {
             if ( $identifier )
-                $dirs[$scope][$identifier] = array( $dir, $globalDir );
+                $dirs[$scope][$identifier] = [$dir, $globalDir];
             else
-                $dirs[$scope][] = array( $dir, $globalDir );
+                $dirs[$scope][] = [$dir, $globalDir];
         }
 
         $this->CacheFile = false;
@@ -1385,11 +1379,11 @@ class eZINI
         }
         if ( $identifier === 'siteaccess' )
             return 'siteaccess';
-        else if ( $identifier && strpos($identifier, 'extension:') === 0 )
+        else if ( $identifier && str_starts_with($identifier, 'extension:') )
             return 'extension';
-        else if ( strpos($dir, 'siteaccess') !== false )
+        else if ( str_contains($dir, 'siteaccess') )
             return 'siteaccess';
-        else if ( strpos($dir, 'extension') !== false )
+        else if ( str_contains($dir, 'extension') )
             return 'extension';
 
         eZDebug::writeStrict( "Could not figgure out INI scope for \$identifier: '$identifier' with \$dir: '$dir', falling back to '$default'", __METHOD__ );
@@ -1459,9 +1453,9 @@ class eZINI
      * @param array $signatures
      * @return false|array
      */
-    function variableMulti( $blockName, $varNames, $signatures = array() )
+    function variableMulti( $blockName, $varNames, $signatures = [] )
     {
-        $ret = array();
+        $ret = [];
 
         if ( !isset( $this->BlockValues[$blockName] )
             && !isset( self::$injectedSettings[$this->FileName][$blockName] )
@@ -1575,16 +1569,16 @@ class eZINI
 
         if ( is_array( $ret ) )
         {
-            $arr = array();
+            $arr = [];
             foreach ( $ret as $key => $retItem )
             {
-                $arr[$key] = explode( ';', $retItem );
+                $arr[$key] = explode( ';', (string) $retItem );
             }
             $ret = $arr;
         }
         else if ( $ret !== false )
         {
-            $ret = trim( $ret ) === '' ? array() : explode( ';', $ret );
+            $ret = trim( (string) $ret ) === '' ? [] : explode( ';', (string) $ret );
         }
 
         return $ret;
@@ -1642,7 +1636,7 @@ class eZINI
             return true;
 
         $fileName = $fileName === false ? $ini->FileName : $fileName;
-        $fileNameExploded = explode( '.', $fileName );
+        $fileNameExploded = explode( '.', (string) $fileName );
         $realFileName = $fileNameExploded[0] . '.' . $fileNameExploded[1];
         $blockName = $blockName === false ? '*' : $blockName;
         $settingName = $settingName === false ? '*' : $settingName;
@@ -1819,7 +1813,7 @@ class eZINI
     */
     function setGroups( $groupArray )
     {
-        $resultArray = array();
+        $resultArray = [];
         // Check for readOnly
         foreach ( $groupArray as $blockName => $blockVariables )
         {
@@ -2036,7 +2030,7 @@ class eZINI
      */
     static function resetAllInstances( $resetGlobalOverrideDirs = true )
     {
-        self::$instances = array();
+        self::$instances = [];
 
         if ( $resetGlobalOverrideDirs )
             self::resetGlobalOverrideDirs();
@@ -2072,7 +2066,7 @@ class eZINI
 
     /// \privatesection
     /// The charset of the ini file
-    public $Charset;
+    public $Charset = 'utf8';
 
     /// Variable to store the textcodec.
     public $Codec;
@@ -2104,20 +2098,11 @@ class eZINI
     /// true if cache should be used
     public $UseCache;
 
-    /// true if the overrides should only be changed locally
-    public $UseLocalOverrides;
-
     /// Contains the override dirs, if in local mode
     public $LocalOverrideDirArray;
 
     /// Contains global override dirs
     static protected $GlobalOverrideDirArray = null;
-
-    /// If \c true then all file loads are done directly on the filename.
-    public $DirectAccess;
-
-    /// If \c true empty element will be created in the beginning of array if it is defined in this ini file.
-    public $AddArrayDefinition;
 
     /// If \c true eZINI will check each setting (before saving) for correspondence of settings in site.ini[eZINISetting].ReadonlySettingList
     public $ReadOnlySettingsCheck = true;

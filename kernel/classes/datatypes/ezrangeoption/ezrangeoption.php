@@ -20,13 +20,13 @@ class eZRangeOption
     /**
      * Constructor
      *
-     * @param string $name
+     * @param string $Name
      */
-    public function __construct( $name )
+    public function __construct(
+        /// Contains the Option name
+        public $Name
+    )
     {
-        $this->Name = $name;
-        $this->Options = array();
-        $this->OptionCount = 0;
     }
 
     /*!
@@ -50,11 +50,7 @@ class eZRangeOption
     */
     function attributes()
     {
-        return array( 'name',
-                      'start_value',
-                      'stop_value',
-                      'step_value',
-                      'option_list' );
+        return ['name', 'start_value', 'stop_value', 'step_value', 'option_list'];
     }
 
     function hasAttribute( $name )
@@ -96,10 +92,7 @@ class eZRangeOption
 
     function addOption( $valueArray )
     {
-        $this->Options[] = array( "id" => $this->OptionCount,
-                                  "value" => $valueArray['value'],
-                                  'additional_price' => 0,
-                                  "is_default" => false );
+        $this->Options[] = ["id" => $this->OptionCount, "value" => $valueArray['value'], 'additional_price' => 0, "is_default" => false];
 
         $this->OptionCount += 1;
     }
@@ -128,8 +121,7 @@ class eZRangeOption
 
             for ( $i = $startValue; $i <= $stopValue; $i += $stepValue )
             {
-                $this->addOption( array( 'value' => $i,
-                                         'additional_price' => 0 ) );
+                $this->addOption( ['value' => $i, 'additional_price' => 0] );
             }
         }
         else
@@ -176,15 +168,11 @@ class eZRangeOption
         $this->StepValue = $value;
     }
 
-
-        /// Contains the Option name
-    public $Name;
-
     /// Contains the Options
-    public $Options;
+    public $Options = [];
 
     /// Contains the option counter value
-    public $OptionCount;
+    public $OptionCount = 0;
     public $StartValue;
     public $StopValue;
     public $StepValue;

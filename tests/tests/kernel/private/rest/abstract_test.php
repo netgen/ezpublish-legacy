@@ -24,7 +24,7 @@ abstract class ezpRestTestCase extends ezpTestCase
      */
     protected $mvcConfig;
 
-    public function __construct( $name = NULL, array $data = array(), $dataName = '' )
+    public function __construct( $name = NULL, array $data = [], $dataName = '' )
     {
         $this->mvcConfig = new ezpMvcConfiguration();
 
@@ -42,7 +42,7 @@ abstract class ezpRestTestCase extends ezpTestCase
      */
     protected function loadDummySettings()
     {
-        $this->restINI->setVariable( 'ApiProvider', 'ProviderClass', array( 'test' => 'ezpRestTestApiProvider' ));
+        $this->restINI->setVariable( 'ApiProvider', 'ProviderClass', ['test' => 'ezpRestTestApiProvider']);
     }
 
     /**
@@ -54,15 +54,14 @@ abstract class ezpRestTestCase extends ezpTestCase
     {
         $r = new ezpRestRequest();
         $r->uri = $uri;
-        $r->variables = array( 'ResponseGroups' => array() );
-        $r->contentVariables = array();
+        $r->variables = ['ResponseGroups' => []];
+        $r->contentVariables = [];
         $r->protocol = 'http-get';
         return $this->getTestControllerFromRequest( $r );
     }
 
     /**
      * Returns a valid test controller from a request object
-     * @param ezpRestRequest $r
      * @return ezpRestMvcController
      */
     protected function getTestControllerFromRequest( ezpRestRequest $r )

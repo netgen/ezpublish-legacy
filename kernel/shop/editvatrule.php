@@ -30,7 +30,7 @@ function checkEnteredData( $country, $categories, $vatType, $productCategories, 
 
     if ( !$country || !is_numeric( $vatType ) )
     {
-        $errors = array();
+        $errors = [];
         $errorHeader = ezpI18n::tr( 'kernel/shop/editvatrule', 'Invalid data entered' );
 
         if ( !$country )
@@ -38,7 +38,7 @@ function checkEnteredData( $country, $categories, $vatType, $productCategories, 
         if ( !is_numeric( $vatType ) )
             $errors[] = ezpI18n::tr( 'kernel/shop/editvatrule', 'Choose a VAT type.' );
 
-        return array( $errorHeader, $errors );
+        return [$errorHeader, $errors];
     }
 
     /*
@@ -65,7 +65,7 @@ function checkEnteredData( $country, $categories, $vatType, $productCategories, 
             else
             {
                 $errorMessage = "Default rule for country '%1' already exists.";
-                $errors[] = ezpI18n::tr( 'kernel/shop/editvatrule', $errorMessage, null, array( $country ) );
+                $errors[] = ezpI18n::tr( 'kernel/shop/editvatrule', $errorMessage, null, [$country] );
             }
 
             break;
@@ -90,7 +90,7 @@ function checkEnteredData( $country, $categories, $vatType, $productCategories, 
                 continue;
 
             // Construct string containing name of all the conflicting categories.
-            $intersectingCategories = array();
+            $intersectingCategories = [];
             foreach ( $productCategories as $cat )
             {
                 if ( array_search( $cat->attribute( 'id' ), $intersection ) !== false )
@@ -103,11 +103,11 @@ function checkEnteredData( $country, $categories, $vatType, $productCategories, 
             else
                 $errorMessage = "There is already a rule defined for country '%1' containing the following categories: %2.";
 
-            $errors[] = ezpI18n::tr( 'kernel/shop/editvatrule', $errorMessage, null, array( $country, $intersectingCategories ) );
+            $errors[] = ezpI18n::tr( 'kernel/shop/editvatrule', $errorMessage, null, [$country, $intersectingCategories] );
         }
     }
 
-    return array( $errorHeader, $errors );
+    return [$errorHeader, $errors];
 }
 
 
@@ -115,20 +115,20 @@ if ( $module->isCurrentAction( 'Cancel' ) )
 {
     return $module->redirectTo( $module->functionURI( 'vatrules' ) );
 }
-else if ( in_array( $module->currentAction(), array(  'Create', 'StoreChanges' ) ) )
+else if ( in_array( $module->currentAction(), ['Create', 'StoreChanges'] ) )
 {
     if ( $module->isCurrentAction( 'StoreChanges' ) )
         $ruleID = $module->actionParameter( 'RuleID' );
 
     $chosenCountry = $module->actionParameter( 'Country' );
-    $chosenCategories = $module->hasActionParameter( 'Categories' ) ? $module->actionParameter( 'Categories' ) : array();
+    $chosenCategories = $module->hasActionParameter( 'Categories' ) ? $module->actionParameter( 'Categories' ) : [];
     $chosenVatType = $module->actionParameter( 'VatType' );
 
     // normalize data
     if ( in_array( '*', $chosenCategories ) )
-        $chosenCategories = array();
+        $chosenCategories = [];
 
-    list( $errorHeader, $errors ) = checkEnteredData( $chosenCountry, $chosenCategories, $chosenVatType,
+    [$errorHeader, $errors] = checkEnteredData( $chosenCountry, $chosenCategories, $chosenVatType,
                                                       $productCategories, $ruleID );
 
     // save rule (creating it if not exists)
@@ -159,7 +159,7 @@ else if ( in_array( $module->currentAction(), array(  'Create', 'StoreChanges' )
         // Modify chosen categories array
         // so that it can be saved into the VAT rule.
         $chosenCategories = array_map(
-            function( $i ) { return array( 'id' => $i ); },
+            fn($i) => ['id' => $i],
             $chosenCategories
         );
 
@@ -187,7 +187,7 @@ else
     $tplVatRule = null;
     $tplCountry = false;
     $tplVatTypeID = false;
-    $tplCategoryIDs = array();
+    $tplCategoryIDs = [];
 
     $pathText = ezpI18n::tr( 'kernel/shop/editvatrule', 'Create new VAT charging rule' );
 }
@@ -214,9 +214,8 @@ $tpl->setVariable( 'country_code', $tplCountry );
 $tpl->setVariable( 'category_ids', $tplCategoryIDs );
 $tpl->setVariable( 'vat_type_id',  $tplVatTypeID );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/editvatrule.tpl" );
-$Result['path'] = array( array( 'text' => $pathText,
-                                'url' => false ) );
+$Result['path'] = [['text' => $pathText, 'url' => false]];
 
 ?>

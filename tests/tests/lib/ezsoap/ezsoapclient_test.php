@@ -12,17 +12,7 @@ class eZSOAPClientTest extends ezpTestCase
 {
     public static function providerTestSoapClientConstructorUseSSL()
     {
-        return array(
-            array( 80, false ),
-            array( 80, false, false ),
-            array( 80, true, true ),
-            array( 443, true ),
-            array( 443, false, false ),
-            array( 443, true, true ),
-            array( 'ssl', true ),
-            array( 'ssl', true, true ),
-            array( 'ssl', false, false ),
-        );
+        return [[80, false], [80, false, false], [80, true, true], [443, true], [443, false, false], [443, true, true], ['ssl', true], ['ssl', true, true], ['ssl', false, false]];
     }
 
     /**
@@ -31,16 +21,12 @@ class eZSOAPClientTest extends ezpTestCase
     public function testSoapClientConstructorUseSSL( $port, $expectedUseSSLResult, $useSSL = null )
     {
         $client = new eZSOAPClient( 'soap.example.com', '/', $port, $useSSL );
-        $this->assertEquals( $this->readAttribute( $client, 'UseSSL' ), $expectedUseSSLResult );
+        static::assertEquals(static::readAttribute($client, 'UseSSL'), $expectedUseSSLResult);
     }
 
     public static function providerTestSoapClientConstructorPort()
     {
-        return array(
-            array( 80, 80 ),
-            array( 443, 443 ),
-            array( 'ssl', 443 )
-        );
+        return [[80, 80], [443, 443], ['ssl', 443]];
     }
 
     /**
@@ -49,7 +35,7 @@ class eZSOAPClientTest extends ezpTestCase
     public function testSoapClientConstructorPort( $port, $expectedPortResult )
     {
         $client = new eZSOAPClient( 'soap.example.com', '/', $port );
-        $this->assertEquals( $this->readAttribute( $client, 'Port' ), $expectedPortResult );
+        static::assertEquals(static::readAttribute($client, 'Port'), $expectedPortResult);
     }
 
     /**
@@ -59,23 +45,20 @@ class eZSOAPClientTest extends ezpTestCase
      */
     public static function providerTestSoapClientSend()
     {
-        return array(
-            array( 'bb4a091369e40cbf682a278cfd35f04a', 'soap.critmon1.ez.no', '/', 80, 'hostID', 'network_namespace' ),
-            array( 'bb4a091369e40cbf682a278cfd35f04a', 'soap.critmon1.ez.no', '/', 443, 'hostID', 'network_namespace' ),
-        );
+        return [['bb4a091369e40cbf682a278cfd35f04a', 'soap.critmon1.ez.no', '/', 80, 'hostID', 'network_namespace'], ['bb4a091369e40cbf682a278cfd35f04a', 'soap.critmon1.ez.no', '/', 443, 'hostID', 'network_namespace']];
     }
 
     /**
      * @dataProvider providerTestSoapClientSend
      */
-    public function testSoapClientSend( $expectedSendResult, $server, $path, $port, $name, $namespace, $parameters = array() )
+    public function testSoapClientSend( $expectedSendResult, $server, $path, $port, $name, $namespace, $parameters = [] )
     {
         self::markTestSkipped( "Test disabled as critmon has been shut down. Needs a different server or way of doing this." );
 
         $client = new eZSOAPClient( $server, $path, $port );
         $request = new eZSOAPRequest( $name, $namespace, $parameters );
         $response = $client->send( $request );
-        $this->assertEquals( $response->value(), $expectedSendResult );
+        static::assertEquals($response->value(), $expectedSendResult);
     }
 }
 

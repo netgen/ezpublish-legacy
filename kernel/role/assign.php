@@ -36,7 +36,7 @@ else if ( $http->hasPostVariable( 'BrowseActionName' ) and
           $http->postVariable( 'BrowseActionName' ) == 'SelectObjectRelationNode' )
 {
     $selectedNodeIDArray = $http->postVariable( 'SelectedNodeIDArray' );
-    if ( count( $selectedNodeIDArray ) == 1 )
+    if ( (is_countable($selectedNodeIDArray) ? count( $selectedNodeIDArray ) : 0) == 1 )
     {
         $limitValue = $selectedNodeIDArray[0];
     }
@@ -58,7 +58,7 @@ else if ( $http->hasPostVariable( 'BrowseActionName' ) and
     eZRole::expireCache();
 
     $db->commit();
-    if ( count( $selectedObjectIDArray ) > 0 )
+    if ( (is_countable($selectedObjectIDArray) ? count( $selectedObjectIDArray ) : 0) > 0 )
     {
         eZContentCacheManager::clearAllContentCache();
     }
@@ -74,10 +74,8 @@ else if ( is_string( $limitIdent ) && !isset( $limitValue ) )
     {
         case 'subtree':
         {
-            eZContentBrowse::browse( array( 'action_name' => 'SelectObjectRelationNode',
-                                            'from_page' => '/role/assign/' . $roleID . '/' . $limitIdent,
-                                            'cancel_page' => '/role/view/' . $roleID ),
-                                     $Module );
+            eZContentBrowse::browse( $Module,
+                                     ['action_name' => 'SelectObjectRelationNode', 'from_page' => '/role/assign/' . $roleID . '/' . $limitIdent, 'cancel_page' => '/role/view/' . $roleID] );
             return;
         } break;
 
@@ -89,10 +87,9 @@ else if ( is_string( $limitIdent ) && !isset( $limitValue ) )
             $tpl->setVariable( 'role_id', $roleID );
             $tpl->setVariable( 'limit_ident', $limitIdent );
 
-            $Result = array();
+            $Result = [];
             $Result['content'] = $tpl->fetch( 'design:role/assign_limited_section.tpl' );
-            $Result['path'] = array( array( 'url' => false,
-                                            'text' => ezpI18n::tr( 'kernel/role', 'Limit on section' ) ) );
+            $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/role', 'Limit on section' )]];
             return;
         } break;
 
@@ -105,10 +102,8 @@ else if ( is_string( $limitIdent ) && !isset( $limitValue ) )
 }
 else if ( is_numeric( $roleID ) )
 {
-    eZContentBrowse::browse( array( 'action_name' => 'AssignRole',
-                                    'from_page' => '/role/assign/' . $roleID . '/' . $limitIdent . '/' . $limitValue,
-                                    'cancel_page' => '/role/view/' . $roleID ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'AssignRole', 'from_page' => '/role/assign/' . $roleID . '/' . $limitIdent . '/' . $limitValue, 'cancel_page' => '/role/view/' . $roleID] );
 
     return;
 }

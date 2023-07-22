@@ -44,10 +44,7 @@ class ezjscEncodingTemplateFunctions
 {
     function operatorList()
     {
-        return array( 'json_encode',
-                      'xml_encode',
-                      'node_encode',
-                      );
+        return ['json_encode', 'xml_encode', 'node_encode'];
     }
 
     function namedParameterPerOperator()
@@ -57,22 +54,7 @@ class ezjscEncodingTemplateFunctions
 
     function namedParameterList()
     {
-        return array( 'json_encode' => array( 'hash' => array( 'type' => 'hash',
-                                                'required' => true,
-                                                'default' => array() )),
-                      'xml_encode' => array( 'hash' => array( 'type' => 'hash',
-                                                'required' => true,
-                                                'default' => array() )),
-                      'node_encode' => array( 'node' => array( 'type' => 'object',
-                                                'required' => true,
-                                                'default' => array() ),
-                                              'params' => array( 'type' => 'hash',
-                                                'required' => false,
-                                                'default' => array() ),
-                                              'type' => array( 'type' => 'string',
-                                                'required' => false,
-                                                'default' => 'json' )),
-        );
+        return ['json_encode' => ['hash' => ['type' => 'hash', 'required' => true, 'default' => []]], 'xml_encode' => ['hash' => ['type' => 'hash', 'required' => true, 'default' => []]], 'node_encode' => ['node' => ['type' => 'object', 'required' => true, 'default' => []], 'params' => ['type' => 'hash', 'required' => false, 'default' => []], 'type' => ['type' => 'string', 'required' => false, 'default' => 'json']]];
                                               
     }
 
@@ -83,7 +65,7 @@ class ezjscEncodingTemplateFunctions
             case 'json_encode':
             {
                 // Lets you use json_encode from templates
-                $operatorValue = json_encode( $namedParameters['hash'] );
+                $operatorValue = json_encode( $namedParameters['hash'], JSON_THROW_ON_ERROR );
             } break;
             case 'xml_encode':
             {

@@ -11,8 +11,8 @@
 class eZImageEZP21324Test extends ezpDatabaseTestCase
 {
     protected $backupGlobals = false;
-    const CLASS_IDENTIFIER = 'ezimage_ezp21324_test_class';
-    const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
+    final public const CLASS_IDENTIFIER = 'ezimage_ezp21324_test_class';
+    final public const IMAGE_FILE_PATH = "tests/tests/kernel/datatypes/ezimage/ezimagetype_regression_issue14983.png";
 
     public function setUp()
     {
@@ -174,10 +174,7 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
         $operationResult = eZOperationHandler::execute(
             'content',
             'publish',
-            array(
-                'object_id' => $object->attribute( 'id' ),
-                'version' => $version->attribute( 'version' )
-            )
+            ['object_id' => $object->attribute( 'id' ), 'version' => $version->attribute( 'version' )]
         );
 
         self::assertEquals( 1, $operationResult['status'] );
@@ -201,10 +198,7 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
         $operationResult = eZOperationHandler::execute(
             'content',
             'publish',
-            array(
-                'object_id' => $object->attribute( 'id' ),
-                'version' => $version->attribute( 'version' )
-            )
+            ['object_id' => $object->attribute( 'id' ), 'version' => $version->attribute( 'version' )]
         );
 
         self::assertEquals( 1, $operationResult['status'] );
@@ -227,7 +221,6 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
 
     /**
      * Creates a copy of $sourceObject
-     * @param eZContentObject $sourceObject
      * @return eZContentObject
      */
     protected function createCopy( eZContentObject $sourceObject )
@@ -250,12 +243,7 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
 
         // and create a new one
         $nodeAssignment = eZNodeAssignment::create(
-            array(
-                'contentobject_id' => $newObject->attribute( 'id' ),
-                'contentobject_version' => $curVersion,
-                'parent_node' => 2,
-                'is_main' => 1
-            )
+            ['contentobject_id' => $newObject->attribute( 'id' ), 'contentobject_version' => $curVersion, 'parent_node' => 2, 'is_main' => 1]
         );
         $nodeAssignment->store();
 
@@ -263,10 +251,7 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
         eZOperationHandler::execute(
             'content',
             'publish',
-            array(
-                'object_id' => $newObject->attribute( 'id' ),
-                'version'   => $curVersion
-            )
+            ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion]
         );
 
         $db->commit();
@@ -313,10 +298,7 @@ class eZImageEZP21324Test extends ezpDatabaseTestCase
         return eZImageFile::fetchObject(
             eZImageFile::definition(),
             null,
-            array(
-                'contentobject_attribute_id' => $contentObjectAttributeId,
-                'filepath' => $file
-            )
+            ['contentobject_attribute_id' => $contentObjectAttributeId, 'filepath' => $file]
         );
     }
 }

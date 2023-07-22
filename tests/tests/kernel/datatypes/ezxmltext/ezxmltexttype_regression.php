@@ -28,12 +28,7 @@ class eZXMLTextTypeRegression extends ezpDatabaseTestCase
         $translation = eZContentLanguage::addLanguage( $locale->localeCode(), $locale->internationalLanguageName() );
 
         // create related objects
-        $relatedObjectsIds = array(
-            $this->createObjectForRelation(),
-            $this->createObjectForRelation(),
-            $this->createObjectForRelation(),
-            $this->createObjectForRelation()
-        );
+        $relatedObjectsIds = [$this->createObjectForRelation(), $this->createObjectForRelation(), $this->createObjectForRelation(), $this->createObjectForRelation()];
 
         $xmlTextEn = "<embed href=\"ezobject://{$relatedObjectsIds[0]}\" /><link href=\"ezobject://{$relatedObjectsIds[1]}\">link</link>";
         $xmlTextFr = "<embed href=\"ezobject://{$relatedObjectsIds[2]}\" /><link href=\"ezobject://{$relatedObjectsIds[3]}\">link</link>";
@@ -45,12 +40,9 @@ class eZXMLTextTypeRegression extends ezpDatabaseTestCase
         $articleId = $article->publish();
 
         // Workaround as setting folder->name directly doesn't produce the expected result
-        $article->addTranslation( 'fre-FR', array(
-            'title' => __METHOD__ . ' fre-FR',
-            'intro' => $xmlTextFr
-        ) );
+        $article->addTranslation( 'fre-FR', ['title' => __METHOD__ . ' fre-FR', 'intro' => $xmlTextFr] );
 
-        $relatedObjects = eZContentObject::fetch( $articleId )->relatedObjects( false, false, 0, false, array( 'AllRelations' => eZContentObject::RELATION_LINK | eZContentObject::RELATION_EMBED ) );
+        $relatedObjects = eZContentObject::fetch( $articleId )->relatedObjects( false, false, 0, false, ['AllRelations' => eZContentObject::RELATION_LINK | eZContentObject::RELATION_EMBED] );
         self::assertEquals( 4, count( $relatedObjects ) );
         $expectedRelations = array_flip( $relatedObjectsIds );
         foreach( $relatedObjects as $relatedObject )

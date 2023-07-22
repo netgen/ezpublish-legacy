@@ -23,7 +23,7 @@ class eZPackageOperator
      */
     public function __construct( $name = 'ezpackage' )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -39,12 +39,7 @@ class eZPackageOperator
     */
     function namedParameterList()
     {
-        return array( 'class' => array( 'type' => 'string',
-                                        'required' => true,
-                                        'default' => false ),
-                      'data' => array( 'type' => 'string',
-                                       'required' => false,
-                                       'default' => false ) );
+        return ['class' => ['type' => 'string', 'required' => true, 'default' => false], 'data' => ['type' => 'string', 'required' => false, 'default' => false]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
@@ -58,7 +53,7 @@ class eZPackageOperator
                 if ( $operatorValue instanceof eZPackage )
                 {
                     if ( !is_array( $fileList = $operatorValue->fileList( 'default' ) ) )
-                        $fileList = array();
+                        $fileList = [];
                     foreach ( $fileList as $file )
                     {
                         $fileType = $file["type"];

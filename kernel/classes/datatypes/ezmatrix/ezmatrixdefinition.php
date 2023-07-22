@@ -22,23 +22,20 @@ class eZMatrixDefinition
      */
     public function __construct()
     {
-        $this->ColumnNames = array();
     }
 
 
     function decodeClassAttribute( $xmlString )
     {
         $dom = new DOMDocument( '1.0', 'utf-8' );
-        if ( strlen ( $xmlString ) != 0 )
+        if ( strlen ( (string) $xmlString ) != 0 )
         {
             $success = $dom->loadXML( $xmlString );
             $columns = $dom->getElementsByTagName( "column-name" );
-            $columnList = array();
+            $columnList = [];
             foreach ( $columns as $columnElement )
             {
-                $columnList[] = array( 'name' => $columnElement->textContent,
-                                       'identifier' => $columnElement->getAttribute( 'id' ),
-                                       'index' =>  $columnElement->getAttribute( 'idx' ) );
+                $columnList[] = ['name' => $columnElement->textContent, 'identifier' => $columnElement->getAttribute( 'id' ), 'index' =>  $columnElement->getAttribute( 'idx' )];
             }
             $this->ColumnNames = $columnList;
         }
@@ -52,7 +49,7 @@ class eZMatrixDefinition
 
     function attributes()
     {
-        return array( 'columns' );
+        return ['columns'];
     }
 
     function hasAttribute( $attr )
@@ -97,7 +94,7 @@ class eZMatrixDefinition
     {
         if ( $name == false )
         {
-            $name = 'Col_' . ( count( $this->ColumnNames ) );
+            $name = 'Col_' . ( is_countable($this->ColumnNames) ? count( $this->ColumnNames ) : 0 );
         }
 
         if ( $id == false )
@@ -107,16 +104,14 @@ class eZMatrixDefinition
             $id = $trans->transformByGroup( $name, 'identifier' );
         }
 
-        $this->ColumnNames[] = array( 'name' => $name,
-                                      'identifier' => $id,
-                                      'index' => count( $this->ColumnNames ) );
+        $this->ColumnNames[] = ['name' => $name, 'identifier' => $id, 'index' => is_countable($this->ColumnNames) ? count( $this->ColumnNames ) : 0];
     }
 
     function removeColumn( $index )
     {
-        if ( $index == 0 && count( $this->ColumnNames ) == 1 )
+        if ( $index == 0 && (is_countable($this->ColumnNames) ? count( $this->ColumnNames ) : 0) == 1 )
         {
-            $this->ColumnNames = array();
+            $this->ColumnNames = [];
         }
         else
         {
@@ -124,7 +119,7 @@ class eZMatrixDefinition
         }
     }
 
-    public $ColumnNames;
+    public $ColumnNames = [];
 
 }
 

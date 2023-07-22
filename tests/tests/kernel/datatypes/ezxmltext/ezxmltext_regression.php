@@ -61,8 +61,7 @@ class eZXMLTextRegression extends ezpDatabaseTestCase
         $version1Xml = $folder->short_description->attribute('output')->attribute( 'output_text' );
 
         // Step 2: Translate folder
-        $trData = array( "name" => "Folder Nor",
-                         "short_description" => $xmlDataNor );
+        $trData = ["name" => "Folder Nor", "short_description" => $xmlDataNor];
         $folder->addTranslation( "nor-NO", $trData ); // addTranslation() publishes too.
 
         // Step 3: Remove version 1
@@ -101,7 +100,7 @@ END;
             // and attribute values will be lost.
             $folder->short_description = $testData;
         }
-        catch ( PHPUnit_Framework_Error $e )
+        catch ( PHPUnit_Framework_Error )
         {
             // CAVEAT: this test is too generic to catch the following problem specifically
             // This can only used as an indication for now.

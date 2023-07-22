@@ -47,8 +47,6 @@ class eZBorkTranslator extends eZTranslatorHandler
     public function __construct()
     {
         parent::__construct( false );
-
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -70,8 +68,8 @@ class eZBorkTranslator extends eZTranslatorHandler
     */
     function borkify( $text )
     {
-        $textBlocks = preg_split( "/(%[^ ]+)/", $text, -1, PREG_SPLIT_DELIM_CAPTURE );
-        $newTextBlocks = array();
+        $textBlocks = preg_split( "/(%[^ ]+)/", (string) $text, -1, PREG_SPLIT_DELIM_CAPTURE );
+        $newTextBlocks = [];
         foreach ( $textBlocks as $text )
         {
             if ( $text[0] == '%' )
@@ -139,7 +137,7 @@ class eZBorkTranslator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached bork translations
-    public $Messages;
+    public $Messages = [];
 }
 
 ?>

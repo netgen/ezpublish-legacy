@@ -35,7 +35,7 @@ class eZDBPackageHandler extends eZPackageHandler
         {
             $databaseType = $parameters['database-type'];
         }
-        $path .= '/' . eZDBPackageHandler::sqlDirectory();
+        $path .= '/' . (new eZDBPackageHandler())->sqlDirectory();
         if ( $databaseType )
         {
             $path .= '/' . $databaseType;
@@ -77,14 +77,10 @@ class eZDBPackageHandler extends eZPackageHandler
             {
                 $package->appendInstall( 'sql', false, false, true,
                                          $fileItem['file'], false,
-                                         array( 'path' => $fileItem['path'],
-                                                'database-type' => $fileItem['database_type'],
-                                                'copy-file' => true ) );
+                                         ['path' => $fileItem['path'], 'database-type' => $fileItem['database_type'], 'copy-file' => true] );
                 if ( $fileItem['database_type'] )
                     $package->appendDependency( 'requires',
-                                                array( 'type' => 'ezdb',
-                                                       'name' => $fileItem['database_type'],
-                                                       'value' => false ) );
+                                                ['type' => 'ezdb', 'name' => $fileItem['database_type'], 'value' => false] );
                 $noticeText = "Adding " . $cli->stylize( 'mark', "sql" ) . " file " . $cli->stylize( 'file', $fileItem['path'] );
                 if ( $fileItem['database_type'] )
                     $noticeText .= " for database " . $cli->stylize( 'emphasize',  $fileItem['database_type']  );
@@ -100,26 +96,27 @@ class eZDBPackageHandler extends eZPackageHandler
 
     function handleParameters( $packageType, $package, $cli, $type, $arguments )
     {
-        $sqlFileList = array();
+        $fileList = [];
+        $sqlFileList = [];
         $currentDatabaseType = false;
 
-        for ( $i = 0; $i < count( $arguments ); ++$i )
+        for ( $i = 0; $i < (is_countable($arguments) ? count( $arguments ) : 0); ++$i )
         {
             $argument = $arguments[$i];
             if ( $argument[0] == '-' )
             {
-                if ( strlen( $argument ) > 1 and
+                if ( strlen( (string) $argument ) > 1 and
                      $argument[1] == '-' )
                 {
                 }
                 else
                 {
-                    $flag = substr( $argument, 1, 1 );
+                    $flag = substr( (string) $argument, 1, 1 );
                     if ( $flag == 'd' )
                     {
-                        if ( strlen( $argument ) > 2 )
+                        if ( strlen( (string) $argument ) > 2 )
                         {
-                            $data = substr( $argument, 2 );
+                            $data = substr( (string) $argument, 2 );
                         }
                         else
                         {
@@ -146,9 +143,7 @@ class eZDBPackageHandler extends eZPackageHandler
                                  implode( "\n", $triedFiles ) );
                     return false;
                 }
-                $fileList[] = array( 'file' => $sqlFile,
-                                     'database_type' => $databaseType,
-                                     'path' => $realFilePath );
+                $fileList[] = ['file' => $sqlFile, 'database_type' => $databaseType, 'path' => $realFilePath];
             }
         }
         if ( count( $fileList ) == 0 )
@@ -156,17 +151,17 @@ class eZDBPackageHandler extends eZPackageHandler
             $cli->error( "No files were added" );
             return false;
         }
-        return array( 'sql-file-list' => $fileList );
+        return ['sql-file-list' => $fileList];
     }
 
     function sqlFileExists( &$sqlFile, &$databaseType,
                             &$triedFiles )
     {
-        $triedFiles = array();
+        $triedFiles = [];
         if ( file_exists( $sqlFile ) )
         {
             $filePath = $sqlFile;
-            if ( preg_match( '#^.+/([^/]+$)#', $sqlFile, $matches ) )
+            if ( preg_match( '#^.+/([^/]+$)#', (string) $sqlFile, $matches ) )
                 $sqlFile = $matches[1];
             return $filePath;
         }
@@ -195,7 +190,7 @@ class eZDBPackageHandler extends eZPackageHandler
         $installNode->setAttribute( 'database-type', $installItem['database-type'] );
 
         $originalPath = $installItem['path'];
-        $installDirectory = $package->path() . '/' . eZDBPackageHandler::sqlDirectory();
+        $installDirectory = $package->path() . '/' . (new eZDBPackageHandler())->sqlDirectory();
         if ( $installItem['database-type'] )
             $installDirectory .= '/' . $installItem['database-type'];
         if ( !file_exists(  $installDirectory ) )

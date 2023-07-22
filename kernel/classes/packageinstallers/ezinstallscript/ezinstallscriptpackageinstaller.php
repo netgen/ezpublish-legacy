@@ -33,7 +33,7 @@ class eZInstallScriptPackageInstaller extends eZPackageInstallationHandler
 
     function customInstallHandlerInfo( $package, $installItem )
     {
-        $return = array();
+        $return = [];
 
         $itemPath = $package->path() . '/' . $installItem['sub-directory'];
         $xmlPath = $itemPath . '/' . $installItem['filename'] . '.xml';
@@ -54,8 +54,7 @@ class eZInstallScriptPackageInstaller extends eZPackageInstallationHandler
         $itemPath = $package->path() . '/' . $installItem['sub-directory'];
         $stepTemplatePath = $itemPath . '/templates';
 
-        return array( 'name' => $step['template'],
-                      'path' => $stepTemplatePath );
+        return ['name' => $step['template'], 'path' => $stepTemplatePath];
     }
 }
 ?>

@@ -27,7 +27,7 @@ class eZFilePackageHandler extends eZPackageHandler
                       &$installData )
     {
         $collectionName = $parameters['collection'];
-        $installVariables = array();
+        $installVariables = [];
         if ( isset( $installParameters['variables'] ) )
             $installVariables = $installParameters['variables'];
         $iniFileVariables = false;
@@ -53,7 +53,7 @@ class eZFilePackageHandler extends eZPackageHandler
                     else
                     {
                         $newFilePath = $package->fileStorePath( $fileItem, $collectionName, $installParameters['path'], $installVariables );
-                        if ( preg_match( "#^(.+)/[^/]+$#", $newFilePath, $matches ) )
+                        if ( preg_match( "#^(.+)/[^/]+$#", (string) $newFilePath, $matches ) )
                         {
                             eZDir::mkdir( $matches[1], false, true );
                         }
@@ -84,7 +84,7 @@ class eZFilePackageHandler extends eZPackageHandler
 
     function add( $packageType, $package, $cli, $parameters )
     {
-        $collections = array();
+        $collections = [];
         foreach ( $parameters['file-list'] as $fileItem )
         {
             $package->appendFile( $fileItem['file'], $fileItem['type'], $fileItem['role'],
@@ -112,24 +112,20 @@ class eZFilePackageHandler extends eZPackageHandler
         foreach ( $collections as $collection )
         {
             $installItems = $package->installItemsList( 'ezfile', false, $collection, true );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, true,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
             $dependencyItems = $package->dependencyItems( 'provides',
-                                                          array( 'type'  => 'ezfile',
-                                                                 'name'  => 'collection',
-                                                                 'value' =>  $collection ) );
-            if ( count( $dependencyItems ) == 0 )
+                                                          ['type'  => 'ezfile', 'name'  => 'collection', 'value' =>  $collection] );
+            if ( (is_countable($dependencyItems) ? count( $dependencyItems ) : 0) == 0 )
                 $package->appendDependency( 'provides',
-                                            array( 'type'  => 'ezfile',
-                                                   'name'  => 'collection',
-                                                   'value' => $collection ) );
+                                            ['type'  => 'ezfile', 'name'  => 'collection', 'value' => $collection] );
             $installItems = $package->installItemsList( 'ezfile', false, $collection, false );
-            if ( count( $installItems ) == 0 )
+            if ( (is_countable($installItems) ? count( $installItems ) : 0) == 0 )
                 $package->appendInstall( 'ezfile', false, false, false,
                                          false, false,
-                                         array( 'collection' => $collection ) );
+                                         ['collection' => $collection] );
         }
     }
 
@@ -140,7 +136,7 @@ class eZFilePackageHandler extends eZPackageHandler
 
     function handleParameters( $packageType, $package, $cli, $type, $arguments )
     {
-        $fileList = array();
+        $fileList = [];
         $currentType = 'file';
         $currentVariableName = false;
         $currentRole = false;
@@ -171,18 +167,18 @@ class eZFilePackageHandler extends eZPackageHandler
             $currentType = 'thumbnail';
             $currentRole = false;
         }
-        for ( $i = 0; $i < count( $arguments ); ++$i )
+        for ( $i = 0; $i < (is_countable($arguments) ? count( $arguments ) : 0); ++$i )
         {
             $argument = $arguments[$i];
             if ( $argument[0] == '-' )
             {
-                if ( strlen( $argument ) > 1 and
+                if ( strlen( (string) $argument ) > 1 and
                      $argument[1] == '-' )
                 {
                 }
                 else
                 {
-                    $flag = substr( $argument, 1, 1 );
+                    $flag = substr( (string) $argument, 1, 1 );
                     if ( $flag == 't' or
                          $flag == 'r' or
                          $flag == 'n' or
@@ -191,9 +187,9 @@ class eZFilePackageHandler extends eZPackageHandler
                          $flag == 'p' or
                          $flag == 'c' )
                     {
-                        if ( strlen( $argument ) > 2 )
+                        if ( strlen( (string) $argument ) > 2 )
                         {
-                            $data = substr( $argument, 2 );
+                            $data = substr( (string) $argument, 2 );
                         }
                         else
                         {
@@ -202,7 +198,7 @@ class eZFilePackageHandler extends eZPackageHandler
                         }
                         if ( $flag == 't' )
                         {
-                            if ( !in_array( $data, array( 'design', 'ini', 'file', 'thumbnail' ) ) )
+                            if ( !in_array( $data, ['design', 'ini', 'file', 'thumbnail'] ) )
                             {
                                 $cli->error( "Unknown file type $data, allowed values are design, ini, thumbnail and file" );
                                 return false;
@@ -277,7 +273,7 @@ class eZFilePackageHandler extends eZPackageHandler
                 {
                     $error = ( "File " . $cli->stylize( 'file', $file ) . " does not exist\n" .
                                "The following files were searched for:\n" );
-                    $files = array();
+                    $files = [];
                     foreach ( $triedFiles as $triedFile )
                     {
                         $files[] = $cli->stylize( 'file', $triedFile );
@@ -298,30 +294,12 @@ class eZFilePackageHandler extends eZPackageHandler
                         $iniFile = $this->iniMatch( $iniFile, $role, $roleValue, $file, $triedFiles );
                         if ( !$iniFile )
                             continue;
-                        $fileList[] = array( 'file' => $file,
-                                             'package-path' => $packagePath,
-                                             'type' => $type,
-                                             'role' => $role,
-                                             'role-value' => $roleValue,
-                                             'variable-name' => $currentVariableName,
-                                             'file-type' => $fileFileType,
-                                             'design' => $design,
-                                             'collection' => $currentCollection,
-                                             'path' => $iniFile );
+                        $fileList[] = ['file' => $file, 'package-path' => $packagePath, 'type' => $type, 'role' => $role, 'role-value' => $roleValue, 'variable-name' => $currentVariableName, 'file-type' => $fileFileType, 'design' => $design, 'collection' => $currentCollection, 'path' => $iniFile];
                     }
                 }
                 else
                 {
-                    $fileList[] = array( 'file' => $file,
-                                         'package-path' => $packagePath,
-                                         'type' => $type,
-                                         'role' => $role,
-                                         'role-value' => $roleValue,
-                                         'variable-name' => $currentVariableName,
-                                         'file-type' => $fileFileType,
-                                         'design' => $design,
-                                         'collection' => $currentCollection,
-                                         'path' => $realFilePath );
+                    $fileList[] = ['file' => $file, 'package-path' => $packagePath, 'type' => $type, 'role' => $role, 'role-value' => $roleValue, 'variable-name' => $currentVariableName, 'file-type' => $fileFileType, 'design' => $design, 'collection' => $currentCollection, 'path' => $realFilePath];
                 }
                 $realPath = false;
             }
@@ -331,17 +309,17 @@ class eZFilePackageHandler extends eZPackageHandler
             $cli->error( "No files were added" );
             return false;
         }
-        return array( 'file-list' => $fileList );
+        return ['file-list' => $fileList];
     }
 
     function roleExists( $type, $role )
     {
         if ( $type == 'design' )
             return in_array( $role,
-                             array( 'template', 'image', 'stylesheet', 'font' ) );
+                             ['template', 'image', 'stylesheet', 'font'] );
         if ( $type == 'ini' )
             return in_array( $role,
-                             array( 'standard', 'siteaccess', 'override' ) );
+                             ['standard', 'siteaccess', 'override'] );
         return false;
     }
 
@@ -353,7 +331,7 @@ class eZFilePackageHandler extends eZPackageHandler
     function fileExists( &$file, &$type, &$role, &$roleValue, &$design,
                          &$triedFiles )
     {
-        $triedFiles = array();
+        $triedFiles = [];
         switch ( $type )
         {
             case 'file':
@@ -387,7 +365,7 @@ class eZFilePackageHandler extends eZPackageHandler
 //                     {
 //                         $file = $matches[2];
 //                     }
-                    if ( preg_match( "#^(.+)\.([^.]+)$#", $file, $matches ) )
+                    if ( preg_match( "#^(.+)\.([^.]+)$#", (string) $file, $matches ) )
                     {
                         $file = 'thumbnail.' . $matches[2];
                     }
@@ -417,7 +395,7 @@ class eZFilePackageHandler extends eZPackageHandler
                         $roleFileName = 'fonts';
                     } break;
                 }
-                $designDirectories = array( 'design' );
+                $designDirectories = ['design'];
                 $extensionBaseDirectory = eZExtension::baseDirectory();
                 $ini = eZINI::instance( 'design.ini' );
                 $extensionDesigns = $ini->variable( 'ExtensionSettings', 'DesignExtensions' );
@@ -438,7 +416,7 @@ class eZFilePackageHandler extends eZPackageHandler
                     }
                     $preg .= '/([^/]+)/(.+)$#';
                     $realFile = $file;
-                    if ( preg_match( $preg, $file, $matches ) )
+                    if ( preg_match( $preg, (string) $file, $matches ) )
                     {
                         $design = $matches[1];
                         if ( preg_match( '#^(template(?:s)|image(?:s)|stylesheet(?:s)|font(?:s))/(.+)$#', $matches[2], $matches ) )
@@ -503,7 +481,7 @@ class eZFilePackageHandler extends eZPackageHandler
                     $filePath = $designDirectory . '/' . $file;
                     if ( file_exists( $filePath ) )
                     {
-                        if ( preg_match( "#^([^/]+)/(.+)$#", $file, $matches ) )
+                        if ( preg_match( "#^([^/]+)/(.+)$#", (string) $file, $matches ) )
                         {
                             $design = $matches[1];
                             $file = $matches[2];
@@ -528,21 +506,21 @@ class eZFilePackageHandler extends eZPackageHandler
 
     function iniMatch( $filePath, &$role, &$roleValue, &$file, &$triedFiles )
     {
-        if ( preg_match( "#^settings/siteaccess/([^/]+)/([^/]+)$#", $filePath, $matches ) )
+        if ( preg_match( "#^settings/siteaccess/([^/]+)/([^/]+)$#", (string) $filePath, $matches ) )
         {
             $role = 'siteaccess';
             $roleValue = $matches[1];
             $file = $matches[2];
             return $filePath;
         }
-        else if ( preg_match( "#^settings/override/([^/]+)$#", $filePath, $matches ) )
+        else if ( preg_match( "#^settings/override/([^/]+)$#", (string) $filePath, $matches ) )
         {
             $role = 'override';
             $roleValue = false;
             $file = $matches[1];
             return $filePath;
         }
-        else if ( preg_match( "#^settings/([^/]+)$#", $filePath, $matches ) )
+        else if ( preg_match( "#^settings/([^/]+)$#", (string) $filePath, $matches ) )
         {
             $role = 'standard';
             $roleValue = false;
@@ -568,7 +546,7 @@ class eZFilePackageHandler extends eZPackageHandler
         $filePath = $file;
         if ( file_exists( $filePath ) )
         {
-            if ( preg_match( "#^.+/([^/]+)$#", $filePath, $matches ) )
+            if ( preg_match( "#^.+/([^/]+)$#", (string) $filePath, $matches ) )
                 $file = $matches[1];
             return $filePath;
         }

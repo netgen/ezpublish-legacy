@@ -16,7 +16,7 @@
 
 class eZCodePageMapper
 {
-    const CACHE_CODE_DATE = 1026316422;
+    final public const CACHE_CODE_DATE = 1_026_316_422;
 
     /**
      * Constructor
@@ -85,7 +85,7 @@ class eZCodePageMapper
     function convertString( $str )
     {
         $out = "";
-        $len = strlen( $str );
+        $len = strlen( (string) $str );
         for ( $i = 0; $i < $len; ++$i )
         {
             $char = $str[$i];
@@ -96,22 +96,22 @@ class eZCodePageMapper
 
     function strlen( $str )
     {
-        return strlen( $str );
+        return strlen( (string) $str );
     }
 
     function strpos( $haystack, $needle, $offset = 0 )
     {
-        return strpos( $haystack, $needle, $offset );
+        return strpos( (string) $haystack, (string) $needle, $offset );
     }
 
     function strrpos( $haystack, $needle )
     {
-        return strrpos( $haystack, $needle );
+        return strrpos( (string) $haystack, (string) $needle );
     }
 
     function substr( $str, $start, $length )
     {
-        return substr( $str, $start, $length );
+        return substr( (string) $str, $start, $length );
     }
 
     function setSubstituteCharacter( $char_code )
@@ -176,8 +176,8 @@ class eZCodePageMapper
             }
         }
 
-        $this->InputOutputMap = array();
-        $this->OutputInputMap = array();
+        $this->InputOutputMap = [];
+        $this->OutputInputMap = [];
 
         $input_codepage = eZCodePage::instance( $this->InputCharsetCode );
         $output_codepage = eZCodePage::instance( $this->OutputCharsetCode );

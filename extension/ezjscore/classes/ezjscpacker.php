@@ -82,13 +82,13 @@ class ezjscPacker
         {
             // Is this a js file or js content?
             if ( isset( $packedFile[4] ) &&
-               ( strpos( $packedFile, 'http://' ) === 0 ||
-                 strpos( $packedFile, 'https://' ) === 0 ||
-                 strripos( $packedFile, '.js' ) === ( strlen( $packedFile ) -3 ) ) )
+               ( str_starts_with((string) $packedFile, 'http://') ||
+                 str_starts_with((string) $packedFile, 'https://') ||
+                 strripos( (string) $packedFile, '.js' ) === ( strlen( (string) $packedFile ) -3 ) ) )
             {
                 if ( $useFullUrl )
                 {
-                    $packedFile = $http->createRedirectUrl( $packedFile, array( 'pre_url' => false ) );
+                    $packedFile = $http->createRedirectUrl( $packedFile, ['pre_url' => false] );
                 }
                 $ret .= "<script$lang type=\"$type\" src=\"$packedFile\"$charset></script>\r\n";
             }
@@ -122,13 +122,13 @@ class ezjscPacker
         {
             // Is this a css file or css content?
             if ( isset( $packedFile[5] ) &&
-               ( strpos( $packedFile, 'http://' ) === 0 ||
-                 strpos( $packedFile, 'https://' ) === 0 ||
-                 strripos( $packedFile, '.css' ) === ( strlen( $packedFile ) -4 ) ) )
+               ( str_starts_with((string) $packedFile, 'http://') ||
+                 str_starts_with((string) $packedFile, 'https://') ||
+                 strripos( (string) $packedFile, '.css' ) === ( strlen( (string) $packedFile ) -4 ) ) )
             {
                 if ( $useFullUrl )
                 {
-                    $packedFile = $http->createRedirectUrl( $packedFile, array( 'pre_url' => false ) );
+                    $packedFile = $http->createRedirectUrl( $packedFile, ['pre_url' => false] );
                 }
                 $ret .= "<link rel=\"$rel\" type=\"$type\" href=\"$packedFile\"$media />\r\n";
             }
@@ -220,33 +220,17 @@ class ezjscPacker
     {
         if ( !$fileArray )
         {
-            return array();
+            return [];
         }
         else if ( !is_array( $fileArray ) )
         {
-            $fileArray = array( $fileArray );
+            $fileArray = [$fileArray];
         }
 
         $ezjscINI    = eZINI::instance( 'ezjscore.ini' );
         $bases       = eZTemplateDesignResource::allDesignBases();
         $customHosts = $ezjscINI->variable( 'Packer', 'CustomHosts' );
-        $data = array(
-            'http'           => array(),
-            'www'            => array(),
-            'locale'         => array(),
-            'cache_name'     => '',
-            'cache_hash'     => '',
-            'cache_path'     => '',
-            'last_modified'  => 0,
-            'file_extension' => $fileExtension,
-            'file_post_name' => $filePostName,
-            'pack_level'     => $packLevel,
-            'sub_path'       => $subPath,
-            'cache_dir'      => self::getCacheDir(),
-            'www_dir'        => htmlspecialchars( self::getWwwDir(), ENT_COMPAT, 'UTF-8' ),
-            'index_dir'      => self::getIndexDir(),
-            'custom_host'    => ( isset( $customHosts[$fileExtension] ) ? $customHosts[$fileExtension] : '' ),
-        );
+        $data = ['http'           => [], 'www'            => [], 'locale'         => [], 'cache_name'     => '', 'cache_hash'     => '', 'cache_path'     => '', 'last_modified'  => 0, 'file_extension' => $fileExtension, 'file_post_name' => $filePostName, 'pack_level'     => $packLevel, 'sub_path'       => $subPath, 'cache_dir'      => self::getCacheDir(), 'www_dir'        => htmlspecialchars( (string) self::getWwwDir(), ENT_COMPAT, 'UTF-8' ), 'index_dir'      => self::getIndexDir(), 'custom_host'    => ( $customHosts[$fileExtension] ?? '' )];
 
         // Only pack files if Packer is enabled and if not set DevelopmentMode is disabled
         if ( $ezjscINI->hasVariable( 'eZJSCore', 'Packer' ) )
@@ -287,9 +271,9 @@ class ezjscPacker
                 continue;
             }
             // if the file name contains :: it is threated as a custom code genarator
-            else if ( strpos( $file, '::' ) !== false )
+            else if ( str_contains( (string) $file, '::' ) )
             {
-                $server = self::serverCallHelper( explode( '::', $file )  );
+                $server = self::serverCallHelper( explode( '::', (string) $file )  );
                 if ( !$server instanceof ezjscServerRouter )
                 {
                     continue;
@@ -317,13 +301,13 @@ class ezjscPacker
                 continue;
             }
             // is it a http / https url  ?
-            else if ( strpos( $file, 'http://' ) === 0 || strpos( $file, 'https://' ) === 0 )
+            else if ( str_starts_with((string) $file, 'http://') || str_starts_with((string) $file, 'https://') )
             {
                 $data['http'][] = $file;
                 continue;
             }
             // is it a http / https url where protocol is selected dynamically  ?
-            else if ( strpos( $file, '://' ) === 0 )
+            else if ( str_starts_with((string) $file, '://') )
             {
                 if ( !isset( $protocol ) )
                     $protocol = eZSys::serverProtocol();
@@ -332,11 +316,11 @@ class ezjscPacker
                 continue;
             }
             // is it a absolute path ?
-            else if ( strpos( $file, 'var/' ) === 0 )
+            else if ( str_starts_with((string) $file, 'var/') )
             {
-                if ( substr( $file, 0, 2 ) === '//' || preg_match( "#^[a-zA-Z0-9]+:#", $file ) )
+                if ( str_starts_with((string) $file, '//') || preg_match( "#^[a-zA-Z0-9]+:#", (string) $file ) )
                     $file = '/';
-                else if ( strlen( $file ) > 0 &&  $file[0] !== '/' )
+                else if ( strlen( (string) $file ) > 0 &&  $file[0] !== '/' )
                     $file = '/' . $file;
 
                 eZURI::transformURI( $file, true, 'relative' );
@@ -350,18 +334,18 @@ class ezjscPacker
             {
                 // Allow path to be outside subpath if it starts with '/'
                 if ( $file[0] === '/' )
-                    $file = ltrim( $file, '/' );
+                    $file = ltrim( (string) $file, '/' );
                 else
                     $file = $subPath . $file;
 
-                $triedFiles = array();
+                $triedFiles = [];
                 $match = eZTemplateDesignResource::fileMatch( $bases, '', $file, $triedFiles );
                 if ( $match === false )
                 {
                     eZDebug::writeWarning( "Could not find: $file", __METHOD__ );
                     continue;
                 }
-                $file = htmlspecialchars( $match['path'] );
+                $file = htmlspecialchars( (string) $match['path'] );
                 $fileTime = file_exists( $file ) ? filemtime( $file ): false;
                 $wwwFile  = $data['www_dir'] . $file;
             }
@@ -383,7 +367,7 @@ class ezjscPacker
         {
             self::$log[] = $data;
             // if packing is disabled, return the valid paths / content we have generated
-            return array_merge( $data['http'], $data['www'] );
+            return [...$data['http'], ...$data['www']];
         }
         else if ( empty($data['locale']) && !empty($data['http']) )
         {
@@ -394,7 +378,7 @@ class ezjscPacker
         else if ( empty($data['locale']) )
         {
             eZDebug::writeWarning( "Could not find any files: " . var_export( $originalFileArray, true ), __METHOD__ );
-            return array();
+            return [];
         }
 
         // See if cahe file exists and if it has expired (only if time is not part of name)
@@ -469,8 +453,8 @@ class ezjscPacker
         {
             foreach( $ezjscINI->variable( 'eZJSCore', $isCSS ? 'CssOptimizer' : 'JavaScriptOptimizer' ) as $optimizer )
             {
-                if ( is_callable( array( $optimizer, 'optimize' ) ) )
-                    $content = call_user_func( array( $optimizer, 'optimize' ), $content, $data['pack_level'] );
+                if ( is_callable( [$optimizer, 'optimize'] ) )
+                    $content = call_user_func( [$optimizer, 'optimize'], $content, $data['pack_level'] );
                 else
                     eZDebug::writeWarning( "Could not call optimizer '{$optimizer}'", __METHOD__ );
             }
@@ -495,7 +479,7 @@ class ezjscPacker
     {
         if ( preg_match_all( "/url\(\s*[\'|\"]?([A-Za-z0-9_\-\/\.\\%?&@#=]+)[\'|\"]?\s*\)/ix", $fileContent, $urlMatches ) )
         {
-           $urlPaths = array();
+           $urlPaths = [];
            $urlMatches = array_unique( $urlMatches[1] );
            $cssPathArray   = explode( '/', $file );
            $wwwDir = self::getWwwDir();
@@ -504,10 +488,10 @@ class ezjscPacker
            $cssPathCount = count( $cssPathArray );
            foreach ( $urlMatches as $match )
            {
-               $match = str_replace( '\\', '/', $match );
+               $match = str_replace( '\\', '/', (string) $match );
                $relativeCount = substr_count( $match, '../' );
                // Replace path if it is realtive
-               if ( $match[0] !== '/' and strpos( $match, 'http:' ) === false )
+               if ( $match[0] !== '/' and !str_contains( $match, 'http:' ) )
                {
                    $cssPathSlice = $relativeCount === 0 ? $cssPathArray : array_slice( $cssPathArray  , 0, $cssPathCount - $relativeCount  );
                    $newMatchPath = $wwwDir;
@@ -577,7 +561,7 @@ class ezjscPacker
             $extension = $data['file_extension'] === '.js' ? 'JS' : 'CSS';
             if ( $as_html )
             {
-                $sourceFilesStats = self::printDebugReportFiles( $data, $as_html );
+                $sourceFilesStats = self::printDebugReportFiles( $data );
                 $cache = $data['cache_path'] === '' ? ''
                                                     : "<span class='debuginfo' title='Full path: {$data['cache_path']}'>{$data['cache_hash']}</span>";
                 $stats .= "<tr class='data'><td>{$cache}</td><td>{$extension}</td><td>{$data['pack_level']}</td><td>{$sourceFilesStats}</td></tr>";
@@ -639,10 +623,10 @@ class ezjscPacker
      *
      * @var array
      */
-    protected static $log = array();
+    protected static $log = [];
 }
 
 // Auto append callback on eZDebug to be able to show report on packer use
-eZDebug::appendBottomReport( 'ezjscPacker', array( 'ezjscPacker', 'printDebugReport' ) );
+eZDebug::appendBottomReport( 'ezjscPacker', ['ezjscPacker', 'printDebugReport'] );
 
 ?>

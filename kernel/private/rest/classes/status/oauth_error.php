@@ -10,13 +10,8 @@
 
 class ezpRestOauthErrorStatus implements ezcMvcResultStatusObject
 {
-    public $errorType;
-    public $message;
-
-    public function __construct( $errorType = null, $message = null )
+    public function __construct(public $errorType = null, public $message = null)
     {
-        $this->errorType = $errorType;
-        $this->message = $message;
     }
 
     public function process( ezcMvcResponseWriter $writer )

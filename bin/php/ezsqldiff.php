@@ -12,14 +12,11 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish SQL diff\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish SQL diff\n\n" .
                                                         "Displays differences between two database schemas,\n" .
                                                         "and sets exit code based whether there is a difference or not\n" .
                                                         "\n" .
-                                                        "ezsqldiff.php --type mysql --user=root stable32 stable33" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "ezsqldiff.php --type mysql --user=root stable32 stable33" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
@@ -29,69 +26,51 @@ $options = $script->getOptions( "[source-type:][source-host:][source-user:][sour
                                 "[lint-check]" .
                                 "[reverse][check-only]",
                                 "[source][match]",
-                                array( 'source-type' => ( "Which database type to use for source, can be one of:\n" .
-                                                          "mysql, postgresql" ),
-                                       'source-host' => "Connect to host source database",
-                                       'source-user' => "User for login to source database",
-                                       'source-password' => "Password to use when connecting to source database",
-                                       'source-socket' => 'Socket to connect to source database (only for MySQL)',
-                                       'match-type' => ( "Which database type to use for match, can be one of:\n" .
-                                                         "mysql, postgresql" ),
-                                       'match-host' => "Connect to host match database",
-                                       'match-user' => "User for login to match database",
-                                       'match-password' => "Password to use when connecting to match database",
-                                       'match-socket' => 'Socket to connect to match database (only for MySQL)',
-                                       'type' => ( "Which database type to use for match and source, can be one of:\n" .
-                                                   "mysql, postgresql" ),
-                                       'host' => "Connect to host match and source database",
-                                       'user' => "User for login to match and source database",
-                                       'password' => "Password to use when connecting to match and source database",
-                                       'socket' => 'Socket to connect to match and source database (only for MySQL)',
-                                       'lint-check' => 'Instead of comparing 2 datase schemas, verify source database schema for standards compliance',
-                                       'reverse' => "Reverse the differences",
-                                       'check-only' => "Don't show SQLs for the differences, just set exit code and return"
-                                       ) );
+                                ['source-type' => ( "Which database type to use for source, can be one of:\n" .
+                                                          "mysql, postgresql" ), 'source-host' => "Connect to host source database", 'source-user' => "User for login to source database", 'source-password' => "Password to use when connecting to source database", 'source-socket' => 'Socket to connect to source database (only for MySQL)', 'match-type' => ( "Which database type to use for match, can be one of:\n" .
+                                                  "mysql, postgresql" ), 'match-host' => "Connect to host match database", 'match-user' => "User for login to match database", 'match-password' => "Password to use when connecting to match database", 'match-socket' => 'Socket to connect to match database (only for MySQL)', 'type' => ( "Which database type to use for match and source, can be one of:\n" .
+                                            "mysql, postgresql" ), 'host' => "Connect to host match and source database", 'user' => "User for login to match and source database", 'password' => "Password to use when connecting to match and source database", 'socket' => 'Socket to connect to match and source database (only for MySQL)', 'lint-check' => 'Instead of comparing 2 datase schemas, verify source database schema for standards compliance', 'reverse' => "Reverse the differences", 'check-only' => "Don't show SQLs for the differences, just set exit code and return"] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( "Missing source database" );
     $script->shutdown( 1 );
 }
 
-if ( count( $options['arguments'] ) < 2 and
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 2 and
      !$options['lint-check'] )
 {
     $cli->error( "Missing match database" );
     $script->shutdown( 1 );
 }
 
-$sourceType = $options['source-type'] ? $options['source-type'] : $options['type'];
-$sourceDBHost = $options['source-host'] ? $options['source-host'] : $options['host'];
-$sourceDBUser = $options['source-user'] ? $options['source-user'] : $options['user'];
-$sourceDBPassword = $options['source-password'] ? $options['source-password'] : $options['password'];
-$sourceDBSocket = $options['source-socket'] ? $options['source-socket'] : $options['socket'];
+$sourceType = $options['source-type'] ?: $options['type'];
+$sourceDBHost = $options['source-host'] ?: $options['host'];
+$sourceDBUser = $options['source-user'] ?: $options['user'];
+$sourceDBPassword = $options['source-password'] ?: $options['password'];
+$sourceDBSocket = $options['source-socket'] ?: $options['socket'];
 $sourceDB = $options['arguments'][0];
 
 if( !is_string( $sourceDBPassword ) )
     $sourceDBPassword = '';
 
-$matchType = $options['match-type'] ? $options['match-type'] : $options['type'];
-$matchDBHost = $options['match-host'] ? $options['match-host'] : $options['host'];
-$matchDBUser = $options['match-user'] ? $options['match-user'] : $options['user'];
-$matchDBPassword = $options['match-password'] ? $options['match-password'] : $options['password'];
-$matchDBSocket = $options['match-socket'] ? $options['match-socket'] : $options['socket'];
-$matchDB = count( $options['arguments'] ) >= 2 ? $options['arguments'][1] : '';
+$matchType = $options['match-type'] ?: $options['type'];
+$matchDBHost = $options['match-host'] ?: $options['host'];
+$matchDBUser = $options['match-user'] ?: $options['user'];
+$matchDBPassword = $options['match-password'] ?: $options['password'];
+$matchDBSocket = $options['match-socket'] ?: $options['socket'];
+$matchDB = (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) >= 2 ? $options['arguments'][1] : '';
 
 if ( !is_string( $matchDBPassword ) )
     $matchDBPassword = '';
 
-if ( strlen( trim( $sourceType ) ) == 0 )
+if ( strlen( trim( (string) $sourceType ) ) == 0 )
 {
     $cli->error( "No source type chosen" );
     $script->shutdown( 1 );
 }
-if ( strlen( trim( $matchType ) ) == 0 )
+if ( strlen( trim( (string) $matchType ) ) == 0 )
 {
     if ( !$options['lint-check'] )
     {
@@ -107,17 +86,12 @@ function loadDatabaseSchema( $type, $host, $user, $password, $socket, $db, $cli 
     $dbSchema = false;
     if ( file_exists( $db ) and is_file( $db ) )
     {
-        $dbSchema = eZDbSchema::instance( array( 'type' => $type,
-                                                 'schema' => eZDbSchema::read( $db ) ) );
+        $dbSchema = eZDbSchema::instance( ['type' => $type, 'schema' => eZDbSchema::read( $db )] );
         return $dbSchema;
     }
     else
     {
-        $parameters = array( 'use_defaults' => false,
-                             'server' => $host,
-                             'user' => $user,
-                             'password' => $password,
-                             'database' => $db );
+        $parameters = ['use_defaults' => false, 'server' => $host, 'user' => $user, 'password' => $password, 'database' => $db];
         if ( $socket )
             $parameters['socket'] = $socket;
         $dbInstance = eZDB::instance( 'ez' . $type,
@@ -134,7 +108,7 @@ function loadDatabaseSchema( $type, $host, $user, $password, $socket, $db, $cli 
         {
             $cli->error( "Could not initialize database:" );
             $msg = "* Tried database '$db'";
-            if ( strlen( $host ) > 0 )
+            if ( strlen( (string) $host ) > 0 )
             {
                 $msg .= " at host '$host'";
             }
@@ -142,11 +116,11 @@ function loadDatabaseSchema( $type, $host, $user, $password, $socket, $db, $cli 
             {
                 $msg .= " locally";
             }
-            if ( strlen( $user ) > 0 )
+            if ( strlen( (string) $user ) > 0 )
             {
                 $msg .= " with user '$user'";
             }
-            if ( strlen( $password ) > 0 )
+            if ( strlen( (string) $password ) > 0 )
                 $msg .= " and with a password";
             $cli->error( $msg );
 
@@ -217,7 +191,7 @@ else
     }
 }
 
-if ( count( $differences ) > 0 )
+if ( (is_countable($differences) ? count( $differences ) : 0) > 0 )
     $script->setExitCode( 1 );
 
 $script->shutdown();

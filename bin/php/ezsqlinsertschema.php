@@ -12,12 +12,9 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish SQL Schema insert\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish SQL Schema insert\n\n" .
                                                         "Insert database schema and data to specified database\n".
-                                                        "ezsqlinsertschema.php --type=mysql --user=root share/db_schema.dba ezp35stable" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "ezsqlinsertschema.php --type=mysql --user=root share/db_schema.dba ezp35stable" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
@@ -25,28 +22,16 @@ $options = $script->getOptions( "[type:][user:][host:][password;][port:][socket:
                                 "[table-type:][table-charset:]" .
                                 "[insert-types:][allow-multi-insert][schema-file:][clean-existing]",
                                 "[filename][database]",
-                                array( 'type' => ( "Which database type to use, can be one of:\n" .
-                                                   "mysql, postgresql or any other supported by extensions" ),
-                                       'host' => "Connect to host database",
-                                       'user' => "User for login to database",
-                                       'password' => "Password to use when connecting to database",
-                                       'port' => 'Port to connect to database',
-                                       'socket' => 'Socket to connect to match and database (only for MySQL)',
-                                       'table-type' => ( "The table storage type to use when creating tables.\n" .
-                                                         "MySQL: bdb, innodb and myisam\n" .
-                                                         "PostgreSQL: \n" .
-                                                         "Oracle: " ),
-                                       'clean-existing' => 'Clean up existing schema (remove all database objects)',
-                                       'table-charset' => 'Defines the charset to use on tables, the names of the charset depends on database type',
-                                       'schema-file' => 'The schema file to use when importing data structures, is only required when importing a schema',
-                                       'allow-multi-insert' => ( 'Will create INSERT statements with multiple data entries (applies to data import only)' . "\n" .
-                                                                 'Multi-inserts will only be created for databases that support it' ),
-                                       'insert-types' => ( "A comma separated list of types to import (default is schema only):\n" .
-                                                           "schema - Table schema\n" .
-                                                           "data - Table data\n" .
-                                                           "all - Both table schema and data\n" .
-                                                           "none - Insert nothing (useful if you want to clean up schema only)" )
-                                       ) );
+                                ['type' => ( "Which database type to use, can be one of:\n" .
+                                                   "mysql, postgresql or any other supported by extensions" ), 'host' => "Connect to host database", 'user' => "User for login to database", 'password' => "Password to use when connecting to database", 'port' => 'Port to connect to database', 'socket' => 'Socket to connect to match and database (only for MySQL)', 'table-type' => ( "The table storage type to use when creating tables.\n" .
+                                                  "MySQL: bdb, innodb and myisam\n" .
+                                                  "PostgreSQL: \n" .
+                                                  "Oracle: " ), 'clean-existing' => 'Clean up existing schema (remove all database objects)', 'table-charset' => 'Defines the charset to use on tables, the names of the charset depends on database type', 'schema-file' => 'The schema file to use when importing data structures, is only required when importing a schema', 'allow-multi-insert' => ( 'Will create INSERT statements with multiple data entries (applies to data import only)' . "\n" .
+                                                          'Multi-inserts will only be created for databases that support it' ), 'insert-types' => ( "A comma separated list of types to import (default is schema only):\n" .
+                                                    "schema - Table schema\n" .
+                                                    "data - Table data\n" .
+                                                    "all - Both table schema and data\n" .
+                                                    "none - Insert nothing (useful if you want to clean up schema only)" )] );
 $script->initialize();
 
 $type = $options['type'];
@@ -66,7 +51,7 @@ if ( $options['insert-types'] )
 {
     $includeSchema = false;
     $includeData = false;
-    $includeTypes = explode( ',', $options['insert-types'] );
+    $includeTypes = explode( ',', (string) $options['insert-types'] );
     foreach ( $includeTypes as $includeType )
     {
         switch ( $includeType )
@@ -98,7 +83,7 @@ if ( $options['insert-types'] )
 
 $onlyCleanupSchema = $options['clean-existing'] && !$includeSchema && !$includeData;
 
-switch ( count( $options['arguments'] ) )
+switch ( is_countable($options['arguments']) ? count( $options['arguments'] ) : 0 )
 {
     case 0:
         $cli->error( "Missing filename and database" );
@@ -126,15 +111,10 @@ switch ( count( $options['arguments'] ) )
         break;
 }
 
-$dbschemaParameters = array( 'schema' => $includeSchema,
-                             'data' => $includeData,
-                             'format' => 'local',
-                             'table_type' => $options['table-type'],
-                             'table_charset' => $options['table-charset'],
-                             'allow_multi_insert' => $options['allow-multi-insert'] );
+$dbschemaParameters = ['schema' => $includeSchema, 'data' => $includeData, 'format' => 'local', 'table_type' => $options['table-type'], 'table_charset' => $options['table-charset'], 'allow_multi_insert' => $options['allow-multi-insert']];
 
 
-if ( strlen( trim( $type ) ) == 0 )
+if ( strlen( trim( (string) $type ) ) == 0 )
 {
     $cli->error( "No database type chosen" );
     $script->shutdown( 1 );
@@ -146,7 +126,7 @@ if ( !$onlyCleanupSchema and ( !file_exists( $filename ) or !is_file( $filename 
     $script->shutdown( 1 );
 }
 
-if ( strlen( trim( $user ) ) == 0)
+if ( strlen( trim( (string) $user ) ) == 0)
 {
     $cli->error( "No database user chosen" );
     $script->shutdown( 1 );
@@ -157,7 +137,7 @@ if ( strlen( trim( $user ) ) == 0)
 function eZTriedDatabaseString( $database, $host, $user, $password, $socket )
 {
     $msg = "'$database'";
-    if ( strlen( $host ) > 0 )
+    if ( strlen( (string) $host ) > 0 )
     {
         $msg .= " at host '$host'";
     }
@@ -165,23 +145,20 @@ function eZTriedDatabaseString( $database, $host, $user, $password, $socket )
     {
         $msg .= " locally";
     }
-    if ( strlen( $user ) > 0 )
+    if ( strlen( (string) $user ) > 0 )
     {
         $msg .= " with user '$user'";
     }
-    if ( strlen( $password ) > 0 )
+    if ( strlen( (string) $password ) > 0 )
         $msg .= " and with a password";
-    if ( strlen( $socket ) > 0 )
+    if ( strlen( (string) $socket ) > 0 )
         $msg .= " and with socket '$socket'";
     return $msg;
 }
 
 // Connect to database
 
-$parameters = array( 'server' => $host,
-                     'user' => $user,
-                     'password' => $password,
-                     'database' => $database );
+$parameters = ['server' => $host, 'user' => $user, 'password' => $password, 'database' => $database];
 if ( $socket )
     $parameters['socket'] = $socket;
 if ( $port )

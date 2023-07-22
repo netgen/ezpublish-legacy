@@ -18,34 +18,30 @@
 class eZMatrix
 {
     /**
-     * @param string $name
+     * @param string $Name
      * @param int|bool $numRows
      * @param eZMatrixDefinition|bool $matrixColumnDefinition
      */
-    public function __construct( $name, $numRows = false, $matrixColumnDefinition = false )
+    public function __construct( /// Contains the Matrix name
+    public $Name, $numRows = false, $matrixColumnDefinition = false )
     {
-        $this->Name = $name;
-        $this->Matrix = array();
-
         if ( $numRows !== false &&  $matrixColumnDefinition !== false )
         {
             $columns = $matrixColumnDefinition->attribute( 'columns' );
-            $numColumns = count( $columns );
+            $numColumns = is_countable($columns) ? count( $columns ) : 0;
             $this->NumColumns = $numColumns;
 
-            $sequentialColumns = array();
+            $sequentialColumns = [];
             foreach ( $columns as $column )
             {
-                $sequentialColumns[] = array( 'identifier' => $column['identifier'],
-                                              'index' => $column['index'],
-                                              'name' => $column['name'] );
+                $sequentialColumns[] = ['identifier' => $column['identifier'], 'index' => $column['index'], 'name' => $column['name']];
 
             }
-            $this->Matrix['columns'] = array();
+            $this->Matrix['columns'] = [];
             $this->Matrix['columns']['sequential'] = $sequentialColumns;
 
             $this->NumRows = $numRows;
-            $cells = array();
+            $cells = [];
             for ( $i = 0; $i < $numColumns; ++$i )
             {
                 for ( $j = 0; $j < $numRows; ++$j )
@@ -133,11 +129,9 @@ class eZMatrix
     */
     function addColumnToMatrix( $columnDefinition )
     {
-        $newColumn  = array( 'identifier'   => $columnDefinition['identifier'],
-                             'index'        => $columnDefinition['index'],
-                             'name'         => $columnDefinition['name'] );
+        $newColumn  = ['identifier'   => $columnDefinition['identifier'], 'index'        => $columnDefinition['index'], 'name'         => $columnDefinition['name']];
 
-        array_splice( $this->Matrix['columns']['sequential'], $columnDefinition['index'], 0, array( $newColumn ) );
+        array_splice( $this->Matrix['columns']['sequential'], $columnDefinition['index'], 0, [$newColumn] );
     }
 
     /*!
@@ -209,7 +203,7 @@ class eZMatrix
             $this->reorderColumns();
 
             $columns          = $classColumnsDefinition->attribute( 'columns' );
-            $numColumns       =  count( $columns );
+            $numColumns       =  is_countable($columns) ? count( $columns ) : 0;
             $this->NumColumns =  $numColumns;
 
             $xmlString        = $this->xmlString();
@@ -224,7 +218,7 @@ class eZMatrix
     */
     function buildReorderRuleForColumn( $columns, $pos )
     {
-        $rule = array( $pos );
+        $rule = [$pos];
         $startPos = $pos;
 
         $column = $columns[$pos];
@@ -245,7 +239,7 @@ class eZMatrix
     {
         $matrix     = $this->attribute( 'matrix' );
         $columns    = $matrix['columns']['sequential'];
-        $rules      = array();
+        $rules      = [];
         $positions  = array_keys( $columns );
 
         foreach ( $columns as $pos => $column )
@@ -279,7 +273,7 @@ class eZMatrix
         foreach( $rules as $rule )
         {
             // last column in rule
-            $pos = count( $rule ) - 1;
+            $pos = (is_countable($rule) ? count( $rule ) : 0) - 1;
 
             $column = $this->column( $rule[$pos] );
 
@@ -333,8 +327,7 @@ class eZMatrix
     */
     function column( $colIdx )
     {
-        return array( 'columnDefinition' => $this->columnDefinition( $colIdx ),
-                      'cellsData' => $this->columnCellsData ( $colIdx ) );
+        return ['columnDefinition' => $this->columnDefinition( $colIdx ), 'cellsData' => $this->columnCellsData ( $colIdx )];
     }
 
     /*!
@@ -370,7 +363,7 @@ class eZMatrix
     protected function setColumnCellData( $colIdx, $cellData )
     {
         $columnCount = $this->attribute( 'columnCount' );
-        $dataCount = count( $cellData );
+        $dataCount = is_countable($cellData) ? count( $cellData ) : 0;
         $dataOffset = 0;
         $cellOffset = $colIdx;
 
@@ -390,7 +383,7 @@ class eZMatrix
     */
     protected function columnCellsData( $colIdx )
     {
-        $retArray = array();
+        $retArray = [];
         $columnCount = $this->attribute( 'columnCount' );
         $rowCount = $this->attribute( 'rowCount' );
         $cells = $this->attribute( 'cells' );
@@ -444,7 +437,7 @@ class eZMatrix
     {
         $columnsToRemove = $this->getColumnsToRemove( $matrixColumnDefinition );
 
-        if ( count( $columnsToRemove ) > 0 )
+        if ( (is_countable($columnsToRemove) ? count( $columnsToRemove ) : 0) > 0 )
         {
             // remove begins from last column (reverse order )
             foreach ( array_reverse( $columnsToRemove ) as $column )
@@ -462,7 +455,7 @@ class eZMatrix
     */
     function getColumnsToRemove( $matrixColumnsDefinition )
     {
-        $columnsToRemove = array();
+        $columnsToRemove = [];
         $matrix          = $this->attribute( 'matrix' );
         $columns         = $matrix['columns']['sequential'];
 
@@ -586,13 +579,7 @@ class eZMatrix
 
     function attributes()
     {
-        return array( 'name' ,
-                      'rows',
-                      'columns',
-                      'matrix',
-                      'cells',
-                      'rowCount',
-                      'columnCount' );
+        return ['name', 'rows', 'columns', 'matrix', 'cells', 'rowCount', 'columnCount'];
     }
 
     function hasAttribute( $name )
@@ -626,11 +613,11 @@ class eZMatrix
             }break;
             case "rowCount" :
             {
-                return count( $this->Matrix['rows']['sequential'] );
+                return is_countable($this->Matrix['rows']['sequential']) ? count( $this->Matrix['rows']['sequential'] ) : 0;
             }break;
             case "columnCount" :
             {
-                return count( $this->Matrix['columns']['sequential'] );
+                return is_countable($this->Matrix['columns']['sequential']) ? count( $this->Matrix['columns']['sequential'] ) : 0;
             }break;
             default:
             {
@@ -646,14 +633,14 @@ class eZMatrix
 
         for ( $r = $addCount; $r > 0; $r-- )
         {
-            $newCells = array();
+            $newCells = [];
             $numColumns = $this->attribute( 'columnCount' );
             $numRows = $this->attribute( 'rowCount' );
             for ( $i = 0; $i < $numColumns; $i++ )
             {
                 $newCells[] = '';
             }
-            $newRow = array();
+            $newRow = [];
             $newRow['columns'] = $newCells;
             $this->NumRows++;
             if ( $beforeIndex === false )
@@ -670,7 +657,7 @@ class eZMatrix
                 array_splice( $this->Cells, $insertIndex, 0, $newCells );
                 $newRow['identifier'] =  'row_' . $beforeIndex;
                 $newRow['name'] = 'Row_' . ( $numRows + 1 );
-                array_splice( $this->Matrix['rows']['sequential'], $beforeIndex, 0,  array( $newRow ) );
+                array_splice( $this->Matrix['rows']['sequential'], $beforeIndex, 0,  [$newRow] );
 
             }
         }
@@ -706,7 +693,7 @@ class eZMatrix
             $numRows = $rowsNode->getAttribute( 'number' );
 
             $namedColumns = $dom->getElementsByTagName( "column" );
-            $namedColumnList = array();
+            $namedColumnList = [];
             if ( $namedColumns->length > 0 )
             {
                 foreach ( $namedColumns as $namedColumn )
@@ -714,26 +701,23 @@ class eZMatrix
                     $columnName = $namedColumn->textContent;
                     $columnID = $namedColumn->getAttribute( 'id' );
                     $columnNumber = $namedColumn->getAttribute( 'num' );
-                    $namedColumnList[$columnNumber] = array( 'name' => $columnName,
-                                                             'column_number' => $columnNumber,
-                                                             'column_id' => $columnID );
+                    $namedColumnList[$columnNumber] = ['name' => $columnName, 'column_number' => $columnNumber, 'column_id' => $columnID];
                 }
             }
             $cellNodes = $dom->getElementsByTagName( "c" );
-            $cellList = array();
+            $cellList = [];
             foreach ( $cellNodes as $cellNode )
             {
                 $cellList[] = $cellNode->textContent;
             }
 
-            $rows = array( 'sequential' => array() );
-            $sequentialRows = array();
+            $rows = ['sequential' => []];
+            $sequentialRows = [];
 
             for ( $i = 1; $i <= $numRows; $i++ )
             {
-                $row = array( 'identifier' => 'row_' . $i ,
-                              'name' => 'Row_' . $i );
-                $rowColumns = array();
+                $row = ['identifier' => 'row_' . $i, 'name' => 'Row_' . $i];
+                $rowColumns = [];
                 for ( $j = 1; $j <= $numColumns; $j++ )
                 {
                     $rowColumns[] = $cellList[ ($i-1) * $numColumns + $j-1];
@@ -743,31 +727,26 @@ class eZMatrix
             }
             $rows['sequential'] = $sequentialRows;
 
-            $columns = array( 'sequential' => array(),
-                              'id' => array() );
-            $sequentialColumns = array();
-            $idColumns = array();
+            $columns = ['sequential' => [], 'id' => []];
+            $sequentialColumns = [];
+            $idColumns = [];
 
             for ( $i = 0; $i < $numColumns; $i++ )
             {
                 if ( isset( $column ) )
                     unset( $column );
-                $column = array();
+                $column = [];
                 if ( isset( $namedColumnList[$i] ) && is_array( $namedColumnList[$i] ) )
                 {
-                    $column = array( 'identifier' => $namedColumnList[$i]['column_id'],
-                                     'index' => $i,
-                                     'name' => $namedColumnList[$i]['name'] );
+                    $column = ['identifier' => $namedColumnList[$i]['column_id'], 'index' => $i, 'name' => $namedColumnList[$i]['name']];
                 }
                 else
                 {
-                    $column = array( 'identifier' => 'col_' . ($i + 1),
-                                     'index' => $i,
-                                     'name' => 'Col_' . ($i + 1) );
+                    $column = ['identifier' => 'col_' . ($i + 1), 'index' => $i, 'name' => 'Col_' . ($i + 1)];
 
                 }
 
-                $columnRows = array();
+                $columnRows = [];
                 for( $j = 0; $j < $numRows; $j++ )
                 {
                     $columnRows[] = $sequentialRows[$j]['columns'][$i];
@@ -779,9 +758,7 @@ class eZMatrix
             $columns['sequential'] = $sequentialColumns;
             $columns['id'] = $idColumns;
 
-            $matrix = array( 'rows' => $rows,
-                             'columns' => $columns,
-                             'cells' => $cellList );
+            $matrix = ['rows' => $rows, 'columns' => $columns, 'cells' => $cellList];
 
             $this->Matrix = $matrix;
             $this->NumRows = $numRows;
@@ -790,8 +767,8 @@ class eZMatrix
         }
         else
         {
-            $this->Cells = array();
-            $this->Matrix = array();
+            $this->Cells = [];
+            $this->Matrix = [];
         }
     }
     /*!
@@ -876,11 +853,8 @@ class eZMatrix
         return $this->domString( $doc );
     }
 
-    /// Contains the Matrix name
-    public $Name;
-
     /// Contains the Matrix array
-    public $Matrix;
+    public $Matrix = [];
 
     /// Contains the number of columns
     public $NumColumns;

@@ -19,12 +19,11 @@ class eZImageTextLayer extends eZImageLayer
 {
     public function __construct( $imageObjectRef = null, $imageObject = null,
                                   $width = false, $height = false,
-                                  $font = false, $boundingBox = null, $text = null, $textAngle = 0 )
+                                  $font = false, /// \privatesection
+                                  public $TextBoundingBox = null, public $Text = null, $textAngle = 0 )
     {
         parent::__construct( $imageObjectRef, $imageObject, $width, $height, $font );
-        $this->Text = $text;
         $this->TextAngle = $textAngle;
-        $this->TextBoundingBox = $boundingBox;
     }
 
     /*!
@@ -138,7 +137,7 @@ class eZImageTextLayer extends eZImageLayer
             eZDebug::writeError( 'ImageTTFBBox function not in PHP, check PHP compilation', 'ezimagetextlayer.php' );
             return $Return;
         }
-        $bbox = ImageTTFBBox( $font->pointSize(), $angle, $font->realFile(), $text );
+        $bbox = ImageTTFBBox( $font->pointSize(), $angle, $font->realFile(), (string) $text );
 
         if ( !$bbox )
             return $Return;
@@ -163,10 +162,6 @@ class eZImageTextLayer extends eZImageLayer
         $layer->create( $width, $height, null );
         return $layer;
     }
-
-    /// \privatesection
-    public $TextBoundingBox;
-    public $Text;
     public $Angle;
 }
 

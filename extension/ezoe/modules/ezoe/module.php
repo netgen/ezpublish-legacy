@@ -27,60 +27,24 @@
 //
 
 
-$Module = array( 'name' => 'eZ Online Editor Module Views, for dialoges and internal ajax use!' );
+$Module = ['name' => 'eZ Online Editor Module Views, for dialoges and internal ajax use!'];
 
-$ViewList = array();
-$ViewList['relations'] = array(
-    'functions' => array( 'editor' ),
-    'ui_context' => 'edit',
-    'script' => 'relations.php',
-    'params' => array( 'ObjectID', 'ObjectVersion', 'ContentType', 'EmbedID', 'EmbedInline', 'EmbedSize' )
-    );
+$ViewList = [];
+$ViewList['relations'] = ['functions' => ['editor'], 'ui_context' => 'edit', 'script' => 'relations.php', 'params' => ['ObjectID', 'ObjectVersion', 'ContentType', 'EmbedID', 'EmbedInline', 'EmbedSize']];
 
-$ViewList['upload'] = array(
-    'functions' => array( 'editor' ),
-    'ui_context' => 'edit',
-    'script' => 'upload.php',
-    'params' => array( 'ObjectID', 'ObjectVersion', 'ContentType', 'ForcedUpload' )
-    );
+$ViewList['upload'] = ['functions' => ['editor'], 'ui_context' => 'edit', 'script' => 'upload.php', 'params' => ['ObjectID', 'ObjectVersion', 'ContentType', 'ForcedUpload']];
 
-$ViewList['tags'] = array(
-    'functions' => array( 'editor' ),
-    'ui_context' => 'edit',
-    'script' => 'tags.php',
-    'params' => array( 'ObjectID', 'ObjectVersion', 'TagName', 'CustomTagName' )
-    );
+$ViewList['tags'] = ['functions' => ['editor'], 'ui_context' => 'edit', 'script' => 'tags.php', 'params' => ['ObjectID', 'ObjectVersion', 'TagName', 'CustomTagName']];
 
-$ViewList['dialog'] = array(
-    'functions' => array( 'editor' ),
-    'ui_context' => 'edit',
-    'script' => 'dialog.php',
-    'params' => array( 'ObjectID', 'ObjectVersion', 'Dialog' )
-    );
+$ViewList['dialog'] = ['functions' => ['editor'], 'ui_context' => 'edit', 'script' => 'dialog.php', 'params' => ['ObjectID', 'ObjectVersion', 'Dialog']];
 
-$ViewList['embed_view'] = array(
-    'functions' => array( 'editor' ),
-    'script' => 'embed_view.php',
-    'params' => array( 'EmbedID' )
-    );
+$ViewList['embed_view'] = ['functions' => ['editor'], 'script' => 'embed_view.php', 'params' => ['EmbedID']];
 
-$ViewList['load'] = array(
-    'functions' => array( 'editor' ),
-    'script' => 'load.php',
-    'params' => array( 'EmbedID', 'DataMap', 'ImagePreGenerateSizes' )
-    );
+$ViewList['load'] = ['functions' => ['editor'], 'script' => 'load.php', 'params' => ['EmbedID', 'DataMap', 'ImagePreGenerateSizes']];
 
-$ViewList['spellcheck_rpc'] = array(
-    'functions' => array( 'editor' ),
-    'script' => 'spellcheck_rpc.php',
-    'params' => array( )
-    );
+$ViewList['spellcheck_rpc'] = ['functions' => ['editor'], 'script' => 'spellcheck_rpc.php', 'params' => []];
 
-$ViewList['atd_rpc'] = array(
-    'functions' => array( 'editor' ),
-    'script' => 'atd_rpc.php',
-    'params' => array( )
-    );
+$ViewList['atd_rpc'] = ['functions' => ['editor'], 'script' => 'atd_rpc.php', 'params' => []];
 
 
 /*
@@ -138,12 +102,12 @@ $FunctionList['editor'] = array( 'Class' => $ClassID,
                                'Subtree' => $Subtree);
 */
 
-$FunctionList = array();
-$FunctionList['relations'] = array();
-$FunctionList['editor'] = array();
-$FunctionList['search'] = array();// only used by template code to see if user should see this feature in ezoe
-$FunctionList['browse'] = array();// only used by template code to see if user should see this feature in ezoe
-$FunctionList['disable_editor'] = array();
+$FunctionList = [];
+$FunctionList['relations'] = [];
+$FunctionList['editor'] = [];
+$FunctionList['search'] = [];// only used by template code to see if user should see this feature in ezoe
+$FunctionList['browse'] = [];// only used by template code to see if user should see this feature in ezoe
+$FunctionList['disable_editor'] = [];
 
 
 

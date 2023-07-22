@@ -15,43 +15,33 @@ require_once 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => ( "eZ Publish database flattening.\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish database flattening.\n\n" .
                                                         "Will remove data that is not considered currently in use to minimize the amount of database data it consumes\n" .
                                                         "\n" .
                                                         "Possible values for NAME is:\n" .
                                                         "contentobject, contentclass, workflow, role or all (for all items)\n" .
-                                                        "flatten.php -s admin contentobject"),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "flatten.php -s admin contentobject"), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[db-host:][db-user:][db-password:][db-database:][db-type:|db-driver:][sql]",
                                 "[name]",
-                                array( 'db-host' => "Database host",
-                                       'db-user' => "Database user",
-                                       'db-password' => "Database password",
-                                       'db-database' => "Database name",
-                                       'db-driver' => "Database driver",
-                                       'db-type' => "Database driver, alias for --db-driver",
-                                       'sql' => "Display sql queries"
-                                       ) );
+                                ['db-host' => "Database host", 'db-user' => "Database user", 'db-password' => "Database password", 'db-database' => "Database name", 'db-driver' => "Database driver", 'db-type' => "Database driver, alias for --db-driver", 'sql' => "Display sql queries"] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( "Missing NAME value ( could be contentobject, contentclass, workflow, role or all )" );
     $script->shutdown( 1 );
 }
 
-$dbUser = $options['db-user'] ? $options['db-user'] : false;
-$dbPassword = $options['db-password'] ? $options['db-password'] : false;
-$dbHost = $options['db-host'] ? $options['db-host'] : false;
-$dbName = $options['db-database'] ? $options['db-database'] : false;
-$dbImpl = $options['db-driver'] ? $options['db-driver'] : false;
+$dbUser = $options['db-user'] ?: false;
+$dbPassword = $options['db-password'] ?: false;
+$dbHost = $options['db-host'] ?: false;
+$dbName = $options['db-database'] ?: false;
+$dbImpl = $options['db-driver'] ?: false;
 $showSQL = $options['sql'] ? true : false;
-$siteAccess = $options['siteaccess'] ? $options['siteaccess'] : false;
+$siteAccess = $options['siteaccess'] ?: false;
 
 if ( $siteAccess )
 {
@@ -60,16 +50,13 @@ if ( $siteAccess )
 
 
 $flattenAllItems = false;
-$flattenItems = array();
-$flatten = array( 'contentobject' => false,
-                  'contentclass' => false,
-                  'workflow' => false,
-                  'role' => false );
+$flattenItems = [];
+$flatten = ['contentobject' => false, 'contentclass' => false, 'workflow' => false, 'role' => false];
 
 foreach ( $options['arguments'] as $arg )
 {
 
-    $item = strtolower( $arg );
+    $item = strtolower( (string) $arg );
     if ( $item == 'all' )
         $flattenAllItems = true;
     else
@@ -114,7 +101,7 @@ $db = eZDB::instance();
 
 if ( $dbHost or $dbName or $dbUser or $dbImpl )
 {
-    $params = array();
+    $params = [];
     if ( $dbHost !== false )
         $params['server'] = $dbHost;
     if ( $dbUser !== false )

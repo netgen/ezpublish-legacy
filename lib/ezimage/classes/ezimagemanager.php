@@ -88,18 +88,6 @@ class eZImageManager
      */
     public function __construct()
     {
-        $this->SupportedFormats = array();
-        $this->SupportedMIMEMap = array();
-        $this->ImageHandlers = array();
-        $this->AliasList = array();
-        $this->Factories = array();
-        $this->ImageFilters = array();
-        $this->MIMETypeSettings = array();
-        $this->MIMETypeSettingsMap = array();
-        $this->QualityValues = array();
-        $this->QualityValueMap = array();
-        $this->QualityValueMapOverride = array();
-
         $ini = eZINI::instance( 'image.ini' );
         $this->TemporaryImageDirPath = eZSys::cacheDirectory() . '/' . $ini->variable( 'FileSettings', 'TemporaryDir' );
     }
@@ -114,7 +102,7 @@ class eZImageManager
     function setSupportedFormats( $mimeList )
     {
         $this->SupportedFormats = $mimeList;
-        $this->SupportedMIMEMap = array();
+        $this->SupportedMIMEMap = [];
         foreach ( $mimeList as $mimeName )
         {
             $this->SupportedMIMEMap[$mimeName] = true;
@@ -175,11 +163,7 @@ class eZImageManager
         $aliasList = $this->AliasList;
         if ( !isset( $aliasList['original'] ) )
         {
-            $alias = array( 'name' => 'original',
-                            'reference' => false,
-                            'mime_type' => false,
-                            'quality' => false,
-                            'filters' => array() );
+            $alias = ['name' => 'original', 'reference' => false, 'mime_type' => false, 'quality' => false, 'filters' => []];
             $alias['alias_key'] = $this->createImageAliasKey( $alias );
             $aliasList['original'] = $alias;
         }
@@ -223,9 +207,7 @@ class eZImageManager
     */
     function createImageAliasKey( $alias )
     {
-        $keyData = array( $alias['name'],
-                          $alias['reference'],
-                          $alias['mime_type'] );
+        $keyData = [$alias['name'], $alias['reference'], $alias['mime_type']];
         if ( $alias['reference'] )
         {
             $referenceAlias = $this->alias( $alias['reference'] );
@@ -447,7 +429,7 @@ class eZImageManager
                     foreach ( $settings['disallowed_filters'] as $filter )
                     {
                         $regexp = eZImageManager::wildcardToRegexp( $filter );
-                        if ( preg_match( '#' . $regexp . '#', $filterName ) )
+                        if ( preg_match( '#' . $regexp . '#', (string) $filterName ) )
                         {
                             return false;
                         }
@@ -458,7 +440,7 @@ class eZImageManager
                     foreach ( $settings['allowed_filters'] as $filter )
                     {
                         $regexp = eZImageManager::wildcardToRegexp( $filter );
-                        if ( preg_match( '#' . $regexp . '#', $filterName ) )
+                        if ( preg_match( '#' . $regexp . '#', (string) $filterName ) )
                         {
                             return true;
                         }
@@ -476,8 +458,7 @@ class eZImageManager
     */
     function appendQualityValue( $mimeType, $qualityValue )
     {
-        $element = array( 'name' => $mimeType,
-                          'value' => $qualityValue );
+        $element = ['name' => $mimeType, 'value' => $qualityValue];
         $this->QualityValues[] = $element;
         $this->QualityValueMap[$mimeType] = $element;
     }
@@ -499,8 +480,7 @@ class eZImageManager
     */
     function setQualityValueOverride( $mimeType, $qualityValue )
     {
-        $element = array( 'name' => $mimeType,
-                          'value' => $qualityValue );
+        $element = ['name' => $mimeType, 'value' => $qualityValue];
         $this->QualityValueMapOverride[$mimeType] = $element;
     }
 
@@ -509,7 +489,7 @@ class eZImageManager
     */
     function resetQualityValueOverride()
     {
-        $this->QualityValueMapOverride = array();
+        $this->QualityValueMapOverride = [];
     }
 
     /*!
@@ -519,7 +499,7 @@ class eZImageManager
     {
         $this->MIMETypeSettings[] = $settings;
         if ( !isset( $this->MIMETypeSettingsMap[$settings['mime_type']] ) )
-            $this->MIMETypeSettingsMap[$settings['mime_type']] = array();
+            $this->MIMETypeSettingsMap[$settings['mime_type']] = [];
         $this->MIMETypeSettingsMap[$settings['mime_type']][] = $settings;
     }
 
@@ -538,7 +518,7 @@ class eZImageManager
         $overrideList = $ini->variable( 'MIMETypeSettings', 'OverrideList' );
         foreach ( $overrideList as $mimeType )
         {
-            $settings = eZImageManager::readMIMETypeSettingFromINI( $mimeType );
+            $settings = (new eZImageManager())->readMIMETypeSettingFromINI($mimeType);
             if ( $settings )
                 $this->appendMIMETypeSetting( $settings );
         }
@@ -559,7 +539,7 @@ class eZImageManager
         $values = $ini->variable( 'MIMETypeSettings', 'Quality' );
         foreach ( $values as $value )
         {
-            $elements = explode( ';', $value );
+            $elements = explode( ';', (string) $value );
             $mimeType = $elements[0];
             $qualityValue = $elements[1];
             $this->appendQualityValue( $mimeType, $qualityValue );
@@ -578,15 +558,14 @@ class eZImageManager
             return false;
         if ( $ini->hasVariable( 'MIMETypeSettings', 'ConversionRules' ) )
         {
-            $conversionRules = array();
+            $conversionRules = [];
             $rules = $ini->variable( 'MIMETypeSettings', 'ConversionRules' );
             foreach ( $rules as $ruleString )
             {
-                $ruleItems = explode( ';', $ruleString );
+                $ruleItems = explode( ';', (string) $ruleString );
                 if ( count( $ruleItems ) >= 2 )
                 {
-                    $conversionRule = array( 'from' => $ruleItems[0],
-                                             'to' => $ruleItems[1] );
+                    $conversionRule = ['from' => $ruleItems[0], 'to' => $ruleItems[1]];
                     $this->appendConversionRule( $conversionRule );
                 }
             }
@@ -640,13 +619,7 @@ class eZImageManager
             return false;
         if ( !$ini->hasVariable( $mimeGroup, 'MIMEType' ) )
             return false;
-        $settings = array( 'name' => $mimeGroup,
-                           'match' => false,
-                           'mime_type' => false,
-                           'override_mime_type' => false,
-                           'allowed_filters' => false,
-                           'disallowed_filters' => false,
-                           'extra_filters' => false );
+        $settings = ['name' => $mimeGroup, 'match' => false, 'mime_type' => false, 'override_mime_type' => false, 'allowed_filters' => false, 'disallowed_filters' => false, 'extra_filters' => false];
         $settings['mime_type'] = $ini->variable( $mimeGroup, 'MIMEType' );
         $ini->assign( $mimeGroup, 'Match', $settings['match'] );
         $ini->assign( $mimeGroup, 'OverrideMIMEType', $settings['override_mime_type'] );
@@ -654,7 +627,7 @@ class eZImageManager
         $ini->assign( $mimeGroup, 'DisallowedFilters', $settings['disallowed_filters'] );
         if ( $ini->hasVariable( $mimeGroup, 'ExtraFilters' ) )
         {
-            $filters = array();
+            $filters = [];
             $filterRawList = $ini->variable( $mimeGroup, 'ExtraFilters' );
             foreach ( $filterRawList as $filterRawItem )
             {
@@ -720,9 +693,7 @@ class eZImageManager
         }
         else
         {
-            $optionArray = array( 'iniFile'       => $iniFile,
-                                  'iniSection'    => $converterName,
-                                  'iniVariable'   => 'Handler' );
+            $optionArray = ['iniFile'       => $iniFile, 'iniSection'    => $converterName, 'iniVariable'   => 'Handler'];
 
             $options = new ezpExtensionOptions( $optionArray );
 
@@ -740,18 +711,17 @@ class eZImageManager
     */
     function createFilterDataFromINI( $filterText )
     {
-        $equalPosition = strpos( $filterText, '=' );
+        $equalPosition = strpos( (string) $filterText, '=' );
         $filterData = false;
         if ( $equalPosition !== false )
         {
-            $filterName = substr( $filterText, 0, $equalPosition );
-            $filterDataText = substr( $filterText, $equalPosition + 1 );
+            $filterName = substr( (string) $filterText, 0, $equalPosition );
+            $filterDataText = substr( (string) $filterText, $equalPosition + 1 );
             $filterData = explode( ';', $filterDataText );
         }
         else
             $filterName = $filterText;
-        return array( 'name' => $filterName,
-                      'data' => $filterData );
+        return ['name' => $filterName, 'data' => $filterData];
     }
 
     /*!
@@ -766,11 +736,7 @@ class eZImageManager
             eZDebug::writeError( "No such group $iniGroup in ini file image.ini", __METHOD__ );
             return false;
         }
-        $alias = array( 'name' => $iniGroup,
-                        'reference' => false,
-                        'mime_type' => false,
-                        'quality' => false,
-                        'filters' => array() );
+        $alias = ['name' => $iniGroup, 'reference' => false, 'mime_type' => false, 'quality' => false, 'filters' => []];
         if ( $ini->hasVariable( $iniGroup, 'Name' ) )
             $alias['name'] = $ini->variable( $iniGroup, 'Name' );
         if ( $ini->hasVariable( $iniGroup, 'MIMEType' ) )
@@ -779,7 +745,7 @@ class eZImageManager
             $alias['quality'] = $ini->variable( $iniGroup, 'Quality' );
         if ( $ini->hasVariable( $iniGroup, 'Filters' ) )
         {
-            $filters = array();
+            $filters = [];
             $filterRawList = $ini->variable( $iniGroup, 'Filters' );
             foreach ( $filterRawList as $filterRawItem )
             {
@@ -789,7 +755,7 @@ class eZImageManager
         }
         if ( $ini->hasVariable( $iniGroup, 'Reference' ) )
         {
-            $alias['reference'] = trim( $ini->variable( $iniGroup, 'Reference' ) );
+            $alias['reference'] = trim( (string) $ini->variable( $iniGroup, 'Reference' ) );
             $alias['reference'] = ( $alias['reference'] !== '' ) ? $alias['reference'] : false;
         }
         return $alias;
@@ -807,7 +773,7 @@ class eZImageManager
      *        Optional array that can be used to specify the image's basename
      * @return bool true if the alias was created, false if it wasn't
      */
-    function createImageAlias( $aliasName, &$existingAliasList, $parameters = array() )
+    function createImageAlias( $aliasName, &$existingAliasList, $parameters = [] )
     {
         // check for $aliasName validity
         $aliasList = $this->aliasList();
@@ -904,23 +870,7 @@ class eZImageManager
                      *
                      * Can we reload the alias list somehow ?
                      */
-                    $currentAliasData = array( 'url' => $destinationMimeData['url'],
-                                               'dirpath' => $destinationMimeData['dirpath'],
-                                               'filename' => $destinationMimeData['filename'],
-                                               'suffix' => $destinationMimeData['suffix'],
-                                               'basename' => $destinationMimeData['basename'],
-                                               'alternative_text' => $aliasInfo['alternative_text'],
-                                               'name' => $aliasName,
-                                               'sub_type' => false,
-                                               'timestamp' => time(),
-                                               'alias_key' => $aliasKey,
-                                               'mime_type' => $destinationMimeData['name'],
-                                               'override_mime_type' => false,
-                                               'info' => false,
-                                               'width' => false,
-                                               'height' => false,
-                                               'is_valid' => true,
-                                               'is_new' => true );
+                    $currentAliasData = ['url' => $destinationMimeData['url'], 'dirpath' => $destinationMimeData['dirpath'], 'filename' => $destinationMimeData['filename'], 'suffix' => $destinationMimeData['suffix'], 'basename' => $destinationMimeData['basename'], 'alternative_text' => $aliasInfo['alternative_text'], 'name' => $aliasName, 'sub_type' => false, 'timestamp' => time(), 'alias_key' => $aliasKey, 'mime_type' => $destinationMimeData['name'], 'override_mime_type' => false, 'info' => false, 'width' => false, 'height' => false, 'is_valid' => true, 'is_new' => true];
 
                     if ( isset( $destinationMimeData['override_mime_type'] ) )
                         $currentAliasData['override_mime_type'] = $destinationMimeData['override_mime_type'];
@@ -940,7 +890,7 @@ class eZImageManager
                             $info = getimagesize( $tempPath );
                             if ( $info )
                             {
-                                list( $currentAliasData['width'], $currentAliasData['height'] ) = $info;
+                                [$currentAliasData['width'], $currentAliasData['height']] = $info;
                             }
                             else
                             {
@@ -963,8 +913,7 @@ class eZImageManager
 
                     // Notify about image alias generation. Parameters are alias
                     // url and alias name.
-                    ezpEvent::getInstance()->notify( 'image/alias', array( $currentAliasData['url'],
-                                                                           $currentAliasData['name'] ) );
+                    ezpEvent::getInstance()->notify( 'image/alias', [$currentAliasData['url'], $currentAliasData['name']] );
 
                     return true;
                 }
@@ -1014,7 +963,7 @@ class eZImageManager
      \return \c true if the image was succesfully analyzed, \c false otherwise.
      \note It will return \c true if there is no analyzer for the image type.
     */
-    static function analyzeImage( &$mimeData, $parameters = array() )
+    static function analyzeImage( &$mimeData, $parameters = [] )
     {
         $file = $mimeData['url'];
 
@@ -1049,8 +998,10 @@ class eZImageManager
      *        Optional parameters. Known ones so far: (basename)
      * @return bool
      */
-    function convert( $sourceMimeData, &$destinationMimeData, $aliasName = false, $parameters = array() )
+    function convert( mixed $sourceMimeData, mixed &$destinationMimeData, mixed $aliasName = false, $parameters = [] )
     {
+        $leftoverFilters = [];
+        $handlerFilters = [];
         // if the local file doesn't exist, we need to fetch it locally
         if ( is_array( $sourceMimeData ) && isset( $sourceMimeData['url'] ) && !file_exists( $sourceMimeData['url'] ) )
         {
@@ -1061,7 +1012,7 @@ class eZImageManager
         if ( is_string( $sourceMimeData ) )
             $sourceMimeData = eZMimeType::findByFileContents( $sourceMimeData );
 
-        $this->analyzeImage( $sourceMimeData );
+        static::analyzeImage($sourceMimeData);
         $currentMimeData = $sourceMimeData;
         $handlers = $this->ImageHandlers;
         $supportedMIMEMap = $this->SupportedMIMEMap;
@@ -1071,7 +1022,7 @@ class eZImageManager
             $destinationMimeData = eZMimeType::findByFileContents( $destinationPath );
         }
 
-        $filters = array();
+        $filters = [];
         $alias = false;
         $this->resetQualityValueOverride();
         if ( $aliasName )
@@ -1090,7 +1041,7 @@ class eZImageManager
                 {
                     foreach ( $qualityOverride as $qualityOverrideValue )
                     {
-                        $elements = explode( ';', $qualityOverrideValue );
+                        $elements = explode( ';', (string) $qualityOverrideValue );
                         $mimeType = $elements[0];
                         $qualityValue = $elements[1];
                         $this->setQualityValueOverride( $mimeType, $qualityValue );
@@ -1111,7 +1062,7 @@ class eZImageManager
         $mimeTypeFilters = $this->mimeTypeFilters( $sourceMimeData );
         if ( is_array( $mimeTypeFilters ) )
             $wantedFilters = array_merge( $wantedFilters, $mimeTypeFilters );
-        $filters = array();
+        $filters = [];
         foreach ( array_keys( $wantedFilters ) as $wantedFilterKey )
         {
             $wantedFilter = $wantedFilters[$wantedFilterKey];
@@ -1166,7 +1117,7 @@ class eZImageManager
         }
 
         $wantedFilters = $filters;
-        $filters = array();
+        $filters = [];
         foreach ( array_keys( $wantedFilters ) as $wantedFilterKey )
         {
             $wantedFilter = $wantedFilters[$wantedFilterKey];
@@ -1177,7 +1128,7 @@ class eZImageManager
             $filters[] = $wantedFilter;
         }
         $result = true;
-        $tempFiles = array();
+        $tempFiles = [];
         if ( $currentMimeData['name'] != $destinationMimeData['name'] or
              count( $filters ) > 0 )
         {
@@ -1191,8 +1142,8 @@ class eZImageManager
                     if ( !$handler )
                         continue;
 
-                    $handlerFilters = array();
-                    $leftoverFilters = array();
+                    $handlerFilters = [];
+                    $leftoverFilters = [];
                     foreach ( $filters as $filter )
                     {
                         if ( $handler->isFilterSupported( $filter ) )
@@ -1333,16 +1284,15 @@ class eZImageManager
      * would be provided during generation of aliasName. This so that requests
      * not holding the lock will provide meaningful information.
      *
-     * @param mixed $mimeData
      * @param string $aliasName
      * @return array
      */
-    function imageAliasInfo( $mimeData, $aliasName, $isAliasNew = false )
+    function imageAliasInfo( mixed $mimeData, $aliasName, $isAliasNew = false )
     {
         if ( is_string( $mimeData ) )
             $mimeData = eZMimeType::findByFileContents( $mimeData );
 
-        $this->analyzeImage( $mimeData );
+        static::analyzeImage($mimeData);
         if ( $aliasName )
         {
             $aliasList = $this->aliasList();
@@ -1420,24 +1370,24 @@ class eZImageManager
     }
 
     /// \privatesection
-    public $ImageHandlers;
+    public $ImageHandlers = [];
     public $OutputMIME;
     public $OutputMIMEMap;
     public $Rules;
     public $DefaultRule;
     public $RuleMap;
     public $MIMETypes;
-    public $Types = array();
-    public $SupportedFormats;
-    public $SupportedMIMEMap;
-    public $AliasList;
-    public $Factories;
-    public $ImageFilters;
-    public $MIMETypeSettings;
-    public $MIMETypeSettingsMap;
-    public $QualityValues;
-    public $QualityValueMap;
-    public $QualityValueMapOverride;
+    public $Types = [];
+    public $SupportedFormats = [];
+    public $SupportedMIMEMap = [];
+    public $AliasList = [];
+    public $Factories = [];
+    public $ImageFilters = [];
+    public $MIMETypeSettings = [];
+    public $MIMETypeSettingsMap = [];
+    public $QualityValues = [];
+    public $QualityValueMap = [];
+    public $QualityValueMapOverride = [];
     public $TemporaryImageDirPath;
     public $ConversionRules;
     

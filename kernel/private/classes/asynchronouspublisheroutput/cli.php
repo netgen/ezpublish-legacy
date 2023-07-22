@@ -24,6 +24,6 @@ class ezpAsynchronousPublisherCliOutput implements ezpAsynchronousPublisherOutpu
         $this->cli->output( $message );
     }
 
-    private $cli;
+    private readonly \eZCLI $cli;
 }
 ?>

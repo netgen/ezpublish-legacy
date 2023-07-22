@@ -10,8 +10,7 @@ $Module = $Params['Module'];
 $LanguageCode = $Params['Language'];
 $http = eZHTTPTool::instance();
 $ClassID = null;
-$validation = array( 'processed' => false,
-                     'groups' => array() );
+$validation = ['processed' => false, 'groups' => []];
 
 if ( isset( $Params["ClassID"] ) )
     $ClassID = $Params["ClassID"];
@@ -37,7 +36,7 @@ if ( $http->hasPostVariable( 'RemoveGroupButton' ) && $http->hasPostVariable( 'g
 {
     if ( !eZClassFunctions::removeGroup( $ClassID, $ClassVersion, $http->postVariable( 'group_id_checked' ) ) )
     {
-        $validation['groups'][] = array( 'text' => ezpI18n::tr( 'kernel/class', 'You have to have at least one group that the class belongs to!' ) );
+        $validation['groups'][] = ['text' => ezpI18n::tr( 'kernel/class', 'You have to have at least one group that the class belongs to!' )];
         $validation['processed'] = true;
     }
 }
@@ -48,7 +47,7 @@ $datatypes = eZDataType::registeredDataTypes();
 $mainGroupID = false;
 $mainGroupName = false;
 $groupList = $class->fetchGroupList();
-if ( count( $groupList ) > 0 )
+if ( (is_countable($groupList) ? count( $groupList ) : 0) > 0 )
 {
     $mainGroupID = $groupList[0]->attribute( 'group_id' );
     $mainGroupName = $groupList[0]->attribute( 'group_name' );
@@ -58,8 +57,7 @@ $Module->setTitle( "Edit class " . $class->attribute( "name" ) );
 
 $tpl = eZTemplate::factory();
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array( 'class', $class->attribute( "id" ) ),
-                      array( 'class_identifier', $class->attribute( 'identifier' ) ) ) );
+$res->setKeys( [['class', $class->attribute( "id" )], ['class_identifier', $class->attribute( 'identifier' )]] );
 
 $tpl->setVariable( 'module', $Module );
 $tpl->setVariable( 'language_code', $LanguageCode );
@@ -69,16 +67,13 @@ $tpl->setVariable( 'datatypes', $datatypes );
 $tpl->setVariable( 'validation', $validation );
 $tpl->setVariable( 'scheduled_script_id', (int) $Params['ScheduledScriptID'] );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:class/view.tpl' );
-$Result['path'] = array( array( 'url' => '/class/grouplist/',
-                                'text' => ezpI18n::tr( 'kernel/class', 'Class groups' ) ) );
+$Result['path'] = [['url' => '/class/grouplist/', 'text' => ezpI18n::tr( 'kernel/class', 'Class groups' )]];
 if ( $mainGroupID !== false )
 {
-    $Result['path'][] = array( 'url' => '/class/classlist/' . $mainGroupID,
-                               'text' => $mainGroupName );
+    $Result['path'][] = ['url' => '/class/classlist/' . $mainGroupID, 'text' => $mainGroupName];
 }
-$Result['path'][] = array( 'url' => false,
-                           'text' => $class->attribute( 'name' ) );
+$Result['path'][] = ['url' => false, 'text' => $class->attribute( 'name' )];
 
 ?>

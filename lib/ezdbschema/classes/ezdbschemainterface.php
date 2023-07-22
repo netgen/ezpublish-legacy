@@ -68,8 +68,6 @@ class eZDBSchemaInterface
     public function __construct( $params )
     {
         $this->DBInstance = $params['instance'];
-        $this->Schema = false;
-        $this->Data = false;
         if ( isset( $params['schema'] ) )
             $this->Schema = $params['schema'];
         if ( isset( $params['data'] ) )
@@ -85,7 +83,7 @@ class eZDBSchemaInterface
      \param $params supported options are 'meta_data' and 'format'
      \return DB schema array
     */
-    function schema( $params = array() )
+    function schema( $params = [] )
     {
     }
 
@@ -104,13 +102,9 @@ class eZDBSchemaInterface
            code will do simple SELECT queries
      \sa fetchTableData()
     */
-    function data( $schema = false, $tableNameList = false, $params = array() )
+    function data( $schema = false, $tableNameList = false, $params = [] )
     {
-        $params = array_merge( array( 'meta_data' => false,
-                                      'format' => 'generic',
-                                      'offset' => false,
-                                      'limit' => false,
-                                      'force_read' => false ),
+        $params = array_merge( ['meta_data' => false, 'format' => 'generic', 'offset' => false, 'limit' => false, 'force_read' => false],
                                $params );
 
         if ( $this->Data === false || $params['force_read'] )
@@ -122,7 +116,7 @@ class eZDBSchemaInterface
             if ( $schema['_info']['format'] == 'generic' )
                 $this->transformSchema( $schema, true );
 
-            $data = array();
+            $data = [];
             foreach ( $schema as $tableName => $tableInfo )
             {
                 // Skip the information array, this is not a table
@@ -134,7 +128,7 @@ class eZDBSchemaInterface
                     continue;
 
                 $tableEntry = $this->fetchTableData( $tableInfo, $params['offset'], $params['limit'] );
-                if ( count( $tableEntry['rows'] ) > 0 )
+                if ( (is_countable($tableEntry['rows']) ? count( $tableEntry['rows'] ) : 0) > 0 )
                     $data[$tableName] = $tableEntry;
             }
             $this->transformData( $data, $params['format'] == 'local' );
@@ -178,23 +172,23 @@ class eZDBSchemaInterface
     */
     function fetchTableData( $tableInfo, $offset = false, $limit = false )
     {
-        if ( count( $tableInfo['fields'] ) == 0 )
+        if ( (is_countable($tableInfo['fields']) ? count( $tableInfo['fields'] ) : 0) == 0 )
             return false;
 
         $tableName = $tableInfo['name'];
         $fields = array_keys( $tableInfo['fields'] );
         $fieldText = implode( ', ', $fields );
-        $rows = $this->DBInstance->arrayQuery( "SELECT $fieldText FROM $tableName", array( 'offset' => $offset, 'limit' => $limit ) );
-        $resultArray = array();
+        $rows = $this->DBInstance->arrayQuery( "SELECT $fieldText FROM $tableName", ['offset' => $offset, 'limit' => $limit] );
+        $resultArray = [];
         /// @todo scan only once for fields of type char, not once per row
         foreach ( $rows as $row )
         {
-            $rowData = array();
+            $rowData = [];
             foreach ( $tableInfo['fields'] as $fieldName => $field )
             {
                 if ( $field['type'] == 'char' )
                 {
-                    $rowData[$fieldName] = str_pad( $row[$fieldName], $field['length'], ' ' );
+                    $rowData[$fieldName] = str_pad( (string) $row[$fieldName], $field['length'], ' ' );
                 }
                 else
                 {
@@ -203,8 +197,7 @@ class eZDBSchemaInterface
             }
             $resultArray[] = array_values( $rowData );
         }
-        return array( 'fields' => $fields,
-                      'rows' => $resultArray );
+        return ['fields' => $fields, 'rows' => $resultArray];
     }
 
     /*!
@@ -214,17 +207,14 @@ class eZDBSchemaInterface
      \param differences array
      \param filename
     */
-    function writeUpgradeFile( $differences, $filename, $params = array() )
+    function writeUpgradeFile( $differences, $filename, $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false,
-                                      'allow_multi_insert' => false,
-                                      'diff_friendly' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false, 'allow_multi_insert' => false, 'diff_friendly' => false],
                                $params );
         $fp = @fopen( $filename, 'w' );
         if ( $fp )
         {
-            fputs( $fp, $this->generateUpgradeFile( $differences, $params ) );
+            fputs( $fp, (string) $this->generateUpgradeFile( $differences, $params ) );
             fclose( $fp );
             return true;
         }
@@ -240,14 +230,9 @@ class eZDBSchemaInterface
 
       \param filename
     */
-    function writeSQLSchemaFile( $filename, $params = array() )
+    function writeSQLSchemaFile( $filename, $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false,
-                                      'allow_multi_insert' => false,
-                                      'diff_friendly' => false,
-                                      'offset' => false,
-                                      'limit' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false, 'allow_multi_insert' => false, 'diff_friendly' => false, 'offset' => false, 'limit' => false],
                                $params );
         $includeSchema = $params['schema'];
         $includeData = $params['data'];
@@ -258,13 +243,13 @@ class eZDBSchemaInterface
             $this->transformSchema( $schema, true );
             if ( $includeSchema )
             {
-                fputs( $fp, $this->generateSchemaFile( $schema, $params ) );
+                fputs( $fp, (string) $this->generateSchemaFile( $schema, $params ) );
             }
             if ( $includeData )
             {
-                $data = $this->data( $schema, false, array( 'offset' => $params['offset'], 'limit' => $params['limit'] ) );
+                $data = $this->data( $schema, false, ['offset' => $params['offset'], 'limit' => $params['limit']] );
                 $this->transformData( $data, true );
-                fputs( $fp, $this->generateDataFile( $schema, $data, $params ) );
+                fputs( $fp, (string) $this->generateDataFile( $schema, $data, $params ) );
             }
             fclose( $fp );
             return true;
@@ -280,12 +265,9 @@ class eZDBSchemaInterface
 
       \param filename
     */
-    function writeSerializedSchemaFile( $filename, $params = array() )
+    function writeSerializedSchemaFile( $filename, $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false,
-                                      'offset' => false,
-                                      'limit' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false, 'offset' => false, 'limit' => false],
                                $params );
         $includeSchema = $params['schema'];
         $includeData = $params['data'];
@@ -295,8 +277,7 @@ class eZDBSchemaInterface
             $schema = $this->schema( $params );
             if ( $includeSchema and $includeData )
             {
-                fputs( $fp, serialize( array( 'schema' => $schema,
-                                              'data' => $this->data( $schema, false, array( 'offset' => $params['offset'], 'limit' => $params['limit'] ) ) ) ) );
+                fputs( $fp, serialize( ['schema' => $schema, 'data' => $this->data( $schema, false, ['offset' => $params['offset'], 'limit' => $params['limit']] )] ) );
             }
             else if ( $includeSchema )
             {
@@ -304,7 +285,7 @@ class eZDBSchemaInterface
             }
             else if ( $includeData )
             {
-                fputs( $fp, serialize( $this->data( $schema, false, array( 'offset' => $params['offset'], 'limit' => $params['limit'] ) ) ) );
+                fputs( $fp, serialize( $this->data( $schema, false, ['offset' => $params['offset'], 'limit' => $params['limit']] ) ) );
             }
             fclose( $fp );
             return true;
@@ -320,12 +301,9 @@ class eZDBSchemaInterface
 
       \param filename
     */
-    function writeArraySchemaFile( $filename, $params = array() )
+    function writeArraySchemaFile( $filename, $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false,
-                                      'offset' => false,
-                                      'limit' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false, 'offset' => false, 'limit' => false],
                                $params );
         $includeSchema = $params['schema'];
         $includeData = $params['data'];
@@ -348,7 +326,7 @@ class eZDBSchemaInterface
             }
             if ( $includeData )
             {
-                $data = $this->data( $schema, false, array( 'offset' => $params['offset'], 'limit' => $params['limit'] ) );
+                $data = $this->data( $schema, false, ['offset' => $params['offset'], 'limit' => $params['limit']] );
                 fputs( $fp, "// This array contains the database data\n" );
                 if ( isset( $data['_info'] ) )
                 {
@@ -377,10 +355,9 @@ class eZDBSchemaInterface
                      - data - Whether to insert the data or not, default is \c false
       \return \c false if the schema could not be inserted, \c true if successful
     */
-    function insertSchema( $params = array() )
+    function insertSchema( $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false],
                                $params );
 
         if ( !is_object( $this->DBInstance ) )
@@ -417,7 +394,7 @@ class eZDBSchemaInterface
         }
         if ( $includeData )
         {
-            $data = $this->data( $schema, false, array( 'format' => 'local' ) );
+            $data = $this->data( $schema, false, ['format' => 'local'] );
 
             $this->DBInstance->begin();
 
@@ -465,8 +442,7 @@ class eZDBSchemaInterface
     */
     function generateDataFile( $schema, $data, $params )
     {
-        $params = array_merge( array( 'allow_multi_insert' => false,
-                                      'diff_friendly' => false ),
+        $params = array_merge( ['allow_multi_insert' => false, 'diff_friendly' => false],
                                $params );
         $sql = '';
 
@@ -494,7 +470,7 @@ class eZDBSchemaInterface
      \param schema database schema
      \return schema for file output
     */
-    function generateSchemaFile( $schema, $params = array() )
+    function generateSchemaFile( $schema, $params = [] )
     {
         $sql = '';
 
@@ -517,12 +493,9 @@ class eZDBSchemaInterface
     /*!
      * \private
      */
-    function generateUpgradeFile( $differences, $params = array() )
+    function generateUpgradeFile( $differences, $params = [] )
     {
-        $params = array_merge( array( 'schema' => true,
-                                      'data' => false,
-                                      'allow_multi_insert' => false,
-                                      'diff_friendly' => false ),
+        $params = array_merge( ['schema' => true, 'data' => false, 'allow_multi_insert' => false, 'diff_friendly' => false],
                                $params );
         $sql = '';
 
@@ -545,7 +518,7 @@ class eZDBSchemaInterface
                     foreach ( $table_diff['changed_fields'] as $field_name => $changed_field )
                     {
                         $changed_field_def = $changed_field['field-def'];
-                        $diffPrams = array_merge( $params, array( 'different-options' => $changed_field['different-options'] ) );
+                        $diffPrams = array_merge( $params, ['different-options' => $changed_field['different-options']] );
                         $this->appendSQLComments( $changed_field_def, $sql );
                         $sql .= $this->generateAlterFieldSql( $table, $field_name, $changed_field_def, $diffPrams );
                         unset( $diffPrams );
@@ -668,14 +641,14 @@ class eZDBSchemaInterface
     */
     function generateTableInsertSQLList( $tableName, $tableDef, $dataEntries, $params, $withClosure = true )
     {
-        $diffFriendly = isset( $params['diff_friendly'] ) ? $params['diff_friendly'] : false;
+        $diffFriendly = $params['diff_friendly'] ?? false;
         $multiInsert = ( isset( $params['allow_multi_insert'] ) and $params['allow_multi_insert'] ) ? $this->isMultiInsertSupported() : false;
 
         // Make sure we don't generate SQL when there are no rows
-        if ( count( $dataEntries['rows'] ) == 0 )
+        if ( (is_countable($dataEntries['rows']) ? count( $dataEntries['rows'] ) : 0) == 0 )
             return '';
 
-        $sqlList = array();
+        $sqlList = [];
         $sql = '';
         $defText = '';
         $entryIndex = 0;
@@ -859,11 +832,11 @@ class eZDBSchemaInterface
     {
         if ( isset( $def['comments'] ) )
         {
-            if ( count( $def['comments'] ) > 0 )
+            if ( (is_countable($def['comments']) ? count( $def['comments'] ) : 0) > 0 )
                 $sql .= "\n";
             foreach ( $def['comments'] as $comment )
             {
-                $commentLines = explode( "\n", $comment );
+                $commentLines = explode( "\n", (string) $comment );
                 foreach ( $commentLines as $commentLine )
                 {
                     $sql .= '-- ' . $commentLine . "\n";
@@ -921,7 +894,7 @@ class eZDBSchemaInterface
             return false;
         }
 
-        $transformationRules = array();
+        $transformationRules = [];
 
         if ( $ini->hasVariable( $schemaType, 'ColumnNameTranslation' ) )
             $transformationRules['column-name'] = $ini->variable( $schemaType, 'ColumnNameTranslation' );
@@ -935,29 +908,29 @@ class eZDBSchemaInterface
             {
                 foreach ( $transformationRules['column-type'] as $key => $val )
                 {
-                    $types = explode( ';', $val );
+                    $types = explode( ';', (string) $val );
                     $transformationRules['column-type'][$key] = $types;
                 }
             }
         }
 
-        $indexTranslations = array();
+        $indexTranslations = [];
         if ( $ini->hasVariable( $schemaType, 'IndexTranslation' ) )
         {
             $translations = $ini->variable( $schemaType, 'IndexTranslation' );
             foreach ( $translations as $combinedName => $translation )
             {
-                list( $tableName, $indexName ) = explode( '.', $combinedName );
-                $indexTranslations[$tableName][$indexName] = array();
-                $fields = explode( ';', $translation );
+                [$tableName, $indexName] = explode( '.', (string) $combinedName );
+                $indexTranslations[$tableName][$indexName] = [];
+                $fields = explode( ';', (string) $translation );
                 foreach ( $fields as $field )
                 {
                     $entries = explode( '.', $field );
                     $fieldName = $entries[0];
-                    $fieldData = array();
+                    $fieldData = [];
                     for ( $i = 1; $i < count( $entries ); ++$i )
                     {
-                        list( $metaName, $metaValue ) = explode( '/', $entries[$i], 2 );
+                        [$metaName, $metaValue] = explode( '/', $entries[$i], 2 );
                         if ( is_numeric( $metaValue ) )
                             $metaValue = (int)$metaValue;
                         $fieldData[$metaName] = $metaValue;
@@ -968,18 +941,18 @@ class eZDBSchemaInterface
         }
         $transformationRules['index-field'] = $indexTranslations;
 
-        $tableTranslations = array();
+        $tableTranslations = [];
         if ( $ini->hasVariable( $schemaType, 'TableOptionTranslation' ) )
         {
             $translations = $ini->variable( $schemaType, 'TableOptionTranslation' );
             foreach ( $translations as $tableName => $optionTexts )
             {
-                $tableTranslations[$tableName] = array();
-                $options = explode( ';', $optionTexts );
-                $optionData = array();
+                $tableTranslations[$tableName] = [];
+                $options = explode( ';', (string) $optionTexts );
+                $optionData = [];
                 foreach ( $options as $option )
                 {
-                    list( $metaName, $metaValue ) = explode( '/', $option, 2 );
+                    [$metaName, $metaValue] = explode( '/', $option, 2 );
                     if ( is_numeric( $metaValue ) )
                         $metaValue = (int)$metaValue;
                     $optionData[$metaName] = $metaValue;
@@ -997,14 +970,14 @@ class eZDBSchemaInterface
             {
                 foreach ( $tmpIdxNameTranslations as $key => $val )
                 {
-                    list( $tableName, $genericIdxName ) = explode( '.', $key );
+                    [$tableName, $genericIdxName] = explode( '.', $key );
                     $localIdxName = $val;
                     if ( !$tableName || !$genericIdxName || !$localIdxName )
                     {
                         eZDebug::writeWarning( "Malformed index name translation rule: $key => $val" );
                         continue;
                     }
-                    $transformationRules['index-name'][] = array( $tableName, $genericIdxName, $localIdxName );
+                    $transformationRules['index-name'][] = [$tableName, $genericIdxName, $localIdxName];
 
                 }
             }
@@ -1013,25 +986,25 @@ class eZDBSchemaInterface
 
         if ( $ini->hasVariable( $schemaType, 'ColumnOptionTranslations' ) )
         {
-            $transformationRules['column-option'] = array();
+            $transformationRules['column-option'] = [];
             foreach( $ini->variable( $schemaType, 'ColumnOptionTranslations' ) as $key => $val )
             {
-                list( $tableName, $colName ) = explode( '.', $key );
+                [$tableName, $colName] = explode( '.', (string) $key );
                 $colOptOverride = $val;
                 if ( !$tableName || !$colName || !$colOptOverride )
                 {
                     eZDebug::writeWarning( "Malformed column option translation rule: $key => $val" );
                     continue;
                 }
-                $transformationRules['column-option'][] = array( $tableName, $colName, $colOptOverride );
+                $transformationRules['column-option'][] = [$tableName, $colName, $colOptOverride];
             }
         }
 
         // prevent PHP warnings when cycling through the rules
-        foreach ( array( 'column-name', 'column-type', 'column-option', 'index-name' ) as $rulesType )
+        foreach ( ['column-name', 'column-type', 'column-option', 'index-name'] as $rulesType )
         {
             if( !isset( $transformationRules[$rulesType] ) )
-                $transformationRules[$rulesType] = array();
+                $transformationRules[$rulesType] = [];
         }
 
         return $transformationRules;
@@ -1064,7 +1037,7 @@ class eZDBSchemaInterface
         // transform column names
         foreach ( $schemaTransformationRules['column-name'] as $key => $val )
         {
-            list( $tableName, $genericColName ) = explode( '.', $key );
+            [$tableName, $genericColName] = explode( '.', (string) $key );
             $localColName = $val;
 
             if ( $toLocal )
@@ -1107,18 +1080,18 @@ class eZDBSchemaInterface
         // tranform column types
         foreach ( $schemaTransformationRules['column-type'] as $key => $val )
         {
-            list( $tableName, $colName ) = explode( '.', $key );
-            list( $genericType, $localType ) = $val;
+            [$tableName, $colName] = explode( '.', (string) $key );
+            [$genericType, $localType] = $val;
 
             if ( !isset( $schema[$tableName] ) )
                 continue;
 
-            preg_match( '/(\w+)\((\d+)\)/', $localType, $matches );
+            preg_match( '/(\w+)\((\d+)\)/', (string) $localType, $matches );
             $localLength = ( count($matches) == 3 ) ? $matches[2] : null;
             if ( count($matches) == 3 )
                 $localType = $matches[1];
 
-            preg_match( '/(\w+)\((\d+)\)/', $genericType, $matches );
+            preg_match( '/(\w+)\((\d+)\)/', (string) $genericType, $matches );
             $genericLength = ( count($matches) == 3 ) ? $matches[2] : null;
             if ( count($matches) == 3 )
                 $genericType = $matches[1];
@@ -1167,12 +1140,12 @@ class eZDBSchemaInterface
                 if ( !isset( $schema[$tableName]['indexes'][$indexName]['fields'] ) )
                     continue;
 
-                $newFields = array();
+                $newFields = [];
                 foreach ( $schema[$tableName]['indexes'][$indexName]['fields'] as $indexField )
                 {
                     if ( !is_array( $indexField ) )
                     {
-                        $indexField = array( 'name' => $indexField );
+                        $indexField = ['name' => $indexField];
                     }
                     $fieldName = $indexField['name'];
                     if ( isset( $fields[$fieldName] ) )
@@ -1192,7 +1165,7 @@ class eZDBSchemaInterface
                     }
 
                     // Check if we have any entries other than 'name', if not we skip the array definition
-                    if ( count( array_diff( array_keys( $indexField ), array( 'name' ) ) ) == 0 )
+                    if ( count( array_diff( array_keys( $indexField ), ['name'] ) ) == 0 )
                     {
                         $indexField = $indexField['name'];
                     }
@@ -1232,7 +1205,7 @@ class eZDBSchemaInterface
         // Transform index names
         foreach ( $schemaTransformationRules['index-name'] as $idxTransRule )
         {
-            list( $tableName, $genericIdxName, $localIdxName ) = $idxTransRule;
+            [$tableName, $genericIdxName, $localIdxName] = $idxTransRule;
 
             if ( $toLocal )
             {
@@ -1262,7 +1235,7 @@ class eZDBSchemaInterface
         // Transform table column options
         foreach ( $schemaTransformationRules['column-option'] as $colOptTransRule )
         {
-            list( $tableName, $colName, $colOptOverride ) = $colOptTransRule;
+            [$tableName, $colName, $colOptOverride] = $colOptTransRule;
 
             if ( !isset( $schema[$tableName] ) || !isset( $schema[$tableName]['fields'][$colName] ) )
                 continue;
@@ -1335,7 +1308,7 @@ class eZDBSchemaInterface
         // transform column names
         foreach ( $schemaTransformationRules['column-name'] as $key => $val )
         {
-            list( $tableName, $genericColName ) = explode( '.', $key );
+            [$tableName, $genericColName] = explode( '.', (string) $key );
             $localColName = $val;
 
             if ( $toLocal )
@@ -1370,8 +1343,8 @@ class eZDBSchemaInterface
 
     /// eZDB instance
     public $DBInstance;
-    public $Schema;
-    public $Data;
+    public $Schema = false;
+    public $Data = false;
 }
 
 ?>

@@ -59,7 +59,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
     public function testRemoveByAction()
     {
-        $nodeID = mt_rand();
+        $nodeID = random_int(0, mt_getrandmax());
         $action = "eznode:$nodeID";
 
         $url = eZURLAliasML::create( __FUNCTION__, $action, 1, 2 );
@@ -83,7 +83,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
     public function testGetChildren()
     {
-        $action = "eznode:" . mt_rand();
+        $action = "eznode:" . random_int(0, mt_getrandmax());
 
         $parent = eZURLAliasML::create( __FUNCTION__ . "Parent", $action, 1, 2 );
         $parent->store();
@@ -101,7 +101,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
         // Number of children should be 2 (child3 has different language and
         // should not be included in getChildren()).
-        self::assertEquals( 2, count( $children ) );
+        self::assertEquals( 2, is_countable($children) ? count( $children ) : 0 );
 
         self::assertEquals( (int) $child1->attribute( 'id' ), (int) $children[0]->attribute( 'id' ) );
         self::assertEquals( (int) $child2->attribute( 'id' ), (int) $children[1]->attribute( 'id' ) );
@@ -109,7 +109,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
     public function testGetPath()
     {
-        $action = "eznode:" . mt_rand();
+        $action = "eznode:" . random_int(0, mt_getrandmax());
         $expectedPath = "/testGetPathParent/testGetPathChild1/testGetPathChild2";
 
         $parent = eZURLAliasML::create( __FUNCTION__ . "Parent", $action, 1, 2 );
@@ -126,8 +126,8 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
     public function testFindUniqueText()
     {
-        $action = "eznode:" . mt_rand();
-        $childName = __FUNCTION__ . mt_rand() . " Child";
+        $action = "eznode:" . random_int(0, mt_getrandmax());
+        $childName = __FUNCTION__ . random_int(0, mt_getrandmax()) . " Child";
 
         // Create a few children
         $child1 = eZURLAliasML::create( $childName, $action, 0, 2 );
@@ -164,7 +164,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
 
     public function testSetLangMaskAlwaysAvailable()
     {
-        $nodeID = mt_rand();
+        $nodeID = random_int(0, mt_getrandmax());
 
         // Create an ezurlalias_ml entry
         $url = eZURLAliasML::create( __FUNCTION__ . $nodeID, "eznode:" . $nodeID, 0, 2 );
@@ -191,8 +191,8 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
         // Make sure we can see all languages
         ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'ShowUntranslatedObjects', 'enabled' );
 
-        $action = "eznode:" . mt_rand();
-        $name = __FUNCTION__ . mt_rand();
+        $action = "eznode:" . random_int(0, mt_getrandmax());
+        $name = __FUNCTION__ . random_int(0, mt_getrandmax());
         
         $engGB = eZContentLanguage::fetchByLocale( 'eng-GB' );
         $norNO = eZContentLanguage::fetchByLocale( 'nor-NO' );
@@ -215,7 +215,7 @@ class eZURLAliasMLTest extends ezpDatabaseTestCase
         // TEST PART 1 - NORMAL PRIORITIZATION -------------------------------
         // The order of the language array also determines the prioritization.
         // In this case 'eng-GB' should be prioritized before 'nor-NO'.
-        $languageList = array( "eng-GB", "nor-NO" );
+        $languageList = ["eng-GB", "nor-NO"];
         ezpINIHelper::setINISetting( 'site.ini', 'RegionalSettings', 'SiteLanguageList', $languageList );
 
         eZContentLanguage::clearPrioritizedLanguages();

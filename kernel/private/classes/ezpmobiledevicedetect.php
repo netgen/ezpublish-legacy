@@ -20,8 +20,6 @@ class ezpMobileDeviceDetect
 
     /**
      * Construct
-     *
-     * @param ezpMobileDeviceDetectFilterInterface $filter
      */
     public function __construct( ezpMobileDeviceDetectFilterInterface $filter )
     {

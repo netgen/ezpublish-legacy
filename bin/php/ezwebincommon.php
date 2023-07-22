@@ -98,7 +98,7 @@ function getUserInput( $prompt )
 {
     $stdin = fopen( "php://stdin", "r+" );
 
-    fwrite( $stdin, $prompt );
+    fwrite( $stdin, (string) $prompt );
 
     $userInput = fgets( $stdin );
     $userInput = trim( $userInput, "\n" );
@@ -147,7 +147,7 @@ function checkDir( $dirName )
             $action = getUserInput( "Directory '$dirName' doesn't exist. Create? [y/n]: ");
         }
 
-        if( strpos( $action, 'n' ) === 0 )
+        if( str_starts_with((string) $action, 'n') )
             showError( "Unable to continue. Aborting..." );
 
         if( !eZDir::mkdir( $dirName, false, true ) )
@@ -214,7 +214,7 @@ function downloadPackages( $packageList, $packageURL, $packageDir, $packageRepos
                 $action = getUserInput( "Package '$packageName' already imported. Import it anyway? [y/n]: " );
             }
 
-            if ( strpos( $action, 'n' ) === 0 )
+            if ( str_starts_with((string) $action, 'n') )
                 unset( $packageList[$k] );
             else
             {
@@ -223,7 +223,7 @@ function downloadPackages( $packageList, $packageURL, $packageDir, $packageRepos
         }
     }
 
-    if( count( $packageList ) == 0 )
+    if( (is_countable($packageList) ? count( $packageList ) : 0) == 0 )
     {
         // all packages are imported.
         return true;
@@ -234,7 +234,7 @@ function downloadPackages( $packageList, $packageURL, $packageDir, $packageRepos
     if( !checkDir( $packageDir ) )
         return false;
 
-    $downloadPackageList = array();
+    $downloadPackageList = [];
     foreach( $packageList as $packageName )
     {
         if( file_exists( "$packageDir/$packageName.ezpkg" ) )
@@ -249,7 +249,7 @@ function downloadPackages( $packageList, $packageURL, $packageDir, $packageRepos
                 $action = getUserInput( "Package '$packageName' already downloaded. Download it anyway? [y/n]: " );
             }
 
-            if ( strpos( $action, 'n' ) === 0 )
+            if ( str_starts_with((string) $action, 'n') )
                 continue;
         }
 
@@ -300,7 +300,7 @@ function downloadPackages( $packageList, $packageURL, $packageDir, $packageRepos
 /*!
  install packages
 */
-function installPackages( $packageList, $params = array() )
+function installPackages( $packageList, $params = [] )
 {
     global $cli;
 
@@ -356,18 +356,11 @@ function installPackages( $packageList, $params = array() )
                     global $autoMode;
                     if( $autoMode == 'on' )
                     {
-                        switch( $packageType )
-                        {
-                            case 'contentclass':
-                                $action = 2;
-                                break;
-                            case 'extension':
-                                $action = 1;
-                                break;
-                            default:
-                                $action = handlePackageError( $params['error'] );
-                                break;
-                        }
+                        $action = match ($packageType) {
+                            'contentclass' => 2,
+                            'extension' => 1,
+                            default => handlePackageError( $params['error'] ),
+                        };
                     }
                     else
                     {
@@ -393,7 +386,7 @@ function siteAccessMap( $siteAccessNameArray )
     {
         //Build array map of checked siteaccesses.
         //Siteaccess name as key, points to root dir, to be used in eZINI methods.
-        $siteAccessMap = array();
+        $siteAccessMap = [];
         foreach( $siteAccessNameArray as $siteAccessName )
         {
             $mapEntry = checkSiteaccess( $siteAccessName );
@@ -447,7 +440,7 @@ function postInstallAdminSiteaccessINIUpdate( $params )
 {
     $siteINI = eZINI::instance( "site.ini.append.php", "settings/siteaccess/" . $params['admin_siteaccess'], null, false, null, true );
     $siteINI->setVariable( "DesignSettings", "SiteDesign", $params['admin_siteaccess'] );
-    $siteINI->setVariable( "DesignSettings", "AdditionalSiteDesignList", array( "admin" ) );
+    $siteINI->setVariable( "DesignSettings", "AdditionalSiteDesignList", ["admin"] );
     $siteINI->setVariable( "SiteAccessSettings", "RelatedSiteAccessList", $params['all_siteaccess_list'] );
     $siteINI->setVariable( "FileSettings", "VarDir", "var/ezwebin_site" );
     $siteINI->save();
@@ -470,18 +463,13 @@ function createTranslationSiteAccesses( $params )
         // make $locale as 'top priority language'
         // and append 'primary language' as fallback language.
         $primaryLanguage = $params['primary_language'];
-        $languageList = array( $locale );
+        $languageList = [$locale];
         if ( $locale != $primaryLanguage )
         {
             $languageList[] = $primaryLanguage;
         }
 
-        eZSiteInstaller::createSiteAccess( array( 'src' => array( 'siteaccess' => $params['user_siteaccess'] ),
-                                                  'dst' => array( 'siteaccess' => eZSiteInstaller::languageNameFromLocale( $locale ),
-                                                                  'settings' => array( 'site.ini' => array( 'RegionalSettings' => array( 'Locale' => $locale,
-                                                                                                                                         'ContentObjectLocale' => $locale,
-                                                                                                                                         'TextTranslation' => $locale != 'eng-GB' ? 'enabled' : 'disabled',
-                                                                                                                                         'SiteLanguageList' => $languageList ) ) ) ) ) );
+        (new eZSiteInstaller())->createSiteAccess(['src' => ['siteaccess' => $params['user_siteaccess']], 'dst' => ['siteaccess' => (new eZSiteInstaller())->languageNameFromLocale($locale), 'settings' => ['site.ini' => ['RegionalSettings' => ['Locale' => $locale, 'ContentObjectLocale' => $locale, 'TextTranslation' => $locale != 'eng-GB' ? 'enabled' : 'disabled', 'SiteLanguageList' => $languageList]]]]]);
     }
 }
 
@@ -516,32 +504,16 @@ function templateLookObjectData( $params )
     $siteaccessUrls = $params['siteaccess_urls'];
 
     // set 'language settings' matrix data
-    $siteaccessAliasTable = array();
+    $siteaccessAliasTable = [];
     foreach( $siteaccessUrls['translation'] as $name => $urlInfo )
     {
         $siteaccessAliasTable[] = $urlInfo['url'];
         $siteaccessAliasTable[] = $name;
-        $siteaccessAliasTable[] = ucfirst( $name );
+        $siteaccessAliasTable[] = ucfirst( (string) $name );
     }
 
     //create data array
-    $templateLookData = array( "site_map_url" => array( "DataText" => "Site map",
-                                                        "Content" => "/content/view/sitemap/2" ),
-                                "tag_cloud_url" => array( "DataText" => "Tag cloud",
-                                                          "Content" => "/content/view/tagcloud/2" ),
-                                "login_label" => array( "DataText" => "Login" ),
-                                "logout_label" => array( "DataText" => "Logout" ),
-                                "my_profile_label" => array( "DataText" => "My profile" ),
-                                "register_user_label" => array( "DataText" => "Register" ),
-                                "rss_feed" => array( "DataText" => "/rss/feed/my_feed" ),
-                                "shopping_basket_label" => array( "DataText" => "Shopping basket" ),
-                                "site_settings_label" => array( "DataText" => "Site settings" ),
-                                "language_settings" => array( "MatrixTitle" => "Language settings",
-                                                              "MatrixDefinition" => $languageSettingsMatrixDefinition,
-                                                              "MatrixCells" => $siteaccessAliasTable ),
-                                "footer_text" => array( "DataText" => "Copyright &#169; 1999-2014 eZ Systems AS. All rights reserved." ),
-                                "hide_powered_by" => array( "DataInt" => 0 ),
-                                "footer_script" => array( "DataText" => "" ) );
+    $templateLookData = ["site_map_url" => ["DataText" => "Site map", "Content" => "/content/view/sitemap/2"], "tag_cloud_url" => ["DataText" => "Tag cloud", "Content" => "/content/view/tagcloud/2"], "login_label" => ["DataText" => "Login"], "logout_label" => ["DataText" => "Logout"], "my_profile_label" => ["DataText" => "My profile"], "register_user_label" => ["DataText" => "Register"], "rss_feed" => ["DataText" => "/rss/feed/my_feed"], "shopping_basket_label" => ["DataText" => "Shopping basket"], "site_settings_label" => ["DataText" => "Site settings"], "language_settings" => ["MatrixTitle" => "Language settings", "MatrixDefinition" => $languageSettingsMatrixDefinition, "MatrixCells" => $siteaccessAliasTable], "footer_text" => ["DataText" => "Copyright &#169; 1999-2014 eZ Systems AS. All rights reserved."], "hide_powered_by" => ["DataInt" => 0], "footer_script" => ["DataText" => ""]];
 
     return $templateLookData;
 }
@@ -555,8 +527,8 @@ function updateINIAccessType( $accessType, $params )
     if( $accessType === 'hostname' || $accessType === 'host' )
         $accessType = 'hostname';
 
-    $portMatch = array();
-    $hostMatch = array();
+    $portMatch = [];
+    $hostMatch = [];
 
     $siteINI = eZINI::instance( "site.ini.append.php", "settings/override", null, false, null, true );
 

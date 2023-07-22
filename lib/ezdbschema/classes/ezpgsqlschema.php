@@ -17,7 +17,7 @@
 
 class eZPgsqlSchema extends eZDBSchemaInterface
 {
-    const SHOW_TABLES_QUERY = '
+    final public const SHOW_TABLES_QUERY = '
         SELECT n.nspname as "Schema",
                c.relname as "Name",
                CASE c.relkind
@@ -36,7 +36,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
               AND pg_catalog.pg_table_is_visible(c.oid)
         ORDER BY 1, 2';
 
-    const FETCH_TABLE_OID_QUERY = '
+    final public const FETCH_TABLE_OID_QUERY = '
         SELECT c.oid,
                n.nspname,
                c.relname
@@ -46,7 +46,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
               AND c.relname ~ \'^<<tablename>>$\'
         ORDER BY 2, 3';
 
-    const FETCH_TABLE_DEF_QUERY = '
+    final public const FETCH_TABLE_DEF_QUERY = '
         SELECT a.attname,
                pg_catalog.format_type(a.atttypid, a.atttypmod),
                (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d
@@ -56,26 +56,23 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         WHERE a.attrelid = \'<<oid>>\' AND a.attnum > 0 AND NOT a.attisdropped
         ORDER BY a.attnum';
 
-    const FETCH_INDEX_DEF_QUERY = '
+    final public const FETCH_INDEX_DEF_QUERY = '
         SELECT c.relname, i.*
         FROM pg_catalog.pg_index i, pg_catalog.pg_class c
         WHERE indrelid = \'<<oid>>\'
               AND i.indexrelid = c.oid';
 
-    const FETCH_INDEX_COL_NAMES_QUERY = '
+    final public const FETCH_INDEX_COL_NAMES_QUERY = '
         SELECT a.attnum, a.attname
         FROM pg_catalog.pg_attribute a
         WHERE a.attrelid = \'<<indexrelid>>\' AND a.attnum IN (<<attids>>) AND NOT a.attisdropped
         ORDER BY a.attnum';
 
-    function schema( $params = array() )
+    function schema( $params = [] )
     {
-        $params = array_merge( array( 'meta_data' => false,
-                                      'format' => 'generic',
-                                      'sort_columns' => true,
-                                      'sort_indexes' => true ),
+        $params = array_merge( ['meta_data' => false, 'format' => 'generic', 'sort_columns' => true, 'sort_indexes' => true],
                                $params );
-        $schema = array();
+        $schema = [];
 
         if ( $this->Schema === false )
         {
@@ -112,7 +109,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
      */
     function fetchTableFields( $table, $params )
     {
-        $fields = array();
+        $fields = [];
 
         $resultArray = $this->DBInstance->arrayQuery( str_replace( '<<tablename>>', $table, eZPgsqlSchema::FETCH_TABLE_OID_QUERY ) );
         $row = $resultArray[0];
@@ -121,7 +118,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         $resultArray = $this->DBInstance->arrayQuery( str_replace( '<<oid>>', $oid, eZPgsqlSchema::FETCH_TABLE_DEF_QUERY ) );
         foreach( $resultArray as $row )
         {
-            $field = array();
+            $field = [];
             $autoinc = false;
             $field['type'] = $this->parseType( $row['format_type'], $field['length'] );
             if ( !$field['length'] )
@@ -148,9 +145,9 @@ class eZPgsqlSchema extends eZDBSchemaInterface
                 $field['default'] = (string)$this->parseDefault ( $row['default'], $autoinc );
             }
 
-            $numericTypes = array( 'float', 'int' );
-            $blobTypes = array( 'tinytext', 'text', 'mediumtext', 'longtext' );
-            $charTypes = array( 'varchar', 'char' );
+            $numericTypes = ['float', 'int'];
+            $blobTypes = ['tinytext', 'text', 'mediumtext', 'longtext'];
+            $charTypes = ['varchar', 'char'];
             if ( in_array( $field['type'], $charTypes ) )
             {
                 if ( !$field['not_null'] )
@@ -229,7 +226,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
             $metaData = $params['meta_data'];
         }
 
-        $indexes = array();
+        $indexes = [];
 
         $resultArray = $this->DBInstance->arrayQuery( str_replace( '<<tablename>>', $table, eZPgsqlSchema::FETCH_TABLE_OID_QUERY ) );
         $row = $resultArray[0];
@@ -239,19 +236,19 @@ class eZPgsqlSchema extends eZDBSchemaInterface
 
         foreach( $resultArray as $row )
         {
-            $fields = array();
+            $fields = [];
             $kn = $row['relname'];
 
-            $column_id_array = explode( ' ', $row['indkey'] );
+            $column_id_array = explode( ' ', (string) $row['indkey'] );
             if ( $row['indisprimary'] == 't' )
             {
                 // If the name of the key matches our primary key naming standard
                 // we change the name to PRIMARY, this makes it 100% similar to
                 // primary keys in MySQL
                 $correctName = $this->primaryKeyIndexName( $table, $kn, $column_id_array );
-                if ( strlen( $correctName ) > 63 )
+                if ( strlen( (string) $correctName ) > 63 )
                 {
-                    eZDebug::writeError( "The index name '$correctName' (" . strlen( $correctName ) . ") exceeds 63 characters which is the PostgreSQL limit for names" );
+                    eZDebug::writeError( "The index name '$correctName' (" . strlen( (string) $correctName ) . ") exceeds 63 characters which is the PostgreSQL limit for names" );
                 }
                 if ( $kn == $correctName )
                 {
@@ -298,7 +295,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
 
     function parseType( $type_info, &$length_info )
     {
-        preg_match ( "@([a-z ]*)(\(([0-9]*|[0-9]*,[0-9]*)\))?@", $type_info, $matches );
+        preg_match ( "@([a-z ]*)(\(([0-9]*|[0-9]*,[0-9]*)\))?@", (string) $type_info, $matches );
         if ( isset( $matches[3] ) )
         {
             $length_info = $matches[3];
@@ -309,19 +306,12 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         return $type;
     }
 
-    function isTypeLengthSupported( $pgType )
+    function isTypeLengthSupported($pgType)
     {
-        switch ( $pgType )
-        {
-            case 'integer':
-            case 'double precision':
-            case 'real':
-            case 'bigint':
-            {
-                return false;
-            } break;
-        }
-        return true;
+        return match ($pgType) {
+            'integer', 'double precision', 'real', 'bigint' => false,
+            default => true,
+        };
     }
 
     function convertFromStandardType( $type, &$length )
@@ -412,40 +402,40 @@ class eZPgsqlSchema extends eZDBSchemaInterface
 
     function parseDefault( $default, &$autoinc )
     {
-        if ( preg_match( "@^NULL::.*@", $default, $matches ) )
+        if ( preg_match( "@^NULL::.*@", (string) $default, $matches ) )
         {
             return null;
         }
 
         // postgresql 7.x: nextval('ezbasket_id_seq'::text)
         // postgresql 8.x: nextval(('ezbasket_id_seq'::text)::regclass)
-        if ( preg_match( "@^nextval\(\(?'([a-z_]+_id_seq)'::text\)@", $default, $matches ) )
+        if ( preg_match( "@^nextval\(\(?'([a-z_]+_id_seq)'::text\)@", (string) $default, $matches ) )
         {
             $autoinc = 1;
             return '';
         }
 
-        if ( preg_match( "@^\(?([^()]*)\)?::double precision@", $default, $matches ) )
+        if ( preg_match( "@^\(?([^()]*)\)?::double precision@", (string) $default, $matches ) )
         {
             return $matches[1];
         }
 
-        if ( preg_match( "@^(.*)::bigint@", $default, $matches ) )
+        if ( preg_match( "@^(.*)::bigint@", (string) $default, $matches ) )
         {
             return $matches[1];
         }
 
-        if ( preg_match( "@^'(.*)'::character\ varying$@", $default, $matches ) )
+        if ( preg_match( "@^'(.*)'::character\ varying$@", (string) $default, $matches ) )
         {
             return $matches[1];
         }
 
-        if ( preg_match( "@^'(.*)'::[a-zA-Z ]+$@", $default, $matches ) )
+        if ( preg_match( "@^'(.*)'::[a-zA-Z ]+$@", (string) $default, $matches ) )
         {
             return $matches[1];
         }
 
-        if ( preg_match( "@^'(.*)'$@", $default, $matches ) )
+        if ( preg_match( "@^'(.*)'$@", (string) $default, $matches ) )
         {
             return $matches[1];
         }
@@ -463,8 +453,9 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     */
     function generateAddIndexSql( $table_name, $index_name, $def, $params, $withClosure = true )
     {
-        $diffFriendly = isset( $params['diff_friendly'] ) ? $params['diff_friendly'] : false;
-        $postgresqlCompatible = isset( $params['compatible_sql'] ) ? $params['compatible_sql'] : false;
+        $sql = null;
+        $diffFriendly = $params['diff_friendly'] ?? false;
+        $postgresqlCompatible = $params['compatible_sql'] ?? false;
 
         $spacing = $postgresqlCompatible ? "\n    " : " ";
         switch ( $def['type'] )
@@ -472,9 +463,9 @@ class eZPgsqlSchema extends eZDBSchemaInterface
             case 'primary':
             {
                 $pkeyName = $this->primaryKeyIndexName( $table_name, $index_name, $def['fields'] );
-                if ( strlen( $pkeyName ) > 63 )
+                if ( strlen( (string) $pkeyName ) > 63 )
                 {
-                    eZDebug::writeError( "The primary key '$pkeyName' (" . strlen( $pkeyName ) . ") exceeds 63 characters which is the PostgreSQL limit for names" );
+                    eZDebug::writeError( "The primary key '$pkeyName' (" . strlen( (string) $pkeyName ) . ") exceeds 63 characters which is the PostgreSQL limit for names" );
                 }
                 $sql = "ALTER TABLE ONLY $table_name" . $spacing . "ADD CONSTRAINT $pkeyName PRIMARY KEY";
             } break;
@@ -542,9 +533,9 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     /*!
      * \private
      */
-    function generateFieldDef( $table_name, $field_name, $def, $add_default_not_null = true, $params )
+    function generateFieldDef( $table_name, $field_name, $def, $params, $add_default_not_null = true )
     {
-        $diffFriendly = isset( $params['diff_friendly'] ) ? $params['diff_friendly'] : false;
+        $diffFriendly = $params['diff_friendly'] ?? false;
 
         if ( in_array( $field_name, $this->reservedKeywordList() ) )
         {
@@ -570,13 +561,13 @@ class eZPgsqlSchema extends eZDBSchemaInterface
                 if ( $defaultDef )
                 {
                     $sql_def .= ( $diffFriendly ? "\n    " : " " );
-                    $sql_def .= rtrim( $defaultDef );
+                    $sql_def .= rtrim( (string) $defaultDef );
                 }
                 $nullDef = eZPGSQLSchema::generateNullDef( false, false, $def, $params );
                 if ( $nullDef )
                 {
                     $sql_def .= ( $diffFriendly ? "\n    " : " " );
-                    $sql_def .= trim( $nullDef );
+                    $sql_def .= trim( (string) $nullDef );
                 }
             }
         }
@@ -599,7 +590,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     */
     function generateDefaultDef( $table_name, $field_name, $def, $params )
     {
-        $postgresqlCompatible = isset( $params['compatible_sql'] ) ? $params['compatible_sql'] : false;
+        $postgresqlCompatible = $params['compatible_sql'] ?? false;
         $sql_def = '';
         if ( $table_name and $field_name )
         {
@@ -675,7 +666,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     function generateAddFieldSql( $table_name, $field_name, $def, $params )
     {
         $sql = "ALTER TABLE $table_name ADD COLUMN ";
-        $sql .= eZPgsqlSchema::generateFieldDef( $table_name, $field_name, $def, false, $params ) . ";\n";
+        $sql .= eZPgsqlSchema::generateFieldDef( $table_name, $field_name, $def, $params, false ) . ";\n";
         $defaultSQL = eZPGSQLSchema::generateDefaultDef( $table_name, $field_name, $def, $params );
         if ( $defaultSQL )
             $sql .= $defaultSQL . ";\n";
@@ -708,7 +699,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     {
         $sql = "ALTER TABLE $table_name RENAME COLUMN $field_name TO " . $field_name . "_tmp;\n";
         $sql .= "ALTER TABLE $table_name ADD COLUMN ";
-        $sql .= eZPgsqlSchema::generateFieldDef( $table_name, $field_name, $def, false, $params ) . ";\n";
+        $sql .= eZPgsqlSchema::generateFieldDef( $table_name, $field_name, $def, $params, false ) . ";\n";
         $defaultSQL = eZPGSQLSchema::generateDefaultDef( $table_name, $field_name, $def, $params );
         if ( $defaultSQL )
             $sql .= $defaultSQL . ";\n";
@@ -751,15 +742,12 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     */
     function generateTableArrays( $table, $table_def, $params, $withClosure = true )
     {
-        $diffFriendly = isset( $params['diff_friendly'] ) ? $params['diff_friendly'] : false;
-        $postgresqlCompatible = isset( $params['compatible_sql'] ) ? $params['compatible_sql'] : false;
+        $diffFriendly = $params['diff_friendly'] ?? false;
+        $postgresqlCompatible = $params['compatible_sql'] ?? false;
 
-        $arrays = array( 'sequences' => array(),
-                         'tables' => array(),
-                         'indexes' => array(),
-                         'constraints' => array() );
+        $arrays = ['sequences' => [], 'tables' => [], 'indexes' => [], 'constraints' => []];
 
-        $sql_fields = array();
+        $sql_fields = [];
 
         $spacing = $postgresqlCompatible ? '    ' : '  ';
 
@@ -769,12 +757,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         {
             if ( $field_def['type'] == 'auto_increment' )
             {
-                $sequenceFields = array( "CREATE SEQUENCE {$table}_{$field_name}_seq",
-                                         "START 1",
-                                         "INCREMENT 1",
-                                         "MAXVALUE 9223372036854775807",
-                                         "MINVALUE 1",
-                                         "CACHE 1" );
+                $sequenceFields = ["CREATE SEQUENCE {$table}_{$field_name}_seq", "START 1", "INCREMENT 1", "MAXVALUE 9223372036854775807", "MINVALUE 1", "CACHE 1"];
                 $arrays['sequences'][] = join( "\n$spacing", $sequenceFields ) . ( $withClosure ? ';' : '' );
             }
         }
@@ -783,7 +766,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         $fields = $table_def['fields'];
         foreach ( $fields as $field_name => $field_def )
         {
-            $sql_fields[] = $spacing . eZPgsqlSchema::generateFieldDef( $table, $field_name, $field_def, true, $params );
+            $sql_fields[] = $spacing . eZPgsqlSchema::generateFieldDef( $table, $field_name, $field_def, $params, true );
         }
         $sql .= join( ",\n", $sql_fields ) . ( $withClosure ? "\n);" : "\n)" );
         $arrays['tables'][] = $sql;
@@ -829,16 +812,13 @@ class eZPgsqlSchema extends eZDBSchemaInterface
         return $sqlList;
     }
 
-    function generateSchemaFile( $schema, $params = array() )
+    function generateSchemaFile( $schema, $params = [] )
     {
         $sql = '';
-        $postgresqlCompatible = isset( $params['compatible_sql'] ) ? $params['compatible_sql'] : false;
+        $postgresqlCompatible = $params['compatible_sql'] ?? false;
 
         $i = 0;
-        $allArrays = array( 'sequences' => array(),
-                            'tables' => array(),
-                            'indexes' => array(),
-                            'constraints' => array() );
+        $allArrays = ['sequences' => [], 'tables' => [], 'indexes' => [], 'constraints' => []];
 
         foreach ( $schema as $table => $tableDef )
         {
@@ -911,302 +891,7 @@ class eZPgsqlSchema extends eZDBSchemaInterface
     */
     function reservedKeywordList()
     {
-        return array( 'abort',
-                      'absolute',
-                      'access',
-                      'action',
-                      'add',
-                      'after',
-                      'aggregate',
-                      'all',
-                      'alter',
-                      'analyse',
-                      'analyze',
-                      'and',
-                      'any',
-                      'as',
-                      'asc',
-                      'assertion',
-                      'assignment',
-                      'at',
-                      'authorization',
-                      'backward',
-                      'before',
-                      'begin',
-                      'between',
-                      'bigint',
-                      'binary',
-                      'bit',
-                      'boolean',
-                      'both',
-                      'by',
-                      'cache',
-                      'called',
-                      'cascade',
-                      'case',
-                      'cast',
-                      'chain',
-                      'char',
-                      'character',
-                      'characteristics',
-                      'check',
-                      'checkpoint',
-                      'class',
-                      'close',
-                      'cluster',
-                      'coalesce',
-                      'collate',
-                      'column',
-                      'comment',
-                      'commit',
-                      'committed',
-                      'constraint',
-                      'constraints',
-                      'conversion',
-                      'convert',
-                      'copy',
-                      'create',
-                      'createdb',
-                      'createuser',
-                      'cross',
-                      'current_date',
-                      'current_time',
-                      'current_timestamp',
-                      'current_user',
-                      'cursor',
-                      'cycle',
-                      'database',
-                      'day',
-                      'deallocate',
-                      'dec',
-                      'decimal',
-                      'declare',
-                      'default',
-                      'deferrable',
-                      'deferred',
-                      'definer',
-                      'delete',
-                      'delimiter',
-                      'delimiters',
-                      'desc',
-                      'distinct',
-                      'do',
-                      'domain',
-                      'double',
-                      'drop',
-                      'each',
-                      'else',
-                      'encoding',
-                      'encrypted',
-                      'end',
-                      'escape',
-                      'except',
-                      'exclusive',
-                      'execute',
-                      'exists',
-                      'explain',
-                      'external',
-                      'extract',
-                      'false',
-                      'fetch',
-                      'float',
-                      'for',
-                      'force',
-                      'foreign',
-                      'forward',
-                      'freeze',
-                      'from',
-                      'full',
-                      'function',
-                      'get',
-                      'global',
-                      'grant',
-                      'group',
-                      'handler',
-                      'having',
-                      'hour',
-                      'ilike',
-                      'immediate',
-                      'immutable',
-                      'implicit',
-                      'in',
-                      'increment',
-                      'index',
-                      'inherits',
-                      'initially',
-                      'inner',
-                      'inout',
-                      'input',
-                      'insensitive',
-                      'insert',
-                      'instead',
-                      'int',
-                      'integer',
-                      'intersect',
-                      'interval',
-                      'into',
-                      'invoker',
-                      'is',
-                      'isnull',
-                      'isolation',
-                      'join',
-                      'key',
-                      'lancompiler',
-                      'language',
-                      'leading',
-                      'left',
-                      'level',
-                      'like',
-                      'limit',
-                      'listen',
-                      'load',
-                      'local',
-                      'localtime',
-                      'localtimestamp',
-                      'location',
-                      'lock',
-                      'match',
-                      'maxvalue',
-                      'minute',
-                      'minvalue',
-                      'mode',
-                      'month',
-                      'move',
-                      'names',
-                      'national',
-                      'natural',
-                      'nchar',
-                      'new',
-                      'next',
-                      'no',
-                      'nocreatedb',
-                      'nocreateuser',
-                      'none',
-                      'not',
-                      'nothing',
-                      'notify',
-                      'notnull',
-                      'null',
-                      'nullif',
-                      'numeric',
-                      'of',
-                      'off',
-                      'offset',
-                      'oids',
-                      'old',
-                      'on',
-                      'only',
-                      'operator',
-                      'option',
-                      'or',
-                      'order',
-                      'out',
-                      'outer',
-                      'overlaps',
-                      'overlay',
-                      'owner',
-                      'partial',
-                      'password',
-                      'path',
-                      'pendant',
-                      'placing',
-                      'position',
-                      'precision',
-                      'prepare',
-                      'primary',
-                      'prior',
-                      'privileges',
-                      'procedural',
-                      'procedure',
-                      'read',
-                      'real',
-                      'recheck',
-                      'references',
-                      'reindex',
-                      'relative',
-                      'rename',
-                      'replace',
-                      'reset',
-                      'restrict',
-                      'returns',
-                      'revoke',
-                      'right',
-                      'rollback',
-                      'row',
-                      'rule',
-                      'schema',
-                      'scroll',
-                      'second',
-                      'security',
-                      'select',
-                      'sequence',
-                      'serializable',
-                      'session',
-                      'session_user',
-                      'set',
-                      'setof',
-                      'share',
-                      'show',
-                      'similar',
-                      'simple',
-                      'smallint',
-                      'some',
-                      'stable',
-                      'start',
-                      'statement',
-                      'statistics',
-                      'stdin',
-                      'stdout',
-                      'storage',
-                      'strict',
-                      'substring',
-                      'sysid',
-                      'table',
-                      'temp',
-                      'template',
-                      'temporary',
-                      'then',
-                      'time',
-                      'timestamp',
-                      'to',
-                      'toast',
-                      'trailing',
-                      'transaction',
-                      'treat',
-                      'trigger',
-                      'trim',
-                      'true',
-                      'truncate',
-                      'trusted',
-                      'type',
-                      'unencrypted',
-                      'union',
-                      'unique',
-                      'unknown',
-                      'unlisten',
-                      'until',
-                      'update',
-                      'usage',
-                      'user',
-                      'using',
-                      'vacuum',
-                      'valid',
-                      'validator',
-                      'values',
-                      'varchar',
-                      'varying',
-                      'verbose',
-                      'version',
-                      'view',
-                      'volatile',
-                      'when',
-                      'where',
-                      'with',
-                      'without',
-                      'work',
-                      'write',
-                      'year',
-                      'zone' );
+        return ['abort', 'absolute', 'access', 'action', 'add', 'after', 'aggregate', 'all', 'alter', 'analyse', 'analyze', 'and', 'any', 'as', 'asc', 'assertion', 'assignment', 'at', 'authorization', 'backward', 'before', 'begin', 'between', 'bigint', 'binary', 'bit', 'boolean', 'both', 'by', 'cache', 'called', 'cascade', 'case', 'cast', 'chain', 'char', 'character', 'characteristics', 'check', 'checkpoint', 'class', 'close', 'cluster', 'coalesce', 'collate', 'column', 'comment', 'commit', 'committed', 'constraint', 'constraints', 'conversion', 'convert', 'copy', 'create', 'createdb', 'createuser', 'cross', 'current_date', 'current_time', 'current_timestamp', 'current_user', 'cursor', 'cycle', 'database', 'day', 'deallocate', 'dec', 'decimal', 'declare', 'default', 'deferrable', 'deferred', 'definer', 'delete', 'delimiter', 'delimiters', 'desc', 'distinct', 'do', 'domain', 'double', 'drop', 'each', 'else', 'encoding', 'encrypted', 'end', 'escape', 'except', 'exclusive', 'execute', 'exists', 'explain', 'external', 'extract', 'false', 'fetch', 'float', 'for', 'force', 'foreign', 'forward', 'freeze', 'from', 'full', 'function', 'get', 'global', 'grant', 'group', 'handler', 'having', 'hour', 'ilike', 'immediate', 'immutable', 'implicit', 'in', 'increment', 'index', 'inherits', 'initially', 'inner', 'inout', 'input', 'insensitive', 'insert', 'instead', 'int', 'integer', 'intersect', 'interval', 'into', 'invoker', 'is', 'isnull', 'isolation', 'join', 'key', 'lancompiler', 'language', 'leading', 'left', 'level', 'like', 'limit', 'listen', 'load', 'local', 'localtime', 'localtimestamp', 'location', 'lock', 'match', 'maxvalue', 'minute', 'minvalue', 'mode', 'month', 'move', 'names', 'national', 'natural', 'nchar', 'new', 'next', 'no', 'nocreatedb', 'nocreateuser', 'none', 'not', 'nothing', 'notify', 'notnull', 'null', 'nullif', 'numeric', 'of', 'off', 'offset', 'oids', 'old', 'on', 'only', 'operator', 'option', 'or', 'order', 'out', 'outer', 'overlaps', 'overlay', 'owner', 'partial', 'password', 'path', 'pendant', 'placing', 'position', 'precision', 'prepare', 'primary', 'prior', 'privileges', 'procedural', 'procedure', 'read', 'real', 'recheck', 'references', 'reindex', 'relative', 'rename', 'replace', 'reset', 'restrict', 'returns', 'revoke', 'right', 'rollback', 'row', 'rule', 'schema', 'scroll', 'second', 'security', 'select', 'sequence', 'serializable', 'session', 'session_user', 'set', 'setof', 'share', 'show', 'similar', 'simple', 'smallint', 'some', 'stable', 'start', 'statement', 'statistics', 'stdin', 'stdout', 'storage', 'strict', 'substring', 'sysid', 'table', 'temp', 'template', 'temporary', 'then', 'time', 'timestamp', 'to', 'toast', 'trailing', 'transaction', 'treat', 'trigger', 'trim', 'true', 'truncate', 'trusted', 'type', 'unencrypted', 'union', 'unique', 'unknown', 'unlisten', 'until', 'update', 'usage', 'user', 'using', 'vacuum', 'valid', 'validator', 'values', 'varchar', 'varying', 'verbose', 'version', 'view', 'volatile', 'when', 'where', 'with', 'without', 'work', 'write', 'year', 'zone'];
     }
 }
 ?>

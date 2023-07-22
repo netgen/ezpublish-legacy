@@ -69,7 +69,7 @@ interface ezpSearchEngine
      * @param array $params Search parameters
      * @param array $searchTypes Search types
      */
-    public function search( $searchText, $params = array(), $searchTypes = array() );
+    public function search( $searchText, $params = [], $searchTypes = [] );
 
     /**
      * Returns an array describing the supported search types by the search engine.

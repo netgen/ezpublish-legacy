@@ -6,18 +6,10 @@
  * @package kernel
  */
 
-$Module = array( "name" => "Settings management",
-                 "variable_params" => true );
+$Module = ["name" => "Settings management", "variable_params" => true];
 
-$ViewList = array();
-$ViewList["view"] = array(
-    "script" => "view.php",
-    "default_navigation_part" => "ezsetupnavigationpart",
-    "params" => array( 'SiteAccess' , 'INIFile' ) );
-$ViewList["edit"] = array(
-    "script" => "edit.php",
-    'ui_context' => 'edit',
-    "default_navigation_part" => "ezsetupnavigationpart",
-    "params" => array( 'SiteAccess', 'INIFile', 'Block', 'Setting', 'Placement' ) );
+$ViewList = [];
+$ViewList["view"] = ["script" => "view.php", "default_navigation_part" => "ezsetupnavigationpart", "params" => ['SiteAccess', 'INIFile']];
+$ViewList["edit"] = ["script" => "edit.php", 'ui_context' => 'edit', "default_navigation_part" => "ezsetupnavigationpart", "params" => ['SiteAccess', 'INIFile', 'Block', 'Setting', 'Placement']];
 
 ?>

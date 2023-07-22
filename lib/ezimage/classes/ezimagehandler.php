@@ -17,9 +17,9 @@
 
 class eZImageHandler
 {
-    const KEEP_SUFFIX = 1;
-    const REPLACE_SUFFIX = 2;
-    const PREPEND_TAG_REPLACE_SUFFIX = 3;
+    public const KEEP_SUFFIX = 1;
+    public const REPLACE_SUFFIX = 2;
+    public const PREPEND_TAG_REPLACE_SUFFIX = 3;
 
     /**
      * Initializes the image handler with data sent from the inheriting class.
@@ -43,9 +43,9 @@ class eZImageHandler
         $this->ConversionRules = $conversionRules;
         $this->OutputRewriteType = $outputRewriteType;
         $this->Filters = $filters;
-        $this->FilterMap = array();
-        $this->SupportImageFilters = array();
-        $this->MIMETagMap = array();
+        $this->FilterMap = [];
+        $this->SupportImageFilters = [];
+        $this->MIMETagMap = [];
         if ( $mimeTagMap )
             $this->MIMETagMap = $mimeTagMap;
         if ( $this->Filters)
@@ -85,9 +85,9 @@ class eZImageHandler
         $name = $mimeData['name'];
         if ( isset( $this->MIMETagMap[$name] ) )
             return $this->MIMETagMap[$name];
-        $position = strpos( $name, '/' );
+        $position = strpos( (string) $name, '/' );
         if ( $position !== false )
-            return substr( $name, $position + 1 );
+            return substr( (string) $name, $position + 1 );
         else
             return false;
     }
@@ -114,17 +114,16 @@ class eZImageHandler
     */
     static function createFilterDefinitionFromINI( $filterText )
     {
-        $equalPosition = strpos( $filterText, '=' );
+        $equalPosition = strpos( (string) $filterText, '=' );
         $filterData = false;
         if ( $equalPosition !== false )
         {
-            $filterName = substr( $filterText, 0, $equalPosition );
-            $filterData = substr( $filterText, $equalPosition + 1 );
+            $filterName = substr( (string) $filterText, 0, $equalPosition );
+            $filterData = substr( (string) $filterText, $equalPosition + 1 );
         }
         else
             $filterName = $filterText;
-        return array( 'name' => $filterName,
-                      'text' => $filterData );
+        return ['name' => $filterName, 'text' => $filterData];
     }
 
     /*!
@@ -133,7 +132,7 @@ class eZImageHandler
     */
     static function convertFilterToText( $filterDefinition, $filterData )
     {
-        $replaceList = array();
+        $replaceList = [];
         if ( $filterData['data'] )
         {
             $counter = 1;
@@ -157,7 +156,7 @@ class eZImageHandler
         if ( isset( $this->FilterMap[$filterData['name']] ) )
         {
             $filterDefinition =& $this->FilterMap[$filterData['name']];
-            $text = $this->convertFilterToText( $filterDefinition, $filterData );
+            $text = static::convertFilterToText($filterDefinition, $filterData);
         }
         return $text;
     }
@@ -249,7 +248,7 @@ class eZImageHandler
         $perm = $ini->variable( "FileSettings", "ImagePermissions" );
         $success = false;
         $oldmask = umask( 0 );
-        if ( !chmod( $filepath, octdec( $perm ) ) )
+        if ( !chmod( $filepath, octdec( (string) $perm ) ) )
             eZDebug::writeError( "Chmod $perm $filepath failed", __METHOD__ );
         else
             $success = true;
@@ -265,8 +264,8 @@ class eZImageHandler
     {
         if ( !$separatorCharacter )
             $separatorCharacter = '#';
-        $wildcardArray = preg_split( "#[*]#", $wildcard, -1, PREG_SPLIT_DELIM_CAPTURE );
-        $wildcardList = array();
+        $wildcardArray = preg_split( "#[*]#", (string) $wildcard, -1, PREG_SPLIT_DELIM_CAPTURE );
+        $wildcardList = [];
         $i = 0;
         foreach ( $wildcardArray as $wildcardElement )
         {
@@ -291,10 +290,10 @@ class eZImageHandler
             $mimeName = $mimeData['name'];
         foreach ( $mimeTypes as $mimeType )
         {
-            if ( strpos( $mimeType, '*' ) !== false )
+            if ( str_contains( (string) $mimeType, '*' ) )
             {
                 $matchString = eZImageHandler::wildcardToRegexp( $mimeType );
-                if ( preg_match( "#^" . $matchString . "$#", $mimeName ) )
+                if ( preg_match( "#^" . $matchString . "$#", (string) $mimeName ) )
                 {
                     return true;
                 }
@@ -318,10 +317,10 @@ class eZImageHandler
             $mimeName = $mimeData['name'];
         foreach ( $mimeTypes as $mimeType )
         {
-            if ( strpos( $mimeType, '*' ) !== false )
+            if ( str_contains( (string) $mimeType, '*' ) )
             {
                 $matchString = eZImageHandler::wildcardToRegexp( $mimeType );
-                if ( preg_match( "#^" . $matchString . "$#", $mimeName ) )
+                if ( preg_match( "#^" . $matchString . "$#", (string) $mimeName ) )
                 {
                     return true;
                 }
@@ -361,19 +360,17 @@ class eZImageHandler
 
         if ( $wantedMimeData )
         {
-            $conversionRules = array_merge( array( array( 'from' => $currentMimeData['name'],
-                                                          'to' => $wantedMimeData['name'] ) ),
+            $conversionRules = array_merge( [['from' => $currentMimeData['name'], 'to' => $wantedMimeData['name']]],
                                             $conversionRules );
         }
 
-        $supportedFormats = array();
+        $supportedFormats = [];
         foreach ( $supportedFormatsOriginal as $supportedFormat )
         {
             if ( $this->isOutputMIMETypeSupported( $supportedFormat ) )
             {
                 $supportedFormats[] = $supportedFormat;
-                $conversionRules[] = array( 'from' => $supportedFormat,
-                                            'to' => $supportedFormat );
+                $conversionRules[] = ['from' => $supportedFormat, 'to' => $supportedFormat];
             }
         }
 
@@ -391,10 +388,10 @@ class eZImageHandler
                     continue;
 
                 $matchRule = false;
-                if ( strpos( $rule['from'], '*' ) !== false )
+                if ( str_contains( (string) $rule['from'], '*' ) )
                 {
                     $matchString = eZImageHandler::wildcardToRegexp( $rule['from'] );
-                    if ( preg_match( "#^" . $matchString . "$#", $currentMimeData['name'] ) )
+                    if ( preg_match( "#^" . $matchString . "$#", (string) $currentMimeData['name'] ) )
                     {
                         $matchRule = $rule;
                     }

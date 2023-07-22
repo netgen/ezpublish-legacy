@@ -40,7 +40,7 @@ class eZSetupSummary
         $persistenceList = $this->PersistenceList;
 
         if ( isset( $persistenceList['tests_run'] ) and
-             count( $persistenceList['tests_run'] ) > 0 )
+             (is_countable($persistenceList['tests_run']) ? count( $persistenceList['tests_run'] ) : 0) > 0 )
         {
             $checkPassed = true;
             foreach ( $persistenceList['tests_run'] as $checkValue )

@@ -7,7 +7,7 @@
  */
 
 $Module = $Params['Module'];
-$Result = array();
+$Result = [];
 $Result['content'] = '';
 
 // Identify whether the input data was submitted through URL parameters or through POST
@@ -20,8 +20,8 @@ if ( $Module->isCurrentAction( 'Assign' )                 and
 }
 else
 {
-    $objectID = isset( $Params['ObjectID'] ) ? $Params['ObjectID'] : false;
-    $selectedStateIDList = isset( $Params['SelectedStateID'] ) ? array( $Params['SelectedStateID'] ) : false ;
+    $objectID = $Params['ObjectID'] ?? false;
+    $selectedStateIDList = isset( $Params['SelectedStateID'] ) ? [$Params['SelectedStateID']] : false ;
 }
 
 // Change object's state
@@ -30,8 +30,7 @@ if ( $objectID and $selectedStateIDList )
     if ( eZOperationHandler::operationIsAvailable( 'content_updateobjectstate' ) )
     {
         $operationResult = eZOperationHandler::execute( 'content', 'updateobjectstate',
-                                                        array( 'object_id'     => $objectID,
-                                                               'state_id_list' => $selectedStateIDList ) );
+                                                        ['object_id'     => $objectID, 'state_id_list' => $selectedStateIDList] );
     }
     else
     {
@@ -56,8 +55,5 @@ elseif ( $objectID )
 else
     $Module->hasActionParameter( 'RedirectRelativeURI' ) ? $Module->redirectTo( $Module->actionParameter( 'RedirectRelativeURI' ) ) : $Module->redirectTo( '/' );
 
-$Result['path'] = array(
-                    array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-                    array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Assign' ) )
-                   );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Assign' )]];
 ?>

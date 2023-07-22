@@ -16,7 +16,7 @@
 
 class eZMailNotificationTransport extends eZNotificationTransport
 {
-    function send( $addressList, $subject, $body, $transportData = null, $parameters = array() )
+    function send( $addressList, $subject, $body, $transportData = null, $parameters = [] )
     {
         $ini = eZINI::instance();
         $mail = new eZMail();
@@ -62,7 +62,7 @@ class eZMailNotificationTransport extends eZNotificationTransport
     {
         if ( is_array( $addressList ) )
         {
-            $validatedAddressList = array();
+            $validatedAddressList = [];
             foreach ( $addressList as $address )
             {
                 if ( $mail->validate( $address ) )
@@ -78,7 +78,7 @@ class eZMailNotificationTransport extends eZNotificationTransport
 //             }
             return $validatedAddressList;
         }
-        else if ( strlen( $addressList ) > 0 )
+        else if ( strlen( (string) $addressList ) > 0 )
         {
             if ( $mail->validate( $addressList ) )
             {

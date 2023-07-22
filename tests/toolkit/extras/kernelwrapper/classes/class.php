@@ -52,7 +52,7 @@ class ezpClass
 
         $this->language = $language;
 
-        $this->class = eZContentClass::create( $creatorID, array(), $this->language );
+        $this->class = eZContentClass::create( $creatorID, [], $this->language );
         $this->class->setName( $name, $this->language );
         $this->class->setAttribute( 'contentobject_name', $contentObjectName );
         $this->class->setAttribute( 'identifier', $identifier );
@@ -75,7 +75,7 @@ class ezpClass
      */
     public function add( $name = 'Test attribute', $identifer = 'test_attribute', $type = 'ezstring' )
     {
-        $classAttribute = eZContentClassAttribute::create( $this->id, $type, array(), $this->language );
+        $classAttribute = eZContentClassAttribute::create( $this->id, $type, [], $this->language );
         $classAttribute->setName( $name, $this->language );
 
         $dataType = $classAttribute->dataType();
@@ -90,12 +90,11 @@ class ezpClass
     /**
      * Remove given eZContentClassAttribute object from initialized class.
      *
-     * @param eZContentClassAttribute $classAttribute
      * @return void
      */
     public function remove( eZContentClassAttribute $classAttribute )
     {
-        $this->class->removeAttributes( array( $classAttribute ) );
+        $this->class->removeAttributes( [$classAttribute] );
     }
 
     /**
@@ -123,10 +122,9 @@ class ezpClass
      * Sets the property $name to $value.
      *
      * @param string $name
-     * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set( $name, mixed $value )
     {
         $this->$name = $value;
     }

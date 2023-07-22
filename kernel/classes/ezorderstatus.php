@@ -46,42 +46,22 @@
 class eZOrderStatus extends eZPersistentObject
 {
     // Define for statuses that doesn't really exist (DB error)
-    const UNDEFINED = 0;
+    final public const UNDEFINED = 0;
 
     // Some predefined statuses, they will also appear in the database.
-    const PENDING = 1;
-    const PROCESSING = 2;
-    const DELIVERED = 3;
+    final public const PENDING = 1;
+    final public const PROCESSING = 2;
+    final public const DELIVERED = 3;
 
     // All custom order statuses have this value or higher
-    const CUSTOM = 1000;
+    final public const CUSTOM = 1000;
 
     /*!
      \return the persistent object definition for the eZOrderStatus class.
     */
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "status_id" => array( 'name' => 'StatusID',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         "is_active" => array( 'name' => "IsActive",
-                                                               'datatype' => 'bool',
-                                                               'default' => true,
-                                                               'required' => true ) ),
-                      "keys" => array( "id" ),
-                      'function_attributes' => array( 'is_internal' => 'isInternal' ),
-                      "increment_key" => "id",
-                      "class_name" => "eZOrderStatus",
-                      "name" => "ezorder_status" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "status_id" => ['name' => 'StatusID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true], "is_active" => ['name' => "IsActive", 'datatype' => 'bool', 'default' => true, 'required' => true]], "keys" => ["id"], 'function_attributes' => ['is_internal' => 'isInternal'], "increment_key" => "id", "class_name" => "eZOrderStatus", "name" => "ezorder_status"];
     }
 
     /*!
@@ -111,7 +91,7 @@ class eZOrderStatus extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZOrderStatus::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -126,7 +106,7 @@ class eZOrderStatus extends eZPersistentObject
             return eZOrderStatus::createUndefined();
         return eZPersistentObject::fetchObject( eZOrderStatus::definition(),
                                                 null,
-                                                array( "status_id" => $statusID ),
+                                                ["status_id" => $statusID],
                                                 $asObject );
     }
 
@@ -140,7 +120,7 @@ class eZOrderStatus extends eZPersistentObject
     {
         if ( empty( $GLOBALS['eZOrderStatusMap'][$asObject][$showInactive] ) )
         {
-            $conds = array();
+            $conds = [];
             if ( !$showInactive )
                 $conds['is_active'] = 1;
             $list = eZPersistentObject::fetchObjectList( eZOrderStatus::definition(),
@@ -149,7 +129,7 @@ class eZOrderStatus extends eZPersistentObject
                                                          null,
                                                          null,
                                                          $asObject );
-            $map = array();
+            $map = [];
             if ( $asObject )
             {
                 // Here we access member variables directly since it is of the same class
@@ -180,13 +160,13 @@ class eZOrderStatus extends eZPersistentObject
     {
         if ( empty( $GLOBALS['eZOrderStatusList'][$asObject][$showInactive] ) )
         {
-            $conds = array();
+            $conds = [];
             if ( !$showInactive )
                 $conds['is_active'] = 1;
             $GLOBALS['eZOrderStatusList'][$asObject][$showInactive] = eZPersistentObject::fetchObjectList( eZOrderStatus::definition(),
                                                                                                            null,
                                                                                                            $conds,
-                                                                                                           array( 'status_id' => false ),
+                                                                                                           ['status_id' => false],
                                                                                                            null,
                                                                                                            $asObject );
         }
@@ -219,13 +199,13 @@ class eZOrderStatus extends eZPersistentObject
     {
         if ( empty( $GLOBALS['eZOrderStatusOList'][$asObject][$showInactive] ) )
         {
-            $conds = array();
+            $conds = [];
             if ( !$showInactive )
                 $conds['is_active'] = 1;
             $GLOBALS['eZOrderStatusOList'][$asObject][$showInactive] = eZPersistentObject::fetchObjectList( eZOrderStatus::definition(),
                                                                                                             null,
                                                                                                             $conds,
-                                                                                                            array( 'name' => false ),
+                                                                                                            ['name' => false],
                                                                                                             null,
                                                                                                             $asObject );
         }
@@ -262,7 +242,7 @@ class eZOrderStatus extends eZPersistentObject
         $db->query( "UPDATE ezorder_status_history SET status_id = 0 WHERE status_id = $statusID" );
 
         $id = $this->ID;
-        eZPersistentObject::removeObject( eZOrderStatus::definition(), array( "id" => $id ) );
+        eZPersistentObject::removeObject( eZOrderStatus::definition(), ["id" => $id] );
 
         $db->commit();
 
@@ -275,10 +255,7 @@ class eZOrderStatus extends eZPersistentObject
     */
     static function create()
     {
-        $row = array(
-            'id' => null,
-            'is_active' => true,
-            'name' => ezpI18n::tr( 'kernel/shop', 'Order status' ) );
+        $row = ['id' => null, 'is_active' => true, 'name' => ezpI18n::tr( 'kernel/shop', 'Order status' )];
         return new eZOrderStatus( $row );
     }
 
@@ -292,11 +269,7 @@ class eZOrderStatus extends eZPersistentObject
     {
         if ( empty( $GLOBALS['eZOrderStatusUndefined'] ) )
         {
-            $row = array(
-                'id' => null,
-                'status_id' => eZOrderStatus::UNDEFINED,
-                'is_active' => true,
-                'name' => ezpI18n::tr( 'kernel/shop', 'Undefined' ) );
+            $row = ['id' => null, 'status_id' => eZOrderStatus::UNDEFINED, 'is_active' => true, 'name' => ezpI18n::tr( 'kernel/shop', 'Undefined' )];
             $GLOBALS['eZOrderStatusUndefined'] = new eZOrderStatus( $row );
         }
         return $GLOBALS['eZOrderStatusUndefined'];

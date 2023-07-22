@@ -35,35 +35,7 @@ class eZContentBrowseBookmark extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "node_id" => array( 'name' => "NodeID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZContentObjectTreeNode',
-                                                             'foreign_attribute' => 'node_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "name" => array( 'name' => "Name",
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'node' => 'fetchNode',
-                                                      'contentobject_id' => 'contentObjectID' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZContentBrowseBookmark",
-                      "name" => "ezcontentbrowsebookmark" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "node_id" => ['name' => "NodeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "function_attributes" => ['node' => 'fetchNode', 'contentobject_id' => 'contentObjectID'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZContentBrowseBookmark", "name" => "ezcontentbrowsebookmark"];
 
     }
 
@@ -74,7 +46,7 @@ class eZContentBrowseBookmark extends eZPersistentObject
     static function fetch( $bookmarkID )
     {
         return eZPersistentObject::fetchObject( eZContentBrowseBookmark::definition(),
-                                                null, array( 'id' => $bookmarkID ), true );
+                                                null, ['id' => $bookmarkID], true );
     }
 
     /*!
@@ -85,9 +57,9 @@ class eZContentBrowseBookmark extends eZPersistentObject
     {
         $objectList = eZPersistentObject::fetchObjectList( eZContentBrowseBookmark::definition(),
                                                             null,
-                                                            array( 'user_id' => $userID ),
-                                                            array( 'id' => 'desc' ),
-                                                            array( 'offset' => $offset, 'length' => $limit ),
+                                                            ['user_id' => $userID],
+                                                            ['id' => 'desc'],
+                                                            ['offset' => $offset, 'length' => $limit],
                                                             true );
         return $objectList;
     }
@@ -107,9 +79,7 @@ class eZContentBrowseBookmark extends eZPersistentObject
         $nodeID =(int) $nodeID;
         $nodeName = $db->escapeString( $nodeName );
         $db->query( "DELETE FROM ezcontentbrowsebookmark WHERE node_id=$nodeID and user_id=$userID" );
-        $bookmark = new eZContentBrowseBookmark( array( 'user_id' => $userID,
-                                                        'node_id' => $nodeID,
-                                                        'name' => $nodeName ) );
+        $bookmark = new eZContentBrowseBookmark( ['user_id' => $userID, 'node_id' => $nodeID, 'name' => $nodeName] );
         $bookmark->store();
         $db->commit();
         return $bookmark;

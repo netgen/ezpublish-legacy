@@ -65,7 +65,7 @@ class eZDebugRegression extends ezpTestCase
         eZDebug::accumulatorStop( __METHOD__, true );
 
         $debug = eZDebug::instance();
-        $this->assertEquals( 0, $debug->TimeAccumulatorList[__METHOD__]['recursive_counter'] );
+        static::assertEquals(0, $debug->TimeAccumulatorList[__METHOD__]['recursive_counter']);
     }
 
     /**
@@ -86,7 +86,7 @@ class eZDebugRegression extends ezpTestCase
         eZDebug::accumulatorStart( __METHOD__, false, false, true );
 
         $debug = eZDebug::instance();
-        $this->assertEquals( 0, $debug->TimeAccumulatorList[__METHOD__]['recursive_counter'] );
+        static::assertEquals(0, $debug->TimeAccumulatorList[__METHOD__]['recursive_counter']);
     }
 
     /**
@@ -103,13 +103,13 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '::1', '::1/32' ) ) );
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '::2', '::1/32' ) ) );
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '::7', '::1/32' ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['::1', '::1/32'] ));
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['::2', '::1/32'] ));
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['::7', '::1/32'] ));
 
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '2001:db8:1234:0000:0000:0000:0000:0000', '2001:db8:1234::/48' ) ) );
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '2001:db8:1234:0000:0000:0000:0000:0007', '2001:db8:1234::/48' ) ) );
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( '2001:db8:1234:ffff:ffff:ffff:ffff:ffff', '2001:db8:1234::/48' ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['2001:db8:1234:0000:0000:0000:0000:0000', '2001:db8:1234::/48'] ));
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['2001:db8:1234:0000:0000:0000:0000:0007', '2001:db8:1234::/48'] ));
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, ['2001:db8:1234:ffff:ffff:ffff:ffff:ffff', '2001:db8:1234::/48'] ));
     }
 
     /**
@@ -127,10 +127,10 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001', $methodIsAllowedByCurrentIP->invokeArgs( $object, array( inet_pton( '::1' ) ) ) );
-        $this->assertEquals( '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111', $methodIsAllowedByCurrentIP->invokeArgs( $object, array( inet_pton( '::7' ) ) ) );
-        $this->assertEquals( '00100000000000010000110110111000000100100011010000000000000000000000000000000000000000000000000000000000000000000000000000000000', $methodIsAllowedByCurrentIP->invokeArgs( $object, array( inet_pton( '2001:db8:1234::' ) ) ) );
-        $this->assertEquals( '00100000000000010000110110111000000100100011010011111111111111111111111111111111111111111111111111111111111111111111111111111111', $methodIsAllowedByCurrentIP->invokeArgs( $object, array( inet_pton( '2001:db8:1234:ffff:ffff:ffff:ffff:ffff' ) ) ) );
+        static::assertEquals('00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001', $methodIsAllowedByCurrentIP->invokeArgs( $object, [inet_pton( '::1' )] ));
+        static::assertEquals('00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111', $methodIsAllowedByCurrentIP->invokeArgs( $object, [inet_pton( '::7' )] ));
+        static::assertEquals('00100000000000010000110110111000000100100011010000000000000000000000000000000000000000000000000000000000000000000000000000000000', $methodIsAllowedByCurrentIP->invokeArgs( $object, [inet_pton( '2001:db8:1234::' )] ));
+        static::assertEquals('00100000000000010000110110111000000100100011010011111111111111111111111111111111111111111111111111111111111111111111111111111111', $methodIsAllowedByCurrentIP->invokeArgs( $object, [inet_pton( '2001:db8:1234:ffff:ffff:ffff:ffff:ffff' )] ));
     }
 
     /**
@@ -147,7 +147,7 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( array( '::1/32', 'commandline' ) ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, [['::1/32', 'commandline']] ));
     }
 
     /**
@@ -164,7 +164,7 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( array( '2001:db8:1234::/48', 'commandline' ) ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, [['2001:db8:1234::/48', 'commandline']] ));
     }
 
     /**
@@ -181,7 +181,7 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( array( '127.0.0.1/32', 'commandline' ) ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, [['127.0.0.1/32', 'commandline']] ));
     }
 
     /**
@@ -198,7 +198,7 @@ class eZDebugRegression extends ezpTestCase
         $methodIsAllowedByCurrentIP->setAccessible( true );
 
         $object = new eZDebug();
-        $this->assertEquals( true, $methodIsAllowedByCurrentIP->invokeArgs( $object, array( array( '192.0.2.0/24', 'commandline' ) ) ) );
+        static::assertEquals(true, $methodIsAllowedByCurrentIP->invokeArgs( $object, [['192.0.2.0/24', 'commandline']] ));
     }
 }
 

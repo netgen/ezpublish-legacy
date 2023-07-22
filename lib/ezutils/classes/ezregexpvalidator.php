@@ -19,11 +19,13 @@ class eZRegExpValidator extends eZInputValidator
     /**
      * Constructor
      *
-     * @param string $rule
+     * @param string $RegExpRule
      */
-    public function __construct( $rule = null )
+    public function __construct(
+        /// \privatesection
+        public $RegExpRule = null
+    )
     {
-        $this->RegExpRule = $rule;
     }
 
     function setRegExpRule( $rule )
@@ -36,10 +38,10 @@ class eZRegExpValidator extends eZInputValidator
         if ( !is_array( $this->RegExpRule ) )
             return eZInputValidator::STATE_INVALID;
         $accepted =& $this->RegExpRule["accepted"];
-        if ( preg_match( $accepted, $text ) )
+        if ( preg_match( $accepted, (string) $text ) )
             return eZInputValidator::STATE_ACCEPTED;
         $intermediate =& $this->RegExpRule["intermediate"];
-        if ( preg_match( $intermediate, $text ) )
+        if ( preg_match( $intermediate, (string) $text ) )
             return eZInputValidator::STATE_INTERMEDIATE;
         return eZInputValidator::STATE_INVALID;
     }
@@ -55,12 +57,9 @@ class eZRegExpValidator extends eZInputValidator
             $intermediate = $fixup["match"];
             $fixup = $fixup["replace"];
         }
-        $text = preg_replace( $intermediate, $fixup, $text );
+        $text = preg_replace( $intermediate, (string) $fixup, (string) $text );
         return $text;
     }
-
-    /// \privatesection
-    public $RegExpRule;
 }
 
 ?>

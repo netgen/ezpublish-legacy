@@ -29,7 +29,7 @@ class eZDbSchema
         if ( is_object( $params ) )
         {
             $db = $params;
-            $params = array( 'instance' => $db );
+            $params = ['instance' => $db];
         }
 
         if ( !isset( $params['instance'] ) )
@@ -79,7 +79,7 @@ class eZDbSchema
                 include( $filename );
                 if ( $returnArray )
                 {
-                    $params = array();
+                    $params = [];
                     if ( isset( $schema ) )
                         $params['schema'] = $schema;
                     if ( isset( $data ) )
@@ -131,7 +131,7 @@ class eZDbSchema
         $fp = @fopen( $filename, 'w' );
         if ( $fp )
         {
-            fputs( $fp, eZDbSchema::generateUpgradeFile( $differences ) );
+            fputs( $fp, (string) eZDbSchema::generateUpgradeFile( $differences ) );
             fclose( $fp );
             return true;
         }

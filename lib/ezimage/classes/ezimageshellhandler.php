@@ -24,13 +24,6 @@ class eZImageShellHandler extends eZImageHandler
         parent::__construct( $handlerName, $isEnabled, $outputRewriteType,
                                $supportedInputMIMETypes, $supportedOutputMIMETypes,
                                $conversionRules, $filters, $mimeTagMap );
-        $this->Path = false;
-        $this->Executable = false;
-        $this->PreParameters = false;
-        $this->PostParameters = false;
-        $this->UseTypeTag = false;
-        $this->QualityParameters = false;
-        $this->FrameRangeParameters = false;
     }
 
     /*!
@@ -38,7 +31,7 @@ class eZImageShellHandler extends eZImageHandler
     */
     function convert( $manager, $sourceMimeData, &$destinationMimeData, $filters = false )
     {
-        $argumentList = array();
+        $argumentList = [];
         $executable = $this->Executable;
         if ( eZSys::osType() == 'win32' and $this->ExecutableWin32 )
             $executable = $this->ExecutableWin32;
@@ -69,7 +62,7 @@ class eZImageShellHandler extends eZImageHandler
         // for the whole path.
         $argumentList[] = eZSys::escapeShellArgument(
             $sourceMimeData['dirpath'] . DIRECTORY_SEPARATOR . addcslashes(
-                $sourceMimeData['filename'],
+                (string) $sourceMimeData['filename'],
                 // ImageMagick meta-characters
                 '~*?[]{}<>'
             )
@@ -83,7 +76,7 @@ class eZImageShellHandler extends eZImageHandler
             $outputQuality = $manager->qualityValue( $destinationMimeData['name'] );
             if ( $outputQuality )
             {
-                $qualityArgument = eZSys::createShellArgument( $qualityParameter, array( '%1' => $outputQuality ) );
+                $qualityArgument = eZSys::createShellArgument( $qualityParameter, ['%1' => $outputQuality] );
                 $argumentList[] = $qualityArgument;
             }
         }
@@ -115,7 +108,7 @@ class eZImageShellHandler extends eZImageHandler
                 eZDebug::writeError( 'Unknown destination file: ' . $destinationMimeData['url'] . " when executing '$systemString'", 'eZImageShellHandler(' . $this->HandlerName . ')' );
                 return false;
             }
-            $this->changeFilePermissions( $destinationMimeData['url'] );
+            static::changeFilePermissions($destinationMimeData['url']);
             return true;
         }
         else
@@ -155,22 +148,22 @@ class eZImageShellHandler extends eZImageHandler
                 $inputMimeList = $ini->variable( $iniGroup, 'InputMIMEList' );
             if ( $ini->hasVariable( $iniGroup, 'OutputMIMEList' ) )
                 $outputMimeList = $ini->variable( $iniGroup, 'OutputMIMEList' );
-            $qualityParameters = array();
+            $qualityParameters = [];
             if ( $ini->hasVariable( $iniGroup, 'QualityParameters' ) )
             {
                 $qualityParametersRaw = $ini->variable( $iniGroup, 'QualityParameters' );
                 foreach ( $qualityParametersRaw as $qualityParameterRaw )
                 {
-                    $elements = explode( ';', $qualityParameterRaw );
+                    $elements = explode( ';', (string) $qualityParameterRaw );
                     $qualityParameters[$elements[0]] = $elements[1];
                 }
             }
-            $frameRangeParameters = array();
+            $frameRangeParameters = [];
             if ( $ini->hasVariable( $iniGroup, 'FrameRangeParameters' ) )
             {
                 foreach ( $ini->variable( $iniGroup, 'FrameRangeParameters' ) as $frameRangeParameter )
                 {
-                    $elements = explode( ';', $frameRangeParameter );
+                    $elements = explode( ';', (string) $frameRangeParameter );
                     $frameRangeParameters[$elements[0]] = $elements[1];
                 }
             }
@@ -178,15 +171,14 @@ class eZImageShellHandler extends eZImageHandler
             $conversionRules = false;
             if ( $ini->hasVariable( $iniGroup, 'ConversionRules' ) )
             {
-                $conversionRules = array();
+                $conversionRules = [];
                 $rules = $ini->variable( $iniGroup, 'ConversionRules' );
                 foreach ( $rules as $ruleString )
                 {
-                    $ruleItems = explode( ';', $ruleString );
+                    $ruleItems = explode( ';', (string) $ruleString );
                     if ( count( $ruleItems ) >= 2 )
                     {
-                        $conversionRules[] = array( 'from' => $ruleItems[0],
-                                                    'to' => $ruleItems[1] );
+                        $conversionRules[] = ['from' => $ruleItems[0], 'to' => $ruleItems[1]];
                     }
                 }
             }
@@ -226,7 +218,7 @@ class eZImageShellHandler extends eZImageHandler
             if ( $ini->hasVariable( $iniGroup, 'Filters' ) )
             {
                 $filterRawList = $ini->variable( $iniGroup, 'Filters' );
-                $filters = array();
+                $filters = [];
                 foreach ( $filterRawList as $filterRawItem )
                 {
                     $filter = eZImageHandler::createFilterDefinitionFromINI( $filterRawItem );
@@ -237,10 +229,10 @@ class eZImageShellHandler extends eZImageHandler
             if ( $ini->hasVariable( $iniGroup, 'MIMETagMap' ) )
             {
                 $mimeTagMapList = $ini->variable( $iniGroup, 'MIMETagMap' );
-                $mimeTagMap = array();
+                $mimeTagMap = [];
                 foreach ( $mimeTagMapList as $mimeTagMapItem )
                 {
-                    $mimeTagMapArray = explode( ';', $mimeTagMapItem );
+                    $mimeTagMapArray = explode( ';', (string) $mimeTagMapItem );
                     if ( count( $mimeTagMapArray ) >= 2 )
                         $mimeTagMap[$mimeTagMapArray[0]] = $mimeTagMapArray[1];
                 }
@@ -265,10 +257,10 @@ class eZImageShellHandler extends eZImageHandler
     }
 
     /// \privatesection
-    public $Path;
-    public $Executable;
-    public $PreParameters;
-    public $PostParameters;
+    public $Path = false;
+    public $Executable = false;
+    public $PreParameters = false;
+    public $PostParameters = false;
 
     public $ExecutableWin32;
     public $ExecutableMac;
@@ -283,9 +275,9 @@ class eZImageShellHandler extends eZImageHandler
     public $SupportImageFilters;
     public $MIMETagMap;
     public $IsEnabled;
-    public $UseTypeTag;
-    public $QualityParameters;
-    public $FrameRangeParameters;
+    public $UseTypeTag = false;
+    public $QualityParameters = false;
+    public $FrameRangeParameters = false;
 }
 
 ?>

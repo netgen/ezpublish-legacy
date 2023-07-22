@@ -59,8 +59,6 @@ class eZTemplateCacheBlock
     /**
      * Filters cache keys when needed.
      * Useful to avoid having current URI as a cache key if an error has occurred and has been caught by error module.
-     *
-     * @param array $keys
      */
     static private function filterKeys( array &$keys )
     {
@@ -109,9 +107,8 @@ class eZTemplateCacheBlock
 
         if ( $ttl == 0 )
             $ttl = -1;
-        return array( &$cacheHandler,
-                      $cacheHandler->processCache( array( 'eZTemplateCacheBlock', 'retrieveContent' ), null,
-                                                   $ttl, $globalExpiryTime ) );
+        return [&$cacheHandler, $cacheHandler->processCache( ['eZTemplateCacheBlock', 'retrieveContent'], null,
+                                     $ttl, $globalExpiryTime )];
     }
 
     /*!
@@ -167,7 +164,7 @@ class eZTemplateCacheBlock
      */
     static function cachePath( $keyString, $nodeID = false )
     {
-        $filename = md5( $keyString ) . ".cache";
+        $filename = md5( (string) $keyString ) . ".cache";
 
         $phpDir = eZTemplateCacheBlock::templateBlockCacheDir();
         if ( is_numeric( $nodeID ) )
@@ -210,7 +207,7 @@ class eZTemplateCacheBlock
             $nodePathString = '';
 
             // clean up $subtreeExpiryParameter
-            $subtreeExpiryParameter = trim( $subtreeExpiryParameter, '/' );
+            $subtreeExpiryParameter = trim( (string) $subtreeExpiryParameter, '/' );
 
             $nodeID = false;
             $subtree = $subtreeExpiryParameter;
@@ -224,7 +221,7 @@ class eZTemplateCacheBlock
             {
                 $nonAliasPath = 'content/view/full/';
 
-                if ( strpos( $subtree, $nonAliasPath ) === 0 )
+                if ( str_starts_with($subtree, $nonAliasPath) )
                 {
                     // 'subtree_expiry' is like 'content/view/full/2'
                     $nodeID = (int)substr( $subtree, strlen( $nonAliasPath ) );

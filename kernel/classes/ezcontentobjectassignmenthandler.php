@@ -18,19 +18,18 @@ class eZContentObjectAssignmentHandler
 {
     /**
      * Constructor
-     * @param eZContentObject $contentObject
+     * @param eZContentObject $CurrentObject
      * @param eZContentObjectVersion $contentVersion
      */
-    public function __construct( $contentObject, $contentVersion )
+    public function __construct( public $CurrentObject, $contentVersion )
     {
-        $this->CurrentObject = $contentObject;
         $this->CurrentVersion = $contentVersion;
     }
 
     function nodeIDList( $selectionText )
     {
-        $nodeList = array();
-        $items = explode( ',', trim( $selectionText ) );
+        $nodeList = [];
+        $items = explode( ',', trim( (string) $selectionText ) );
         foreach ( $items as $item )
         {
             $item = trim( $item );
@@ -85,11 +84,8 @@ class eZContentObjectAssignmentHandler
      */
     function setupAssignments( $parameters )
     {
-        $parameters = array_merge( array( 'group-name' => false,
-                                          'default-variable-name' => false,
-                                          'specific-variable-name' => false,
-                                          'fallback-node-id' => false,
-                                          'section-id-wanted' => false ),
+        $mainID = null;
+        $parameters = array_merge( ['group-name' => false, 'default-variable-name' => false, 'specific-variable-name' => false, 'fallback-node-id' => false, 'section-id-wanted' => false],
                                    $parameters );
         if ( !$parameters['group-name'] and
              !$parameters['default-variable-name'] and
@@ -107,7 +103,7 @@ class eZContentObjectAssignmentHandler
         $contentClassID = $contentClass->attribute( 'id' );
         foreach ( $specificAssignments as $specificAssignment )
         {
-            $assignmentRules = explode( ';', $specificAssignment );
+            $assignmentRules = explode( ';', (string) $specificAssignment );
             $classMatches = $assignmentRules[0];
             $assignments = $assignmentRules[1];
             $mainID = false;
@@ -142,7 +138,7 @@ class eZContentObjectAssignmentHandler
         }
         if ( !$hasAssignment )
         {
-            $assignmentRules = explode( ';', $defaultAssignment );
+            $assignmentRules = explode( ';', (string) $defaultAssignment );
             $assignments = $assignmentRules[0];
             $mainID = false;
             if ( isset( $assignmentRules[1] ) )
@@ -191,10 +187,7 @@ class eZContentObjectAssignmentHandler
                         $sectionID = $result[0]['section_id'];
                     }
 
-                    $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $this->CurrentObject->attribute( 'id' ),
-                                                                       'contentobject_version' => $this->CurrentVersion->attribute( 'version' ),
-                                                                       'parent_node' => $node->attribute( 'node_id' ),
-                                                                       'is_main' => $isMain ) );
+                    $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $this->CurrentObject->attribute( 'id' ), 'contentobject_version' => $this->CurrentVersion->attribute( 'version' ), 'parent_node' => $node->attribute( 'node_id' ), 'is_main' => $isMain] );
                     $nodeAssignment->store();
                     ++$assignmentCount;
                 }
@@ -204,22 +197,13 @@ class eZContentObjectAssignmentHandler
             if ( $assignmentCount == 0 &&
                  $parameters['fallback-node-id'] )
             {
-                $nodeAssignment = eZNodeAssignment::create( array( 'contentobject_id' => $this->CurrentObject->attribute( 'id' ),
-                                                                   'contentobject_version' => $this->CurrentVersion->attribute( 'version' ),
-                                                                   'parent_node' => $parameters['fallback-node-id'],
-                                                                   'is_main' => true ) );
+                $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $this->CurrentObject->attribute( 'id' ), 'contentobject_version' => $this->CurrentVersion->attribute( 'version' ), 'parent_node' => $parameters['fallback-node-id'], 'is_main' => true] );
                 $nodeAssignment->store();
                 ++$assignmentCount;
             }
         }
         return true;
     }
-
-    /// \privatesection
-    /**
-     * @var eZContentObject
-     */
-    public $CurrentObject;
 
     /**
      * @var eZContentObjectVersion

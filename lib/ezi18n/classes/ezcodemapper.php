@@ -17,14 +17,12 @@
 
 class eZCodeMapper
 {
-    const TYPE_DIRECT = 1;
-    const TYPE_RANGE = 2;
-    const TYPE_REPLACE = 3;
+    final public const TYPE_DIRECT = 1;
+    final public const TYPE_RANGE = 2;
+    final public const TYPE_REPLACE = 3;
 
     public function __construct()
     {
-        $this->TransformationTables = array();
-        $this->TransformationFiles = array();
     }
 
     /*!
@@ -32,9 +30,7 @@ class eZCodeMapper
     */
     function mappingTable( $identifier )
     {
-        if ( isset( $this->TransformationTables[$identifier] ) )
-            return $this->TransformationTables[$identifier];
-        return false;
+        return $this->TransformationTables[$identifier] ?? false;
     }
 
     /*!
@@ -50,6 +46,7 @@ class eZCodeMapper
     */
     function error( $text, $position = false )
     {
+        $str = null;
         if ( $position )
         {
             $str = $position['file'] . ':' . $position['from'][0] . ' C' . $position['from'][1];
@@ -74,6 +71,7 @@ class eZCodeMapper
     */
     function warning( $text, $position = false )
     {
+        $str = null;
         if ( $position )
         {
             $str = $position['file'] . ':' . $position['from'][0] . ' C' . $position['from'][1];
@@ -112,7 +110,7 @@ class eZCodeMapper
     function loadTransformationFiles( $currentCharset, $transformationGroup )
     {
         $ini = eZINI::instance( 'transform.ini' );
-        $repositoryList = array( $ini->variable( 'Transformation', 'Repository' ) );
+        $repositoryList = [$ini->variable( 'Transformation', 'Repository' )];
         $files = $ini->variable( 'Transformation', 'Files' );
         $extensions = $ini->variable( 'Transformation', 'Extensions' );
         $repositoryList = array_merge( $repositoryList,
@@ -120,11 +118,11 @@ class eZCodeMapper
 
         // Check if the current charset maps to a unicode group
         // If it does it can trigger loading of additional files
-        $unicodeGroups = array();
+        $unicodeGroups = [];
         $charsets = $ini->variable( 'Transformation', 'Charsets' );
         foreach ( $charsets as $entry )
         {
-            list ( $charset, $group ) = explode( ';', $entry, 2 );
+            [$charset, $group] = explode( ';', (string) $entry, 2 );
             $charset = eZCharsetInfo::realCharsetCode( $charset );
             if ( $charset == $currentCharset )
             {
@@ -176,7 +174,7 @@ class eZCodeMapper
     function parseTransformationFile( $filename, $name )
     {
 //         eZDebug::writeDebug( "Parsing file $filename" );
-        $tbl = array();
+        $tbl = [];
 
         $fd = fopen( $filename, "rb" );
         if ( !$fd )
@@ -204,7 +202,7 @@ class eZCodeMapper
 
         while ( !feof( $fd ) or strlen( $buffer ) > 0 )
         {
-            $lines = array();
+            $lines = [];
             $len = strlen( $buffer );
             // Check if we have data in the buffer yet
             // Note: The actual buffer reading is done at the end of this while loop
@@ -219,8 +217,7 @@ class eZCodeMapper
                     if ( $eolPos !== false )
                     {
                         $line = substr( $buffer, $endPos, $eolPos - $endPos );
-                        $lines[] = array( 'text' => $line,
-                                          'line' => $lineNum );
+                        $lines[] = ['text' => $line, 'line' => $lineNum];
                         ++$lineNum;
                         $endPos = $eolPos + 1;
                     }
@@ -273,7 +270,7 @@ class eZCodeMapper
                     if ( !preg_match( '#^[a-zA-Z_-][a-zA-Z0-9_-]*$#', $identifier ) )
                     {
                         $this->warning( "Invalid identifier '$identifier', can only contain a-z, a-Z - and _",
-                                      array( 'file' => $filename, 'from' => array( $linePos, strlen( $identifier ) ) ) );
+                                      ['file' => $filename, 'from' => [$linePos, strlen( $identifier )]] );
                         $identifier = false;
                         continue;
                     }
@@ -283,7 +280,7 @@ class eZCodeMapper
                 else if ( $identifier === false )
                 {
                     $this->warning( "No identifier defined yet, skipping: '" . $line . "'",
-                                    array( 'file' => $filename, 'from' => array( $linePos, 0 ) ) );
+                                    ['file' => $filename, 'from' => [$linePos, 0]] );
                     continue;
                 }
                 else
@@ -318,20 +315,17 @@ class eZCodeMapper
                             if ( $delimiterPos === false )
                             {
                                 $this->warning( "No end-quote found for line, skipping: '$line'",
-                                                array( 'file' => $filename,
-                                                       'from' => array( $linePos, $pos ),
-                                                       'to' => array( $linePos, strlen( $line ) ) ) );
+                                                ['file' => $filename, 'from' => [$linePos, $pos], 'to' => [$linePos, strlen( $line )]] );
                                 $pos = $len;
                                 $failed = true;
                                 break;
                             }
-                            $str = str_replace( array( "\\\"", "\\\\" ),
-                                                array( "\"", "\\" ),
+                            $str = str_replace( ["\\\"", "\\\\"],
+                                                ["\"", "\\"],
                                                 substr( $line, $pos + 1, $delimiterPos - $pos - 1 ) );
 //                             print( "string '$str'\n" );
                             $pos = $delimiterPos + 1;
-                            $unicodeData = array( 'value' => $str,
-                                                  'type' => 'string' );
+                            $unicodeData = ['value' => $str, 'type' => 'string'];
                         }
                         else if ( $char == 'U' and
                              $pos + 1 < $len and
@@ -342,8 +336,7 @@ class eZCodeMapper
                             {
                                 $col = $hexPos;
                                 $this->warning( "Found U+ value with " . ( 4 - ( $len - $hexPos ) ) . " missing hex numbers",
-                                                array( 'file' => $filename,
-                                                       'from' => array( $linePos, $hexPos ) ) );
+                                                ['file' => $filename, 'from' => [$linePos, $hexPos]] );
                                 $failed = true;
                                 $pos = $hexPos;
                                 break;
@@ -358,21 +351,17 @@ class eZCodeMapper
                                     $col = $hexPos + $offset;
                                     $hasHexValues = false;
                                     $this->warning( "Found U+ value with " . ( 4 - $offset ) . " missing hex numbers",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $hexPos ),
-                                                           'to' => array( $linePos, $hexPos + $offset ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $hexPos], 'to' => [$linePos, $hexPos + $offset]] );
                                     $failed = true;
                                     $pos = $hexPos + $offset;
                                     break;
                                 }
-                                if ( strpos( $hexValues, $hexChar ) === false )
+                                if ( !str_contains( $hexValues, $hexChar ) )
                                 {
                                     $col = $hexPos + $offset;
                                     $hasHexValues = false;
                                     $this->warning( "Found U+ value with invalid hex numbers ($hexChar)",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $hexPos ),
-                                                           'to' => array( $linePos, $hexPos + $offset ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $hexPos], 'to' => [$linePos, $hexPos + $offset]] );
                                     $pos = $hexPos + $offset;
                                     $failed = true;
                                     break;
@@ -383,23 +372,21 @@ class eZCodeMapper
                             if ( $hasHexValues )
                             {
                                 $unicodeValue = hexdec( substr( $line, $hexPos, 4 ) );
-                                $unicodeData = array( 'value' => $unicodeValue,
-                                                      'type' => 'unicode' );
+                                $unicodeData = ['value' => $unicodeValue, 'type' => 'unicode'];
 //                                 print( "unicode U+ '$unicodeValue'\n" );
                             }
                             $pos = $hexPos + 4;
                         }
-                        else if ( strpos( $hexValues, $char ) !== false and
+                        else if ( str_contains( $hexValues, $char ) and
                                   $pos + 1 < $len and
-                                  strpos( $hexValues, $line[$pos + 1] ) !== false )
+                                  str_contains( $hexValues, $line[$pos + 1] ) )
                         {
                             $hexPos = $pos;
                             if ( $hexPos + 2 > $len )
                             {
                                 $col = $len;
                                 $this->warning( "Found ASCII value with " . ( 2 - ( $len - $hexPos ) ) . " missing hex numbers",
-                                                array( 'file' => $filename,
-                                                       'from' => array( $linePos, $hexPos ) ) );
+                                                ['file' => $filename, 'from' => [$linePos, $hexPos]] );
                                 $pos = $hexPos;
                                 $failed = true;
                                 break;
@@ -414,21 +401,17 @@ class eZCodeMapper
                                     $col = $hexPos + $offset;
                                     $hasHexValues = false;
                                     $this->warning( "Found ASCII value with " . ( 2 - $offset ) . " missing hex numbers",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $hexPos ),
-                                                           'to' => array( $linePos, $hexPos + $offset ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $hexPos], 'to' => [$linePos, $hexPos + $offset]] );
                                     $pos = $hexPos + $offset;
                                     $failed = true;
                                     break;
                                 }
-                                if ( strpos( $hexValues, $hexChar ) === false )
+                                if ( !str_contains( $hexValues, $hexChar ) )
                                 {
                                     $col = $hexPos + $offset;
                                     $hasHexValues = false;
                                     $this->warning( "Found ASCII value with invalid hex numbers ($hexChar)",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $hexPos ),
-                                                           'to' => array( $linePos, $hexPos + $offset ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $hexPos], 'to' => [$linePos, $hexPos + $offset]] );
                                     $pos = $hexPos + $offset;
                                     $failed = true;
                                     break;
@@ -440,23 +423,20 @@ class eZCodeMapper
                             {
                                 $asciiValue = hexdec( substr( $line, $hexPos, 4 ) );
 //                                 print( "unicode ASCII '$asciiValue'\n" );
-                                $unicodeData = array( 'value' => $asciiValue,
-                                                      'type' => 'ascii' );
+                                $unicodeData = ['value' => $asciiValue, 'type' => 'ascii'];
                             }
                             $pos = $hexPos + 2;
                         }
                         else if ( substr( $line, $pos, 6 ) == 'remove' )
                         {
 //                             print( "remove character\n" );
-                            $unicodeData = array( 'value' => false,
-                                                  'type' => 'remove' );
+                            $unicodeData = ['value' => false, 'type' => 'remove'];
                             $pos += 6;
                         }
                         else if ( substr( $line, $pos, 4 ) == 'keep' )
                         {
 //                             print( "keep character\n" );
-                            $unicodeData = array( 'value' => true,
-                                                  'type' => 'keep' );
+                            $unicodeData = ['value' => true, 'type' => 'keep'];
                             $pos += 4;
                         }
 
@@ -470,8 +450,7 @@ class eZCodeMapper
                                      strlen( $unicodeData['value'] ) > 1 )
                                 {
                                     $this->warning( "Text string with more than one character cannot be used as input value '" . $unicodeData['value'] . "'",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -481,8 +460,7 @@ class eZCodeMapper
                             else if ( $state == 'marker' )
                             {
                                 $this->warning( "Source value not expected, a source value has already been extracted at $line" . "[$pos]",
-                                                array( 'file' => $filename,
-                                                       'from' => array( $linePos, $pos ) ) );
+                                                ['file' => $filename, 'from' => [$linePos, $pos]] );
                                 $failed = true;
                                 break;
                             }
@@ -492,8 +470,7 @@ class eZCodeMapper
                                      strlen( $unicodeData['value'] ) > 1 )
                                 {
                                     $this->warning( "Text string with more than one character cannot be used as range end value '" . $unicodeData['value'] . "'",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -504,15 +481,14 @@ class eZCodeMapper
                                       $state == 'range_marker' )
                             {
                                 $this->warning( "Range value not expected, a range value has already been extracted at $line" . "[$pos]",
-                                                array( 'file' => $filename,
-                                                       'from' => array( $linePos, $pos ) ) );
+                                                ['file' => $filename, 'from' => [$linePos, $pos]] );
                                 $failed = true;
                                 break;
                             }
                             else if ( $state == 'map_input' )
                             {
                                 if ( !is_array( $destinationValues ) )
-                                    $destinationValues = array();
+                                    $destinationValues = [];
                                 $destinationValues = array_merge( $destinationValues,
                                                                   $this->extractUnicodeValues( $unicodeData ) );
                                 $type = 'map';
@@ -520,7 +496,7 @@ class eZCodeMapper
                             else if ( $state == 'replace_input' )
                             {
                                 if ( !is_array( $destinationValues ) )
-                                    $destinationValues = array();
+                                    $destinationValues = [];
                                 $destinationValues = array_merge( $destinationValues,
                                                                   $this->extractUnicodeValues( $unicodeData ) );
                                 $type = 'replace';
@@ -531,8 +507,7 @@ class eZCodeMapper
                                      strlen( $unicodeData['value'] ) > 1 )
                                 {
                                     $this->warning( "Text string with more than one character cannot be used as transpose value '" . $unicodeData['value'] . "'",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -545,8 +520,7 @@ class eZCodeMapper
                                      strlen( $unicodeData['value'] ) > 1 )
                                 {
                                     $this->warning( "Text string with more than one character cannot be used as transpose modulo value '" . $unicodeData['value'] . "'",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -554,8 +528,7 @@ class eZCodeMapper
                                 if ( $moduloValue == 0 )
                                 {
                                     $this->error( "Modulo value of 0 is not allowed, 1 will be used instead",
-                                                  array( 'file' => $filename,
-                                                         'from' => array( $linePos, $pos ) ) );
+                                                  ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     // Note: There is another 0 check in generateSimpleMappingTable()
                                 }
 //                                 print( "modulo value=$moduloValue\n" );
@@ -571,8 +544,7 @@ class eZCodeMapper
                                 if ( $char == '=' )
                                 {
                                     $this->warning( "Cannot use map marker $char without prior character value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -580,16 +552,14 @@ class eZCodeMapper
                                           $char == '-' )
                                 {
                                     $this->warning( "Cannot use range marker $char without prior character value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting input value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -609,16 +579,14 @@ class eZCodeMapper
                                 else if ( $char == '+' )
                                 {
                                     $this->warning( "Cannot use range marker $char without prior character value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting marker",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -649,8 +617,7 @@ class eZCodeMapper
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting range end value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -660,8 +627,7 @@ class eZCodeMapper
                                 if ( $char == '=' )
                                 {
                                     $this->warning( "Duplicate mapping marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -669,16 +635,14 @@ class eZCodeMapper
                                           $char == '+' )
                                 {
                                     $this->warning( "Already mapping values, cannot use range/transpose marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting output values",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -688,8 +652,7 @@ class eZCodeMapper
                                 if ( $char == '%' )
                                 {
                                     $this->warning( "Modulo marker already used, cannot use $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -697,16 +660,14 @@ class eZCodeMapper
                                           $char == '+' )
                                 {
                                     $this->warning( "Transpose marker $char used, but no modulo value has been found yet",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting modulo value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -716,8 +677,7 @@ class eZCodeMapper
                                 if ( $char == '=' )
                                 {
                                     $this->warning( "Already transposing, cannot use mapping marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -725,16 +685,14 @@ class eZCodeMapper
                                           $char == '+' )
                                 {
                                     $this->warning( "Duplicate transpose marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting transpose value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -744,8 +702,7 @@ class eZCodeMapper
                                 if ( $char == '=' )
                                 {
                                     $this->warning( "Already replacing, cannot use mapping marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -753,16 +710,14 @@ class eZCodeMapper
                                           $char == '+' )
                                 {
                                     $this->warning( "Already replacing, cannot use transpose marker $char",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
                                 else
                                 {
                                     $this->warning( "Unknown character '$char', expecting replace value",
-                                                    array( 'file' => $filename,
-                                                           'from' => array( $linePos, $pos ) ) );
+                                                    ['file' => $filename, 'from' => [$linePos, $pos]] );
                                     $failed = true;
                                     break;
                                 }
@@ -778,7 +733,7 @@ class eZCodeMapper
 //                                $destinationValues = array_diff( $destinationValues, array( '' ) );
 
                             if ( !isset( $tbl[$identifier] ) )
-                                $tbl[$identifier] = array();
+                                $tbl[$identifier] = [];
 
                             if ( $type == 'map' )
                             {
@@ -837,8 +792,8 @@ class eZCodeMapper
     */
     function appendDirectMapping( &$block, $identifier, $sourceValue, $destinationValues )
     {
-        $count = count( $block );
-        if ( count( $destinationValues ) == 1 )
+        $count = is_countable($block) ? count( $block ) : 0;
+        if ( (is_countable($destinationValues) ? count( $destinationValues ) : 0) == 1 )
             $destinationValues = array_pop( $destinationValues );
         if ( isset( $block[$count - 1] ) and
              $block[$count - 1][0] == self::TYPE_DIRECT and
@@ -848,9 +803,7 @@ class eZCodeMapper
         }
         else
         {
-            $block[] = array( self::TYPE_DIRECT,
-                              array( $sourceValue => $destinationValues ),
-                              $identifier );
+            $block[] = [self::TYPE_DIRECT, [$sourceValue => $destinationValues], $identifier];
 
         }
     }
@@ -866,20 +819,18 @@ class eZCodeMapper
     */
     function appendReplaceMapping( &$block, $identifier, $sourceValue, $sourceEndValue, $destinationValues )
     {
-        $count = count( $block );
-        if ( count( $destinationValues ) == 1 )
+        $count = is_countable($block) ? count( $block ) : 0;
+        if ( (is_countable($destinationValues) ? count( $destinationValues ) : 0) == 1 )
             $destinationValues = array_pop( $destinationValues );
         if ( isset( $block[$count - 1] ) and
              $block[$count - 1][0] == self::TYPE_REPLACE and
              $block[$count - 1][2] == $identifier )
         {
-            $block[$count - 1][1][] = array( $sourceValue, $sourceEndValue, $destinationValues );
+            $block[$count - 1][1][] = [$sourceValue, $sourceEndValue, $destinationValues];
         }
         else
         {
-            $block[] = array( self::TYPE_REPLACE,
-                              array( array( $sourceValue, $sourceEndValue, $destinationValues ) ),
-                              $identifier );
+            $block[] = [self::TYPE_REPLACE, [[$sourceValue, $sourceEndValue, $destinationValues]], $identifier];
 
         }
     }
@@ -896,18 +847,16 @@ class eZCodeMapper
     */
     function appendTransposeMapping( &$block, $identifier, $sourceValue, $sourceEndValue, $transposeValue, $addValue, $moduloValue )
     {
-        $count = count( $block );
+        $count = is_countable($block) ? count( $block ) : 0;
         if ( isset( $block[$count - 1] ) and
              $block[$count - 1][0] == self::TYPE_RANGE and
              $block[$count - 1][2] == $identifier )
         {
-            $block[$count - 1][1][] = array( $sourceValue, $sourceEndValue, $addValue ? $transposeValue : -$transposeValue, $moduloValue );
+            $block[$count - 1][1][] = [$sourceValue, $sourceEndValue, $addValue ? $transposeValue : -$transposeValue, $moduloValue];
         }
         else
         {
-            $block[] = array( self::TYPE_RANGE,
-                              array( array( $sourceValue, $sourceEndValue, $addValue ? $transposeValue : -$transposeValue, $moduloValue ) ),
-                              $identifier );
+            $block[] = [self::TYPE_RANGE, [[$sourceValue, $sourceEndValue, $addValue ? $transposeValue : -$transposeValue, $moduloValue]], $identifier];
 
         }
     }
@@ -956,21 +905,21 @@ class eZCodeMapper
         }
         else if ( $type == 'ascii' )
         {
-            return array( $data['value'] );
+            return [$data['value']];
         }
         else if ( $type == 'unicode' )
         {
-            return array( $data['value'] );
+            return [$data['value']];
         }
         else if ( $type == 'remove' )
         {
-            return array( false );
+            return [false];
         }
         else if ( $type == 'keep' )
         {
-            return array( true );
+            return [true];
         }
-        return array();
+        return [];
     }
 
     /*!
@@ -981,7 +930,7 @@ class eZCodeMapper
     */
     function expandInheritance( $table )
     {
-        $newTable = array();
+        $newTable = [];
         foreach ( $table as $tableItem )
         {
             if ( is_string( $tableItem ) )
@@ -1016,7 +965,7 @@ class eZCodeMapper
     */
     function ordinalValues( $table, $list )
     {
-        $ordinals = array();
+        $ordinals = [];
         if ( is_string( $list ) )
         {
             $len = strlen( $list );
@@ -1033,10 +982,10 @@ class eZCodeMapper
         {
             foreach ( $list as $item )
             {
-                $ordinals = array_merge( $ordinals, eZCodeMapper::ordinalValues( $table, $item ) );
+                $ordinals = array_merge( $ordinals, (new eZCodeMapper())->ordinalValues($table, $item) );
             }
         }
-        $ordinals = eZCodeMapper::mapOrdinals( $table, $ordinals );
+        $ordinals = (new eZCodeMapper())->mapOrdinals($table, $ordinals);
         return $ordinals;
     }
 
@@ -1047,7 +996,7 @@ class eZCodeMapper
     */
     function mapOrdinals( $table, $ordinals )
     {
-        $mappedOrdinals = array();
+        $mappedOrdinals = [];
         foreach ( $ordinals as $ordinal )
         {
             while ( !is_array( $ordinal ) and isset( $table[$ordinal] ) )
@@ -1055,7 +1004,7 @@ class eZCodeMapper
                 $ordinal = $table[$ordinal];
                 if ( is_array( $ordinal ) )
                 {
-                    $ordinal = eZCodeMapper::mapOrdinals( $table, $ordinal );
+                    $ordinal = (new eZCodeMapper())->mapOrdinals($table, $ordinal);
                 }
             }
             if ( is_array( $ordinal ) )
@@ -1078,12 +1027,12 @@ class eZCodeMapper
         {
             if ( is_array( $to ) )
             {
-                $newTo = array();
+                $newTo = [];
                 foreach ( $to as $ordinal )
                 {
                     if ( $ordinal == $fromCode )
                     {
-                        $newTo = array_merge( $newTo, array( $toCode ) );
+                        $newTo = [...$newTo, $toCode];
                     }
                     else
                     {
@@ -1113,7 +1062,7 @@ class eZCodeMapper
     {
         if ( !is_array( $table ) )
             return false;
-        $unicodeMap = array();
+        $unicodeMap = [];
         foreach ( $table as $tableItem )
         {
             $type = $tableItem[0];
@@ -1132,21 +1081,21 @@ class eZCodeMapper
 //                     {
 //                         print( "<pre>oldcode<br/>" ); var_dump( $toCode ); print( "</pre>" );
 //                     }
-                    $toCode = eZCodeMapper::ordinalValues( $unicodeMap, $toCode );
+                    $toCode = (new eZCodeMapper())->ordinalValues($unicodeMap, $toCode);
 //                     if ( $fromCode == 1026 )
 //                     {
 //                         print( "<pre>newcode<br/>" ); var_dump( $toCode ); print( "</pre>" );
 //                     }
-                    if ( count( $allowedRanges ) == 0 )
+                    if ( (is_countable($allowedRanges) ? count( $allowedRanges ) : 0) == 0 )
                     {
-                        if ( count( $toCode ) == 1 )
+                        if ( (is_countable($toCode) ? count( $toCode ) : 0) == 1 )
                             $toCode = $toCode[0];
                         // If the mapping already exists we skip it
                         if ( isset( $unicodeMap[$fromCode] ) )
                             continue;
 
                         $unicodeMap[$fromCode] = $toCode;
-                        $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $fromCode, $toCode );
+                        $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $fromCode, $toCode);
                     }
                     else
                     {
@@ -1164,7 +1113,7 @@ class eZCodeMapper
                             continue;
 
                         $toCodeList = $toCode;
-                        $newToCodeList = array();
+                        $newToCodeList = [];
                         foreach ( $toCodeList as $toCode )
                         {
                             if ( is_bool( $toCode ) )
@@ -1195,7 +1144,7 @@ class eZCodeMapper
                             if ( isset( $unicodeMap[$fromCode] ) )
                                 continue;
 
-                            $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $fromCode, $toCode );
+                            $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $fromCode, $toCode);
 
                             $unicodeMap[$fromCode] = $toCode;
                         }
@@ -1221,7 +1170,7 @@ class eZCodeMapper
                         $modulo = 1;
                     for ( $i = $start; $i <= $stop; $i += $modulo )
                     {
-                        if ( count( $allowedRanges ) == 0 )
+                        if ( (is_countable($allowedRanges) ? count( $allowedRanges ) : 0) == 0 )
                         {
                             $allowed = true;
                         }
@@ -1242,14 +1191,14 @@ class eZCodeMapper
                         }
 
                         $replace = $i + $add;
-                        $replace = eZCodeMapper::ordinalValues( $unicodeMap, $replace );
-                        if ( count( $allowedRanges ) == 0 )
+                        $replace = (new eZCodeMapper())->ordinalValues($unicodeMap, $replace);
+                        if ( (is_countable($allowedRanges) ? count( $allowedRanges ) : 0) == 0 )
                         {
-                            if ( count( $replace ) == 0 )
+                            if ( (is_countable($replace) ? count( $replace ) : 0) == 0 )
                                 $replace = false;
-                            else if ( count( $replace ) == 1 )
+                            else if ( (is_countable($replace) ? count( $replace ) : 0) == 1 )
                                 $replace = $replace[0];
-                            $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $i, $replace );
+                            $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $i, $replace);
 
                             // If the mapping already exists we skip it
                             if ( isset( $unicodeMap[$i] ) )
@@ -1259,7 +1208,7 @@ class eZCodeMapper
                         }
                         else
                         {
-                            $newReplace = array();
+                            $newReplace = [];
                             foreach ( $allowedRanges as $allowedRange )
                             {
                                 foreach ( $replace as $replaceOrdinal )
@@ -1282,7 +1231,7 @@ class eZCodeMapper
                             if ( isset( $unicodeMap[$i] ) )
                                 continue;
 
-                            $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $i, $replace );
+                            $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $i, $replace);
                             $unicodeMap[$i] = $replace;
                         }
                     }
@@ -1301,12 +1250,12 @@ class eZCodeMapper
                         $start = $tmp;
                     }
                     $replace = $rangeItem[2];
-                    $replace = eZCodeMapper::ordinalValues( $unicodeMap, $replace );
-                    if ( count( $allowedRanges ) == 0 )
+                    $replace = (new eZCodeMapper())->ordinalValues($unicodeMap, $replace);
+                    if ( (is_countable($allowedRanges) ? count( $allowedRanges ) : 0) == 0 )
                     {
-                        if ( count( $replace ) == 0 )
+                        if ( (is_countable($replace) ? count( $replace ) : 0) == 0 )
                             $replace = false;
-                        else if ( count( $replace ) == 1 )
+                        else if ( (is_countable($replace) ? count( $replace ) : 0) == 1 )
                             $replace = $replace[0];
                         for ( $i = $start; $i <= $stop; ++$i )
                         {
@@ -1314,13 +1263,13 @@ class eZCodeMapper
                             if ( isset( $unicodeMap[$i] ) )
                                 continue;
 
-                            $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $i, $replace );
+                            $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $i, $replace);
                             $unicodeMap[$i] = $replace;
                         }
                     }
                     else
                     {
-                        $newReplace = array();
+                        $newReplace = [];
                         foreach ( $allowedRanges as $allowedRange )
                         {
                             foreach ( $replace as $replaceOrdinal )
@@ -1356,7 +1305,7 @@ class eZCodeMapper
                                 if ( isset( $unicodeMap[$i] ) )
                                     continue;
 
-                                $unicodeMap = eZCodeMapper::mapExistingCodes( $unicodeMap, $i, $replace );
+                                $unicodeMap = (new eZCodeMapper())->mapExistingCodes($unicodeMap, $i, $replace);
                                 $unicodeMap[$i] = $replace;
                             }
                         }
@@ -1377,11 +1326,11 @@ class eZCodeMapper
     function generateMappingCode( $identifier )
     {
         if ( !is_array( $identifier ) )
-            $identifier = array( $identifier );
+            $identifier = [$identifier];
         $table = $this->expandInheritance( $identifier );
 
         // We allow all characters for now
-        $allowedRanges = array();
+        $allowedRanges = [];
         $simpleTable = $this->generateSimpleMappingTable( $table, $allowedRanges );
         ksort( $simpleTable );
         return $simpleTable;
@@ -1402,17 +1351,17 @@ class eZCodeMapper
             return false;
         }
 
-        $charsetTable = array();
+        $charsetTable = [];
         foreach ( $unicodeTable as $match => $replacement )
         {
-            $matchLocal = $codec->convertString( array( $match ) );
+            $matchLocal = $codec->convertString( [$match] );
             if ( is_array( $replacement ) )
             {
                 $replacementLocal = $codec->convertString( $replacement );
             }
             else
             {
-                $replacementLocal = $codec->convertString( array( $replacement ) );
+                $replacementLocal = $codec->convertString( [$replacement] );
             }
             $charsetTable[$matchLocal] = $replacementLocal;
         }
@@ -1433,7 +1382,7 @@ class eZCodeMapper
     function decodeCommand( $name, $parameters )
     {
         $names = $this->ruleNames();
-        $rules = array();
+        $rules = [];
         switch ( $name )
         {
             // Special code handlers
@@ -1452,12 +1401,12 @@ class eZCodeMapper
             case 'uppercase':
             case 'search_cleanup':
             {
-                if ( count( $parameters ) == 0 )
+                if ( (is_countable($parameters) ? count( $parameters ) : 0) == 0 )
                 {
                     // Include all normalize rules
                     foreach ( $names as $rule )
                     {
-                        if ( preg_match( '#_'. $name . '$#', $rule ) )
+                        if ( preg_match( '#_'. $name . '$#', (string) $rule ) )
                             $rules[] = $rule;
                     }
                 }
@@ -1475,19 +1424,18 @@ class eZCodeMapper
             case 'transform':
             case 'transliterate':
             {
-                $dividers = array( 'transform' => '_to_',
-                                   'transliterate' => '_transliterate_' );
+                $dividers = ['transform' => '_to_', 'transliterate' => '_transliterate_'];
                 $divider = $dividers[$name];
-                if ( count( $parameters ) == 0 )
+                if ( (is_countable($parameters) ? count( $parameters ) : 0) == 0 )
                 {
                     // Include all transformation rules
                     foreach ( $names as $rule )
                     {
-                        if ( preg_match( '#^[a-zA-Z][a-zA-Z0-9-]+'. $divider . '[a-zA-Z][a-zA-Z0-9-]+$#', $rule ) )
+                        if ( preg_match( '#^[a-zA-Z][a-zA-Z0-9-]+'. $divider . '[a-zA-Z][a-zA-Z0-9-]+$#', (string) $rule ) )
                             $rules[] = $rule;
                     }
                 }
-                else if ( count( $parameters ) == 2 )
+                else if ( (is_countable($parameters) ? count( $parameters ) : 0) == 2 )
                 {
                     $rule = $parameters[0] . $divider . $parameters[1];
                     if ( in_array( $rule, $names ) )
@@ -1635,7 +1583,7 @@ class eZCodeMapper
             $commands = $ini->variable( 'Extensions', 'Commands' );
             if ( isset( $commands[$command['command']] ) )
             {
-                list( $path, $className ) = explode( ':', $commands[$command['command']], 2 );
+                [$path, $className] = explode( ':', (string) $commands[$command['command']], 2 );
                 if ( file_exists( $path ) )
                 {
                     $charsetNameTxt = var_export( $charsetName, true );
@@ -1678,15 +1626,9 @@ class eZCodeMapper
         }
         else if ( $command['command'] == 'identifier_cleanup' )
         {
-            $text = strtolower( $text );
-            $text = preg_replace( array( "#[^a-z0-9_ ]#",
-                                         "/ /",
-                                         "/__+/",
-                                         "/^_|_$/" ),
-                                  array( " ",
-                                         "_",
-                                         "_",
-                                         "" ),
+            $text = strtolower( (string) $text );
+            $text = preg_replace( ["#[^a-z0-9_ ]#", "/ /", "/__+/", "/^_|_$/"],
+                                  [" ", "_", "_", ""],
                                   $text );
             return true;
         }
@@ -1700,7 +1642,7 @@ class eZCodeMapper
 
                 $unicodeValueArray = $codec->convertString( $text );
 
-                $normalizedTextArray = array();
+                $normalizedTextArray = [];
                 $bFlag = false;
                 foreach ( array_keys( $unicodeValueArray ) as $valueKey )
                 {
@@ -1741,19 +1683,9 @@ class eZCodeMapper
             }
 
             // Make sure dots inside words/numbers are kept, the rest is turned into space
-            $text = preg_replace( array( "#(\.){2,}#",
-                                         "#^\.#",
-                                         "#\s\.#",
-                                         "#\.\s#",
-                                         "#\.$#",
-                                         "#([^0-9])%#" ), // Keep only % after a number
-                                  array( " ",
-                                         " ",
-                                         " ",
-                                         " ",
-                                         " ",
-                                         "$1 " ),
-                                  $text );
+            $text = preg_replace( ["#(\.){2,}#", "#^\.#", "#\s\.#", "#\.\s#", "#\.$#", "#([^0-9])%#"], // Keep only % after a number
+                                  [" ", " ", " ", " ", " ", "$1 "],
+                                  (string) $text );
             $ini = eZINI::instance();
             if ( $ini->variable( 'SearchSettings', 'EnableWildcard' ) != 'true' )
             {
@@ -1779,12 +1711,12 @@ class eZCodeMapper
             $commands = $ini->variable( 'Extensions', 'Commands' );
             if ( isset( $commands[$command['command']] ) )
             {
-                list( $path, $className ) = explode( ':', $commands[$command['command']], 2 );
+                [$path, $className] = explode( ':', (string) $commands[$command['command']], 2 );
                 if ( file_exists( $path ) )
                 {
                     include_once( $path );
-                    $text = call_user_func_array( array( $className, 'executeCommand' ),
-                                                  array( $text, $command['command'], $charsetName ) );
+                    $text = call_user_func_array( [$className, 'executeCommand'],
+                                                  [$text, $command['command'], $charsetName] );
                     return true;
                 }
                 else
@@ -1801,23 +1733,12 @@ class eZCodeMapper
     */
     function nonCJKCharsets()
     {
-        return array( 'adobe-standard-encoding',
-                      'cp437', 'cp737', 'cp775', 'cp850', 'cp852', 'cp855', 'cp857',
-                      'cp860', 'cp861', 'cp862', 'cp863', 'cp864', 'cp865', 'cp866',
-                      'cp869', 'cp874',
-                      'dec-mcs', 'hp-roman8',
-                      'iso-8859-1', 'iso-8859-2', 'iso-8859-3', 'iso-8859-4', 'iso-8859-5',
-                      'iso-8859-6', 'iso-8859-7', 'iso-8859-8', 'iso-8859-9', 'iso-8859-10',
-                      'iso-8859-11', 'iso-8859-13', 'iso-8859-14', 'iso-8859-15',
-                      'koi8-r', 'koi8-u', 'macintosh', 'next', 'us-ascii',
-                      'windows-1250', 'windows-1251', 'windows-1252', 'windows-1253',
-                      'windows-1254', 'windows-1255', 'windows-1256', 'windows-1257',
-                      'windows-1258' );
+        return ['adobe-standard-encoding', 'cp437', 'cp737', 'cp775', 'cp850', 'cp852', 'cp855', 'cp857', 'cp860', 'cp861', 'cp862', 'cp863', 'cp864', 'cp865', 'cp866', 'cp869', 'cp874', 'dec-mcs', 'hp-roman8', 'iso-8859-1', 'iso-8859-2', 'iso-8859-3', 'iso-8859-4', 'iso-8859-5', 'iso-8859-6', 'iso-8859-7', 'iso-8859-8', 'iso-8859-9', 'iso-8859-10', 'iso-8859-11', 'iso-8859-13', 'iso-8859-14', 'iso-8859-15', 'koi8-r', 'koi8-u', 'macintosh', 'next', 'us-ascii', 'windows-1250', 'windows-1251', 'windows-1252', 'windows-1253', 'windows-1254', 'windows-1255', 'windows-1256', 'windows-1257', 'windows-1258'];
     }
 
     /// \privatesection
-    public $TransformationTables;
-    public $TransformationFiles;
+    public $TransformationTables = [];
+    public $TransformationFiles = [];
     public $ISOUnicodeCodec;
 }
 

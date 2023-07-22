@@ -33,7 +33,6 @@ class eZImageAliasHandler
      */
     public function __construct( $contentObjectAttribute )
     {
-        $this->ContentObjectAttributeData = array();
         if ( is_object( $contentObjectAttribute ) )
         {
             $this->ContentObjectAttributeData['id'] = $contentObjectAttribute->attribute( 'id' );
@@ -45,7 +44,7 @@ class eZImageAliasHandler
             $this->ContentObjectAttributeData['DataTypeCustom'] = $contentObjectAttribute->DataTypeCustom;
             if ( !is_array( $this->ContentObjectAttributeData['DataTypeCustom'] ) )
             {
-                $this->ContentObjectAttributeData['DataTypeCustom'] = array();
+                $this->ContentObjectAttributeData['DataTypeCustom'] = [];
             }
         }
         else
@@ -64,10 +63,7 @@ class eZImageAliasHandler
     {
         $imageManager = eZImageManager::factory();
         $aliasList = $imageManager->aliasList();
-        return array_merge( array( 'alternative_text',
-                                   'original_filename',
-                                   'is_valid' ),
-                            array_keys( $aliasList ) );
+        return ['alternative_text', 'original_filename', 'is_valid', ...array_keys( $aliasList )];
     }
 
     /*!
@@ -77,9 +73,7 @@ class eZImageAliasHandler
     function hasAttribute( $attributeName )
     {
         if ( in_array( $attributeName,
-                       array( 'alternative_text',
-                              'original_filename',
-                              'is_valid' ) ) )
+                       ['alternative_text', 'original_filename', 'is_valid'] ) )
             return true;
 
         $imageManager = eZImageManager::factory();
@@ -95,9 +89,7 @@ class eZImageAliasHandler
     function attribute( $attributeName )
     {
         if ( in_array( $attributeName,
-                       array( 'alternative_text',
-                              'original_filename',
-                              'is_valid' ) ) )
+                       ['alternative_text', 'original_filename', 'is_valid'] ) )
         {
             return $this->attributeFromOriginal( $attributeName );
         }
@@ -129,8 +121,7 @@ class eZImageAliasHandler
     function setAttribute( $attributeName, $attributeValue )
     {
         if ( in_array( $attributeName,
-                       array( 'alternative_text',
-                              'original_filename' ) ) )
+                       ['alternative_text', 'original_filename'] ) )
         {
             $aliasList = $this->aliasList();
             foreach ( array_keys( $aliasList ) as $aliasName )
@@ -338,7 +329,7 @@ class eZImageAliasHandler
                 $ini = eZINI::instance( 'image.ini' );
                 $contentImageSubtree = $ini->variable( 'FileSettings', 'PublishedImages' );
                 $pathString = $mainNode->pathWithNames();
-                $pathString = function_exists( 'mb_strtolower' ) ? mb_strtolower( $pathString ) : strtolower( $pathString );
+                $pathString = function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $pathString ) : strtolower( (string) $pathString );
                 $pathString = $contentImageSubtree . '/' . $pathString;
             }
         }
@@ -369,7 +360,7 @@ class eZImageAliasHandler
     function imagePathByNode( $contentObjectAttribute, $mainNode )
     {
         $pathString = $mainNode->pathWithNames();
-        $pathString = function_exists( 'mb_strtolower' ) ? mb_strtolower( $pathString ) : strtolower( $pathString );
+        $pathString = function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $pathString ) : strtolower( (string) $pathString );
 
         $ini = eZINI::instance( 'image.ini' );
         $contentImageSubtree = $ini->variable( 'FileSettings', 'PublishedImages' );
@@ -377,7 +368,7 @@ class eZImageAliasHandler
         $attributeID = $attributeData['attribute_id'];
         $attributeVersion = $attributeData['attribute_version'];
         $attributeLanguage = $attributeData['attribute_language'];
-        $pathParts = array( eZSys::storageDirectory(), $contentImageSubtree );
+        $pathParts = [eZSys::storageDirectory(), $contentImageSubtree];
         if ( $pathString != '' )
         {
             //Make sure that all folders are smaller than the FS limit
@@ -434,7 +425,7 @@ class eZImageAliasHandler
             $original = $aliasList['original'];
             $basename = $original['basename'];
             if ( $imageManager->createImageAlias( $aliasName, $aliasList,
-                                                  array( 'basename' => $basename ) ) )
+                                                  ['basename' => $basename] ) )
             {
                 $text = $this->displayText( $original['alternative_text'] );
                 $originalFilename = $original['original_filename'];
@@ -533,7 +524,7 @@ class eZImageAliasHandler
         $this->ContentObjectAttributeData['DataTypeCustom']['dom_tree'] = $domTree;
         $imageNodeArray = $domTree->getElementsByTagName( "ezimage" );
 
-        $aliasList = array();
+        $aliasList = [];
 
         // I think this is a bug in the plain package or related to the bug I filed
         // about the image datatype serialization
@@ -549,30 +540,24 @@ class eZImageAliasHandler
         $imageVariationNodeArray = $imageNode->getElementsByTagName( "alias" );
         $imageOriginalArray = $imageNode->getElementsByTagName( "original" );
 
-        $aliasEntry = array();
+        $aliasEntry = [];
 
         $alternativeText = $imageNode->getAttribute( 'alternative_text' );
         $originalFilename = $imageNode->getAttribute( 'original_filename' );
         $basename = $imageNode->getAttribute( 'basename' );
         $displayText = $this->displayText( $alternativeText );
 
-        $originalData = array( 'attribute_id' => '',
-                               'attribute_version' => '',
-                               'attribute_language' => '' );
+        $originalData = ['attribute_id' => '', 'attribute_version' => '', 'attribute_language' => ''];
         if ( $imageOriginalArray->length > 0 )
         {
             $imageOriginalNode = $imageOriginalArray->item( 0 );
-            $originalData = array( 'attribute_id' => $imageOriginalNode->getAttribute( 'attribute_id' ),
-                                   'attribute_version' => $imageOriginalNode->getAttribute( 'attribute_version' ),
-                                   'attribute_language' => $imageOriginalNode->getAttribute( 'attribute_language' ) );
+            $originalData = ['attribute_id' => $imageOriginalNode->getAttribute( 'attribute_id' ), 'attribute_version' => $imageOriginalNode->getAttribute( 'attribute_version' ), 'attribute_language' => $imageOriginalNode->getAttribute( 'attribute_language' )];
         }
         if ( strlen( $originalData['attribute_id'] ) == 0 ||
              strlen( $originalData['attribute_version'] ) == 0 ||
              strlen( $originalData['attribute_language'] ) == 0 )
         {
-            $originalData = array( 'attribute_id' => $this->ContentObjectAttributeData['id'],
-                                   'attribute_version' => $this->ContentObjectAttributeData['version'],
-                                   'attribute_language' => $this->ContentObjectAttributeData['language_code'] );
+            $originalData = ['attribute_id' => $this->ContentObjectAttributeData['id'], 'attribute_version' => $this->ContentObjectAttributeData['version'], 'attribute_language' => $this->ContentObjectAttributeData['language_code']];
         }
         $this->setOriginalAttributeData( $originalData );
 
@@ -624,7 +609,7 @@ class eZImageAliasHandler
             $imageManager = eZImageManager::factory();
             foreach ( $imageVariationNodeArray as $imageVariation )
             {
-                $aliasEntry = array();
+                $aliasEntry = [];
                 $aliasEntry['name'] = $imageVariation->getAttribute( 'name' );
                 $aliasEntry['width'] = $imageVariation->getAttribute( 'width' );
                 $aliasEntry['height'] = $imageVariation->getAttribute( 'height' );
@@ -682,7 +667,7 @@ class eZImageAliasHandler
         }
         $attributeData = $handler->originalAttributeData();
         $files = eZImageFile::fetchForContentObjectAttribute( $attributeData['attribute_id'], false );
-        $dirs = array();
+        $dirs = [];
 
         foreach ( $files as $filepath )
         {
@@ -708,7 +693,7 @@ class eZImageAliasHandler
     public function purgeAllAliases()
     {
         $aliasList = $this->aliasList( false );
-        ezpEvent::getInstance()->notify( 'image/purgeAliases', array( $aliasList['original']['url'] ) );
+        ezpEvent::getInstance()->notify( 'image/purgeAliases', [$aliasList['original']['url']] );
         unset( $aliasList['original'] ); // keeping original
 
         foreach ( $aliasList as $alias )
@@ -746,7 +731,7 @@ class eZImageAliasHandler
 
         if ( !empty( $aliasList['original']['url'] ) )
         {
-            ezpEvent::getInstance()->notify( 'image/removeAliases', array( $aliasList['original']['url'] ) );
+            ezpEvent::getInstance()->notify( 'image/removeAliases', [$aliasList['original']['url']] );
         }
 
         $this->generateXMLData();
@@ -778,10 +763,7 @@ class eZImageAliasHandler
 
         eZImageFile::removeObject(
             eZImageFile::definition(),
-            array(
-                'contentobject_attribute_id' => $this->ContentObjectAttributeData['id'],
-                'filepath' => $aliasFile
-            )
+            ['contentobject_attribute_id' => $this->ContentObjectAttributeData['id'], 'filepath' => $aliasFile]
         );
 
         // We only remove the image file if other eZImageFile of the same attribute use it (other versions)
@@ -983,7 +965,7 @@ class eZImageAliasHandler
     */
     function parseInformationNode( $imageInfoNode )
     {
-        $imageInformation = array();
+        $imageInformation = [];
 
         $attributes = $imageInfoNode->attributes;
         foreach ( $attributes as $attribute )
@@ -1009,7 +991,7 @@ class eZImageAliasHandler
             {
                 $name = $child->getAttribute( 'name' );
                 $items = $child->getElementsByTagName( 'item' );
-                $array = array();
+                $array = [];
                 foreach ( $items as $item )
                 {
                     $itemValue = $item->textContent;
@@ -1061,7 +1043,7 @@ class eZImageAliasHandler
      *
      * @see httpFile
      */
-    function setHTTPFile( $httpFile )
+    function setHTTPFile( mixed $httpFile )
     {
         $this->ContentObjectAttributeData['DataTypeCustom']['http_file'] = $httpFile;
     }
@@ -1136,9 +1118,9 @@ class eZImageAliasHandler
     {
         if ( !file_exists( $filename ) )
         {
-            $contentObjectID = isset( $this->ContentObjectAttributeData['contentobject_id'] ) ? $this->ContentObjectAttributeData['contentobject_id'] : 0;
-            $contentObjectAttributeID = isset( $this->ContentObjectAttributeData['id'] ) ? $this->ContentObjectAttributeData['id'] : 0;
-            $version = isset( $this->ContentObjectAttributeData['version'] ) ? $this->ContentObjectAttributeData['version'] : 0;
+            $contentObjectID = $this->ContentObjectAttributeData['contentobject_id'] ?? 0;
+            $contentObjectAttributeID = $this->ContentObjectAttributeData['id'] ?? 0;
+            $version = $this->ContentObjectAttributeData['version'] ?? 0;
             $contentObject = eZContentObject::fetch( $contentObjectID );
             $contentObjectAttribute = eZContentObjectAttribute::fetch( $contentObjectAttributeID, $version );
             $contentObjectAttributeName = '';
@@ -1157,7 +1139,7 @@ class eZImageAliasHandler
         $this->increaseImageSerialNumber();
 
         if ( !$originalFilename )
-            $originalFilename = basename( $filename );
+            $originalFilename = basename( (string) $filename );
         $mimeData = eZMimeType::findByFileContents( $filename );
         if ( !$mimeData['is_valid'] and
              $originalFilename != $filename )
@@ -1201,7 +1183,7 @@ class eZImageAliasHandler
                                                $this->ContentObjectAttributeData['version'],
                                                $this->ContentObjectAttributeData['language_code'] );
 
-        $aliasList = array( 'original' => $mimeData );
+        $aliasList = ['original' => $mimeData];
         $aliasList['original']['alternative_text'] = $imageAltText;
         $aliasList['original']['original_filename'] = $originalFilename;
 
@@ -1209,7 +1191,7 @@ class eZImageAliasHandler
         $filePath = $mimeData['url'];
         $fileHandler->fileStore( $filePath, 'image', false, $mimeData['name'] );
 
-        if ( $imageManager->createImageAlias( 'original', $aliasList, array( 'basename' => $mimeData['basename'] ) ) )
+        if ( $imageManager->createImageAlias( 'original', $aliasList, ['basename' => $mimeData['basename']] ) )
         {
             $mimeData = $aliasList['original'];
             $mimeData['name'] = $mimeData['mime_type'];
@@ -1297,7 +1279,7 @@ class eZImageAliasHandler
                     }
                     if ( !$hasScalarValues )
                     {
-                        $toRemove = array();
+                        $toRemove = [];
                         foreach ( $infoItem as $key => $value )
                         {
                             if ( is_string( $value ) && !ctype_print( $value ) )
@@ -1334,7 +1316,7 @@ class eZImageAliasHandler
                         {
                             unset( $arrayItemNode );
                             $arrayItemNode = $dom->createElement( 'item' );
-                            $arrayItemNode->appendChild( $dom->createTextNode( base64_encode( $infoArrayItem ) ) );
+                            $arrayItemNode->appendChild( $dom->createTextNode( base64_encode( (string) $infoArrayItem ) ) );
                             $arrayItemNode->setAttribute( 'key', $infoArrayKey );
                             $arrayItemNode->setAttribute( 'base64', 1 );
 
@@ -1344,7 +1326,7 @@ class eZImageAliasHandler
                 }
                 else
                 {
-                    $infoItem = iconv( mb_detect_encoding( $infoItem ), 'UTF-8//IGNORE', $infoItem );
+                    $infoItem = iconv( mb_detect_encoding( (string) $infoItem ), 'UTF-8//IGNORE', (string) $infoItem );
                     $imageInfoNode->setAttribute( $infoItemName, $infoItem );
                 }
             }
@@ -1513,9 +1495,7 @@ class eZImageAliasHandler
     */
     function isStorageRequired()
     {
-        return isset( $this->ContentObjectAttributeData['DataTypeCustom']['is_storage_required'] ) ?
-            $this->ContentObjectAttributeData['DataTypeCustom']['is_storage_required'] :
-            false;
+        return $this->ContentObjectAttributeData['DataTypeCustom']['is_storage_required'] ?? false;
     }
 
     /*!
@@ -1540,9 +1520,7 @@ class eZImageAliasHandler
         if ( isset( $contentObjectAttributeData['DataTypeCustom']['original_data'] ) )
             return $contentObjectAttributeData['DataTypeCustom']['original_data'];
 
-        $originalData = array( 'attribute_id' => $contentObjectAttributeData['id'],
-                               'attribute_version' => $contentObjectAttributeData['version'],
-                               'attribute_language' => $contentObjectAttributeData['language_code'] );
+        $originalData = ['attribute_id' => $contentObjectAttributeData['id'], 'attribute_version' => $contentObjectAttributeData['version'], 'attribute_language' => $contentObjectAttributeData['language_code']];
         $this->setOriginalAttributeData( $originalData );
         return $originalData;
     }
@@ -1595,9 +1573,7 @@ class eZImageAliasHandler
     */
     function setOriginalAttributeDataValues( $attributeID, $attributeVersion, $attributeLanguage )
     {
-        $this->setOriginalAttributeData( array( 'attribute_id' => $attributeID,
-                                                'attribute_version' => $attributeVersion,
-                                                'attribute_language' => $attributeLanguage ) );
+        $this->setOriginalAttributeData( ['attribute_id' => $attributeID, 'attribute_version' => $attributeVersion, 'attribute_language' => $attributeLanguage] );
     }
 
     /*!
@@ -1618,9 +1594,7 @@ class eZImageAliasHandler
     */
     private function imageSerialNumberRaw()
     {
-        return isset( $this->ContentObjectAttributeData['DataTypeCustom']['serial_number'] ) ?
-            $this->ContentObjectAttributeData['DataTypeCustom']['serial_number'] :
-            0;
+        return $this->ContentObjectAttributeData['DataTypeCustom']['serial_number'] ?? 0;
     }
 
     /*!
@@ -1661,7 +1635,7 @@ class eZImageAliasHandler
 
     /// \privatesection
     /// Contains a some eZContentObjectAttribute's attributes.
-    public $ContentObjectAttributeData;
+    public $ContentObjectAttributeData = [];
     /// Deprecated. Contains a reference to the object attribute
     public $ContentObjectAttribute;
 

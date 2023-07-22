@@ -28,7 +28,7 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
 
 if ( $Module->isCurrentAction( "ChangePassword" ) )
@@ -81,10 +81,9 @@ $tpl->setVariable( "userAccount", $userAccount );
 $tpl->setVariable( 'view_parameters', $UserParameters );
 $tpl->setVariable( 'site_access', $GLOBALS['eZCurrentAccess'] );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:user/edit.tpl" );
-$Result['path'] = array( array( 'text' =>  ezpI18n::tr( 'kernel/user', 'User profile' ),
-                                'url' => false ) );
+$Result['path'] = [['text' =>  ezpI18n::tr( 'kernel/user', 'User profile' ), 'url' => false]];
 
 
 ?>

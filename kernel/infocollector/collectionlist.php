@@ -23,7 +23,7 @@ if( $module->isCurrentAction( 'RemoveCollections' ) && $http->hasPostVariable( '
     $http->setSessionVariable( 'CollectionIDArray', $collectionIDArray );
     $http->setSessionVariable( 'ObjectID', $objectID );
 
-    $collections = count( $collectionIDArray );
+    $collections = is_countable($collectionIDArray) ? count( $collectionIDArray ) : 0;
 
     $tpl = eZTemplate::factory();
     $tpl->setVariable( 'module', $module );
@@ -31,10 +31,9 @@ if( $module->isCurrentAction( 'RemoveCollections' ) && $http->hasPostVariable( '
     $tpl->setVariable( 'object_id', $objectID );
     $tpl->setVariable( 'remove_type', 'collections' );
 
-    $Result = array();
+    $Result = [];
     $Result['content'] = $tpl->fetch( 'design:infocollector/confirmremoval.tpl' );
-    $Result['path'] = array( array( 'url' => false,
-                                    'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' ) ) );
+    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' )]];
     return;
 }
 
@@ -58,12 +57,11 @@ if( $module->isCurrentAction( 'ConfirmRemoval' ) )
 
 if( eZPreferences::value( 'admin_infocollector_list_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_infocollector_list_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_infocollector_list_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -85,10 +83,10 @@ if( !$object )
 $collections = eZInformationCollection::fetchCollectionsList( $objectID, /* object id */
                                                               false, /* creator id */
                                                               false, /* user identifier */
-                                                              array( 'limit' => $limit,'offset' => $offset ) /* limit array */ );
+                                                              ['limit' => $limit, 'offset' => $offset] /* limit array */ );
 $numberOfCollections = eZInformationCollection::fetchCollectionsCount( $objectID );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $objectName = $object->attribute( 'name' );
 
 $tpl = eZTemplate::factory();
@@ -99,11 +97,8 @@ $tpl->setVariable( 'object', $object );
 $tpl->setVariable( 'collection_array', $collections );
 $tpl->setVariable( 'collection_count', $numberOfCollections );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:infocollector/collectionlist.tpl' );
-$Result['path'] = array( array( 'url' => '/infocollector/overview',
-                                'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' ) ),
-                         array( 'url' => false,
-                                'text' => $objectName ) );
+$Result['path'] = [['url' => '/infocollector/overview', 'text' => ezpI18n::tr( 'kernel/infocollector', 'Collected information' )], ['url' => false, 'text' => $objectName]];
 
 ?>

@@ -19,39 +19,11 @@
 class ezpRestRequest extends ezcMvcRequest
 {
     /**
-     * GET variables
-     *
-     * @var array
-     */
-    public $get;
-
-    /**
-     * POST variables
-     *
-     * @var array
-     */
-    public $post;
-
-    /**
      * Original request method
      *
      * @var string
      */
     public $originalProtocol;
-
-    /**
-     * Variables related to content, extracted from GET
-     *
-     * @var array
-     */
-    public $contentVariables;
-
-    /**
-     * Signifies whether the request was made over an encrypted connection.
-     *
-     * @var bool
-     */
-    public $isEncrypted;
 
     /**
      * Constructs a new ezpRestRequest.
@@ -81,10 +53,10 @@ class ezpRestRequest extends ezcMvcRequest
      */
     public function __construct( $date = null, $protocol = '',
         $host = '', $uri = '', $requestId = '', $referrer = '',
-        $variables = array(), $get = array(), $post = array(),
-        $contentVariables = array(), $isEncrypted = false, $body = '',
+        $variables = [], public $get = [], public $post = [],
+        public $contentVariables = [], public $isEncrypted = false, $body = '',
         $files = null, $accept = null, $agent = null, $authentication = null,
-        $raw = null, $cookies = array(), $isFatal = false, $originalProtocol = null )
+        $raw = null, $cookies = [], $isFatal = false, $originalProtocol = null )
     {
         $this->date = $date;
         $this->protocol = $protocol;
@@ -93,10 +65,6 @@ class ezpRestRequest extends ezcMvcRequest
         $this->requestId = $requestId;
         $this->referrer = $referrer;
         $this->variables = $variables;
-        $this->get = $get;
-        $this->post = $post;
-        $this->contentVariables = $contentVariables;
-        $this->isEncrypted = $isEncrypted;
         $this->body = $body;
         $this->files = $files;
         $this->accept = $accept;
@@ -104,7 +72,7 @@ class ezpRestRequest extends ezcMvcRequest
         $this->authentication = $authentication;
         $this->raw = $raw;
         $this->cookies = $cookies;
-        $this->originalProtocol = ( $originalProtocol === null ? $protocol : $originalProtocol );
+        $this->originalProtocol = ( $originalProtocol ?? $protocol );
     }
 
     /**
@@ -170,7 +138,7 @@ class ezpRestRequest extends ezcMvcRequest
     public function getContentQueryString( $withQuestionMark = false )
     {
         $queryString = '';
-        $aParams = array();
+        $aParams = [];
         foreach( $this->contentVariables as $name => $value )
         {
             if( $value !== null )
@@ -198,9 +166,9 @@ class ezpRestRequest extends ezcMvcRequest
     {
         if ( $this->originalProtocol === 'http-post' )
         {
-            if ( strpos( $this->raw['CONTENT_TYPE'], 'application/json' ) === 0 )
+            if ( str_starts_with((string) $this->raw['CONTENT_TYPE'], 'application/json') )
             {
-                return json_decode( $this->body, true );
+                return json_decode( $this->body, true, 512, JSON_THROW_ON_ERROR );
             }
             return $this->post;
         }
@@ -208,16 +176,16 @@ class ezpRestRequest extends ezcMvcRequest
             return null;
 
         if ( empty( $this->body ) )
-            return array();
+            return [];
 
-        if ( strpos( $this->raw['CONTENT_TYPE'], 'application/x-www-form-urlencoded' ) === 0 )
+        if ( str_starts_with((string) $this->raw['CONTENT_TYPE'], 'application/x-www-form-urlencoded') )
         {
             parse_str( $this->body, $parsedBody );
             return $parsedBody;
         }
-        else if ( strpos( $this->raw['CONTENT_TYPE'], 'application/json' ) === 0 )
+        else if ( str_starts_with((string) $this->raw['CONTENT_TYPE'], 'application/json') )
         {
-            return json_decode( $this->body, true );
+            return json_decode( $this->body, true, 512, JSON_THROW_ON_ERROR );
         }
         return null;
     }

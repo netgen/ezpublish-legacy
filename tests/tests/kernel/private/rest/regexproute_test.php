@@ -25,13 +25,13 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
         $route = new ezpMvcRegexpRoute( '@^/foo/(?P<nodeId>\d+)$@', 'fooController', 'barAction' );
         $info = $route->matches( $request );
 
-        $this->assertInstanceOf( 'ezcMvcRoutingInformation', $info );
-        $this->assertEquals( $info->controllerClass, 'fooController' );
-        $this->assertEquals( $info->action, 'barAction' );
+        static::assertInstanceOf('ezcMvcRoutingInformation', $info);
+        static::assertEquals($info->controllerClass, 'fooController');
+        static::assertEquals($info->action, 'barAction');
 
         $request->uri = '/foo/bar2';
         $info = $route->matches( $request );
-        $this->assertNull( $info );
+        static::assertNull($info);
     }
 
     /**
@@ -48,10 +48,7 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
 
         $route = new ezpMvcRegexpRoute(
             '@^/foo/(?P<nodeId>\d+)$@', 'fooController',
-            array(
-                'http-post' => 'barPostAction',
-                'http-put' => 'barPutAction'
-            )
+            ['http-post' => 'barPostAction', 'http-put' => 'barPutAction']
         );
         $info = $route->matches( $request );
     }
@@ -68,13 +65,10 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
 
         $route = new ezpMvcRegexpRoute(
             '@^/foo/(?P<nodeId>\d+)$@', 'fooController',
-            array(
-                'http-post' => 'barPostAction',
-                'http-put' => 'barPutAction'
-            )
+            ['http-post' => 'barPostAction', 'http-put' => 'barPutAction']
         );
         $info = $route->matches( $request );
-        $this->assertNull( $info );
+        static::assertNull($info);
     }
 
     /**
@@ -88,16 +82,13 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
 
         $route = new ezpMvcRegexpRoute(
             '@^/foo/(?P<nodeId>\d+)$@', 'fooController',
-            array(
-                'http-post' => 'barPostAction',
-                'http-put' => 'barPutAction'
-            )
+            ['http-post' => 'barPostAction', 'http-put' => 'barPutAction']
         );
         $info = $route->matches( $request );
 
-        $this->assertInstanceOf( 'ezcMvcRoutingInformation', $info );
-        $this->assertEquals( $info->controllerClass, 'fooController' );
-        $this->assertEquals( $info->action, 'barPutAction' );
+        static::assertInstanceOf('ezcMvcRoutingInformation', $info);
+        static::assertEquals($info->controllerClass, 'fooController');
+        static::assertEquals($info->action, 'barPutAction');
     }
 
     /**
@@ -111,21 +102,15 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
 
         $route = new ezpMvcRegexpRoute(
             '@^/foo/(?P<nodeId>\d+)$@', 'fooController',
-            array(
-                'http-post' => 'barPostAction',
-                'http-put' => 'barPutAction'
-            )
+            ['http-post' => 'barPostAction', 'http-put' => 'barPutAction']
         );
         $info = $route->matches( $request );
 
-        $this->assertInstanceOf( 'ezcMvcRoutingInformation', $info );
-        $this->assertEquals( $info->controllerClass, 'fooController' );
-        $this->assertEquals( $info->action, 'httpOptions' );
-        $this->assertTrue( isset( $request->variables['supported_http_methods'] ) );
-        $this->assertSame(
-            array( 'POST', 'PUT', 'OPTIONS' ),
-            $request->variables['supported_http_methods']
-        );
+        static::assertInstanceOf('ezcMvcRoutingInformation', $info);
+        static::assertEquals($info->controllerClass, 'fooController');
+        static::assertEquals($info->action, 'httpOptions');
+        static::assertTrue(isset( $request->variables['supported_http_methods'] ));
+        static::assertSame(['POST', 'PUT', 'OPTIONS'], $request->variables['supported_http_methods']);
     }
 
     /**
@@ -140,16 +125,13 @@ class ezpRestRegexpRouteTest extends ezpRestTestCase
 
         $route = new ezpMvcRegexpRoute(
             '@^/foo/(?P<nodeId>\d+)$@', 'fooController',
-            array(
-                'http-post' => 'barPostAction',
-                'http-options' => 'barCustomOptionsAction'
-            )
+            ['http-post' => 'barPostAction', 'http-options' => 'barCustomOptionsAction']
         );
         $info = $route->matches( $request );
 
-        $this->assertInstanceOf( 'ezcMvcRoutingInformation', $info );
-        $this->assertEquals( $info->controllerClass, 'fooController' );
-        $this->assertEquals( $info->action, 'barCustomOptionsAction' );
+        static::assertInstanceOf('ezcMvcRoutingInformation', $info);
+        static::assertEquals($info->controllerClass, 'fooController');
+        static::assertEquals($info->action, 'barCustomOptionsAction');
     }
 
 }

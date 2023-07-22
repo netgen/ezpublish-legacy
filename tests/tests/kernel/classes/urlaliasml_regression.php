@@ -56,14 +56,13 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
      * If $defaultLanguage is set only url elements of that language_id are
      * returned.
      *
-     * @param array $actionValues
      * @param boolean $defaultLanguage
      * @return string
-    */
+     */
     public static function buildSql( array $actionValues, $defaultLanguage = false, $extraConditions = false )
     {
         $action = 'eznode';
-        $actionList = array();
+        $actionList = [];
 
         foreach ( $actionValues as $value )
         {
@@ -122,12 +121,12 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // if not nor-NO needs to be added to the site by hand.
         $newLanguageCode = "nor-NO";
         $newTranslationName = 'Norsk ' . __FUNCTION__ . " folder";
-        $trData = array( "name" => $newTranslationName );
+        $trData = ["name" => $newTranslationName];
         $folder->addTranslation( $newLanguageCode, $trData );
 
         $db = eZDB::instance();
         $topLanguageId = (int) eZContentLanguage::topPriorityLanguage()->attribute( 'id' );
-        $query = self::buildSql( array( 2, $parentNodeId, $newArticleNodeId ), $topLanguageId );
+        $query = self::buildSql( [2, $parentNodeId, $newArticleNodeId], $topLanguageId );
         $queryResult = $db->arrayQuery( $query );
 
         $lastId = false;
@@ -183,13 +182,13 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // Add translation of parent node
         $newLanguageCode = "nor-NO";
         $newTranslationName = 'Norsk ' . __FUNCTION__ . " folder";
-        $trData = array( "name" => $newTranslationName );
+        $trData = ["name" => $newTranslationName];
         $folder->addTranslation( $newLanguageCode, $trData );
 
         // Verify table structure
         $db = eZDB::instance();
         $topLanguageId = (int)eZContentLanguage::topPriorityLanguage()->attribute( 'id' );
-        $query = self::buildSql( array( 2, $parentNodeId, $newArticleNodeId ), $topLanguageId );
+        $query = self::buildSql( [2, $parentNodeId, $newArticleNodeId], $topLanguageId );
         $queryResult = $db->arrayQuery( $query );
 
         $lastId = false;
@@ -223,8 +222,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
      */
     public function testURLAliasReplacement()
     {
-        $folderName = "Test Folder " . mt_rand();
-        $childName = "Test Child " . mt_rand();
+        $folderName = "Test Folder " . random_int(0, mt_getrandmax());
+        $childName = "Test Child " . random_int(0, mt_getrandmax());
         $db = eZDB::instance();
 
         // STEP 1: Create test folder
@@ -245,7 +244,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         // Extract the ezurlalias_ml history element id for child1. This
         // history element will be reused for child2 a bit further down.
-        $query = self::buildSql( array( $child1NodeID ), false, array( "is_original" => 0 ) );
+        $query = self::buildSql( [$child1NodeID], false, ["is_original" => 0] );
         $child1Result = $db->arrayQuery( $query );
 
         // STEP 4: Add a second child to the test folder.
@@ -254,7 +253,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $child2->publish();
 
         // Extract ezurlalias_ml id for child2
-        $query = self::buildSql( array( $child2->mainNode->node_id ) );
+        $query = self::buildSql( [$child2->mainNode->node_id] );
         $child2Result = $db->arrayQuery( $query );
 
         // STEP 5: Make sure the old history element id and newly created
@@ -273,7 +272,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // are sure to get unique URLs without any crud (__1, __2, etc).
         // Without unique URLs we cannot predict what the URL for the name
         // will be.
-        $randomNumber = mt_rand();
+        $randomNumber = random_int(0, mt_getrandmax());
         $nonAsciiName = "Noñ äcsíí ©ha®ß ïn ñámé… " . $randomNumber;
         $nonAsciiNameURL = "Noñ-äcsíí-©ha®ß-ïn-ñámé…-" . $randomNumber;
 
@@ -295,7 +294,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $subfolder->addNode( 2 );
 
         // STEP 4: Test for success:
-        $this->assertEquals( $nonAsciiNameURL, $subfolder->nodes[1]->pathWithNames() );
+        static::assertEquals($nonAsciiNameURL, $subfolder->nodes[1]->pathWithNames());
 
 
         // Restore ini settings to their original values
@@ -351,15 +350,15 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         // Extract id for folder1 from ezurlalias_ml
         $db = eZDB::instance();
-        $query = self::buildSql( array( $folder1->mainNode->node_id ) );
+        $query = self::buildSql( [$folder1->mainNode->node_id] );
         $folderUrlEntry = $db->arrayQuery( $query );
 
         // Extract text for child1 from ezurlalias_ml
-        $query = self::buildSql( array( $child1->mainNode->node_id ), false, array( 'is_original' => 1 ) );
+        $query = self::buildSql( [$child1->mainNode->node_id], false, ['is_original' => 1] );
         $child1UrlEntry = $db->arrayQuery( $query );
 
         // Extract parent id for child2 from ezurlalias_ml
-        $query = self::buildSql( array( $child2->mainNode->node_id ), false, array( 'is_original' => 1 ) );
+        $query = self::buildSql( [$child2->mainNode->node_id], false, ['is_original' => 1] );
         $child2UrlEntry = $db->arrayQuery( $query );
 
         // Since child2 has been moved to folder1, child2's parent ID should
@@ -404,7 +403,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         $myElementId = $myElement->mainNode->node_id;
 
-        $q = self::buildSql( array( $myElementId ) );
+        $q = self::buildSql( [$myElementId] );
 
         // ==========
         // = Name 1 =
@@ -547,11 +546,11 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $child->publish();
 
         // STEP 3: Add translation to child with same name
-        $translationAttributes = array( "title" => "Child" );
+        $translationAttributes = ["title" => "Child"];
         $child->addTranslation( "nor-NO", $translationAttributes );
 
         // STEP 4: Verify that lang_mask was updated to 6.
-        $query = self::buildSql( array( $child->mainNode->node_id ) );
+        $query = self::buildSql( [$child->mainNode->node_id] );
         $result = $db->arrayQuery( $query );
 
         self::assertEquals(
@@ -589,14 +588,14 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $child->publish();
 
         // STEP 3: Add translation to child with the same name
-        $translationAttributes = array( "title" => "Child" );
+        $translationAttributes = ["title" => "Child"];
         $child->addTranslation( "nor-NO", $translationAttributes );
 
         // STEP 4: Remove nor-NO translation
         $child->removeTranslation( "nor-NO" );
 
         // STEP 5: Verify that lang_mask has been decreased back down to 2.
-        $query = self::buildSql( array( $child->mainNode->node_id ) );
+        $query = self::buildSql( [$child->mainNode->node_id] );
         $result = $db->arrayQuery( $query );
 
         self::assertEquals( 2, (int) $result[0]['lang_mask'] );
@@ -618,6 +617,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
      */
     public function testURLAliasTranslationLinkValues()
     {
+        $validNames = [];
         $folder = new ezpObject( "folder", 2 );
         $folder->name = __FUNCTION__;
         $parentObjId = $folder->publish();
@@ -643,15 +643,14 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // Add translation of parent node
         $newLanguageCode = "nor-NO";
         $newTranslationName = "Norsk ChildNode";
-        $trData = array( "title" => $newTranslationName );
+        $trData = ["title" => $newTranslationName];
         $article->addTranslation( $newLanguageCode, $trData );
 
         $db = eZDB::instance();
         $topLanguageId = (int)eZContentLanguage::topPriorityLanguage()->attribute( 'id' );
 
-        $curEngElementSql = self::buildSql( array( $article->mainNode->node_id ), $topLanguageId,
-                                            array( 'is_original' => 1,
-                                                   'is_alias' => 0 ) );
+        $curEngElementSql = self::buildSql( [$article->mainNode->node_id], $topLanguageId,
+                                            ['is_original' => 1, 'is_alias' => 0] );
 
         $curEngElement = $db->arrayQuery( $curEngElementSql );
         // There should only be one result here
@@ -663,9 +662,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         $curEngId = (int)$curEngElement[0]['id'];
 
-        $historyElementsSql = self::buildSql( array( $article->mainNode->node_id ), false,
-                                              array( 'is_original' => 0,
-                                                     'is_alias' => 0 ) );
+        $historyElementsSql = self::buildSql( [$article->mainNode->node_id], false,
+                                              ['is_original' => 0, 'is_alias' => 0] );
 
         $possibleHistoryElements = $db->arrayQuery( $historyElementsSql );
 
@@ -710,9 +708,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         $db = eZDB::instance();
 
-        $historyElementsSql = self::buildSql( array( $article->mainNode->node_id ), false,
-                                              array( 'is_original' => 0,
-                                                     'is_alias' => 0 ) );
+        $historyElementsSql = self::buildSql( [$article->mainNode->node_id], false,
+                                              ['is_original' => 0, 'is_alias' => 0] );
 
         $historyElements = $db->arrayQuery( $historyElementsSql );
 
@@ -745,7 +742,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $db = eZDB::instance();
         // STEP 1: Create folder
         $folder = new ezpObject( "folder", 2 );
-        $folder->name = __FUNCTION__ . mt_rand();
+        $folder->name = __FUNCTION__ . random_int(0, mt_getrandmax());
         $folder->publish();
 
         // STEP 2: Create child with folder as parent
@@ -758,17 +755,17 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $folder->publish();
 
         // Extract the ezurlalias_ml id for the renamed entry of folder
-        $query = self::buildSql( array( $folder->mainNode->node_id ), false,
-                                 array( "is_original" => 1 ) );
+        $query = self::buildSql( [$folder->mainNode->node_id], false,
+                                 ["is_original" => 1] );
         $result = $db->arrayQuery( $query );
         $folderUrlAliasId = $result[0]['id'];
 
         // STEP 4: Add a norwegian translation to folder
-        $attributes = array( 'name' => __FUNCTION__ . "(norwegian)" );
+        $attributes = ['name' => __FUNCTION__ . "(norwegian)"];
         $folder->addTranslation( 'nor-NO', $attributes );
 
         // STEP 5: Verify child's parent id.
-        $query = self::buildSql( array( $child->mainNode->node_id ) );
+        $query = self::buildSql( [$child->mainNode->node_id] );
         $result = $db->arrayQuery( $query );
         $childUrlAliasParentId = $result[0]['parent'];
 
@@ -791,7 +788,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $child->publish();
 
         $languageCode = "nor-NO";
-        $trData = array( "title" => "NorTester" );
+        $trData = ["title" => "NorTester"];
         $child->addTranslation( $languageCode, $trData );
 
         $folder2 = new ezpObject( "folder", 2 );
@@ -804,10 +801,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // Verify that all norwegian url entries are also removed
         $language = eZContentLanguage::fetchByLocale( $languageCode, false );
         $languageId = (int)$language->attribute( 'id' );
-        $fetchNorUrlEntriesSql = self::buildSql( array(
-                                                        $child->mainNode->node_id,
-                                                        $newPlacement->attribute( 'node_id' )
-                                                    ),
+        $fetchNorUrlEntriesSql = self::buildSql( [$child->mainNode->node_id, $newPlacement->attribute( 'node_id' )],
                                               $languageId
                                             );
         $db = eZDB::instance();
@@ -845,7 +839,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
      */
     public function testUpdateSubTreePathLeavesAliasesAlone()
     {
-        $random = mt_rand();
+        $random = random_int(0, mt_getrandmax());
 
         $folder = new ezpObject( "folder", 2 );
         $folder->name = __FUNCTION__ . " Folder " . $random;
@@ -866,8 +860,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         // Refetch the alias ezurlalias_ml element
         $db = eZDB::instance();
-        $actionValues = array( $child->mainNode->node_id );
-        $extraConditions = array( 'id' => $alias['element']->attribute( 'id' ) );
+        $actionValues = [$child->mainNode->node_id];
+        $extraConditions = ['id' => $alias['element']->attribute( 'id' )];
         $aliases = $db->arrayQuery( self::buildSql( $actionValues, false, $extraConditions ) );
 
         self::assertEquals( 1, (int) $aliases[0]['is_alias'] );
@@ -882,7 +876,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
     public function testStorePathReparentAliasEntries()
     {
         // Create a real folder
-        $r = mt_rand();
+        $r = random_int(0, mt_getrandmax());
         $theRealFolder = new ezpObject( "folder", 2 );
         $theRealFolder->name = __FUNCTION__ . $r;
         $theRealFolder->publish();
@@ -934,7 +928,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         self::assertEquals( $realFolderAliasId, $myNodeAliasOriginalParent );
 
         $db = eZDB::instance();
-        $q = self::buildSql( array( $myNode->mainNode->node_id ), false, array( 'is_alias' => 1, 'is_original' => 1 ) );
+        $q = self::buildSql( [$myNode->mainNode->node_id], false, ['is_alias' => 1, 'is_original' => 1] );
         $myNodeAliasPostChange = $db->arrayQuery( $q );
         $myNodeAliasPostChangeParent = $myNodeAliasPostChange[0]['parent'];
 
@@ -974,7 +968,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $rootFolder->publish();
 
         // STEP 2: Translate "Root folder" into Norwegian
-        $trData = array( "name" => "Root folder Norwegian" );
+        $trData = ["name" => "Root folder Norwegian"];
         $rootFolder->addTranslation( "nor-NO", $trData );
 
         // STEP 3: Create a child node of "Root folder"
@@ -999,7 +993,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         ezpObject::publishContentObject( $rootFolder->object, $newVersion );
 
         // STEP 6: Add another translation to the child
-        $trData = array( "name" => "Child Japanese" );
+        $trData = ["name" => "Child Japanese"];
         $child->addTranslation( "jpn-JP", $trData );
 
         // STEP 7: Rename "Root folder"
@@ -1031,8 +1025,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $db = eZDB::instance();
         // Ordered array containing the current name for an entry at level,
         // where level is the same as the index.
-        $nameStructure = array();
-        $nameStructure[] = array( __FUNCTION__ );
+        $nameStructure = [];
+        $nameStructure[] = [__FUNCTION__];
 
         // STEP 1: Create Root folder
         $rootFolder = new ezpObject( "folder", 2 );
@@ -1042,26 +1036,26 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $rootId = $rootFolder->mainNode->node_id;
 
         // STEP 2: Create Child article
-        $nameStructure[] = array( "ChildNode" );
+        $nameStructure[] = ["ChildNode"];
         $child = new ezpObject( "article", $rootFolder->mainNode->node_id );
         $child->title = $nameStructure[1][0];
         $child->publish();
 
         $childId = $child->mainNode->node_id;
 
-        $query = self::buildSql( array( 2, $rootId, $childId ) );
+        $query = self::buildSql( [2, $rootId, $childId] );
         $rows = $db->arrayQuery( $query );
         $result = self::verifyUrlEntryParentStructure( $nameStructure, $rows );
         self::assertTrue( $result, "Fail after step 2" );
 
         // STEP 4: Renaming root folder
         // Updating the name structure on renames
-        $nameStructure[0] = array( "TestContainerA" );
+        $nameStructure[0] = ["TestContainerA"];
         $rootFolder->name = $nameStructure[0][0];
         $rootFolder->publish();
 
         // STEP 5: Renaming root folder
-        $nameStructure[0] = array( "TestContainerB" );
+        $nameStructure[0] = ["TestContainerB"];
         $rootFolder->name = $nameStructure[0][0];
         $rootFolder->publish();
 
@@ -1070,7 +1064,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         self::assertTrue( $result, "Fail after step 5"  );
 
         // STEP 6: Rename root folder back to name in history.
-        $nameStructure[0] = array( "TestContainer" );
+        $nameStructure[0] = ["TestContainer"];
         $rootFolder->name = $nameStructure[0][0];
         $rootFolder->publish();
 
@@ -1080,7 +1074,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         // STEP 7: Translate root folder into norwegian.
         $nameStructure[0][] = "TestBinge";
-        $trData = array( "name" => $nameStructure[0][1] );
+        $trData = ["name" => $nameStructure[0][1]];
         $rootFolder->addTranslation( "nor-NO", $trData );
 
         $rows = $db->arrayQuery( $query );
@@ -1089,7 +1083,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
 
         // STEP 8: Translate childe article into norwegian
         $nameStructure[1][] = "BarneNode";
-        $trData = array( "title" => $nameStructure[1][1] );
+        $trData = ["title" => $nameStructure[1][1]];
         $child->addTranslation( "nor-NO", $trData );
 
         $rows = $db->arrayQuery( $query );
@@ -1131,8 +1125,8 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
      */
     public static function verifyUrlEntryParentStructure( $nameTable, $urlEntryData )
     {
-        $parentStructure = array();
-        $translationStructure = array();
+        $parentStructure = [];
+        $translationStructure = [];
 
         foreach ( $nameTable as $level => $names )
         {
@@ -1154,8 +1148,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
                 {
                     if ( !isset( $parentStructure[$level] ) )
                     {
-                        $parentStructure[$level] = array( "languages" => array( $realLang => $id ),
-                                                          "always_available" => $d['always_available'] );
+                        $parentStructure[$level] = ["languages" => [$realLang => $id], "always_available" => $d['always_available']];
                     }
                     else
                     {
@@ -1244,7 +1237,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $child->publish();
 
         // STEP 3: Add translation to child with the same name
-        $translationAttributes = array( "title" => "Child" );
+        $translationAttributes = ["title" => "Child"];
         $child->addTranslation( "nor-NO", $translationAttributes );
 
         // STEP 4: Update the translation
@@ -1262,7 +1255,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // also make sure that the pre-existing entry has not been set as a
         // history element.
 
-        $query = self::buildSql( array( $child->mainNode->node_id ) );
+        $query = self::buildSql( [$child->mainNode->node_id] );
         $result = $db->arrayQuery( $query );
 
         $childRawData = self::urlEntryForName( 'Child', $result );
@@ -1297,7 +1290,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
     {
         ezpINIHelper::setINISetting(
             'site.ini', 'RegionalSettings',
-            'SiteLanguageList', array( 'eng-GB', 'nor-NO' )
+            'SiteLanguageList', ['eng-GB', 'nor-NO']
         );
         eZContentLanguage::clearPrioritizedLanguages();
 
@@ -1339,7 +1332,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         // $subChild3->addTranslation( "nor-NO", $norSubChild3Trans );
 
         // STEP 3: Add translation to child with the same name
-        $translationAttributes = array( "name" => "Child" . __FUNCTION__ );
+        $translationAttributes = ["name" => "Child" . __FUNCTION__];
         $child->addTranslation( "nor-NO", $translationAttributes );
 
         // STEP 4: Update the translation
@@ -1384,7 +1377,7 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $norDataMap['name']->store();
         ezpObject::publishContentObject( $child->object, $newVersion );
 
-        $query = self::buildSql( array( $child->mainNode->node_id ) );
+        $query = self::buildSql( [$child->mainNode->node_id] );
         $result = $db->arrayQuery( $query );
 
         $initialTranslationChild = self::urlEntryForName( "Child-changed" . __FUNCTION__, $result );
@@ -1409,13 +1402,13 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
     {
         $frenchLocale = $this->frenchLanguage->attribute( 'locale' );
         ezpINIHelper::setINISettings(
-            array(
-                array( 'site.ini', 'RegionalSettings', 'ContentObjectLocale', $frenchLocale ),
-                array( 'site.ini', 'RegionalSettings', 'Locale', $frenchLocale ),
-                array( 'site.ini', 'RegionalSettings', 'SiteLanguageList', array( $frenchLocale, 'eng-GB' ) ),
+            [
+                ['site.ini', 'RegionalSettings', 'ContentObjectLocale', $frenchLocale],
+                ['site.ini', 'RegionalSettings', 'Locale', $frenchLocale],
+                ['site.ini', 'RegionalSettings', 'SiteLanguageList', [$frenchLocale, 'eng-GB']],
                 // ShowUntranslatedObjects setting AlwaysAvailable flags must be disabled
-                array( 'site.ini', 'RegionalSettings', 'ShowUntranslatedObjects', 'disabled' )
-            )
+                ['site.ini', 'RegionalSettings', 'ShowUntranslatedObjects', 'disabled'],
+            ]
         );
         eZContentOperationCollection::updateAlwaysAvailable( 1, false );
 
@@ -1430,10 +1423,10 @@ class eZURLAliasMLRegression extends ezpDatabaseTestCase
         $folder->publish();
         eZContentOperationCollection::updateAlwaysAvailable( $folder->object->attribute( 'id' ), false );
         $folder->refresh();
-        $folder->addTranslation( 'eng-GB', array( 'name' => 'english translation' ) );
+        $folder->addTranslation( 'eng-GB', ['name' => 'english translation'] );
         $folder->publish();
 
-        $generatedPath = eZURLAliasML::fetchPathByActionList( 'eznode', array( $folder->mainNode->node_id ), $frenchLocale );
+        $generatedPath = eZURLAliasML::fetchPathByActionList( 'eznode', [$folder->mainNode->node_id], $frenchLocale );
         self::assertNotNull( $generatedPath );
         self::assertEquals( 'english-translation' , $generatedPath );
 

@@ -12,16 +12,11 @@
 require_once 'autoload.php';
 
 $script = eZScript::instance(
-    array(
-        'description' =>
-            "Empty eZ Publish trash.\n" .
-            "Permanently deletes all objects in the trash.\n" .
-            "\n" .
-            "./bin/php/trashpurge.php",
-        'use-session' => false,
-        'use-modules' => false,
-        'use-extensions' => true,
-    )
+    ['description' =>
+        "Empty eZ Publish trash.\n" .
+        "Permanently deletes all objects in the trash.\n" .
+        "\n" .
+        "./bin/php/trashpurge.php", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
 );
 
 $script->startup();
@@ -29,12 +24,7 @@ $script->startup();
 $options = $script->getOptions(
     "[iteration-sleep:][iteration-limit:][memory-monitoring][trashed-days:]",
     "",
-    array(
-        'iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float. Default is one second.',
-        'iteration-limit' => 'Amount of items to remove in each iteration when performing a purge operation. Default is 100.',
-        'memory-monitoring' => 'If set, memory usage will be logged in var/log/trashpurge.log.',
-        'trashed-days'      => 'If set, only objects that has been trashed for at least the specified amount of days will be purged.'
-    )
+    ['iteration-sleep' => 'Amount of seconds to sleep between each iteration when performing a purge operation, can be a float. Default is one second.', 'iteration-limit' => 'Amount of items to remove in each iteration when performing a purge operation. Default is 100.', 'memory-monitoring' => 'If set, memory usage will be logged in var/log/trashpurge.log.', 'trashed-days'      => 'If set, only objects that has been trashed for at least the specified amount of days will be purged.']
 );
 
 $script->initialize();

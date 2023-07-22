@@ -16,23 +16,12 @@
 class ezpModuleViewNotFound extends Exception
 {
     /**
-     * @var string
-     */
-    public $moduleName;
-
-    /**
-     * @var string
-     */
-    public $viewName;
-
-    /**
      * Constructor
      *
      * @param string $moduleName
+     * @param string $viewName
      */
-    public function __construct( $moduleName, $viewName )
+    public function __construct(public $moduleName, public $viewName)
     {
-        $this->moduleName = $moduleName;
-        $this->viewName = $viewName;
     }
 }

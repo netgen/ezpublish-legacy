@@ -16,24 +16,24 @@
 
 class eZContentClassPackageHandler extends eZPackageHandler
 {
-    const ERROR_EXISTS = 1;
-    const ERROR_HAS_OBJECTS = 101;
+    final public const ERROR_EXISTS = 1;
+    final public const ERROR_HAS_OBJECTS = 101;
 
-    const ACTION_REPLACE = 1;
-    const ACTION_SKIP = 2;
-    const ACTION_NEW = 3;
-    const ACTION_DELETE = 4;
+    final public const ACTION_REPLACE = 1;
+    final public const ACTION_SKIP = 2;
+    final public const ACTION_NEW = 3;
+    final public const ACTION_DELETE = 4;
 
     public function __construct()
     {
-        parent::__construct( 'ezcontentclass', array( 'extract-install-content' => true ) );
+        parent::__construct( 'ezcontentclass', ['extract-install-content' => true] );
     }
 
     /*!
      Returns an explanation for the content class install item.
      Use $requestedInfo to request portion of info.
     */
-    function explainInstallItem( $package, $installItem, $requestedInfo = array( 'name', 'identifier', 'description', 'language_info' ) )
+    function explainInstallItem( $package, $installItem, $requestedInfo = ['name', 'identifier', 'description', 'language_info'] )
     {
         if ( $installItem['filename'] )
         {
@@ -54,7 +54,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
             $dom = $package->fetchDOMFromFile( $filepath );
             if ( $dom )
             {
-                $languageInfo = array();
+                $languageInfo = [];
 
                 $content = $dom->documentElement;
                 $classIdentifier = $explainClassIdentitier ? $content->getElementsByTagName( 'identifier' )->item( 0 )->textContent : '';
@@ -77,17 +77,15 @@ class eZContentClassPackageHandler extends eZPackageHandler
                         {
                             $serializedNameList = $serializedNameListNode->textContent;
                             $nameList = new eZContentClassNameList( $serializedNameList );
-                            $languageInfo = $explainLanguageInfo ? $nameList->languageLocaleList() : array();
+                            $languageInfo = $explainLanguageInfo ? $nameList->languageLocaleList() : [];
                             $className = $nameList->name();
                         }
                     }
                 }
 
                 $description = $explainDescription ? ezpI18n::tr( 'kernel/package', "Content class '%classname' (%classidentifier)", false,
-                                                             array( '%classname' => $className,
-                                                                    '%classidentifier' => $classIdentifier ) ) : '';
-                $explainInfo = array( 'description' => $description,
-                                      'language_info' => $languageInfo );
+                                                             ['%classname' => $className, '%classidentifier' => $classIdentifier] ) : '';
+                $explainInfo = ['description' => $description, 'language_info' => $languageInfo];
                 return $explainInfo;
             }
         }
@@ -113,8 +111,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
 
         if ( $class->isRemovable() )
         {
-            $choosenAction = $this->errorChoosenAction( self::ERROR_HAS_OBJECTS,
-                                                        $installParameters, false, $this->HandlerType );
+            $choosenAction = static::errorChoosenAction(self::ERROR_HAS_OBJECTS, $installParameters, false, $this->HandlerType);
             if ( $choosenAction == self::ACTION_SKIP )
             {
                 return true;
@@ -125,15 +122,10 @@ class eZContentClassPackageHandler extends eZPackageHandler
                 $name = $class->attribute( 'name' );
                 if ( $objectsCount )
                 {
-                    $installParameters['error'] = array( 'error_code' => self::ERROR_HAS_OBJECTS,
-                                                         'element_id' => $classRemoteID,
-                                                         'description' => ezpI18n::tr( 'kernel/package',
-                                                                                  "Removing class '%classname' will result in the removal of %objectscount object(s) of this class and all their sub-items. Are you sure you want to uninstall it?",
-                                                                                  false,
-                                                                                  array( '%classname' => $name,
-                                                                                         '%objectscount' => $objectsCount ) ),
-                                                         'actions' => array( self::ACTION_DELETE => "Uninstall class and object(s)",
-                                                                             self::ACTION_SKIP => 'Skip' ) );
+                    $installParameters['error'] = ['error_code' => self::ERROR_HAS_OBJECTS, 'element_id' => $classRemoteID, 'description' => ezpI18n::tr( 'kernel/package',
+                                             "Removing class '%classname' will result in the removal of %objectscount object(s) of this class and all their sub-items. Are you sure you want to uninstall it?",
+                                             false,
+                                             ['%classname' => $name, '%objectscount' => $objectsCount] ), 'actions' => [self::ACTION_DELETE => "Uninstall class and object(s)", self::ACTION_SKIP => 'Skip']];
                     return false;
                 }
             }
@@ -201,10 +193,9 @@ class eZContentClassPackageHandler extends eZPackageHandler
         {
             $className = $class->name();
             $description = ezpI18n::tr( 'kernel/package', "Class '%classname' already exists.", false,
-                                   array( '%classname' => $className ) );
+                                   ['%classname' => $className] );
 
-            $choosenAction = $this->errorChoosenAction( self::ERROR_EXISTS,
-                                                        $installParameters, $description, $this->HandlerType );
+            $choosenAction = static::errorChoosenAction(self::ERROR_EXISTS, $installParameters, $description, $this->HandlerType);
             switch( $choosenAction )
             {
             case eZPackage::NON_INTERACTIVE:
@@ -227,10 +218,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
                 break;
 
             default:
-                $installParameters['error'] = array( 'error_code' => self::ERROR_EXISTS,
-                                                     'element_id' => $classRemoteID,
-                                                     'description' => $description,
-                                                     'actions' => array() );
+                $installParameters['error'] = ['error_code' => self::ERROR_EXISTS, 'element_id' => $classRemoteID, 'description' => $description, 'actions' => []];
                 if ( $class->isRemovable() )
                 {
                     $errorMsg = ezpI18n::tr( 'kernel/package', "Replace existing class" );
@@ -257,7 +245,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
             if ( $classList )
             {
                 // "increment" class identifier
-                if ( preg_match( '/^(.*)_(\d+)$/', $currentClassIdentifier, $matches ) )
+                if ( preg_match( '/^(.*)_(\d+)$/', (string) $currentClassIdentifier, $matches ) )
                     $currentClassIdentifier = $matches[1] . '_' . ( $matches[2] + 1 );
                 else
                     $currentClassIdentifier = $currentClassIdentifier . '_1';
@@ -270,17 +258,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
 
         $classIdentifier = $currentClassIdentifier;
 
-        $values = array( 'version' => 0,
-                         'serialized_name_list' => $classNameList->serializeNames(),
-                         'serialized_description_list' => $classDescriptionList->serializeNames(),
-                         'create_lang_if_not_exist' => true,
-                         'identifier' => $classIdentifier,
-                         'remote_id' => $classRemoteID,
-                         'contentobject_name' => $classObjectNamePattern,
-                         'url_alias_name' => $classURLAliasPattern,
-                         'is_container' => $classIsContainer,
-                         'created' => $classCreated,
-                         'modified' => $classModified );
+        $values = ['version' => 0, 'serialized_name_list' => $classNameList->serializeNames(), 'serialized_description_list' => $classDescriptionList->serializeNames(), 'create_lang_if_not_exist' => true, 'identifier' => $classIdentifier, 'remote_id' => $classRemoteID, 'contentobject_name' => $classObjectNamePattern, 'url_alias_name' => $classURLAliasPattern, 'is_container' => $classIsContainer, 'created' => $classCreated, 'modified' => $classModified];
 
         if ( $content->hasAttribute( 'sort-field' ) )
         {
@@ -320,9 +298,9 @@ class eZContentClassPackageHandler extends eZPackageHandler
         $classID = $class->attribute( 'id' );
 
         if ( !isset( $installData['classid_list'] ) )
-            $installData['classid_list'] = array();
+            $installData['classid_list'] = [];
         if ( !isset( $installData['classid_map'] ) )
-            $installData['classid_map'] = array();
+            $installData['classid_map'] = [];
         $installData['classid_list'][] = $class->attribute( 'id' );
         $installData['classid_map'][$classID] = $class->attribute( 'id' );
 
@@ -330,15 +308,15 @@ class eZContentClassPackageHandler extends eZPackageHandler
         $classAttributeList = $classAttributesNode->getElementsByTagName( 'attribute' );
         foreach ( $classAttributeList as $classAttributeNode )
         {
-            $isNotSupported = strtolower( $classAttributeNode->getAttribute( 'unsupported' ) ) == 'true';
+            $isNotSupported = strtolower( (string) $classAttributeNode->getAttribute( 'unsupported' ) ) == 'true';
             if ( $isNotSupported )
                 continue;
 
             $attributeDatatype = $classAttributeNode->getAttribute( 'datatype' );
-            $attributeIsRequired = strtolower( $classAttributeNode->getAttribute( 'required' ) ) == 'true';
-            $attributeIsSearchable = strtolower( $classAttributeNode->getAttribute( 'searchable' ) ) == 'true';
-            $attributeIsInformationCollector = strtolower( $classAttributeNode->getAttribute( 'information-collector' ) ) == 'true';
-            $attributeIsTranslatable = strtolower( $classAttributeNode->getAttribute( 'translatable' ) ) == 'true';
+            $attributeIsRequired = strtolower( (string) $classAttributeNode->getAttribute( 'required' ) ) == 'true';
+            $attributeIsSearchable = strtolower( (string) $classAttributeNode->getAttribute( 'searchable' ) ) == 'true';
+            $attributeIsInformationCollector = strtolower( (string) $classAttributeNode->getAttribute( 'information-collector' ) ) == 'true';
+            $attributeIsTranslatable = strtolower( (string) $classAttributeNode->getAttribute( 'translatable' ) ) == 'true';
             $attributeSerializedNameListNode = $classAttributeNode->getElementsByTagName( 'serialized-name-list' )->item( 0 );
             $attributeSerializedNameListContent = $attributeSerializedNameListNode ? $attributeSerializedNameListNode->textContent : false;
             $attributeSerializedNameList = new eZSerializedObjectNameList( $attributeSerializedNameListContent );
@@ -366,17 +344,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
             {
                 $classAttribute = eZContentClassAttribute::create( $class->attribute( 'id' ),
                                                                    $attributeDatatype,
-                                                                   array( 'version' => 0,
-                                                                          'identifier' => $attributeIdentifier,
-                                                                          'serialized_name_list' => $attributeSerializedNameList->serializeNames(),
-                                                                          'serialized_description_list' => $attributeSerializedDescriptionList->serializeNames(),
-                                                                          'category' => $attributeCategory,
-                                                                          'serialized_data_text' => $attributeSerializedDataText->serializeNames(),
-                                                                          'is_required' => $attributeIsRequired,
-                                                                          'is_searchable' => $attributeIsSearchable,
-                                                                          'is_information_collector' => $attributeIsInformationCollector,
-                                                                          'can_translate' => $attributeIsTranslatable,
-                                                                          'placement' => $attributePlacement ) );
+                                                                   ['version' => 0, 'identifier' => $attributeIdentifier, 'serialized_name_list' => $attributeSerializedNameList->serializeNames(), 'serialized_description_list' => $attributeSerializedDescriptionList->serializeNames(), 'category' => $attributeCategory, 'serialized_data_text' => $attributeSerializedDataText->serializeNames(), 'is_required' => $attributeIsRequired, 'is_searchable' => $attributeIsSearchable, 'is_information_collector' => $attributeIsInformationCollector, 'can_translate' => $attributeIsTranslatable, 'placement' => $attributePlacement] );
 
                 $dataType = $classAttribute->dataType();
                 $classAttribute->store();
@@ -410,7 +378,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
             $classIdentifier = $classItem['identifier'];
             $classValue = $classItem['value'];
             $cli->notice( "Adding class $classValue to package" );
-            $this->addClass( $package, $classID, $classIdentifier );
+            static::addClass($package, $classID, $classIdentifier);
         }
     }
 
@@ -433,11 +401,11 @@ class eZContentClassPackageHandler extends eZPackageHandler
             $classIdentifier = $class->attribute( 'identifier' );
         $package->appendInstall( 'ezcontentclass', false, false, true,
                                  'class-' . $classIdentifier, 'ezcontentclass',
-                                 array( 'content' => $classNode ) );
+                                 ['content' => $classNode] );
         $package->appendProvides( 'ezcontentclass', 'contentclass', $class->attribute( 'identifier' ) );
         $package->appendInstall( 'ezcontentclass', false, false, false,
                                  'class-' . $classIdentifier, 'ezcontentclass',
-                                 array( 'content' => false ) );
+                                 ['content' => false] );
     }
 
     function handleAddParameters( $packageType, $package, $cli, $arguments )
@@ -455,7 +423,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
         {
             if ( $argument[0] == '-' )
             {
-                if ( strlen( $argument ) > 1 and
+                if ( strlen( (string) $argument ) > 1 and
                      $argument[1] == '-' )
                 {
                 }
@@ -467,8 +435,8 @@ class eZContentClassPackageHandler extends eZPackageHandler
             {
                 if ( $classList === false )
                 {
-                    $classList = array();
-                    $classArray = explode( ',', $argument );
+                    $classList = [];
+                    $classArray = explode( ',', (string) $argument );
                     $error = false;
                     foreach ( $classArray as $classID )
                     {
@@ -488,9 +456,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
                             {
                                 unset( $class );
                                 $class = eZContentClass::fetch( $classID );
-                                $classList[] = array( 'id' => $classID,
-                                                      'identifier' => $class->attribute( 'identifier' ),
-                                                      'value' => $classID );
+                                $classList[] = ['id' => $classID, 'identifier' => $class->attribute( 'identifier' ), 'value' => $classID];
                             }
                         }
                         else
@@ -505,9 +471,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
                             {
                                 unset( $class );
                                 $class = eZContentClass::fetch( $realClassID );
-                                $classList[] = array( 'id' => $realClassID,
-                                                      'identifier' => $class->attribute( 'identifier' ),
-                                                      'value' => $classID );
+                                $classList[] = ['id' => $realClassID, 'identifier' => $class->attribute( 'identifier' ), 'value' => $classID];
                             }
                         }
                     }
@@ -521,7 +485,7 @@ class eZContentClassPackageHandler extends eZPackageHandler
             $cli->error( "No class ids chosen" );
             return false;
         }
-        return array( 'class-list' => $classList );
+        return ['class-list' => $classList];
     }
 
     /*!

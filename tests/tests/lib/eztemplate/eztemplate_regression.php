@@ -1,10 +1,7 @@
 <?php
 class eZTemplateRegression extends ezpDatabaseTestCase
 {
-    /**
-     * @var eZTemplate
-     */
-    private $tpl;
+    private ?\eZTemplate $tpl = null;
 
     public function setUp()
     {
@@ -33,7 +30,7 @@ class eZTemplateRegression extends ezpDatabaseTestCase
     {
         $namespace = "myNamespace";
         $varName = "foo";
-        $aVal = array( "bar", "baz", "biz" ); // Simulate 3 level of nesting
+        $aVal = ["bar", "baz", "biz"]; // Simulate 3 level of nesting
         $previousVal = null;
         $nestingLevel = 0;
 

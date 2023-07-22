@@ -17,13 +17,12 @@
 
 class eZProductCategoryType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezproductcategory";
+    final public const DATA_TYPE_STRING = "ezproductcategory";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Product category", 'Datatype name' ),
-                           array( 'serialize_supported' => true,
-                                  'object_serialize_map' => array( 'data_int' => 'value' ) ) );
+                           ['serialize_supported' => true, 'object_serialize_map' => ['data_int' => 'value']] );
     }
 
    /*!
@@ -149,7 +148,7 @@ class eZProductCategoryType extends eZDataType
         $category =  $contentObjectAttribute->attribute( 'content' );
         if ( $category )
         {
-            return implode( '|', array( $category->attribute( 'name' ), $category->attribute( 'id' ) ) );
+            return implode( '|', [$category->attribute( 'name' ), $category->attribute( 'id' )] );
         }
         return '';
     }
@@ -159,7 +158,7 @@ class eZProductCategoryType extends eZDataType
     {
         if ( $string == '' )
             return true;
-        $categoryData = explode( '|', $string );
+        $categoryData = explode( '|', (string) $string );
 
         if ( isset ( $categoryData[1]  ) )
         {
@@ -206,7 +205,7 @@ class eZProductCategoryType extends eZDataType
     function batchInitializeObjectAttributeData( $classAttribute )
     {
         $default = 0;
-        return array( 'data_int' => $default, 'sort_key_int' => $default );
+        return ['data_int' => $default, 'sort_key_int' => $default];
     }
 }
 

@@ -12,25 +12,21 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Code Template Generator\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Code Template Generator\n\n" .
                                                         "This will apply any template blocks it finds in files\n" .
                                                         "and writes back the new file\n" .
                                                         "\n" .
                                                         "The return code is set to 0 if no changes occured, 1 if a file is changed\n" .
-                                                        "or 2 if an error occurs" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "or 2 if an error occurs" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[a|all][check-only]",
                                 "[file]",
-                                array( 'all' => 'Go trough all files defined in codetemplate.ini',
-                                       'check-only' => 'Will only check if the files will be changed or have errors' ) );
+                                ['all' => 'Go trough all files defined in codetemplate.ini', 'check-only' => 'Will only check if the files will be changed or have errors'] );
 $script->initialize();
 
-if ( !$options['all'] and count( $options['arguments'] ) < 1 )
+if ( !$options['all'] and (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $cli->error( "Need at least one file" );
     $script->shutdown( 1 );

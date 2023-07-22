@@ -8,11 +8,8 @@
  * @package kernel
  */
 
-$MarkDefinition = array( 'name' => 'Hashing',
-                         'marks' => array() );
+$MarkDefinition = ['name' => 'Hashing', 'marks' => []];
 
-$MarkDefinition['marks'][] = array( 'name' => 'MD5-CRC32',
-                                    'file' => 'ezmarkhashing.php',
-                                    'class' => 'eZMarkHashing' );
+$MarkDefinition['marks'][] = ['name' => 'MD5-CRC32', 'file' => 'ezmarkhashing.php', 'class' => 'eZMarkHashing'];
 
 ?>

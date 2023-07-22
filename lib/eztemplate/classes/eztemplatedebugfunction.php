@@ -85,7 +85,7 @@ class eZTemplateDebugFunction
     */
     function functionList()
     {
-        return array( $this->TimingPointName, $this->AccumulatorName, $this->LogName, $this->TraceName );
+        return [$this->TimingPointName, $this->AccumulatorName, $this->LogName, $this->TraceName];
     }
 
     /*!
@@ -95,36 +95,12 @@ class eZTemplateDebugFunction
      */
     function attributeList()
     {
-        return array(
-            $this->TimingPointName => true,
-            $this->AccumulatorName => true,
-            $this->LogName => false,
-            $this->TraceName => true
-        );
+        return [$this->TimingPointName => true, $this->AccumulatorName => true, $this->LogName => false, $this->TraceName => true];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->TimingPointName => array( 'parameters' => true,
-                                                       'static' => false,
-                                                       'transform-children' => true,
-                                                       'tree-transformation' => true,
-                                                       'transform-parameters' => true ),
-                      $this->AccumulatorName => array( 'parameters' => true,
-                                                       'static' => false,
-                                                       'transform-children' => true,
-                                                       'tree-transformation' => true,
-                                                       'transform-parameters' => true ),
-                      $this->LogName => array( 'parameters' => true,
-                                               'static' => false,
-                                               'transform-children' => true,
-                                               'tree-transformation' => true,
-                                               'transform-parameters' => true ),
-                      $this->TraceName => array( 'parameters' => true,
-                                                 'static' => false,
-                                                 'transform-children' => true,
-                                                 'tree-transformation' => true,
-                                                 'transform-parameters' => true ) );
+        return [$this->TimingPointName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true], $this->AccumulatorName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true], $this->LogName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true], $this->TraceName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -140,7 +116,7 @@ class eZTemplateDebugFunction
                 $id = eZTemplateNodeTool::elementConstantValue( $parameters['id'] );
             }
 
-            $newNodes = array();
+            $newNodes = [];
 
             $startDescription = "debug-timing-point START: $id";
             $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "eZDebug::addTimingPoint( " . var_export( $startDescription, true ) . " );" );
@@ -174,7 +150,7 @@ class eZTemplateDebugFunction
             $name = ( $name === false and $id === false ) ?  $functionName : $name;
             // To uniquely identify this accumulator.
             $id = $id === false ? uniqID( $functionName . '_' ): $id;
-            $newNodes = array();
+            $newNodes = [];
 
             if ( $name )
             {
@@ -195,7 +171,7 @@ class eZTemplateDebugFunction
         else if ( $functionName == $this->LogName )
         {
             $nodePlacement  = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-            $newNodes = array();
+            $newNodes = [];
 
             $varIsSet = $msgIsSet = false;
             if ( isset( $parameters['var'] ) )
@@ -212,9 +188,9 @@ class eZTemplateDebugFunction
             $newNodes[]= eZTemplateNodeTool::createCodePieceNode( "// debug-log starts\n" );
 
             if ( $varIsSet )
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $var, $nodePlacement, array( 'treat-value-as-non-object' => true ), 'debug_log_var' );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $var, $nodePlacement, ['treat-value-as-non-object' => true], 'debug_log_var' );
             if ( $msgIsSet )
-                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $msg, $nodePlacement, array( 'treat-value-as-non-object' => true ), 'debug_log_msg' );
+                $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $msg, $nodePlacement, ['treat-value-as-non-object' => true], 'debug_log_msg' );
 
             if ( $varIsSet && $msgIsSet )
                  $newNodes[]= eZTemplateNodeTool::createCodePieceNode( "eZDebug::writeDebug( \$debug_log_var, \$debug_log_msg );\n" );
@@ -245,7 +221,7 @@ class eZTemplateDebugFunction
             if ( !$id )
                 $id = 'template-debug';
 
-            $newNodes = array();
+            $newNodes = [];
 
             $code = ( "if ( extension_loaded( 'xdebug' ) )\n" .
                       "{\n" .

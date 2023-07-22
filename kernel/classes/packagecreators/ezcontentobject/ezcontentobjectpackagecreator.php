@@ -18,19 +18,9 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
 {
     public function __construct( $id )
     {
-        $steps = array();
-        $steps[] = array( 'id' => 'object',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Content objects to include' ),
-                          'methods' => array( 'initialize' => 'initializeObjectList',
-                                              'load' => 'loadObjectList',
-                                              'validate' => 'validateObjectList' ),
-                          'template' => 'object_select.tpl' );
-        $steps[] = array( 'id' => 'object_limits',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Content object limits' ),
-                          'methods' => array( 'initialize' => 'initializeObjectLimits',
-                                              'load' => 'loadObjectLimits',
-                                              'validate' => 'validateObjectLimits' ),
-                          'template' => 'object_limit.tpl' );
+        $steps = [];
+        $steps[] = ['id' => 'object', 'name' => ezpI18n::tr( 'kernel/package', 'Content objects to include' ), 'methods' => ['initialize' => 'initializeObjectList', 'load' => 'loadObjectList', 'validate' => 'validateObjectList'], 'template' => 'object_select.tpl'];
+        $steps[] = ['id' => 'object_limits', 'name' => ezpI18n::tr( 'kernel/package', 'Content object limits' ), 'methods' => ['initialize' => 'initializeObjectLimits', 'load' => 'loadObjectLimits', 'validate' => 'validateObjectLimits'], 'template' => 'object_limit.tpl'];
         $steps[] = $this->packageInformationStep();
         $steps[] = $this->packageMaintainerStep();
         $steps[] = $this->packageChangelogStep();
@@ -76,32 +66,20 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
 
     function initializeObjectList( $package, $http, $step, &$persistentData, $tpl )
     {
-        $persistentData['node_list'] = array();
+        $persistentData['node_list'] = [];
     }
 
     function loadObjectList( $package, $http, $step, &$persistentData, $tpl, &$module )
     {
         if ( $http->hasPostVariable( 'AddSubtree' ) )
         {
-            eZContentBrowse::browse( array( 'action_name' => 'FindLimitationSubtree',
-                                            'description_template' => 'design:package/creators/ezcontentobject/browse_subtree.tpl',
-                                            'from_page' => '/package/create',
-                                            'persistent_data' => array( 'PackageStep' => $http->postVariable( 'PackageStep' ),
-                                                                        'CreatorItemID' => $http->postVariable( 'CreatorItemID' ),
-                                                                        'CreatorStepID' => $http->postVariable( 'CreatorStepID' ),
-                                                                        'Subtree' => 1 ) ),
-                                     $module );
+            eZContentBrowse::browse( $module,
+                                     ['action_name' => 'FindLimitationSubtree', 'description_template' => 'design:package/creators/ezcontentobject/browse_subtree.tpl', 'from_page' => '/package/create', 'persistent_data' => ['PackageStep' => $http->postVariable( 'PackageStep' ), 'CreatorItemID' => $http->postVariable( 'CreatorItemID' ), 'CreatorStepID' => $http->postVariable( 'CreatorStepID' ), 'Subtree' => 1]] );
         }
         else if ( $http->hasPostVariable( 'AddNode' ) )
         {
-            eZContentBrowse::browse( array( 'action_name' => 'FindLimitationNode',
-                                            'description_template' => 'design:package/creators/ezcontentobject/browse_node.tpl',
-                                            'from_page' => '/package/create',
-                                            'persistent_data' => array( 'PackageStep' => $http->postVariable( 'PackageStep' ),
-                                                                        'CreatorItemID' => $http->postVariable( 'CreatorItemID' ),
-                                                                        'CreatorStepID' => $http->postVariable( 'CreatorStepID' ),
-                                                                        'Node' => 1) ),
-                                     $module );
+            eZContentBrowse::browse( $module,
+                                     ['action_name' => 'FindLimitationNode', 'description_template' => 'design:package/creators/ezcontentobject/browse_node.tpl', 'from_page' => '/package/create', 'persistent_data' => ['PackageStep' => $http->postVariable( 'PackageStep' ), 'CreatorItemID' => $http->postVariable( 'CreatorItemID' ), 'CreatorStepID' => $http->postVariable( 'CreatorStepID' ), 'Node' => 1]] );
         }
         else if( $http->hasPostVariable( 'RemoveSelected' ) )
         {
@@ -120,8 +98,7 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
             {
                 foreach( $http->postVariable( 'SelectedNodeIDArray' ) as $nodeID )
                 {
-                    $persistentData['node_list'][] = array( 'id' => $nodeID,
-                                                            'type' => 'subtree' );
+                    $persistentData['node_list'][] = ['id' => $nodeID, 'type' => 'subtree'];
                 }
             }
             else if ( $http->hasPostVariable( 'Node' ) &&
@@ -129,8 +106,7 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
             {
                 foreach( $http->postVariable( 'SelectedNodeIDArray' ) as $nodeID )
                 {
-                    $persistentData['node_list'][] = array( 'id' => $nodeID,
-                                                            'type' => 'node' );
+                    $persistentData['node_list'][] = ['id' => $nodeID, 'type' => 'node'];
                 }
             }
         }
@@ -143,10 +119,9 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
     */
     function validateObjectList( $package, $http, $currentStepID, &$stepMap, &$persistentData, &$errorList )
     {
-        if ( count( $persistentData['node_list'] ) == 0 )
+        if ( (is_countable($persistentData['node_list']) ? count( $persistentData['node_list'] ) : 0) == 0 )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must select one or more node(s)/subtree(s) for export.' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must select one or more node(s)/subtree(s) for export.' )];
             return false;
         }
 
@@ -155,17 +130,10 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
 
     function initializeObjectLimits( $package, $http, $step, &$persistentData, $tpl )
     {
-        $persistentData['object_options'] = array( 'include_classes' => 1,
-                                                   'include_templates' => 1,
-                                                   'site_access_array' => array(),
-                                                   'versions' => 'current',
-                                                   'language_array' => array(),
-                                                   'node_assignment' => 'selected',
-                                                   'related_objects' => 'selected',
-                                                   'embed_objects' => 'selected' );
+        $persistentData['object_options'] = ['include_classes' => 1, 'include_templates' => 1, 'site_access_array' => [], 'versions' => 'current', 'language_array' => [], 'node_assignment' => 'selected', 'related_objects' => 'selected', 'embed_objects' => 'selected'];
 
         $ini = eZINI::instance();
-        $persistentData['object_options']['site_access_array'] = array( $ini->variable( 'SiteSettings', 'DefaultAccess' ) );
+        $persistentData['object_options']['site_access_array'] = [$ini->variable( 'SiteSettings', 'DefaultAccess' )];
 
         $availableLanguages = eZContentObject::translationList();
         foreach ( $availableLanguages as $language )
@@ -180,11 +148,10 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
         $availableSiteAccesses = $ini->variable( 'SiteAccessSettings', 'RelatedSiteAccessList' );
 
         $availableLanguages = eZContentObject::translationList();
-        $availableLanguageArray = array();
+        $availableLanguageArray = [];
         foreach ( $availableLanguages as $language )
         {
-            $availableLanguageArray[] = array( 'name' => $language->attribute( 'language_name' ),
-                                               'locale' => $language->attribute( 'locale_code' ) );
+            $availableLanguageArray[] = ['name' => $language->attribute( 'language_name' ), 'locale' => $language->attribute( 'locale_code' )];
         }
 
         $tpl->setVariable( 'available_site_accesses', $availableSiteAccesses );
@@ -209,18 +176,16 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
         $options['minimal_template_set'] = $http->hasPostVariable( 'MinimalTemplateSet' ) ? $http->postVariable( 'MinimalTemplateSet' ) : false;
 
         $result = true;
-        if ( count( $persistentData['object_options']['language_array'] ) == 0 )
+        if ( (is_countable($persistentData['object_options']['language_array']) ? count( $persistentData['object_options']['language_array'] ) : 0) == 0 )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must choose one or more languages.' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must choose one or more languages.' )];
             $result = false;
         }
 
         if ( $persistentData['object_options']['include_templates'] &&
-             count( $persistentData['object_options']['site_access_array'] ) == 0 )
+             (is_countable($persistentData['object_options']['site_access_array']) ? count( $persistentData['object_options']['site_access_array'] ) : 0) == 0 )
         {
-            $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ),
-                                  'description' => ezpI18n::tr( 'kernel/package', 'You must choose one or more site access.' ) );
+            $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Selected nodes' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must choose one or more site access.' )];
             $result = false;
         }
 
@@ -236,12 +201,12 @@ class eZContentObjectPackageCreator extends eZPackageCreationHandler
         $options = $persistentData['object_options'];
         $nodeCount = 0;
         $description = 'This package contains the following nodes :' . "\n";
-        $nodeNames = array();
+        $nodeNames = [];
         foreach( $nodeList as $nodeInfo )
         {
             $contentNode = eZContentObjectTreeNode::fetch( $nodeInfo['id'] );
             $description .= $contentNode->attribute( 'name' ) . ' - ' . $nodeInfo['type'] . "\n";
-            $nodeNames[] = trim( $contentNode->attribute( 'name' ) );
+            $nodeNames[] = trim( (string) $contentNode->attribute( 'name' ) );
             if ( $nodeInfo['type'] == 'node' )
             {
                 ++$nodeCount;

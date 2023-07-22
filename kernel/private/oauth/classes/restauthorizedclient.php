@@ -36,7 +36,7 @@ class ezpRestAuthorizedClient
 
     public function getState()
     {
-        $result = array();
+        $result = [];
         $result['id'] = $this->id;
         $result['rest_client_id'] = $this->rest_client_id;
         $result['user_id'] = $this->user_id;
@@ -54,19 +54,17 @@ class ezpRestAuthorizedClient
 
     /**
      * Returns the authorization object for a user & application
-     * @param ezpRestClient $client
-     * @param eZUser $user
      */
     public static function fetchForClientUser( ezpRestClient $client, eZUser $user )
     {
         $session = ezcPersistentSessionInstance::get();
 
-        $q = $session->createFindQuery( __CLASS__ );
+        $q = $session->createFindQuery( self::class );
 
         $q->where( $q->expr->eq( 'rest_client_id', $q->bindValue( $client->id ) ) )
           ->where( $q->expr->eq( 'user_id', $q->bindValue( $user->attribute( 'contentobject_id' ) ) ) );
 
-        $results = $session->find( $q, __CLASS__ );
+        $results = $session->find( $q, self::class );
 
         if ( count( $results ) != 1 )
             return false;

@@ -34,10 +34,10 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
         $folder->short_description = "123";
         $folder->publish();
 
-        $identifiers = array( 'name' );
+        $identifiers = ['name'];
 
         $objects = $folder->fetchAttributesByIdentifier( $identifiers, false, false );
-        $objects2 = $folder->fetchAttributesByIdentifier( $identifiers, false, array( false ) );
+        $objects2 = $folder->fetchAttributesByIdentifier( $identifiers, false, [false] );
 
         self::assertEquals( $objects, $objects2 );
     }
@@ -97,18 +97,18 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
 
         $obj->addNode( $objectNode2->mainNode->node_id );
         //create a translation
-        $languageData = array();
+        $languageData = [];
         $languageData['title'] = 'Norsk artikkel';
         $languageData['body'] = 'Dette er en norsk artikkel.';
         $obj->addTranslation( 'nor-NO', $languageData );
 
         //assert the main language and translation language
         $objectMainNode = $obj->object->mainNode();
-        $this->assertEquals( 'English article', $objectMainNode ->getName() );
-        $this->assertEquals( 'Norsk artikkel', $objectMainNode->getName( 'nor-NO' ) );
+        static::assertEquals('English article', $objectMainNode ->getName());
+        static::assertEquals('Norsk artikkel', $objectMainNode->getName( 'nor-NO' ));
         $tempLanguage = $objectMainNode->currentLanguage();
         $objectMainNode->setCurrentLanguage( 'nor-NO' );
-        $this->assertEquals( 'Norsk artikkel', $objectMainNode->attribute( 'name' ) );
+        static::assertEquals('Norsk artikkel', $objectMainNode->attribute( 'name' ));
         $objectMainNode->setCurrentLanguage( $tempLanguage );
     }
 
@@ -148,17 +148,11 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
         }
 
         // and create a new one
-        $nodeAssignment = eZNodeAssignment::create( array(
-                                                         'contentobject_id' => $newObject->attribute( 'id' ),
-                                                         'contentobject_version' => $curVersion,
-                                                         'parent_node' => $newParentNodeID,
-                                                         'is_main' => 1
-                                                         ) );
+        $nodeAssignment = eZNodeAssignment::create( ['contentobject_id' => $newObject->attribute( 'id' ), 'contentobject_version' => $curVersion, 'parent_node' => $newParentNodeID, 'is_main' => 1] );
         $nodeAssignment->store();
 
         // publish the newly created object
-        eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $newObject->attribute( 'id' ),
-                                                                  'version'   => $curVersion ) );
+        eZOperationHandler::execute( 'content', 'publish', ['object_id' => $newObject->attribute( 'id' ), 'version'   => $curVersion] );
         // Update "is_invisible" attribute for the newly created node.
         $newNode = $newObject->attribute( 'main_node' );
         eZContentObjectTreeNode::updateNodeVisibility( $newNode, $newParentNode );
@@ -170,7 +164,7 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
     public static function compareObjectAttributeIds( $object )
     {
         $dataMap = $object->dataMap();
-        $attrIdMap = array();
+        $attrIdMap = [];
 
         foreach( $dataMap as $attr )
         {
@@ -185,6 +179,10 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
      */
     public function testIssue16299()
     {
+        $article1 = null;
+        $article2 = null;
+        $link1 = null;
+        $link2 = null;
         // Create a folder object that will be used as a target for relations
         $folder = new ezpObject( "folder", 2 );
         $folder->name = __FUNCTION__;
@@ -192,35 +190,33 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
         $folder->publish();
 
         // Create two links & two articles that will be related to the folder created above
-        foreach( array( 1, 2 ) as $index )
+        foreach( [1, 2] as $index )
         {
             $varName = "link{$index}";
-            $$varName = new ezpObject( "link", 2 );
-            $$varName->name = "Link " . __FUNCTION__ . " #{$index}";
-            $$varName->location = 'http://ez.no/';
-            $$varName->addContentObjectRelation( $folder->id );
-            $$varName->publish();
+            ${$varName} = new ezpObject( "link", 2 );
+            ${$varName}->name = "Link " . __FUNCTION__ . " #{$index}";
+            ${$varName}->location = 'http://ez.no/';
+            ${$varName}->addContentObjectRelation( $folder->id );
+            ${$varName}->publish();
         }
-        foreach( array( 1, 2 ) as $index )
+        foreach( [1, 2] as $index )
         {
             $varName = "article{$index}";
-            $$varName = new ezpObject( "article", 2 );
-            $$varName->title = "Article " .__FUNCTION__ . " #{$index}";
-            $$varName->intro = __METHOD__;
-            $$varName->addContentObjectRelation( $folder->id );
-            $$varName->publish();
+            ${$varName} = new ezpObject( "article", 2 );
+            ${$varName}->title = "Article " .__FUNCTION__ . " #{$index}";
+            ${$varName}->intro = __METHOD__;
+            ${$varName}->addContentObjectRelation( $folder->id );
+            ${$varName}->publish();
         }
 
         // Call the fetch reverse_related_objects fetch function
         // The array( 'foo', false ) sort_by item should be ignored
         $result = eZFunctionHandler::execute(
             'content', 'reverse_related_objects',
-            array(
-                'object_id' => $folder->id,
-                'sort_by' => array( array( 'name', true ), array( 'foo', false ) ) ) );
+            ['object_id' => $folder->id, 'sort_by' => [['name', true], ['foo', false]]] );
 
         self::assertInternalType( 'array', $result );
-        self::assertEquals( 4, count( $result ), "Expecting 4 objects fetched" );
+        self::assertEquals( 4, is_countable($result) ? count( $result ) : 0, "Expecting 4 objects fetched" );
 
         // Sort by name:
         self::assertEquals( $article1->id, $result[0]->attribute( 'id' ) );
@@ -233,22 +229,18 @@ class eZContentObjectRegression extends ezpDatabaseTestCase
         // This validates the behaviour with only one parameter, as the code's different
         $result = eZFunctionHandler::execute(
             'content', 'reverse_related_objects',
-            array(
-                'object_id' => $folder->id,
-                'sort_by' => array( 'foo', false ) ) );
+            ['object_id' => $folder->id, 'sort_by' => ['foo', false]] );
         self::assertInternalType( 'array', $result );
-        self::assertEquals( 4, count( $result ), "Expecting 4 objects fetched" );
+        self::assertEquals( 4, is_countable($result) ? count( $result ) : 0, "Expecting 4 objects fetched" );
 
         // Call the fetch reverse_related_objects fetch function
         // The array( 'foo', false ) sort_by item should be ignored, and random sorting should occur
         // This validates the behaviour with only one (correct) parameter
         $result = eZFunctionHandler::execute(
         'content', 'reverse_related_objects',
-        array(
-            'object_id' => $folder->id,
-            'sort_by' => array( 'class_identifier', true ) ) );
+        ['object_id' => $folder->id, 'sort_by' => ['class_identifier', true]] );
         self::assertInternalType( 'array', $result );
-        self::assertEquals( 4, count( $result ), "Expecting 4 objects fetched" );
+        self::assertEquals( 4, is_countable($result) ? count( $result ) : 0, "Expecting 4 objects fetched" );
     }
 
     /**

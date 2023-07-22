@@ -13,9 +13,7 @@ $tpl = eZTemplate::factory();
 
 if ( $SectionID == 0 )
 {
-    $section = array( 'id' => 0,
-                      'name' => ezpI18n::tr( 'kernel/section', 'New section' ),
-                      'navigation_part_identifier' => 'ezcontentnavigationpart' );
+    $section = ['id' => 0, 'name' => ezpI18n::tr( 'kernel/section', 'New section' ), 'navigation_part_identifier' => 'ezcontentnavigationpart'];
 }
 else
 {
@@ -30,10 +28,10 @@ if ( $http->hasPostVariable( "StoreButton" ) )
 {
     if ( $SectionID == 0 )
     {
-        $section = new eZSection( array() );
+        $section = new eZSection( [] );
     }
     $section->setAttribute( 'name', $http->postVariable( 'Name' ) );
-    $sectionIdentifier = trim( $http->postVariable( 'SectionIdentifier' ) );
+    $sectionIdentifier = trim( (string) $http->postVariable( 'SectionIdentifier' ) );
     $errorMessage = '';
     if( $sectionIdentifier === '' )
     {
@@ -46,10 +44,9 @@ if ( $http->hasPostVariable( "StoreButton" ) )
     }
     else
     {
-        $conditions = array( 'identifier' => $sectionIdentifier,
-                             'id' => array( '!=', !empty( $SectionID ) ? $SectionID : 0 ) );
+        $conditions = ['identifier' => $sectionIdentifier, 'id' => ['!=', !empty( $SectionID ) ? $SectionID : 0]];
         $existingSection = eZSection::fetchFilteredList( $conditions );
-        if( count( $existingSection ) > 0 )
+        if( (is_countable($existingSection) ? count( $existingSection ) : 0) > 0 )
         {
             $errorMessage = ezpI18n::tr( 'design/admin/section/edit', 'The identifier has been used in another section.' );
         }
@@ -62,7 +59,7 @@ if ( $http->hasPostVariable( "StoreButton" ) )
     {
         $section->store();
         eZContentCacheManager::clearContentCacheIfNeededBySectionID( $section->attribute( 'id' ) );
-        ezpEvent::getInstance()->notify( 'content/section/cache', array( $section->attribute( 'id' ) ) );
+        ezpEvent::getInstance()->notify( 'content/section/cache', [$section->attribute( 'id' )] );
         $Module->redirectTo( $Module->functionURI( 'list' ) );
         return;
     }
@@ -79,11 +76,8 @@ if ( $http->hasPostVariable( 'CancelButton' )  )
 
 $tpl->setVariable( "section", $section );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:section/edit.tpl" );
-$Result['path'] = array( array( 'url' => 'section/list',
-                                'text' => ezpI18n::tr( 'kernel/section', 'Sections' ) ),
-                         array( 'url' => false,
-                                'text' => $section instanceof eZSection ? $section->attribute('name') : $section['name'] ) );
+$Result['path'] = [['url' => 'section/list', 'text' => ezpI18n::tr( 'kernel/section', 'Sections' )], ['url' => false, 'text' => $section instanceof eZSection ? $section->attribute('name') : $section['name']]];
 
 ?>

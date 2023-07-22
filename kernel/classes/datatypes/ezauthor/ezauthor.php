@@ -27,10 +27,8 @@
 
 class eZAuthor
 {
-    public function __construct( )
+    public function __construct()
     {
-        $this->Authors = array();
-        $this->AuthorCount = 0;
     }
 
     /*!
@@ -66,10 +64,7 @@ class eZAuthor
                 $id = 1;
         }
 
-        $this->Authors[] = array( "id" => $id,
-                                  "name" => $name,
-                                  "email" => $email,
-                             "is_default" => false );
+        $this->Authors[] = ["id" => $id, "name" => $name, "email" => $email, "is_default" => false];
 
         $this->AuthorCount ++;
     }
@@ -97,9 +92,7 @@ class eZAuthor
 
     function attributes()
     {
-        static $def = array( 'author_list',
-                             'name',
-                             'is_empty' );
+        static $def = ['author_list', 'name', 'is_empty'];
         return $def;
     }
 
@@ -205,10 +198,10 @@ class eZAuthor
     }
 
     /// Contains the Authors.
-    protected $Authors;
+    protected $Authors = [];
 
     /// Contains the author counter value.
-    protected $AuthorCount;
+    protected $AuthorCount = 0;
 
     // Contains the name of the author set.
     protected $Name;

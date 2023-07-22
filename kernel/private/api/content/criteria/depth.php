@@ -12,13 +12,12 @@
  * Depth criteria
  * @package API
  */
-class ezpContentDepthCriteria implements ezpContentCriteriaInterface
+class ezpContentDepthCriteria implements ezpContentCriteriaInterface, \Stringable
 {
     /**
      * Maximum depth to dig while fetching
-     * @var int
      */
-    private $depth;
+    private readonly int $depth;
 
     public function __construct( $depth )
     {
@@ -27,14 +26,10 @@ class ezpContentDepthCriteria implements ezpContentCriteriaInterface
 
     public function translate()
     {
-        return array(
-            'type'      => 'param',
-            'name'      => array( 'Depth' ),
-            'value'     => array( $this->depth )
-        );
+        return ['type'      => 'param', 'name'      => ['Depth'], 'value'     => [$this->depth]];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return 'With depth '.$this->depth;
     }

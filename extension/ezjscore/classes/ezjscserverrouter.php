@@ -35,17 +35,11 @@
 
 class ezjscServerRouter
 {
-    protected $className = null;
-    protected $functionName = null;
-    protected $functionArguments = array();
-    protected $isTemplateFunction = false;
+    protected $functionArguments = [];
 
-    protected function __construct( $className, $functionName = 'call', array $functionArguments = array(), $isTemplateFunction = false )
+    protected function __construct( protected $className, protected $functionName = 'call', array $functionArguments = [], protected $isTemplateFunction = false )
     {
-        $this->className = $className;
-        $this->functionName = $functionName;
         $this->functionArguments = $functionArguments;
-        $this->isTemplateFunction = $isTemplateFunction;
     }
 
     /**
@@ -131,7 +125,7 @@ class ezjscServerRouter
      * @param array $environmentArguments Optionall hash of environment variables
      * @return int
      */
-    public function getCacheTime( $environmentArguments = array()  )
+    public function getCacheTime( $environmentArguments = []  )
     {
         if ( $this->isTemplateFunction )
         {
@@ -139,7 +133,7 @@ class ezjscServerRouter
         }
         else if ( method_exists( $this->className, 'getCacheTime' ) )
         {
-            return call_user_func( array( $this->className, 'getCacheTime' ), $this->functionName );
+            return call_user_func( [$this->className, 'getCacheTime'], $this->functionName );
         }
         else
         {
@@ -160,7 +154,7 @@ class ezjscServerRouter
         $functionName = $functionName !== null ? '_' . $functionName : '';
         $ezjscoreIni = eZINI::instance( 'ezjscore.ini' );
         $ezjscoreFunctionList = $ezjscoreIni->variable( 'ezjscServer', 'FunctionList' );
-        $limitationList = array();
+        $limitationList = [];
         foreach( $requiredFunctions as $requiredFunction )
         {
             $permissionName = $requiredFunction . $functionName;
@@ -171,7 +165,7 @@ class ezjscServerRouter
             }
             $limitationList[] = $permissionName;
         }
-        return ezjscAccessTemplateFunctions::hasAccessToLimitation( 'ezjscore', 'call', array( 'FunctionList' => $limitationList ) );
+        return ezjscAccessTemplateFunctions::hasAccessToLimitation( 'ezjscore', 'call', ['FunctionList' => $limitationList] );
     }
 
     /**
@@ -197,7 +191,7 @@ class ezjscServerRouter
         }
         else
         {
-            return is_callable( array( $className, $functionName ) );
+            return is_callable( [$className, $functionName] );
         }
     }
 
@@ -207,7 +201,7 @@ class ezjscServerRouter
      * @param array $environmentArguments
      * @return mixed
      */
-    public function call( &$environmentArguments = array(), $isPackeStage = false  )
+    public function call( &$environmentArguments = [], $isPackeStage = false  )
     {
         if ( $this->isTemplateFunction )
         {
@@ -218,7 +212,7 @@ class ezjscServerRouter
         }
         else
         {
-            return call_user_func_array( array( $this->className, $this->functionName ), array( $this->functionArguments, &$environmentArguments, $isPackeStage ) );
+            return call_user_func_array( [$this->className, $this->functionName], [$this->functionArguments, &$environmentArguments, $isPackeStage] );
         }
     }
 

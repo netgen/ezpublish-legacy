@@ -51,7 +51,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
     protected function createFile( $path, $content )
     {
-        return eZFile::create( basename( $path ), dirname( $path ), $content, false );
+        return eZFile::create( basename( (string) $path ), dirname( (string) $path ), $content, false );
     }
 
     protected function makeDFSPath( $path )
@@ -66,8 +66,8 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
         $this->createDFSFile( $srcFile );
         $this->dfsbackend->copyFromDFSToDFS( $srcFile, $tgtFile );
 
-        $this->assertTrue( $this->DFSFileIsValid( $srcFile ), "Source file DFS://$srcFile no longer exists" );
-        $this->assertTrue( $this->DFSFileIsValid( $tgtFile ), "Target file DFS://$tgtFile doesn't exist" );
+        static::assertTrue($this->DFSFileIsValid( $srcFile ), "Source file DFS://$srcFile no longer exists");
+        static::assertTrue($this->DFSFileIsValid( $tgtFile ), "Target file DFS://$tgtFile doesn't exist");
     }
 
     public function testDeleteSingleFile()
@@ -77,23 +77,23 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         if ( !$this->DFSFileIsValid( $file ) )
         {
-            $this->fail( "Test file DFS://$file was not created correctly" );
+            static::fail("Test file DFS://$file was not created correctly");
         }
 
         $this->dfsbackend->delete( $file );
 
-        $this->assertFalse( $this->DFSFileIsValid( $file ), "Test file DFS://$file is still valid" );
+        static::assertFalse($this->DFSFileIsValid( $file ), "Test file DFS://$file is still valid");
     }
 
     public function testDeleteMultipleFiles()
     {
-        for ( $i = 0, $files = array(); $i <= 10; $i++ )
+        for ( $i = 0, $files = []; $i <= 10; $i++ )
         {
             $file = 'testDeleteSingleFile' . uniqid();
             $this->createDFSFile( $file );
             if ( !$this->DFSFileIsValid( $file ) )
             {
-                $this->fail( "Test file DFS://$file was not created correctly" );
+                static::fail("Test file DFS://$file was not created correctly");
             }
             $files[] = $file;
         }
@@ -103,7 +103,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         foreach ( $files as $file )
         {
-            $this->assertFalse( $this->DFSFileIsValid( $file ), "Test file DFS://$file is still valid" );
+            static::assertFalse($this->DFSFileIsValid( $file ), "Test file DFS://$file is still valid");
         }
     }
 
@@ -114,7 +114,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         $this->dfsbackend->copyFromDFS( $file );
 
-        $this->assertTrue( $this->localFileIsValid( $file ), "Test file FS://$file is not valid" );
+        static::assertTrue($this->localFileIsValid( $file ), "Test file FS://$file is not valid");
     }
 
     public function testCopyFromDFSWithNewName()
@@ -125,7 +125,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         $this->dfsbackend->copyFromDFS( $srcFile, $tgtFile );
 
-        $this->assertTrue( $this->localFileIsValid( $tgtFile ), "Test file FS://$tgtFile is not valid" );
+        static::assertTrue($this->localFileIsValid( $tgtFile ), "Test file FS://$tgtFile is not valid");
     }
 
     public function testCopyToDFS()
@@ -135,7 +135,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         $this->dfsbackend->copyToDFS( $srcFile );
 
-        $this->assertTrue( $this->DFSFileIsValid( $srcFile ), "DFS://$srcFile isn't valid" );
+        static::assertTrue($this->DFSFileIsValid( $srcFile ), "DFS://$srcFile isn't valid");
     }
 
     public function testCopyToDFSWithNewName()
@@ -146,7 +146,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         $this->dfsbackend->copyToDFS( $srcFile, $dstFile );
 
-        $this->assertTrue( $this->DFSFileIsValid( $dstFile ), "DFS://$dstFile isn't valid" );
+        static::assertTrue($this->DFSFileIsValid( $dstFile ), "DFS://$dstFile isn't valid");
     }
 
     public function testGetContents()
@@ -156,7 +156,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
         $this->createDFSFile( $file, $contents );
 
         $dfsContents = $this->dfsbackend->getContents( $file );
-        $this->assertEquals( $dfsContents, $contents, "DFS://$file contents doesn't match the expected contents" );
+        static::assertEquals($dfsContents, $contents, "DFS://$file contents doesn't match the expected contents");
     }
 
     public function testPassthrough()
@@ -174,7 +174,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
         $passedContents = ob_get_contents();
         ob_end_clean();
 
-        $this->assertEquals( $passedContents, $contents, "Contents passed from DFS://$file doesn't match the expected contents" );
+        static::assertEquals($passedContents, $contents, "Contents passed from DFS://$file doesn't match the expected contents");
     }
 
     public function testCreateFileOnDFS()
@@ -184,7 +184,7 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
 
         $this->dfsbackend->createFileOnDFS( $filePath, $contents );
 
-        $this->assertTrue( $this->DFSFileIsValid( $filePath, $contents ), "DFS://$filePath is not valid" );
+        static::assertTrue($this->DFSFileIsValid( $filePath, $contents ), "DFS://$filePath is not valid");
     }
 
     public function testRenameOnDFS()
@@ -195,8 +195,8 @@ class eZDFSFileHandlerDFSBackendTest extends ezpTestCase
         $this->createDFSFile( $oldFile );
 
         $this->dfsbackend->renameOnDFS( $oldFile, $newFile );
-        $this->assertTrue( $this->DFSFileIsValid( $newFile ), "DFS://$newFile doesn't exist" );
-        $this->assertFalse( $this->DFSFileIsValid( $oldFile ), "DFS://$oldFile still exists" );
+        static::assertTrue($this->DFSFileIsValid( $newFile ), "DFS://$newFile doesn't exist");
+        static::assertFalse($this->DFSFileIsValid( $oldFile ), "DFS://$oldFile still exists");
     }
 
     /**

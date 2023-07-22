@@ -55,12 +55,5 @@ if ( $LanguageCode )
 
 $tpl->setVariable( 'group', $group );
 
-$Result = array(
-    'path' => array(
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-        array( 'url' => 'state/groups', 'text' => ezpI18n::tr( 'kernel/state', 'Groups' ) ),
-        array( 'url' => false, 'text' => $group->attribute( 'current_translation' )->attribute( 'name' ) )
-    ),
-    'content' => $tpl->fetch( 'design:state/group.tpl' )
-)
+$Result = ['path' => [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => 'state/groups', 'text' => ezpI18n::tr( 'kernel/state', 'Groups' )], ['url' => false, 'text' => $group->attribute( 'current_translation' )->attribute( 'name' )]], 'content' => $tpl->fetch( 'design:state/group.tpl' )]
 ?>

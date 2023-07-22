@@ -148,17 +148,7 @@ class eZUserShopAccountHandler
             }
         }
 
-        return array( 'first_name' => $firstName,
-                      'last_name' => $lastName,
-                      'email' => $email,
-                      'street1' => $street1,
-                      'street2' => $street2,
-                      'zip' => $zip,
-                      'place' => $place,
-                      'state' => $state,
-                      'country' => $country,
-                      'comment' => $comment,
-                      );
+        return ['first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'street1' => $street1, 'street2' => $street2, 'zip' => $zip, 'place' => $place, 'state' => $state, 'country' => $country, 'comment' => $comment];
     }
 }
 

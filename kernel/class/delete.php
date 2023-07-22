@@ -18,7 +18,7 @@ if ( isset( $Params["GroupID"] ) )
 $class = eZContentClass::fetch( $ClassID );
 $ClassName = $class->attribute( 'name' );
 $classObjects = eZContentObject::fetchSameClassList( $ClassID );
-$ClassObjectsCount = count( $classObjects );
+$ClassObjectsCount = count( (array) $classObjects );
 if ( $ClassObjectsCount == 0 )
     $ClassObjectsCount .= " object";
 else
@@ -28,7 +28,7 @@ if ( $http->hasPostVariable( "ConfirmButton" ) )
 {
     $class->remove( true );
     eZContentClassClassGroup::removeClassMembers( $ClassID, 0 );
-    ezpEvent::getInstance()->notify( 'content/class/cache', array( $ClassID ) );
+    ezpEvent::getInstance()->notify( 'content/class/cache', [$ClassID] );
     $Module->redirectTo( '/class/classlist/' . $GroupID );
 }
 if ( $http->hasPostVariable( "CancelButton" ) )
@@ -44,8 +44,7 @@ $tpl->setVariable( "GroupID", $GroupID );
 $tpl->setVariable( "ClassID", $ClassID );
 $tpl->setVariable( "ClassName", $ClassName );
 $tpl->setVariable( "ClassObjectsCount", $ClassObjectsCount );
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:class/delete.tpl" );
-$Result['path'] = array( array( 'url' => '/class/delete/',
-                                'text' => ezpI18n::tr( 'kernel/class', 'Remove class' ) ) );
+$Result['path'] = [['url' => '/class/delete/', 'text' => ezpI18n::tr( 'kernel/class', 'Remove class' )]];
 ?>

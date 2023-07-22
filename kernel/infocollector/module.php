@@ -6,39 +6,17 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZInfoCollector' );
+$Module = ['name' => 'eZInfoCollector'];
 
-$ViewList = array();
-$ViewList['overview'] = array(
-    'script' => 'overview.php',
-    'functions' => array( 'read' ),
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'ui_context' => 'view',
-    'unordered_params' => array( 'offset' => 'Offset' ),
-    'single_post_actions' => array( 'RemoveObjectCollectionButton' => 'RemoveObjectCollection',
-                                    'ConfirmRemoveButton' => 'ConfirmRemoval',
-                                    'CancelRemoveButton' => 'CancelRemoval' ) );
+$ViewList = [];
+$ViewList['overview'] = ['script' => 'overview.php', 'functions' => ['read'], 'default_navigation_part' => 'ezsetupnavigationpart', 'ui_context' => 'view', 'unordered_params' => ['offset' => 'Offset'], 'single_post_actions' => ['RemoveObjectCollectionButton' => 'RemoveObjectCollection', 'ConfirmRemoveButton' => 'ConfirmRemoval', 'CancelRemoveButton' => 'CancelRemoval']];
 
-$ViewList['collectionlist'] = array(
-    'script' => 'collectionlist.php',
-    'functions' => array( 'read' ),
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'ui_context' => 'view',
-    'params' => array( 'ObjectID' ),
-    'unordered_params' => array( 'offset' => 'Offset' ),
-    'single_post_actions' => array( 'RemoveCollectionsButton' => 'RemoveCollections',
-                                    'ConfirmRemoveButton' => 'ConfirmRemoval',
-                                    'CancelRemoveButton' => 'CancelRemoval' ) );
+$ViewList['collectionlist'] = ['script' => 'collectionlist.php', 'functions' => ['read'], 'default_navigation_part' => 'ezsetupnavigationpart', 'ui_context' => 'view', 'params' => ['ObjectID'], 'unordered_params' => ['offset' => 'Offset'], 'single_post_actions' => ['RemoveCollectionsButton' => 'RemoveCollections', 'ConfirmRemoveButton' => 'ConfirmRemoval', 'CancelRemoveButton' => 'CancelRemoval']];
 
-$ViewList['view'] = array(
-    'script' => 'view.php',
-    'functions' => array( 'read' ),
-    'default_navigation_part' => 'ezsetupnavigationpart',
-    'ui_context' => 'view',
-    'params' => array( 'CollectionID' ) );
+$ViewList['view'] = ['script' => 'view.php', 'functions' => ['read'], 'default_navigation_part' => 'ezsetupnavigationpart', 'ui_context' => 'view', 'params' => ['CollectionID']];
 
 
-$FunctionList = array();
-$FunctionList['read'] = array();
+$FunctionList = [];
+$FunctionList['read'] = [];
 
 ?>

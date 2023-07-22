@@ -23,9 +23,11 @@ class eZTemplateTextElement
      *
      * @param $text
      */
-    public function __construct( $text )
+    public function __construct(
+        /// The element text
+        public $Text
+    )
     {
-        $this->Text = $text;
     }
 
     /*!
@@ -38,9 +40,7 @@ class eZTemplateTextElement
 
     function serializeData()
     {
-        return array( 'class_name' => 'eZTemplateTextElement',
-                      'parameters' => array( 'text' ),
-                      'variables' => array( 'text' => 'Text' ) );
+        return ['class_name' => 'eZTemplateTextElement', 'parameters' => ['text'], 'variables' => ['text' => 'Text']];
     }
 
     /*!
@@ -58,9 +58,6 @@ class eZTemplateTextElement
     {
         return $this->Text;
     }
-
-    /// The element text
-    public $Text;
 }
 
 ?>

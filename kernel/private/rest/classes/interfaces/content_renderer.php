@@ -24,7 +24,6 @@ abstract class ezpRestContentRendererInterface
      * Creates an instance of a ezpRestContentRendererInterface for given content
      *
      * @abstract
-     * @param ezpContent $content
      *
      */
     abstract public function __construct( ezpContent $content, ezpRestMvcController $controller );

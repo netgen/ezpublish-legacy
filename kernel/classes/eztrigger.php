@@ -15,49 +15,18 @@
 */
 class eZTrigger extends eZPersistentObject
 {
-    const STATUS_CRON_JOB = 0;
-    const WORKFLOW_DONE = 1;
-    const WORKFLOW_CANCELLED = 2;
-    const NO_CONNECTED_WORKFLOWS = 3;
-    const FETCH_TEMPLATE = 4;
-    const REDIRECT = 5;
-    const WORKFLOW_RESET = 6;
-    const FETCH_TEMPLATE_REPEAT = 7;
+    final public const STATUS_CRON_JOB = 0;
+    final public const WORKFLOW_DONE = 1;
+    final public const WORKFLOW_CANCELLED = 2;
+    final public const NO_CONNECTED_WORKFLOWS = 3;
+    final public const FETCH_TEMPLATE = 4;
+    final public const REDIRECT = 5;
+    final public const WORKFLOW_RESET = 6;
+    final public const FETCH_TEMPLATE_REPEAT = 7;
 
     static function definition()
     {
-        return array( "fields" => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'module_name' => array( 'name' => 'ModuleName',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'function_name' => array( 'name' => 'FunctionName',
-                                                                   'datatype' => 'string',
-                                                                   'default' => '',
-                                                                   'required' => true ),
-                                         'connect_type' => array( 'name' => 'ConnectType',
-                                                                  'datatype' => 'string',
-                                                                  'default' => '',
-                                                                  'required' => true ),
-                                         'workflow_id' => array( 'name' => 'WorkflowID',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZWorkflow',
-                                                                 'foreign_attribute' => 'id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'name' => array( 'name' => 'Name',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ) ),
-                      "class_name" => "eZTrigger",
-                      "keys" => array( 'id' ),
-                      'function_attributes' => array( 'allowed_workflows' => 'fetchAllowedWorkflows' ),
-                      "increment_key" => "id",
-                      "name" => "eztrigger" );
+        return ["fields" => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'module_name' => ['name' => 'ModuleName', 'datatype' => 'string', 'default' => '', 'required' => true], 'function_name' => ['name' => 'FunctionName', 'datatype' => 'string', 'default' => '', 'required' => true], 'connect_type' => ['name' => 'ConnectType', 'datatype' => 'string', 'default' => '', 'required' => true], 'workflow_id' => ['name' => 'WorkflowID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZWorkflow', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'name' => ['name' => 'Name', 'datatype' => 'string', 'default' => '', 'required' => true]], "class_name" => "eZTrigger", "keys" => ['id'], 'function_attributes' => ['allowed_workflows' => 'fetchAllowedWorkflows'], "increment_key" => "id", "name" => "eztrigger"];
     }
 
     /*!
@@ -86,13 +55,13 @@ class eZTrigger extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZTrigger::definition(),
                                                 null,
-                                                array( 'id' => $triggerID ),
+                                                ['id' => $triggerID],
                                                 true);
     }
 
-    static function fetchList( $parameters = array(), $asObject = true )
+    static function fetchList( $parameters = [], $asObject = true )
     {
-        $filterArray = array();
+        $filterArray = [];
         if ( array_key_exists('module', $parameters ) && $parameters[ 'module' ] != '*' )
         {
             $filterArray['module_name'] = $parameters['module'];
@@ -111,9 +80,7 @@ class eZTrigger extends eZPersistentObject
         }
         return eZPersistentObject::fetchObjectList( eZTrigger::definition(),
                                                     null,
-                                                    $filterArray, array( 'module_name' => 'asc' ,
-                                                                         'function_name' => 'asc',
-                                                                         'connect_type' => 'asc' ),
+                                                    $filterArray, ['module_name' => 'asc', 'function_name' => 'asc', 'connect_type' => 'asc'],
                                                     null,
                                                     $asObject );
     }
@@ -126,9 +93,7 @@ class eZTrigger extends eZPersistentObject
     {
         $trigger = eZPersistentObject::fetchObject( eZTrigger::definition(),
                                                     null,
-                                                    array( 'name' => $name,
-                                                           'module_name' => $moduleName,
-                                                           'function_name' => $function ),
+                                                    ['name' => $name, 'module_name' => $moduleName, 'function_name' => $function],
                                                     true );
         if ( $trigger !== NULL )
         {
@@ -158,7 +123,7 @@ class eZTrigger extends eZPersistentObject
 
             $workflowProcessList = eZWorkflowProcess::fetchListByKey( $processKey );
 
-            if ( count( $workflowProcessList ) > 0 )
+            if ( (is_countable($workflowProcessList) ? count( $workflowProcessList ) : 0) > 0 )
             {
                 $existingWorkflowProcess = $workflowProcessList[0];
                 $existingWorkflowStatus = $existingWorkflowProcess->attribute( 'status' );
@@ -172,8 +137,7 @@ class eZTrigger extends eZPersistentObject
                     case eZWorkflow::STATUS_BUSY:
                     {
                         $existingWorkflowProcess->removeThis();
-                        return array( 'Status' => eZTrigger::WORKFLOW_CANCELLED,
-                                      'Result' => null );
+                        return ['Status' => eZTrigger::WORKFLOW_CANCELLED, 'Result' => null];
                     } break;
                     case eZWorkflow::STATUS_FETCH_TEMPLATE:
                     case eZWorkflow::STATUS_FETCH_TEMPLATE_REPEAT:
@@ -195,12 +159,10 @@ class eZTrigger extends eZPersistentObject
                     case eZWorkflow::STATUS_DONE:
                     {
                         $existingWorkflowProcess->removeThis();
-                        return array( 'Status' => eZTrigger::WORKFLOW_DONE,
-                                      'Result' => null );
+                        return ['Status' => eZTrigger::WORKFLOW_DONE, 'Result' => null];
                     }
                 }
-                return array( 'Status' => eZTrigger::WORKFLOW_CANCELLED,
-                              'Result' => null );
+                return ['Status' => eZTrigger::WORKFLOW_CANCELLED, 'Result' => null];
             }else
             {
 //                print( "\n starting new workflow process \n");
@@ -216,8 +178,7 @@ class eZTrigger extends eZPersistentObject
         }
         else
         {
-            return array( 'Status' => eZTrigger::NO_CONNECTED_WORKFLOWS,
-                          'Result' => null );
+            return ['Status' => eZTrigger::NO_CONNECTED_WORKFLOWS, 'Result' => null];
         }
     }
 
@@ -227,6 +188,7 @@ class eZTrigger extends eZPersistentObject
      */
     static function runWorkflow( $workflowProcess )
     {
+        $eventLog = null;
         $workflow = eZWorkflow::fetch( $workflowProcess->attribute( "workflow_id" ) );
         $workflowEvent = null;
 
@@ -245,14 +207,13 @@ class eZTrigger extends eZPersistentObject
             {
                 $workflowProcess->removeThis();
                 $db->commit();
-                return array( 'Status' => eZTrigger::WORKFLOW_CANCELLED,
-                              'Result' => null );
+                return ['Status' => eZTrigger::WORKFLOW_CANCELLED, 'Result' => null];
             } break;
             case eZWorkflow::STATUS_FETCH_TEMPLATE:
             case eZWorkflow::STATUS_FETCH_TEMPLATE_REPEAT:
             {
                 $tpl = eZTemplate::factory();
-                $result = array();
+                $result = [];
                 foreach ( array_keys( $workflowProcess->Template['templateVars'] ) as $key )
                 {
                     $value = $workflowProcess->Template['templateVars'][$key];
@@ -271,28 +232,20 @@ class eZTrigger extends eZPersistentObject
                 {
                     $triggerStatus = eZTrigger::FETCH_TEMPLATE_REPEAT;
                 }
-                return array( 'Status' => $triggerStatus,
-                              'WorkflowProcess' => $workflowProcess,
-                              'Result' => $result );
+                return ['Status' => $triggerStatus, 'WorkflowProcess' => $workflowProcess, 'Result' => $result];
             } break;
             case eZWorkflow::STATUS_REDIRECT:
             {
 //                var_dump( $workflowProcess->RedirectUrl  );
                 $db->commit();
-                return array( 'Status' => eZTrigger::REDIRECT,
-                              'WorkflowProcess' => $workflowProcess,
-                              'Result' => $workflowProcess->RedirectUrl );
+                return ['Status' => eZTrigger::REDIRECT, 'WorkflowProcess' => $workflowProcess, 'Result' => $workflowProcess->RedirectUrl];
 
             } break;
             case eZWorkflow::STATUS_DEFERRED_TO_CRON:
             {
 
                 $db->commit();
-                return array( 'Status' => eZTrigger::STATUS_CRON_JOB,
-                              'WorkflowProcess' => $workflowProcess,
-                              'Result' => array( 'content' => 'Deffered to cron. Operation halted during execution. <br/>Refresh page to continue<br/><br/><b>Note: The halt is just a temporary test</b><br/>',
-                                                 'path' => array( array( 'text' => 'Operation halt',
-                                                                         'url' => false ) ) ) );
+                return ['Status' => eZTrigger::STATUS_CRON_JOB, 'WorkflowProcess' => $workflowProcess, 'Result' => ['content' => 'Deffered to cron. Operation halted during execution. <br/>Refresh page to continue<br/><br/><b>Note: The halt is just a temporary test</b><br/>', 'path' => [['text' => 'Operation halt', 'url' => false]]]];
 /*
                 return array( 'Status' => eZTrigger::STATUS_CRON_JOB,
                               'Result' => $workflowProcess->attribute( 'id') );
@@ -301,24 +254,18 @@ class eZTrigger extends eZPersistentObject
             case eZWorkflow::STATUS_RESET:
             {
                 $db->commit();
-                return array( 'Status' => eZTrigger::WORKFLOW_RESET,
-                              'WorkflowProcess' => $workflowProcess,
-                              'Result' => array( 'content' => 'Workflow was reset',
-                                                 'path' => array( array( 'text' => 'Operation halt',
-                                                                         'url' => false ) ) ) );
+                return ['Status' => eZTrigger::WORKFLOW_RESET, 'WorkflowProcess' => $workflowProcess, 'Result' => ['content' => 'Workflow was reset', 'path' => [['text' => 'Operation halt', 'url' => false]]]];
             } break;
             case eZWorkflow::STATUS_DONE:
             {
                 $workflowProcess->removeThis();
                 $db->commit();
-                return array( 'Status' => eZTrigger::WORKFLOW_DONE,
-                              'Result' => null );
+                return ['Status' => eZTrigger::WORKFLOW_DONE, 'Result' => null];
             }
         }
 
         $db->commit();
-        return array( 'Status' => eZTrigger::WORKFLOW_CANCELLED,
-                      'Result' => null );
+        return ['Status' => eZTrigger::WORKFLOW_CANCELLED, 'Result' => null];
 
 
 
@@ -342,11 +289,7 @@ class eZTrigger extends eZPersistentObject
             }
             $name .= $functionName;
         }
-        $trigger = new eZTrigger( array( 'module_name' => $moduleName,
-                                         'function_name' => $functionName,
-                                         'connect_type' => $connectType,
-                                         'workflow_id' => $workflowID,
-                                         'name' => $name ) );
+        $trigger = new eZTrigger( ['module_name' => $moduleName, 'function_name' => $functionName, 'connect_type' => $connectType, 'workflow_id' => $workflowID, 'name' => $name] );
         $trigger->store();
         return $trigger;
     }

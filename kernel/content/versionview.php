@@ -10,12 +10,12 @@ $http = eZHTTPTool::instance();
 $Offset = (int)$Params['Offset'];
 $ObjectID = (int)$ObjectID;
 $EditVersion = (int)$EditVersion;
-$LanguageCode = htmlspecialchars( $LanguageCode );
-$viewParameters = array( 'offset' => $Offset );
+$LanguageCode = htmlspecialchars( (string) $LanguageCode );
+$viewParameters = ['offset' => $Offset];
 
 // Will be sent from the content/edit page and should be kept
 // incase the user decides to continue editing.
-$FromLanguage = htmlspecialchars( $Params['FromLanguage'] );
+$FromLanguage = htmlspecialchars( (string) $Params['FromLanguage'] );
 
 if ( $http->hasPostVariable( 'BackButton' )  )
 {
@@ -55,7 +55,7 @@ $isCreator = ( $versionObject->attribute( 'creator_id' ) == $user->id() );
 
 if ( $Module->isCurrentAction( 'Versions' ) )
 {
-    return $Module->redirectToView( 'history', array( $ObjectID, $EditVersion, $LanguageCode, $FromLanguage ) );
+    return $Module->redirectToView( 'history', [$ObjectID, $EditVersion, $LanguageCode, $FromLanguage] );
 }
 
 $sectionID = false;
@@ -81,7 +81,7 @@ if ( is_array( $nodeAssignments ) and
 
     $placementID = $nodeAssignments[0]->attribute( 'id' );
 }
-else if ( !$placementID && count( $nodeAssignments ) )
+else if ( !$placementID && (is_countable($nodeAssignments) ? count( $nodeAssignments ) : 0) )
 {
     foreach ( $nodeAssignments as $nodeAssignment )
     {
@@ -152,13 +152,13 @@ if ( $assignment )
 $navigationPartIdentifier = false;
 if ( $sectionID !== false )
 {
-    $designKeys[] = array( 'section', $sectionID ); // Section ID
+    $designKeys[] = ['section', $sectionID]; // Section ID
 
     $section = eZSection::fetch( $sectionID );
     if ( $section )
         $navigationPartIdentifier = $section->attribute( 'navigation_part_identifier' );
 }
-$designKeys[] = array( 'navigation_part_identifier', $navigationPartIdentifier );
+$designKeys[] = ['navigation_part_identifier', $navigationPartIdentifier];
 
 if ( !$Module->isCurrentAction( 'Publish' ) )
     $contentObject->setAttribute( 'current_version', $EditVersion );
@@ -170,7 +170,7 @@ if ( $assignment )
     $assignment->setName( $objectName );
 
 
-$path = array();
+$path = [];
 $pathString = '';
 $pathIdentificationString = '';
 $requestedURIString = '';
@@ -206,7 +206,7 @@ $node->setContentObject( $contentObject );
 
 if ( $Params['SiteAccess'] )
 {
-    $siteAccess = htmlspecialchars( $Params['SiteAccess'] );
+    $siteAccess = htmlspecialchars( (string) $Params['SiteAccess'] );
 }
 else
 {
@@ -232,7 +232,7 @@ $access['name'] = $siteAccess;
 
 if ( $access['type'] === eZSiteAccess::TYPE_URI )
 {
-    $access['uri_part'] = array( $siteAccess );
+    $access['uri_part'] = [$siteAccess];
 }
 
 eZSiteAccess::load( $access );
@@ -259,18 +259,24 @@ if ( $http->hasSessionVariable( 'LastAccessesVersionURI' ) )
     $tpl->setVariable( 'redirect_uri', $http->sessionVariable( 'LastAccessesVersionURI' ) );
 }
 
-$designKeys = array( array( 'object', $contentObject->attribute( 'id' ) ), // Object ID
-                     array( 'node', $virtualNodeID ), // Node id
-                     array( 'remote_id', $contentObject->attribute( 'remote_id' ) ),
-                     array( 'class', $class->attribute( 'id' ) ), // Class ID
-                     array( 'class_identifier', $class->attribute( 'identifier' ) ), // Class identifier
-                     array( 'viewmode', 'full' ) );  // View mode
+$designKeys = [
+    ['object', $contentObject->attribute( 'id' )],
+    // Object ID
+    ['node', $virtualNodeID],
+    // Node id
+    ['remote_id', $contentObject->attribute( 'remote_id' )],
+    ['class', $class->attribute( 'id' )],
+    // Class ID
+    ['class_identifier', $class->attribute( 'identifier' )],
+    // Class identifier
+    ['viewmode', 'full'],
+];  // View mode
 
 if ( $assignment )
 {
-    $designKeys[] = array( 'parent_node', $assignment->attribute( 'parent_node' ) );
+    $designKeys[] = ['parent_node', $assignment->attribute( 'parent_node' )];
     if ( $parentNodeObject instanceof eZContentObjectTreeNode )
-        $designKeys[] = array( 'depth', $parentNodeObject->attribute( 'depth' ) + 1 );
+        $designKeys[] = ['depth', $parentNodeObject->attribute( 'depth' ) + 1];
 }
 
 

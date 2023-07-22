@@ -44,7 +44,7 @@ class eZMBStringMapper
         {
             eZDebug::writeError( "Output charset $output_charset_code not supported", "eZMBStringMapper" );
         }
-        else if ( $this->hasMBStringExtension() )
+        else if ( static::hasMBStringExtension() )
             $this->Valid = true;
         else
             eZDebug::writeError( "No mbstring functions available", "eZMBStringMapper" );
@@ -59,12 +59,8 @@ class eZMBStringMapper
         $charsets =& $GLOBALS["eZMBCharsetList"];
         if ( !is_array( $charsets ) )
         {
-            $charsetList = array( "ucs-4", "ucs-4be", "ucs-4le", "ucs-2", "ucs-2be", "ucs-2le", "utf-32", "utf-32be", "utf-32le", "utf-16",
-                                  "utf-16be", "utf-16le", "utf-8", "utf-7", "ascii", "euc-jp", "sjis", "eucjp-win", "sjis-win", "iso-2022-jp", "jis",
-                                  "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
-                                  "iso-8859-9", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "byte2be", "byte2le", "byte4be",
-                                  "byte4le", "base64", "7bit", "8bit", "utf7-imap" );
-            $charsets = array();
+            $charsetList = ["ucs-4", "ucs-4be", "ucs-4le", "ucs-2", "ucs-2be", "ucs-2le", "utf-32", "utf-32be", "utf-32le", "utf-16", "utf-16be", "utf-16le", "utf-8", "utf-7", "ascii", "euc-jp", "sjis", "eucjp-win", "sjis-win", "iso-2022-jp", "jis", "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8", "iso-8859-9", "iso-8859-10", "iso-8859-13", "iso-8859-14", "iso-8859-15", "byte2be", "byte2le", "byte4be", "byte4le", "base64", "7bit", "8bit", "utf7-imap"];
+            $charsets = [];
             foreach ( $charsetList as $charset )
             {
                 $charsets[$charset] = $charset;
@@ -142,27 +138,27 @@ class eZMBStringMapper
     {
         if ( !$this->Valid )
             return $str;
-        return mb_convert_encoding( $str, $this->OutputCharsetCode, $this->InputCharsetCode );
+        return mb_convert_encoding( (string) $str, $this->OutputCharsetCode, $this->InputCharsetCode );
     }
 
     function strlen( $str )
     {
-        return mb_strlen( $str, $this->InputCharsetCode );
+        return mb_strlen( (string) $str, $this->InputCharsetCode );
     }
 
     function strpos( $haystack, $needle, $offset = 0 )
     {
-        return mb_strpos( $haystack, $needle, $offset, $this->InputCharsetCode );
+        return mb_strpos( (string) $haystack, (string) $needle, $offset, $this->InputCharsetCode );
     }
 
     function strrpos( $haystack, $needle )
     {
-        return mb_strrpos( $haystack, $needle, $this->InputCharsetCode );
+        return mb_strrpos( (string) $haystack, (string) $needle, 0, $this->InputCharsetCode );
     }
 
     function substr( $str, $start, $length )
     {
-        return mb_substr( $str, $start, $length, $this->InputCharsetCode );
+        return mb_substr( (string) $str, $start, $length, $this->InputCharsetCode );
     }
 
     /**

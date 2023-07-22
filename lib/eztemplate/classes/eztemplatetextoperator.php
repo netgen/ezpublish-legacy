@@ -18,8 +18,6 @@ class eZTemplateTextOperator
 {
     public function __construct()
     {
-        $this->Operators= array( 'concat', 'indent' );
-
         foreach ( $this->Operators as $operator )
         {
             $name = $operator . 'Name';
@@ -38,20 +36,7 @@ class eZTemplateTextOperator
 
     function operatorTemplateHints()
     {
-        return array( $this->ConcatName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => true,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => true,
-                                                  'element-transformation-func' => 'concatTransformation'),
-                      $this->IndentName => array( 'input' => true,
-                                                  'output' => true,
-                                                  'parameters' => 3,
-                                                  'element-transformation' => true,
-                                                  'transform-parameters' => true,
-                                                  'input-as-parameter' => true,
-                                                  'element-transformation-func' => 'indentTransformation') ) ;
+        return [$this->ConcatName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'concatTransformation'], $this->IndentName => ['input' => true, 'output' => true, 'parameters' => 3, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'indentTransformation']] ;
     }
 
     /*!
@@ -67,23 +52,15 @@ class eZTemplateTextOperator
     */
     function namedParameterList()
     {
-        return array( $this->IndentName => array( 'indent_count' => array( 'type' => 'integer',
-                                                                           'required' => true,
-                                                                           'default' => false ),
-                                                  'indent_type' => array( 'type' => 'identifier',
-                                                                          'required' => false,
-                                                                          'default' => 'space' ),
-                                                  'indent_filler' => array( 'type' => 'string',
-                                                                            'required' => false,
-                                                                            'default' => false ) ) );
+        return [$this->IndentName => ['indent_count' => ['type' => 'integer', 'required' => true, 'default' => false], 'indent_type' => ['type' => 'identifier', 'required' => false, 'default' => 'space'], 'indent_filler' => ['type' => 'string', 'required' => false, 'default' => false]]];
     }
 
     function indentTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                    $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $count = $type = $filler = false;
-        $paramCount = count( $parameters );
+        $paramCount = is_countable($parameters) ? count( $parameters ) : 0;
 
         if ( $paramCount == 4 )
         {
@@ -123,7 +100,7 @@ class eZTemplateTextOperator
                 $filler = ' ';
             }
         }
-        $newElements = array();
+        $newElements = [];
 
         if ( $count and $type and $filler )
         {
@@ -137,7 +114,7 @@ class eZTemplateTextOperator
             }
             else
             {
-                $indentation = str_repeat( $filler, $count );
+                $indentation = str_repeat( (string) $filler, $count );
                 $code = ( "%output% = '$indentation' . str_replace( '\n', '\n$indentation', %1% );\n" );
             }
         }
@@ -163,7 +140,7 @@ class eZTemplateTextOperator
                      "}else{" .
                      "if ( %3% == 'tab' )\n{\n\t%tmp1% = \"\\t\";\n}\nelse " .
                      "if ( %3% == 'space' )\n{\n\t%tmp1% = ' ';\n}\nelse\n" );
-            if ( count ( $parameters ) == 4 )
+            if ( (is_countable($parameters) ? count ( $parameters ) : 0) == 4 )
             {
                 $code .= "{\n\t%tmp1% = %4%;\n}\n";
             }
@@ -187,19 +164,19 @@ class eZTemplateTextOperator
     function concatTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                    $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $function = $operatorName;
 
-        if ( ( count( $parameters ) < 1 ) )
+        if ( ( (is_countable($parameters) ? count( $parameters ) : 0) < 1 ) )
         {
             return false;
         }
-        if ( ( count( $parameters ) == 1 ) and
+        if ( ( (is_countable($parameters) ? count( $parameters ) : 0) == 1 ) and
              eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
         {
-            return array( eZTemplateNodeTool::createConstantElement( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) ) );
+            return [eZTemplateNodeTool::createConstantElement( eZTemplateNodeTool::elementConstantValue( $parameters[0] ) )];
         }
-        $newElements = array();
+        $newElements = [];
 
         $counter = 1;
         $code = "%output% = ( ";
@@ -229,10 +206,10 @@ class eZTemplateTextOperator
         {
             case $this->ConcatName:
             {
-                $operands = array();
+                $operands = [];
                 if ( $operatorValue !== null )
                     $operands[] = $operatorValue;
-                for ( $i = 0; $i < count( $operatorParameters ); ++$i )
+                for ( $i = 0; $i < (is_countable($operatorParameters) ? count( $operatorParameters ) : 0); ++$i )
                 {
                     $operand = $tpl->elementValue( $operatorParameters[$i], $rootNamespace, $currentNamespace, $placement );
                     if ( !is_object( $operand ) )
@@ -251,31 +228,20 @@ class eZTemplateTextOperator
                 $indentCount = $namedParameters['indent_count'];
                 $indentType = $namedParameters['indent_type'];
                 $filler = false;
-                switch ( $indentType )
-                {
-                    case 'space':
-                    default:
-                    {
-                        $filler = ' ';
-                    } break;
-                    case 'tab':
-                    {
-                        $filler = "\t";
-                    } break;
-                    case 'custom':
-                    {
-                        $filler = $namedParameters['indent_filler'];
-                    } break;
-                }
-                $fillText = str_repeat( $filler, $indentCount );
-                $operatorValue = $fillText . str_replace( "\n", "\n" . $fillText, $operatorValue );
+                $filler = match ($indentType) {
+                    'tab' => "\t",
+                    'custom' => $namedParameters['indent_filler'],
+                    default => ' ',
+                };
+                $fillText = str_repeat( (string) $filler, $indentCount );
+                $operatorValue = $fillText . str_replace( "\n", "\n" . $fillText, (string) $operatorValue );
             } break;
         }
     }
 
     /// \privatesection
     public $ConcatName;
-    public $Operators;
+    public $Operators = ['concat', 'indent'];
     public $IndentName;
 }
 

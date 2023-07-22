@@ -40,10 +40,10 @@ class ezjscJavascriptOptimizer
     public static function optimize( $script, $packLevel = 2 )
     {
         // Normalize line feeds
-        $script = str_replace( array( "\r\n", "\r" ), "\n", $script );
+        $script = str_replace( ["\r\n", "\r"], "\n", $script );
 
         // Remove whitespace from start & end of line + singelline comment + multiple linefeeds
-        $script = preg_replace( array( '/\n\s+/', '/\s+\n/', '#\n\s*//.*#', '/\n+/' ), "\n", $script );
+        $script = preg_replace( ['/\n\s+/', '/\s+\n/', '#\n\s*//.*#', '/\n+/'], "\n", $script );
 
         // Remove multiline comments
         $script = preg_replace( '!(?:\n|\s|^)/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $script );

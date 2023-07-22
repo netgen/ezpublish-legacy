@@ -12,33 +12,22 @@ class eZCollaborationItemTest extends ezpDatabaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $participantsList = array(
-            $this->createParticipantLinkPartialMock(
-                array(
-                    'collaboration_id' => 1,
-                    'participant_id' => 1,
-                    'participant_type' => eZCollaborationItemParticipantLink::TYPE_USER,
-                )
-            ),
-            $this->createParticipantLinkPartialMock(
-                array(
-                    'collaboration_id' => 1,
-                    'participant_id' => 2,
-                    'participant_type' => eZCollaborationItemParticipantLink::TYPE_USERGROUP,
-                )
-            )
-        );
+        $participantsList = [$this->createParticipantLinkPartialMock(
+            ['collaboration_id' => 1, 'participant_id' => 1, 'participant_type' => eZCollaborationItemParticipantLink::TYPE_USER]
+        ), $this->createParticipantLinkPartialMock(
+            ['collaboration_id' => 1, 'participant_id' => 2, 'participant_type' => eZCollaborationItemParticipantLink::TYPE_USERGROUP]
+        )];
 
         $this->getCollaborationItemPartialMock()
-            ->expects( $this->any() )
+            ->expects( static::any() )
             ->method( 'participantList' )
-            ->will( $this->returnValue( $participantsList ) );
+            ->will( static::returnValue($participantsList) );
     }
 
     /**
      * @dataProvider providerForIsParticipant
      */
-    public function testIsParticipant( $expectedResult, $userId, array $groupIdArray = array() )
+    public function testIsParticipant( $expectedResult, $userId, array $groupIdArray = [] )
     {
         $user = $this->createUserMock( $userId, $groupIdArray );
         self::assertEquals(
@@ -49,41 +38,34 @@ class eZCollaborationItemTest extends ezpDatabaseTestCase
 
     public function providerForIsParticipant()
     {
-        return array(
-            array( true, 1 ),
-            array( false, 2 ),
-
-            array( true, 3, array( 2 ) ),
-            array( true, 3, array( 2, 3 ) ),
-            array( false, 3, array( 3 ) ),
-        );
+        return [[true, 1], [false, 2], [true, 3, [2]], [true, 3, [2, 3]], [false, 3, [3]]];
     }
 
 
     /**
      * @return eZUser|PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createUserMock( $userId, array $groupIdArray = array() )
+    protected function createUserMock( $userId, array $groupIdArray = [] )
     {
         $mock = $this->getMockBuilder( 'eZUser' )
-            ->setMethods( array( 'groups', 'attribute' ) )
-            ->setConstructorArgs( array( 'contentobject_id' => $userId ) )
+            ->setMethods( ['groups', 'attribute'] )
+            ->setConstructorArgs( ['contentobject_id' => $userId] )
             ->getMock();
 
-        $groups = array();
+        $groups = [];
         foreach ( $groupIdArray as $groupId )
         {
-            $groups[] = new eZContentObject( array( 'id' => $groupId ) );
+            $groups[] = new eZContentObject( ['id' => $groupId] );
         }
 
-        $mock->expects( $this->any() )
+        $mock->expects( static::any() )
             ->method( 'groups' )
-            ->will( $this->returnValue( $groups ) );
+            ->will( static::returnValue($groups) );
 
-        $mock->expects( $this->any() )
+        $mock->expects( static::any() )
             ->method( 'attribute' )
             ->with( 'contentobject_id' )
-            ->will( $this->returnValue( $userId ) );
+            ->will( static::returnValue($userId) );
 
         return $mock;
     }
@@ -96,7 +78,7 @@ class eZCollaborationItemTest extends ezpDatabaseTestCase
         if ( !isset( $this->collaborationItemPartialMock ) )
         {
             $this->collaborationItemPartialMock = $this->getMockBuilder( 'eZCollaborationItem' )
-                ->setMethods( array( 'participantList' ) )
+                ->setMethods( ['participantList'] )
                 ->disableOriginalConstructor()
                 ->getMock();
         }
@@ -109,17 +91,17 @@ class eZCollaborationItemTest extends ezpDatabaseTestCase
     protected function createParticipantLinkPartialMock( $row )
     {
         $mock = $this->getMockBuilder( 'eZCollaborationItemParticipantLink' )
-            ->setMethods( array( 'participant' ) )
-            ->setConstructorArgs( array( $row ) )
+            ->setMethods( ['participant'] )
+            ->setConstructorArgs( [$row] )
             ->getMock();
 
         $returnValue = $row['participant_type'] == eZCollaborationItemParticipantLink::TYPE_USER
-            ? new eZUser( array( 'contentobject_id' => $row['participant_id'] ) )
-            : new eZContentObject( array( 'id' => $row['participant_id'] ) );
+            ? new eZUser( ['contentobject_id' => $row['participant_id']] )
+            : new eZContentObject( ['id' => $row['participant_id']] );
 
-        $mock->expects( $this->any() )
+        $mock->expects( static::any() )
             ->method( 'participant' )
-            ->will( $this->returnValue( $returnValue ) );
+            ->will( static::returnValue($returnValue) );
 
         return $mock;
     }

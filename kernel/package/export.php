@@ -37,7 +37,7 @@ if ( $fileName != "" and file_exists( $fileName ) )
     $fileLength = false;
     if ( isset( $_SERVER['HTTP_RANGE'] ) )
     {
-        $httpRange = trim( $_SERVER['HTTP_RANGE'] );
+        $httpRange = trim( (string) $_SERVER['HTTP_RANGE'] );
         if ( preg_match( "/^bytes=([0-9]+)-$/", $httpRange, $matches ) )
         {
             $fileOffset = $matches[1];

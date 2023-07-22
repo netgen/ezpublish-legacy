@@ -8,10 +8,7 @@
  */
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'debug-message' => '',
-                                      'use-session' => true,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+$script = eZScript::instance( ['debug-message' => '', 'use-session' => true, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
@@ -62,14 +59,14 @@ $useColors = true;
 $isQuiet = false;
 $useLogFiles = false;
 $showSQL = false;
-$markList = array();
+$markList = [];
 
-$optionsWithData = array( 's' );
-$longOptionsWithData = array( 'siteaccess' );
+$optionsWithData = ['s'];
+$longOptionsWithData = ['siteaccess'];
 
 $readOptions = true;
 
-for ( $i = 1; $i < count( $argv ); ++$i )
+for ( $i = 1; $i < (is_countable($argv) ? count( $argv ) : 0); ++$i )
 {
     $arg = $argv[$i];
     if ( $readOptions and
@@ -158,7 +155,7 @@ for ( $i = 1; $i < count( $argv ); ++$i )
                 if ( strlen( $arg ) > 2 )
                 {
                     $levels = explode( ',', substr( $arg, 2 ) );
-                    $allowedDebugLevels = array();
+                    $allowedDebugLevels = [];
                     foreach ( $levels as $level )
                     {
                         if ( $level == 'all' )

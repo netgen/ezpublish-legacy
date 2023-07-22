@@ -17,44 +17,32 @@ class eZDBInterfaceTest extends ezpDatabaseTestCase
 
     public static function providerForTestImplodeWithTypeCast()
     {
-        return array(
-            array( array( 1, 2, 3, 4 ), '-', 'int', '1-2-3-4' ),
-            array( array( 'a', 'b', 'c', 'd' ), '-', 'string', 'a-b-c-d' ),
-
+        return [
+            [[1, 2, 3, 4], '-', 'int', '1-2-3-4'],
+            [['a', 'b', 'c', 'd'], '-', 'string', 'a-b-c-d'],
             // non-array, empty string expected
-            array( 'notanarray', '-', 'string', '' ),
-        );
+            ['notanarray', '-', 'string', ''],
+        ];
     }
 
     public static function providerForTestGenerateSQLINStatement()
     {
-        return array(
-
+        return [
             // Standard IN queries
-            array( array( 1, 2, 3, 4 ), 'testrow', false, false, 'int',
-                'testrow IN ( 1, 2, 3, 4 )' ),
-            array( array( 'abc', 'def', 'geh' ), 'testrow', false, false, 'string',
-                'testrow IN ( abc, def, geh )' ),
-
+            [[1, 2, 3, 4], 'testrow', false, false, 'int', 'testrow IN ( 1, 2, 3, 4 )'],
+            [['abc', 'def', 'geh'], 'testrow', false, false, 'string', 'testrow IN ( abc, def, geh )'],
             // NOT IN queries
-            array( array( 1, 2, 3, 4 ), 'testrow', true, false, 'int',
-                'testrow NOT IN ( 1, 2, 3, 4 )' ),
-            array( array( 'abc', 'def', 'geh' ), 'testrow', true, false, 'string',
-                'testrow NOT IN ( abc, def, geh )' ),
-
+            [[1, 2, 3, 4], 'testrow', true, false, 'int', 'testrow NOT IN ( 1, 2, 3, 4 )'],
+            [['abc', 'def', 'geh'], 'testrow', true, false, 'string', 'testrow NOT IN ( abc, def, geh )'],
             // Standard IN queries with a real cast (alpha => 0)
-            array( array( 1, 2, 'a', 4 ), 'testrow', false, false, 'int',
-                'testrow IN ( 1, 2, 0, 4 )' ),
-        );
+            [[1, 2, 'a', 4], 'testrow', false, false, 'int', 'testrow IN ( 1, 2, 0, 4 )'],
+        ];
     }
 
     public static function providerForTestGenerateSQLINStatement2()
     {
         // Unicity test
-        return array(
-            array( array( 1, 2, 3, 3, 3, 4 ), 'testrow', false, true, 'int',
-            'testrow IN ( 1, 2, 3, 4 )' )
-        );
+        return [[[1, 2, 3, 3, 3, 4], 'testrow', false, true, 'int', 'testrow IN ( 1, 2, 3, 4 )']];
     }
 
     /**
@@ -64,7 +52,7 @@ class eZDBInterfaceTest extends ezpDatabaseTestCase
     {
         $db = eZDB::instance();
         $ret = $db->implodeWithTypeCast( $glue, $array, $type );
-        $this->assertEquals( $expected, $ret );
+        static::assertEquals($expected, $ret);
     }
 
     /**
@@ -75,7 +63,7 @@ class eZDBInterfaceTest extends ezpDatabaseTestCase
         $db = eZDB::instance();
         $ret = $db->generateSQLINStatement(
             $elements, $columnName, $not, $unique, $type );
-        $this->assertEquals( $expected, $ret );
+        static::assertEquals($expected, $ret);
     }
 
     /**
@@ -90,7 +78,7 @@ class eZDBInterfaceTest extends ezpDatabaseTestCase
 
         $ret = $db->generateSQLINStatement(
             $elements, $columnName, $not, $unique, $type );
-        $this->assertEquals( $expected, $ret );
+        static::assertEquals($expected, $ret);
     }
 
     /**

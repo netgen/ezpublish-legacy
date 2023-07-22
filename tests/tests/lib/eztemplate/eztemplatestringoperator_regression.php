@@ -62,10 +62,10 @@ Mitterrand we   re the jo";
 
 Kohl and Fra nçois
 Mitterrand we re the jo";
-        $namedParameters=array("char"=>false);
+        $namedParameters=["char"=>false];
         $this->templateStringOperator->modify(null,"simplify",
          null,null,null,$testString,$namedParameters,null);
-        $this->assertEquals($testString,$expectedString);
+        static::assertEquals($testString, $expectedString);
     }
 
     /**
@@ -84,9 +84,9 @@ Mitterrand we   re the jo";
         $expectedString="for Germany           on the whole, resultin
 Kohl and Fra  nçois
 Mitterrand we   re the jo";
-        $namedParameters=array("char"=>"\n");
+        $namedParameters=["char"=>"\n"];
         $this->templateStringOperator->modify(null,"simplify",null,null,null,$testString,$namedParameters,null);
-        $this->assertEquals($testString,$expectedString);
+        static::assertEquals($testString, $expectedString);
     }
 
 

@@ -18,25 +18,14 @@ class eZDiscountRule extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                         'datatype' => 'integer',
-                                                         'default' => 0,
-                                                         'required' => true ),
-                                         "name" => array( 'name' => "Name",
-                                                         'datatype' => 'string',
-                                                         'default' => '',
-                                                         'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZDiscountRule",
-                      "name" => "ezdiscountrule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "name" => ['name' => "Name", 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZDiscountRule", "name" => "ezdiscountrule"];
     }
 
     static function fetch( $id, $asObject = true )
     {
         return eZPersistentObject::fetchObject( eZDiscountRule::definition(),
                                                 null,
-                                                array( "id" => $id ),
+                                                ["id" => $id],
                                                 $asObject );
     }
 
@@ -49,9 +38,7 @@ class eZDiscountRule extends eZPersistentObject
 
     static function create()
     {
-        $row = array(
-            "id" => null,
-            "name" => ezpI18n::tr( "kernel/shop/discountgroup", "New discount group" ) );
+        $row = ["id" => null, "name" => ezpI18n::tr( "kernel/shop/discountgroup", "New discount group" )];
         return new eZDiscountRule( $row );
     }
 
@@ -62,7 +49,7 @@ class eZDiscountRule extends eZPersistentObject
     static function removeByID( $id )
     {
         eZPersistentObject::removeObject( eZDiscountRule::definition(),
-                                          array( "id" => $id ) );
+                                          ["id" => $id] );
     }
 }
 ?>

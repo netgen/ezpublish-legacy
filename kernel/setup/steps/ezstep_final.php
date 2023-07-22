@@ -49,7 +49,7 @@ class eZStepFinal extends eZStepInstaller
         $siteType['url'] = $siteaccessURLs['url'];
         $siteType['admin_url'] = $siteaccessURLs['admin_url'];
 
-        $customText = isset( $this->PersistenceList['final_text'] ) ? $this->PersistenceList['final_text'] : '';
+        $customText = $this->PersistenceList['final_text'] ?? '';
 
         $this->Tpl->setVariable( 'site_type', $siteType );
 
@@ -58,12 +58,11 @@ class eZStepFinal extends eZStepInstaller
         $this->Tpl->setVariable( 'setup_previous_step', 'Final' );
         $this->Tpl->setVariable( 'setup_next_step', 'Final' );
 
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/final.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Finished' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Finished' ), 'url' => false]];
         return $result;
 
     }

@@ -71,15 +71,12 @@ $GLOBALS["eZRequestError"] = true;
                     {
                         $module->redirectTo( $extraErrorParameters['new_location'] );
                         $module->setRedirectStatus( $httpErrorString );
-                        return array(); // $Result of this view
+                        return []; // $Result of this view
                     }
                     else
                     {
                         // we need to store the header so that they are listed in view cache data ()
-                        $responseHeaders = array(
-                            eZSys::serverVariable( 'SERVER_PROTOCOL' ) . " $httpErrorString",
-                            "Status: $httpErrorString"
-                        );
+                        $responseHeaders = [eZSys::serverVariable( 'SERVER_PROTOCOL' ) . " $httpErrorString", "Status: $httpErrorString"];
                         header( $responseHeaders[0] );
                         header( $responseHeaders[1] );
                     }
@@ -102,7 +99,7 @@ $GLOBALS["eZRequestError"] = true;
         $errorRerunURL = $errorINI->variable( 'ErrorSettings', 'DefaultRerunURL' );
         if ( isset( $rerunURLList[$errorNumber] ) )
             $errorRerunURL = $rerunURLList[$errorNumber];
-        $Result = array();
+        $Result = [];
         $Result['content'] = false;
         $Result['rerun_uri'] = $errorRerunURL;
         $module->setExitStatus( eZModule::STATUS_RERUN );
@@ -177,14 +174,11 @@ if ( (isset( $Params['ExtraParameters']['AccessList'] ) ) and  ( $ini->variable(
 }
 
 $res = eZTemplateDesignResource::instance();
-$res->setKeys( array( array( 'error_type', $errorType ), array( 'error_number', $errorNumber ) ) );
+$res->setKeys( [['error_type', $errorType], ['error_number', $errorNumber]] );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:error/$errorType/$errorNumber.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/error', 'Error' ),
-                                'url' => false ),
-                         array( 'text' => "$errorType ($errorNumber)",
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/error', 'Error' ), 'url' => false], ['text' => "$errorType ($errorNumber)", 'url' => false]];
 $Result['errorCode'] = $httpErrorCode;
 $Result['errorMessage'] = $httpErrorName;
 $Result['errorType'] = $errorType;

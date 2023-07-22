@@ -37,7 +37,7 @@ class eZContentBrowse
      *
      * @param array $params
      */
-    function __construct( $params = array() )
+    function __construct( $params = [] )
     {
         $http = eZHTTPTool::instance();
         if ( !$params && $http->hasSessionVariable( 'BrowseParameters' ) )
@@ -86,7 +86,7 @@ class eZContentBrowse
      Most data will be automatically derived from the \c action_name value taken from settings/browse.ini, other
      values will override default values.
     */
-    static function browse( $parameters = array(), &$module )
+    static function browse( &$module, $parameters = [] )
     {
         $ini = eZINI::instance( 'browse.ini' );
 
@@ -125,13 +125,13 @@ class eZContentBrowse
             $parameters['start_node'] = $ini->variable( $parameters['type'], 'StartNode' );
 
         if ( !isset( $parameters['ignore_nodes_select'] ) )
-            $parameters['ignore_nodes_select'] = array();
+            $parameters['ignore_nodes_select'] = [];
 
         if ( !isset( $parameters['ignore_nodes_select_subtree'] ) )
-            $parameters['ignore_nodes_select_subtree'] = array();
+            $parameters['ignore_nodes_select_subtree'] = [];
 
         if ( !isset( $parameters['ignore_nodes_click'] ) )
-            $parameters['ignore_nodes_click'] = array();
+            $parameters['ignore_nodes_click'] = [];
 
         if ( !isset( $parameters['class_array'] ) )
         {
@@ -189,7 +189,7 @@ class eZContentBrowse
         if ( !is_numeric( $parameters['start_node'] ) )
             $parameters['start_node'] = eZContentBrowse::nodeAliasID( $parameters['start_node'] );
 
-        for ( $i =0; $i < count( $parameters['top_level_nodes'] ); $i++ )
+        for ( $i =0; $i < (is_countable($parameters['top_level_nodes']) ? count( $parameters['top_level_nodes'] ) : 0); $i++ )
         {
             if ( !is_numeric( $parameters['top_level_nodes'][$i] ) )
                 $parameters['top_level_nodes'][$i] = eZContentBrowse::nodeAliasID( $parameters['top_level_nodes'][$i] );
@@ -267,7 +267,7 @@ class eZContentBrowse
         if ( $http->hasPostVariable( $postName ) && !$http->hasPostVariable( 'BrowseCancelButton' ) )
         {
             $postList = $http->postVariable( $postName );
-            $list = array();
+            $list = [];
             foreach ( $postList as $value )
             {
                 if ( !is_numeric( $value ) )

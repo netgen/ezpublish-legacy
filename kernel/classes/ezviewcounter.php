@@ -12,29 +12,12 @@ class eZViewCounter extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "node_id" => array( 'name' => "NodeID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZContentObjectTreeNode',
-                                                             'foreign_attribute' => 'node_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "count" => array( 'name' => "Count",
-                                                           'datatype' => 'integer',
-                                                           'default' => 0,
-                                                           'required' => true ) ),
-                      "keys" => array( "node_id" ),
-                      'relations' => array( 'node_id' => array( 'class' => 'eZContentObjectTreeNode',
-                                                                'field' => 'node_id' ) ),
-                      "class_name" => "eZViewCounter",
-                      "sort" => array( "count" => "desc" ),
-                      "name" => "ezview_counter" );
+        return ["fields" => ["node_id" => ['name' => "NodeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], "count" => ['name' => "Count", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["node_id"], 'relations' => ['node_id' => ['class' => 'eZContentObjectTreeNode', 'field' => 'node_id']], "class_name" => "eZViewCounter", "sort" => ["count" => "desc"], "name" => "ezview_counter"];
     }
 
     static function create( $node_id )
     {
-        $row = array("node_id" => $node_id,
-                     "count" => 0 );
+        $row = ["node_id" => $node_id, "count" => 0];
         return new eZViewCounter( $row );
     }
 
@@ -45,7 +28,7 @@ class eZViewCounter extends eZPersistentObject
     public static function removeCounter( $node_id )
     {
         eZPersistentObject::removeObject( eZViewCounter::definition(),
-                                          array("node_id" => $node_id ) );
+                                          ["node_id" => $node_id] );
     }
 
     /*!
@@ -84,7 +67,7 @@ class eZViewCounter extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZViewCounter::definition(),
                                                 null,
-                                                array("node_id" => $node_id ),
+                                                ["node_id" => $node_id],
                                                 $asObject );
     }
 
@@ -97,7 +80,7 @@ class eZViewCounter extends eZPersistentObject
                                                          null,
                                                          null,
                                                          null,
-                                                         array( 'length' => $limit, 'offset' => $offset ),
+                                                         ['length' => $limit, 'offset' => $offset],
                                                          false );
         }
 
@@ -132,8 +115,7 @@ class eZViewCounter extends eZPersistentObject
         }
         else
         {
-            $countListArray = $db->arrayQuery( $query, array( "offset" => $offset,
-                                                               "limit" => $limit ) );
+            $countListArray = $db->arrayQuery( $query, ["offset" => $offset, "limit" => $limit] );
         }
         return $countListArray;
     }

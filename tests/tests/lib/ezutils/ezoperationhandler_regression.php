@@ -36,19 +36,19 @@ class eZOperationHandlerRegression extends ezpTestCase
         $wfINI = eZINI::instance( 'workflow.ini' );
 
         // before
-        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', array( 'before_content_read' ) );
-        $this->assertTrue( eZOperationHandler::operationIsAvailable( 'content_read' ) );
+        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', ['before_content_read'] );
+        static::assertTrue(eZOperationHandler::operationIsAvailable( 'content_read' ));
 
         // after
-        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', array( 'after_content_read' ) );
-        $this->assertTrue( eZOperationHandler::operationIsAvailable( 'content_read' ) );
+        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', ['after_content_read'] );
+        static::assertTrue(eZOperationHandler::operationIsAvailable( 'content_read' ));
 
         // complete
-        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', array( 'content_read' ) );
-        $this->assertTrue( eZOperationHandler::operationIsAvailable( 'content_read' ) );
+        $wfINI->setVariable( 'OperationSettings', 'AvailableOperationList', ['content_read'] );
+        static::assertTrue(eZOperationHandler::operationIsAvailable( 'content_read' ));
 
         // unknown one
-        $this->assertFalse( eZOperationHandler::operationIsAvailable( 'foo_bar' ) );
+        static::assertFalse(eZOperationHandler::operationIsAvailable( 'foo_bar' ));
     }
 }
 

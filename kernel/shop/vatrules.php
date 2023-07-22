@@ -27,13 +27,13 @@ function findErrors( $vatRules )
         }
     }
 
-    if ( !$defaultRuleExists && count( $vatRules ) > 0 )
+    if ( !$defaultRuleExists && (is_countable($vatRules) ? count( $vatRules ) : 0) > 0 )
         $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', 'No default rule found. ' .
                             'Please add rule having "Any" country and "Any" category.' );
 
     // 2. Check for conflicting rules.
     // Conflicting rules are those having the same country and equal or intersecting categories sets.
-    $vatRulesCount = count( $vatRules );
+    $vatRulesCount = is_countable($vatRules) ? count( $vatRules ) : 0;
     for ( $i=0; $i < $vatRulesCount; $i++ )
     {
         $iRule       = $vatRules[$i];
@@ -61,7 +61,7 @@ function findErrors( $vatRules )
                 else
                 {
                     $errorMessage = "Conflict: There are multiple default rules for country '%1'.";
-                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, array( $iCountry ) );
+                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, [$iCountry] );
                 }
             }
             // Intersecting rules.
@@ -70,12 +70,12 @@ function findErrors( $vatRules )
                 if ( $iCountry == '*' )
                 {
                     $errorMessage = "Conflict: The following categories for any country are mentioned in multiple rules: %2.";
-                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, array( $iCountry, join( ',', $commonCategories ) ) );
+                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, [$iCountry, join( ',', $commonCategories )] );
                 }
                 else
                 {
                     $errorMessage = "Conflict: The following categories for country '%1' are mentioned in multiple rules: %2.";
-                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, array( $iCountry, join( ',', $commonCategories ) ) );
+                    $errors[] = ezpI18n::tr( 'kernel/shop/vatrules', $errorMessage, null, [$iCountry, join( ',', $commonCategories )] );
                 }
             }
         }
@@ -151,7 +151,7 @@ if ( $http->hasPostVariable( "AddRuleButton" ) )
 if ( $http->hasPostVariable( "RemoveRuleButton" ) )
 {
     if ( !$http->hasPostVariable( "RuleIDList" ) )
-        $ruleIDList = array();
+        $ruleIDList = [];
     else
         $ruleIDList = $http->postVariable( "RuleIDList" );
 
@@ -188,11 +188,10 @@ usort( $vatRules, 'compareVatRules' );
 $tpl->setVariable( 'rules', $vatRules );
 $tpl->setVariable( 'errors', $errors );
 
-$path = array();
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop/vatrules', 'VAT rules' ),
-                 'url' => false );
+$path = [];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop/vatrules', 'VAT rules' ), 'url' => false];
 
-$Result = array();
+$Result = [];
 $Result['path'] = $path;
 $Result['content'] = $tpl->fetch( "design:shop/vatrules.tpl" );
 

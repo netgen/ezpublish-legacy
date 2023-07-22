@@ -18,111 +18,7 @@ class eZWorkflowProcess extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'process_key' => array( 'name' => 'ProcessKey',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'workflow_id' => array( 'name' => 'WorkflowID',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZWorkflow',
-                                                                 'foreign_attribute' => 'id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'user_id' => array( 'name' => 'UserID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         'content_id' => array( 'name' => 'ContentID',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         'content_version' => array( 'name' => 'ContentVersion',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true ),
-                                         'session_key' => array( 'name' => 'SessionKey',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '0',
-                                                                 'required' => true ),
-                                         'node_id' => array( 'name' => 'NodeID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'event_id' => array( 'name' => 'EventID',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'event_position' => array( 'name' => 'EventPosition',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true ),
-                                         'event_state' => array( 'name' => 'EventState',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         'last_event_id' => array( 'name' => 'LastEventID',
-                                                                   'datatype' => 'integer',
-                                                                   'default' => 0,
-                                                                   'required' => true ),
-                                         'last_event_position' => array( 'name' => 'LastEventPosition',
-                                                                         'datatype' => 'integer',
-                                                                         'default' => 0,
-                                                                         'required' => true ),
-                                         'last_event_status' => array( 'name' => 'LastEventStatus',
-                                                                       'datatype' => 'integer',
-                                                                       'default' => 0,
-                                                                       'required' => true ),
-                                         'event_status' => array( 'name' => 'EventStatus',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'activation_date' => array( 'name' => 'ActivationDate',
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'parameters' => array( 'name' => 'Parameters',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => true ),
-                                         'memento_key' => array( 'name' => 'MementoKey',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZOperationMemento',
-                                                                 'foreign_attribute' => 'memento_key',
-                                                                 'multiplicity' => '1..*' ) ),
-                      'keys' => array( 'id' ),
-                      'function_attributes' => array( 'user' => 'user',
-                                                      'content' => 'content',
-                                                      'node' => 'node',
-                                                      'workflow' => 'workflow',
-                                                      'workflow_event' => 'workflowEvent',
-                                                      'last_workflow_event' => 'lastWorkflowEvent',
-                                                      'parameter_list' => 'parameterList' ),
-                      "increment_key" => "id",
-                      'class_name' => 'eZWorkflowProcess',
-                      'sort' => array( 'user_id' => 'asc' ),
-                      'name' => 'ezworkflow_process' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'process_key' => ['name' => 'ProcessKey', 'datatype' => 'string', 'default' => '', 'required' => true], 'workflow_id' => ['name' => 'WorkflowID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZWorkflow', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'user_id' => ['name' => 'UserID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'content_id' => ['name' => 'ContentID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'content_version' => ['name' => 'ContentVersion', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'session_key' => ['name' => 'SessionKey', 'datatype' => 'string', 'default' => '0', 'required' => true], 'node_id' => ['name' => 'NodeID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'event_id' => ['name' => 'EventID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'event_position' => ['name' => 'EventPosition', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'event_state' => ['name' => 'EventState', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'last_event_id' => ['name' => 'LastEventID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'last_event_position' => ['name' => 'LastEventPosition', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'last_event_status' => ['name' => 'LastEventStatus', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'event_status' => ['name' => 'EventStatus', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'activation_date' => ['name' => 'ActivationDate', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'parameters' => ['name' => 'Parameters', 'datatype' => 'text', 'default' => '', 'required' => true], 'memento_key' => ['name' => 'MementoKey', 'datatype' => 'string', 'default' => '', 'required' => true, 'foreign_class' => 'eZOperationMemento', 'foreign_attribute' => 'memento_key', 'multiplicity' => '1..*']], 'keys' => ['id'], 'function_attributes' => ['user' => 'user', 'content' => 'content', 'node' => 'node', 'workflow' => 'workflow', 'workflow_event' => 'workflowEvent', 'last_workflow_event' => 'lastWorkflowEvent', 'parameter_list' => 'parameterList'], "increment_key" => "id", 'class_name' => 'eZWorkflowProcess', 'sort' => ['user_id' => 'asc'], 'name' => 'ezworkflow_process'];
     }
 
     static function create( $processKey, $parameters )
@@ -130,22 +26,7 @@ class eZWorkflowProcess extends eZPersistentObject
         $dateTime = time();
         if ( !isset( $parameters['user_id'] ) )
             $parameters['user_id'] = 0;
-        $row = array( 'process_key' => $processKey,
-                      'workflow_id' => $parameters['workflow_id'],
-                      'user_id' => $parameters['user_id'],
-                      'content_id' => 0,
-                      'content_version' => 0,
-                      'node_id' => 0,
-                      'session_key' => 0,
-                      'event_id' => 0,
-                      'event_position' => 0,
-                      'last_event_id' => 0,
-                      'last_event_position' => 0,
-                      'last_event_status' => 0,
-                      'event_status' => 0,
-                      'created' => $dateTime,
-                      'modified' => $dateTime,
-                      'parameters' => serialize( $parameters ) );
+        $row = ['process_key' => $processKey, 'workflow_id' => $parameters['workflow_id'], 'user_id' => $parameters['user_id'], 'content_id' => 0, 'content_version' => 0, 'node_id' => 0, 'session_key' => 0, 'event_id' => 0, 'event_position' => 0, 'last_event_id' => 0, 'last_event_position' => 0, 'last_event_status' => 0, 'event_status' => 0, 'created' => $dateTime, 'modified' => $dateTime, 'parameters' => serialize( $parameters )];
         return new eZWorkflowProcess( $row );
     }
 
@@ -174,7 +55,9 @@ class eZWorkflowProcess extends eZPersistentObject
 
     function run( &$workflow, &$workflowEvent, &$eventLog )
     {
-        $eventLog = array();
+        $workflowEvent = null;
+        $workflowEvent = null;
+        $eventLog = [];
         eZDebugSetting::writeDebug( 'workflow-process', $workflowEvent, "workflowEvent in process->run beginning" );
 
         $runCurrentEvent = true;
@@ -210,12 +93,7 @@ class eZWorkflowProcess extends eZPersistentObject
                     if ( $activationDate == 0  )
                     {
                         $eventType = $workflowEvent->eventType();
-                        $eventLog[] = array( "status" => $currentEventStatus,
-                                             "status_text" => eZWorkflowType::statusName( $currentEventStatus ),
-                                             "information" => $eventType->attribute( "information" ),
-                                             "description" => $workflowEvent->attribute( "description" ),
-                                             "type_name" => $eventType->attribute( "name" ),
-                                             "type_group" => $eventType->attribute( "group_name" ) );
+                        $eventLog[] = ["status" => $currentEventStatus, "status_text" => eZWorkflowType::statusName( $currentEventStatus ), "information" => $eventType->attribute( "information" ), "description" => $workflowEvent->attribute( "description" ), "type_name" => $eventType->attribute( "name" ), "type_group" => $eventType->attribute( "group_name" )];
                         if ( $currentEventStatus == eZWorkflowType::STATUS_DEFERRED_TO_CRON ||
                              $currentEventStatus == eZWorkflowType::STATUS_FETCH_TEMPLATE   ||
                              $currentEventStatus == eZWorkflowType::STATUS_REDIRECT )
@@ -227,12 +105,7 @@ class eZWorkflowProcess extends eZPersistentObject
                     {
                         eZDebugSetting::writeDebug( 'workflow-process', "Date failed, not running events" );
                         $eventType = $workflowEvent->eventType();
-                        $eventLog[] = array( "status" => $currentEventStatus,
-                                             "status_text" => eZWorkflowType::statusName( $currentEventStatus ),
-                                             "information" => $eventType->attribute( "information" ),
-                                             "description" => $workflowEvent->attribute( "description" ),
-                                             "type_name" => $eventType->attribute( "name" ),
-                                             "type_group" => $eventType->attribute( "group_name" ) );
+                        $eventLog[] = ["status" => $currentEventStatus, "status_text" => eZWorkflowType::statusName( $currentEventStatus ), "information" => $eventType->attribute( "information" ), "description" => $workflowEvent->attribute( "description" ), "type_name" => $eventType->attribute( "name" ), "type_group" => $eventType->attribute( "group_name" )];
                         $done = true;
                     }
                     else
@@ -272,11 +145,11 @@ class eZWorkflowProcess extends eZPersistentObject
             }
             if ( $workflowEvent instanceof eZWorkflowEvent )
             {
-                eZDebugSetting::writeDebug( 'workflow-process', get_class( $workflowEvent ), "workflowEvent class is ezworkflowevent" );
+                eZDebugSetting::writeDebug( 'workflow-process', $workflowEvent::class, "workflowEvent class is ezworkflowevent" );
             }
             else if ( $workflowEvent !== null )
             {
-                eZDebugSetting::writeDebug( 'workflow-process', get_class( $workflowEvent ), "workflowEvent class is not ezworkflowevent" );
+                eZDebugSetting::writeDebug( 'workflow-process', $workflowEvent::class, "workflowEvent class is not ezworkflowevent" );
             }
             eZDebugSetting::writeDebug( 'workflow-process', $done , "in while" );
             if ( $runCurrentEvent and
@@ -299,7 +172,7 @@ class eZWorkflowProcess extends eZPersistentObject
                     else
                     {
                         unset( $cleanupList );
-                        $cleanupList = array();
+                        $cleanupList = [];
                     }
 
                     if ( $eventType->needCleanup() )
@@ -380,12 +253,7 @@ class eZWorkflowProcess extends eZPersistentObject
                             eZDebug::writeWarning( "Unknown status '$currentEventStatus'", __METHOD__ );
                         } break;
                     }
-                    $eventLog[] = array( "status" => $currentEventStatus,
-                                         "status_text" => eZWorkflowType::statusName( $currentEventStatus ),
-                                         "information" => $eventType->attribute( "information" ),
-                                         "description" => $workflowEvent->attribute( "description" ),
-                                         "type_name" => $eventType->attribute( "name" ),
-                                         "type_group" => $eventType->attribute( "group_name" ) );
+                    $eventLog[] = ["status" => $currentEventStatus, "status_text" => eZWorkflowType::statusName( $currentEventStatus ), "information" => $eventType->attribute( "information" ), "description" => $workflowEvent->attribute( "description" ), "type_name" => $eventType->attribute( "name" ), "type_group" => $eventType->attribute( "group_name" )];
                 }
                 else
                 {
@@ -432,14 +300,13 @@ class eZWorkflowProcess extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZWorkflowProcess::definition(),
                                                 null,
-                                                array( 'id' => $id ),
+                                                ['id' => $id],
                                                 $asObject );
     }
 
     static function fetchList( $conds = null, $asObject = true, $offset = false, $limit = false )
     {
-        $limitation = array( 'offset' => $offset,
-                             'length' => $limit );
+        $limitation = ['offset' => $offset, 'length' => $limit];
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null, $conds, null, $limitation,
                                                     $asObject );
@@ -480,13 +347,13 @@ class eZWorkflowProcess extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null,
-                                                    array( 'process_key' => $searchKey ), null, null,
+                                                    ['process_key' => $searchKey], null, null,
                                                     $asObject );
     }
 
     static function fetchUserList( $userID, $asObject = true )
     {
-        $conds = array( 'user_id' => $userID );
+        $conds = ['user_id' => $userID];
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null, $conds, null, null,
                                                     $asObject );
@@ -496,11 +363,7 @@ class eZWorkflowProcess extends eZPersistentObject
                                $contentID, $contentVersion, $nodeID,
                                $asObject = true )
     {
-        $conds = array( 'workflow_id' => $workflowID,
-                        'user_id' => $userID,
-                        'content_id' => $contentID,
-                        'content_version' => $contentVersion,
-                        'node_id' => $nodeID );
+        $conds = ['workflow_id' => $workflowID, 'user_id' => $userID, 'content_id' => $contentID, 'content_version' => $contentVersion, 'node_id' => $nodeID];
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null, $conds, null, null,
                                                     $asObject );
@@ -508,13 +371,13 @@ class eZWorkflowProcess extends eZPersistentObject
 
     static function fetchForStatus( $status = eZWorkflow::STATUS_DEFERRED_TO_CRON,  $asObject = true )
     {
-        $conds = array( 'status' => $status );
+        $conds = ['status' => $status];
 
         $db = eZDB::instance();
         if ( $db->databaseName() == 'oracle' )
-            $conds['LENGTH(memento_key)'] = array( '!=', 0 );
+            $conds['LENGTH(memento_key)'] = ['!=', 0];
         else
-            $conds['memento_key'] = array( '!=', '' );
+            $conds['memento_key'] = ['!=', ''];
 
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null, $conds, null, null,
@@ -523,8 +386,7 @@ class eZWorkflowProcess extends eZPersistentObject
 
     static function fetchForSession( $sessionKey, $workflowID, $asObject = true )
     {
-        $conds = array( 'workflow_id' => $workflowID,
-                        'session_key' => $sessionKey );
+        $conds = ['workflow_id' => $workflowID, 'session_key' => $sessionKey];
         return eZPersistentObject::fetchObjectList( eZWorkflowProcess::definition(),
                                                     null, $conds, null, null,
                                                     $asObject );
@@ -619,7 +481,7 @@ class eZWorkflowProcess extends eZPersistentObject
     function removeThis()
     {
         $workflowParameters = $this->attribute( 'parameter_list' );
-        $cleanupList = array();
+        $cleanupList = [];
 
         $db = eZDB::instance();
         $db->begin();
@@ -633,7 +495,7 @@ class eZWorkflowProcess extends eZPersistentObject
                 $workflowType->cleanup( $this, eZWorkflowEvent::fetch( $workflowEventID ) );
             }
         }
-        eZPersistentObject::removeObject( eZWorkflowProcess::definition(), array( 'id' => $this->attribute( 'id' ) ) );
+        eZPersistentObject::removeObject( eZWorkflowProcess::definition(), ['id' => $this->attribute( 'id' )] );
         $db->commit();
     }
 

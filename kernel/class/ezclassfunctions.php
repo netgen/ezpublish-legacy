@@ -12,7 +12,7 @@ class eZClassFunctions
 {
     static function addGroup( $classID, $classVersion, $selectedGroup )
     {
-        list ( $groupID, $groupName ) = explode( '/', $selectedGroup );
+        [$groupID, $groupName] = explode( '/', (string) $selectedGroup );
         $ingroup = eZContentClassClassGroup::create( $classID, $classVersion, $groupID, $groupName );
         $ingroup->store();
         return true;
@@ -32,7 +32,7 @@ class eZClassFunctions
             }
         }
 
-        if ( count( $groups ) == 0 )
+        if ( (is_countable($groups) ? count( $groups ) : 0) == 0 )
         {
             return false;
         }

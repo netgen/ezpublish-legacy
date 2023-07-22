@@ -78,11 +78,7 @@ class eZDate
 
     function attributes()
     {
-        return array( 'timestamp',
-                      'is_valid',
-                      'year',
-                      'month',
-                      'day' );
+        return ['timestamp', 'is_valid', 'year', 'month', 'day'];
     }
 
     function hasAttribute( $name )

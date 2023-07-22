@@ -17,11 +17,8 @@ class eZISBN10To13Converter
      \param $params custom parameters to the class. The Force parameter is now set as a
                     class variable for the other functions.
     */
-    public function __construct( $script, $cli, $params )
+    public function __construct( public $Script, public $Cli, $params )
     {
-        $this->Script = $script;
-        $this->Cli = $cli;
-        $this->AttributeArray = array();
         if ( isset( $params['force'] ) )
         {
             $this->Force = $params['force'];
@@ -88,10 +85,10 @@ class eZISBN10To13Converter
             $class = eZContentClass::fetch( $classID );
             if ( $class instanceof eZContentClass )
             {
-                $classFilter = array( 'data_type_string' => 'ezisbn' );
+                $classFilter = ['data_type_string' => 'ezisbn'];
                 $classAttributes = $class->fetchAttributes();
                 $attributeFound = false;
-                if ( count( $classAttributes ) > 0 )
+                if ( (is_countable($classAttributes) ? count( $classAttributes ) : 0) > 0 )
                 {
                     foreach ( $classAttributes as $attribute )
                     {
@@ -186,7 +183,7 @@ class eZISBN10To13Converter
      */
     function attributeCount()
     {
-        return count( $this->AttributeArray );
+        return is_countable($this->AttributeArray) ? count( $this->AttributeArray ) : 0;
     }
 
     /*!
@@ -221,11 +218,10 @@ class eZISBN10To13Converter
         $offset = 0;
         $countList = 0;
         $limit = 100;
-        $conditions = array( "contentclassattribute_id" => $classAttributeID );
-        $limitArray = array( 'offset' => $offset,
-                             'limit' => $limit );
+        $conditions = ["contentclassattribute_id" => $classAttributeID];
+        $limitArray = ['offset' => $offset, 'limit' => $limit];
 
-        $sortArray = array( 'id' => 'asc' );
+        $sortArray = ['id' => 'asc'];
 
         // Only fetch some objects each time to avoid memory problems.
         while ( true )
@@ -236,7 +232,7 @@ class eZISBN10To13Converter
                                                                       $sortArray,
                                                                       $limitArray,
                                                                       $asObject );
-            if ( count( $contentObjectAttributeList ) == 0 )
+            if ( count( (array) $contentObjectAttributeList ) == 0 )
             {
                 break;
             }
@@ -250,11 +246,10 @@ class eZISBN10To13Converter
             {
                 $this->Cli->output( ' ' . $this->Cli->stylize( 'strong', $i * $limit ) );
             }
-            $countList = count( $contentObjectAttributeList );
+            $countList = count( (array) $contentObjectAttributeList );
             unset( $contentObjectList );
             $offset += $limit;
-            $limitArray = array( 'offset' => $offset,
-                                 'limit' => $limit );
+            $limitArray = ['offset' => $offset, 'limit' => $limit];
         }
         $repeatLength = 70 - ( $i % 70 );
         $count = ( ( $i - 1 ) * $limit ) + $countList;
@@ -268,8 +263,10 @@ class eZISBN10To13Converter
      */
     function updateContentObjectAttribute( $contentObjectAttribute )
     {
+        $ean = null;
+        $formatedISBN13Value = null;
         $isbnNumber = $contentObjectAttribute->attribute( 'data_text' );
-        $isbnValue = trim( $isbnNumber );
+        $isbnValue = trim( (string) $isbnNumber );
         $error = false;
 
         // If the number only consists of hyphen, it should be emty.
@@ -302,7 +299,7 @@ class eZISBN10To13Converter
             if ( $error === false )
             {
                 $isbn13 = new eZISBN13();
-                $formatedISBN13Value = $isbn13->formatedISBNValue( $ean, $error );
+                $formatedISBN13Value = $isbn13->formatedISBNValue( $error, $ean );
             }
 
             if ( $error === false )
@@ -346,10 +343,7 @@ class eZISBN10To13Converter
                "' WHERE id='" .  $contentObjectAttributeID . "' AND version='" . $version . "'" ;
         $db->query( $sql );
     }
-
-    public $Cli;
-    public $Script;
-    public $AttributeArray;
+    public $AttributeArray = [];
 }
 
 ?>

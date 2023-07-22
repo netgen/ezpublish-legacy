@@ -18,30 +18,14 @@ class eZContentClassClassGroup extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "contentclass_id" => array( 'name' => "ContentClassID",
-                                                                     'datatype' => 'integer',
-                                                                     'default' => 0,
-                                                                     'required' => true,
-                                                                     'foreign_class' => 'eZContentClass',
-                                                                     'foreign_attribute' => 'id',
-                                                                     'multiplicity' => '1..*' ),
-                                         "contentclass_version" => array( 'name' => "ContentClassVersion",
-                                                                          'datatype' => 'integer',
-                                                                          'default' => 0,
-                                                                          'required' => true ),
-                                         "group_id" => array( 'name' => "GroupID",
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         "group_name" => array( 'name' => "GroupName",
-                                                                'datatype' => 'string',
-                                                                'default' => '',
-                                                                'required' => true ) ),
-                      "keys" => array( "contentclass_id", "contentclass_version", "group_id" ),
-//                      "increment_key" => "id",
-                      "class_name" => "eZContentClassClassGroup",
-                      "sort" => array( "contentclass_id" => "asc" ),
-                      "name" => "ezcontentclass_classgroup" );
+        return [
+            "fields" => ["contentclass_id" => ['name' => "ContentClassID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentClass', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "contentclass_version" => ['name' => "ContentClassVersion", 'datatype' => 'integer', 'default' => 0, 'required' => true], "group_id" => ['name' => "GroupID", 'datatype' => 'integer', 'default' => 0, 'required' => true], "group_name" => ['name' => "GroupName", 'datatype' => 'string', 'default' => '', 'required' => true]],
+            "keys" => ["contentclass_id", "contentclass_version", "group_id"],
+            //                      "increment_key" => "id",
+            "class_name" => "eZContentClassClassGroup",
+            "sort" => ["contentclass_id" => "asc"],
+            "name" => "ezcontentclass_classgroup",
+        ];
     }
 
     static function create( $contentclass_id, $contentclass_version, $group_id, $group_name )
@@ -50,10 +34,7 @@ class eZContentClassClassGroup extends eZPersistentObject
         {
             $contentclass_version = 0;
         }
-        $row = array("contentclass_id" => $contentclass_id,
-                     "contentclass_version" => $contentclass_version,
-                     "group_id" => $group_id,
-                     "group_name" => $group_name);
+        $row = ["contentclass_id" => $contentclass_id, "contentclass_version" => $contentclass_version, "group_id" => $group_id, "group_name" => $group_name];
         return new eZContentClassClassGroup( $row );
     }
 
@@ -61,17 +42,14 @@ class eZContentClassClassGroup extends eZPersistentObject
     {
         if( $contentclass_version == null )
         {
-            $row = array( 'group_id' => $group_id );
+            $row = ['group_id' => $group_id];
         }
         else
         {
-            $row = array( 'contentclass_version' => $contentclass_version,
-                          'group_id' => $group_id );
+            $row = ['contentclass_version' => $contentclass_version, 'group_id' => $group_id];
         }
 
-        eZPersistentObject::updateObjectList( array( 'definition' => eZContentClassClassGroup::definition(),
-                                                     'update_fields' => array( 'group_name' => $group_name ),
-                                                     'conditions' => $row ) );
+        eZPersistentObject::updateObjectList( ['definition' => eZContentClassClassGroup::definition(), 'update_fields' => ['group_name' => $group_name], 'conditions' => $row] );
     }
 
     /*!
@@ -83,15 +61,12 @@ class eZContentClassClassGroup extends eZPersistentObject
         if ( $contentclass_version == null )
         {
             eZPersistentObject::removeObject( eZContentClassClassGroup::definition(),
-                                              array("contentclass_id" => $contentclass_id,
-                                                    "group_id" => $group_id ) );
+                                              ["contentclass_id" => $contentclass_id, "group_id" => $group_id] );
         }
         else
         {
             eZPersistentObject::removeObject( eZContentClassClassGroup::definition(),
-                                              array("contentclass_id" => $contentclass_id,
-                                                    "contentclass_version" =>$contentclass_version,
-                                                    "group_id" => $group_id ) );
+                                              ["contentclass_id" => $contentclass_id, "contentclass_version" =>$contentclass_version, "group_id" => $group_id] );
         }
     }
 
@@ -102,7 +77,7 @@ class eZContentClassClassGroup extends eZPersistentObject
     static function removeGroupMembers( $group_id )
     {
         eZPersistentObject::removeObject( eZContentClassClassGroup::definition(),
-                                          array( "group_id" => $group_id ) );
+                                          ["group_id" => $group_id] );
     }
 
     /*!
@@ -112,21 +87,18 @@ class eZContentClassClassGroup extends eZPersistentObject
     static function removeClassMembers( $contentclass_id, $contentclass_version )
     {
         eZPersistentObject::removeObject( eZContentClassClassGroup::definition(),
-                                          array( "contentclass_id" =>$contentclass_id,
-                                                 "contentclass_version" =>$contentclass_version ) );
+                                          ["contentclass_id" =>$contentclass_id, "contentclass_version" =>$contentclass_version] );
     }
 
     static function fetch( $contentclass_id, $contentclass_version, $group_id, $asObject = true )
     {
         return eZPersistentObject::fetchObject( eZContentClassClassGroup::definition(),
                                                 null,
-                                                array("contentclass_id" => $contentclass_id,
-                                                      "contentclass_version" =>$contentclass_version,
-                                                      "group_id" => $group_id ),
+                                                ["contentclass_id" => $contentclass_id, "contentclass_version" =>$contentclass_version, "group_id" => $group_id],
                                                 $asObject );
     }
 
-    static function fetchClassList( $contentclass_version, $group_id, $asObject = true, $orderByArray = array( 'name' ) )
+    static function fetchClassList( $contentclass_version, $group_id, $asObject = true, $orderByArray = ['name'] )
     {
         $versionCond = '';
         $orderByClause = '';
@@ -144,7 +116,7 @@ class eZContentClassClassGroup extends eZPersistentObject
         {
             foreach( array_keys( $orderByArray ) as $key )
             {
-                if ( strcasecmp( $orderByArray[$key], 'name' ) === 0 )
+                if ( strcasecmp( (string) $orderByArray[$key], 'name' ) === 0 )
                 {
                     $classNameSqlFilter = eZContentClassName::sqlAppendFilter( 'contentclass' );
                     $orderByArray[$key] = $classNameSqlFilter['orderBy'];
@@ -169,18 +141,17 @@ class eZContentClassClassGroup extends eZPersistentObject
     {
         if ( is_array( $groupIDList ) )
         {
-            $groupIDList = array( $groupIDList );
+            $groupIDList = [$groupIDList];
         }
         $classGroupList = eZPersistentObject::fetchObjectList( eZContentClassClassGroup::definition(),
-                                                                array(),
-                                                                array( "group_id" => $groupIDList,
-                                                                       "contentclass_version" => $contentclassVersion ),
+                                                                [],
+                                                                ["group_id" => $groupIDList, "contentclass_version" => $contentclassVersion],
                                                                 null,
                                                                 null,
                                                                 false,
                                                                 false,
-                                                                array( array( 'operation' => "distinct contentclass_id" ) ) );
-        $classList = array();
+                                                                [['operation' => "distinct contentclass_id"]] );
+        $classList = [];
         if ( $asObject )
         {
             foreach ( $classGroupList as $classGroup )
@@ -202,8 +173,7 @@ class eZContentClassClassGroup extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZContentClassClassGroup::definition(),
                                                     null,
-                                                    array( "contentclass_id" => $contentclass_id,
-                                                           "contentclass_version" => $contentclass_version ),
+                                                    ["contentclass_id" => $contentclass_id, "contentclass_version" => $contentclass_version],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -213,13 +183,11 @@ class eZContentClassClassGroup extends eZPersistentObject
     {
         $rows = eZPersistentObject::fetchObjectList( eZContentClassClassGroup::definition(),
                                                      null,
-                                                     array( 'group_id' => $groupID,
-                                                            "contentclass_id" => $contentclassID,
-                                                            "contentclass_version" => $contentclassVersion ),
+                                                     ['group_id' => $groupID, "contentclass_id" => $contentclassID, "contentclass_version" => $contentclassVersion],
                                                      null,
                                                      null,
                                                      false );
-        return count( $rows ) > 0;
+        return count( (array) $rows ) > 0;
     }
 
     /// \privatesection

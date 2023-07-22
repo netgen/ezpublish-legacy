@@ -18,9 +18,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
         parent::setUp();
 
         $this->article = new ezpObject( "article", 2, eZUser::fetchByName( 'anonymous' )->attribute( 'contentobject_id' ) );
-        $this->article->title = "Article for " . __CLASS__;
+        $this->article->title = "Article for " . self::class;
         $this->article->publish();
-        $this->article->addTranslation( "nor-NO", array( "title" => "Norsk title of article for " . __CLASS__ ) );
+        $this->article->addTranslation( "nor-NO", ["title" => "Norsk title of article for " . self::class] );
     }
 
     public function tearDown()
@@ -35,9 +35,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     public function testFetchAllVersionsAsObject()
     {
         $versions = $this->article->object->versions();
-        $this->assertEquals( 2, count( $versions ) );
-        $this->assertInstanceOf( 'eZContentObjectVersion' , $versions[0] );
-        $this->assertInstanceOf( 'eZContentObjectVersion' , $versions[1] );
+        static::assertEquals(2, is_countable($versions) ? count( $versions ) : 0);
+        static::assertInstanceOf('eZContentObjectVersion', $versions[0]);
+        static::assertInstanceOf('eZContentObjectVersion', $versions[1]);
     }
 
     /**
@@ -46,9 +46,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     public function testFetchAllVersionsAsRows()
     {
         $versions = $this->article->object->versions( false );
-        $this->assertEquals( 2, count( $versions ) );
-        $this->assertInternalType( 'array' , $versions[0] );
-        $this->assertInternalType( 'array' , $versions[1] );
+        static::assertEquals(2, is_countable($versions) ? count( $versions ) : 0);
+        static::assertInternalType('array', $versions[0]);
+        static::assertInternalType('array', $versions[1]);
     }
 
     /**
@@ -56,10 +56,10 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
      */
     public function testFetchVersionsWithPublishedStatus()
     {
-        $versions = $this->article->object->versions( true, array( 'conditions' => array( 'status' => eZContentObjectVersion::STATUS_PUBLISHED ) ));
-        $this->assertEquals( 1, count( $versions ) );
-        $this->assertEquals( eZContentObjectVersion::STATUS_PUBLISHED, $versions[0]->Status );
-        $this->assertEquals( 2, $versions[0]->Version );
+        $versions = $this->article->object->versions( true, ['conditions' => ['status' => eZContentObjectVersion::STATUS_PUBLISHED]]);
+        static::assertEquals(1, is_countable($versions) ? count( $versions ) : 0);
+        static::assertEquals(eZContentObjectVersion::STATUS_PUBLISHED, $versions[0]->Status);
+        static::assertEquals(2, $versions[0]->Version);
     }
 
     /**
@@ -68,10 +68,10 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     public function testFetchVersionsWithMatchingCreator()
     {
         $creatorID = eZUser::fetchByName( 'anonymous' )->attribute( 'contentobject_id' );
-        $versions = $this->article->object->versions( true, array( 'conditions' => array( 'creator_id' => $creatorID ) ) );
-        $this->assertEquals( 2, count( $versions ) );
-        $this->assertEquals( $creatorID, $versions[0]->CreatorID );
-        $this->assertEquals( $creatorID, $versions[1]->CreatorID );
+        $versions = $this->article->object->versions( true, ['conditions' => ['creator_id' => $creatorID]] );
+        static::assertEquals(2, is_countable($versions) ? count( $versions ) : 0);
+        static::assertEquals($creatorID, $versions[0]->CreatorID);
+        static::assertEquals($creatorID, $versions[1]->CreatorID);
     }
 
     /**
@@ -80,8 +80,8 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     public function testFetchVersionsWithNonMatchingCreator()
     {
         $creatorID = eZUser::fetchByName( 'admin' )->attribute( 'contentobject_id' );
-        $versions = $this->article->object->versions( true, array( 'conditions' => array( 'creator_id' => $creatorID ) ) );
-        $this->assertTrue( empty( $versions ) );
+        $versions = $this->article->object->versions( true, ['conditions' => ['creator_id' => $creatorID]] );
+        static::assertTrue(empty( $versions ));
     }
 
     /**
@@ -89,10 +89,10 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
      */
     public function testFetchVersionsWithArchivedStatus()
     {
-        $versions = $this->article->object->versions( true, array( 'conditions' => array( 'status' => eZContentObjectVersion::STATUS_ARCHIVED ) ));
-        $this->assertEquals( 1, count( $versions ) );
-        $this->assertEquals( eZContentObjectVersion::STATUS_ARCHIVED, $versions[0]->Status );
-        $this->assertEquals( 1, $versions[0]->Version );
+        $versions = $this->article->object->versions( true, ['conditions' => ['status' => eZContentObjectVersion::STATUS_ARCHIVED]]);
+        static::assertEquals(1, is_countable($versions) ? count( $versions ) : 0);
+        static::assertEquals(eZContentObjectVersion::STATUS_ARCHIVED, $versions[0]->Status);
+        static::assertEquals(1, $versions[0]->Version);
     }
 
     /**
@@ -103,13 +103,11 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
         $eZContentObjectDefinition = eZContentObject::definition();
         $objects = eZContentObject::fetchList(
             true,
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id]
         );
-        $this->assertSame( 1, count( $objects ) );
-        $this->assertInstanceOf( 'eZContentObject' , $objects[0] );
-        $this->assertEquals( $this->article->id, $objects[0]->attribute( 'id' )  );
+        static::assertSame(1, count( (array) $objects ));
+        static::assertInstanceOf('eZContentObject', $objects[0]);
+        static::assertEquals($this->article->id, $objects[0]->attribute( 'id' ));
     }
 
     /**
@@ -120,13 +118,11 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
         $eZContentObjectDefinition = eZContentObject::definition();
         $objects = eZContentObject::fetchList(
             false,
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id]
         );
-        $this->assertSame( 1, count( $objects ) );
-        $this->assertInternalType( 'array' , $objects[0] );
-        $this->assertEquals( $this->article->id, $objects[0]['id'] );
+        static::assertSame(1, count( (array) $objects ));
+        static::assertInternalType('array', $objects[0]);
+        static::assertEquals($this->article->id, $objects[0]['id']);
     }
 
     /**
@@ -137,14 +133,11 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
         $eZContentObjectDefinition = eZContentObject::definition();
         $objects = eZContentObject::fetchList(
             true,
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id,
-                'status' => eZContentObject::STATUS_PUBLISHED
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id, 'status' => eZContentObject::STATUS_PUBLISHED]
         );
-        $this->assertSame( 1, count( $objects ) );
-        $this->assertInstanceOf( 'eZContentObject' , $objects[0] );
-        $this->assertEquals( $this->article->id, $objects[0]->attribute( 'id' )  );
+        static::assertSame(1, count( (array) $objects ));
+        static::assertInstanceOf('eZContentObject', $objects[0]);
+        static::assertEquals($this->article->id, $objects[0]->attribute( 'id' ));
     }
 
     /**
@@ -159,12 +152,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
         $eZContentObjectDefinition = eZContentObject::definition();
         $objects = eZContentObject::fetchList(
             true,
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id,
-                'status' => eZContentObject::STATUS_ARCHIVED
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id, 'status' => eZContentObject::STATUS_ARCHIVED]
         );
-        $this->assertSame( 1, count( $objects ) );
+        static::assertSame(1, count( (array) $objects ));
     }
 
     /**
@@ -174,11 +164,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     {
         $eZContentObjectDefinition = eZContentObject::definition();
         $count = eZContentObject::fetchListCount(
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id]
         );
-        $this->assertEquals( 1, $count );
+        static::assertEquals(1, $count);
     }
 
     /**
@@ -188,12 +176,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
     {
         $eZContentObjectDefinition = eZContentObject::definition();
         $count = eZContentObject::fetchListCount(
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id,
-                'status' => eZContentObject::STATUS_PUBLISHED
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id, 'status' => eZContentObject::STATUS_PUBLISHED]
         );
-        $this->assertEquals( 1, $count );
+        static::assertEquals(1, $count);
     }
 
     /**
@@ -206,12 +191,9 @@ class eZContentObjectTest2 extends ezpDatabaseTestCase
 
         $eZContentObjectDefinition = eZContentObject::definition();
         $count = eZContentObject::fetchListCount(
-            array(
-                $eZContentObjectDefinition['name'] . ".id" => $this->article->id,
-                'status' => eZContentObject::STATUS_ARCHIVED
-            )
+            [$eZContentObjectDefinition['name'] . ".id" => $this->article->id, 'status' => eZContentObject::STATUS_ARCHIVED]
         );
-        $this->assertEquals( 1, $count );
+        static::assertEquals(1, $count);
     }
 }
 

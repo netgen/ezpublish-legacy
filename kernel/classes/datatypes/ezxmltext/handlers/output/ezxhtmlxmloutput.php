@@ -11,119 +11,21 @@
 class eZXHTMLXMLOutput extends eZXMLOutputHandler
 {
 
-    public $OutputTags = array(
-
-    'section'      => array( 'quickRender' => true,
-                             'initHandler' => 'initHandlerSection',
-                             'renderHandler' => 'renderChildrenOnly' ),
-
-    'embed'        => array( 'initHandler' => 'initHandlerEmbed',
-                             'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification',
-                                                           'xhtml:id' => 'id',
-                                                           'object_id' => false,
-                                                           'node_id' => false,
-                                                           'show_path' => false ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'embed-inline' => array( 'initHandler' => 'initHandlerEmbed',
-                             'renderHandler' => 'renderInline',
-                             'attrNamesTemplate' => array( 'class' => 'classification',
-                                                           'xhtml:id' => 'id',
-                                                           'object_id' => false,
-                                                           'node_id' => false,
-                                                           'show_path' => false ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'table'        => array( 'initHandler' => 'initHandlerTable',
-                             'leavingHandler' => 'leavingHandlerTable',
-                             'renderHandler' => 'renderAll',
-                             'contentVarName' => 'rows',
-                             'attrNamesTemplate' => array( 'class' => 'classification',
-                                                           'width' => 'width' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'tr'           => array( //'quickRender' => array( 'tr', "\n" ),
-                             'initHandler' => 'initHandlerTr',
-                             'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'td'           => array( 'initHandler' => 'initHandlerTd',
-                             'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'xhtml:width' => 'width',
-                                                           'xhtml:colspan' => 'colspan',
-                                                           'xhtml:rowspan' => 'rowspan',
-                                                           'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'th'           => array( 'initHandler' => 'initHandlerTd',
-                             'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'xhtml:width' => 'width',
-                                                           'xhtml:colspan' => 'colspan',
-                                                           'xhtml:rowspan' => 'rowspan',
-                                                           'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'ol'           => array( 'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'ul'           => array( 'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'li'           => array( 'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'header'       => array( 'initHandler' => 'initHandlerHeader',
-                             'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'paragraph'    => array( //'quickRender' => array( 'p', "\n" ),
-                             'renderHandler' => 'renderParagraph',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'line'         => array( //'quickRender' => array( '', "<br/>" ),
-                             'renderHandler' => 'renderLine' ),
-
-    'literal'      => array( 'renderHandler' => 'renderAll',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'strong'       => array( 'renderHandler' => 'renderInline',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'emphasize'    => array( 'renderHandler' => 'renderInline',
-                             'attrNamesTemplate' => array( 'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'link'         => array( 'initHandler' => 'initHandlerLink',
-                             'renderHandler' => 'renderInline',
-                             'attrNamesTemplate' => array( 'xhtml:id' => 'id',
-                                                           'xhtml:title' => 'title',
-                                                           'url_id' => false,
-                                                           'object_id' => false,
-                                                           'node_id' => false,
-                                                           'show_path' => false,
-                                                           'ezurl_id' => false,
-                                                           'anchor_name' => false,
-                                                           'class' => 'classification' ),
-                             'attrDesignKeys' => array( 'class' => 'classification' ) ),
-
-    'anchor'       => array( 'renderHandler' => 'renderInline' ),
-
-    'custom'       => array( 'initHandler' => 'initHandlerCustom',
-                             'renderHandler' => 'renderCustom',
-                             'attrNamesTemplate' => array( 'name' => false ) ),
-
-    '#text'        => array( 'quickRender' => true,
-                             'renderHandler' => 'renderText' )
-    );
+    public $OutputTags = ['section'      => ['quickRender' => true, 'initHandler' => 'initHandlerSection', 'renderHandler' => 'renderChildrenOnly'], 'embed'        => ['initHandler' => 'initHandlerEmbed', 'renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification', 'xhtml:id' => 'id', 'object_id' => false, 'node_id' => false, 'show_path' => false], 'attrDesignKeys' => ['class' => 'classification']], 'embed-inline' => ['initHandler' => 'initHandlerEmbed', 'renderHandler' => 'renderInline', 'attrNamesTemplate' => ['class' => 'classification', 'xhtml:id' => 'id', 'object_id' => false, 'node_id' => false, 'show_path' => false], 'attrDesignKeys' => ['class' => 'classification']], 'table'        => ['initHandler' => 'initHandlerTable', 'leavingHandler' => 'leavingHandlerTable', 'renderHandler' => 'renderAll', 'contentVarName' => 'rows', 'attrNamesTemplate' => ['class' => 'classification', 'width' => 'width'], 'attrDesignKeys' => ['class' => 'classification']], 'tr'           => [
+        //'quickRender' => array( 'tr', "\n" ),
+        'initHandler' => 'initHandlerTr',
+        'renderHandler' => 'renderAll',
+        'attrNamesTemplate' => ['class' => 'classification'],
+        'attrDesignKeys' => ['class' => 'classification'],
+    ], 'td'           => ['initHandler' => 'initHandlerTd', 'renderHandler' => 'renderAll', 'attrNamesTemplate' => ['xhtml:width' => 'width', 'xhtml:colspan' => 'colspan', 'xhtml:rowspan' => 'rowspan', 'class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'th'           => ['initHandler' => 'initHandlerTd', 'renderHandler' => 'renderAll', 'attrNamesTemplate' => ['xhtml:width' => 'width', 'xhtml:colspan' => 'colspan', 'xhtml:rowspan' => 'rowspan', 'class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'ol'           => ['renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'ul'           => ['renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'li'           => ['renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'header'       => ['initHandler' => 'initHandlerHeader', 'renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'paragraph'    => [
+        //'quickRender' => array( 'p', "\n" ),
+        'renderHandler' => 'renderParagraph',
+        'attrNamesTemplate' => ['class' => 'classification'],
+        'attrDesignKeys' => ['class' => 'classification'],
+    ], 'line'         => [
+        //'quickRender' => array( '', "<br/>" ),
+        'renderHandler' => 'renderLine',
+    ], 'literal'      => ['renderHandler' => 'renderAll', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'strong'       => ['renderHandler' => 'renderInline', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'emphasize'    => ['renderHandler' => 'renderInline', 'attrNamesTemplate' => ['class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'link'         => ['initHandler' => 'initHandlerLink', 'renderHandler' => 'renderInline', 'attrNamesTemplate' => ['xhtml:id' => 'id', 'xhtml:title' => 'title', 'url_id' => false, 'object_id' => false, 'node_id' => false, 'show_path' => false, 'ezurl_id' => false, 'anchor_name' => false, 'class' => 'classification'], 'attrDesignKeys' => ['class' => 'classification']], 'anchor'       => ['renderHandler' => 'renderInline'], 'custom'       => ['initHandler' => 'initHandlerCustom', 'renderHandler' => 'renderCustom', 'attrNamesTemplate' => ['name' => false]], '#text'        => ['quickRender' => true, 'renderHandler' => 'renderText']];
 
     public function __construct( $xmlData, $aliasedType, $contentObjectAttribute = null )
     {
@@ -136,7 +38,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function initHandlerSection( $element, &$attributes, &$siblingParams, &$parentParams )
     {
-        $ret = array();
+        $ret = [];
         if( !isset( $parentParams['section_level'] ) )
             $parentParams['section_level'] = 0;
         else
@@ -177,16 +79,14 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         if ( $this->ObjectAttributeID )
             $headerAutoName = $this->ObjectAttributeID . '_' . $headerAutoName;
 
-        $ret = array( 'tpl_vars' => array( 'level' => $level,
-                                           'header_number' => $levelNumber,
-                                           'toc_anchor_name' => $headerAutoName ) );
+        $ret = ['tpl_vars' => ['level' => $level, 'header_number' => $levelNumber, 'toc_anchor_name' => $headerAutoName]];
 
         return $ret;
     }
 
     function initHandlerLink( $element, &$attributes, &$siblingParams, &$parentParams )
     {
-        $ret = array();
+        $ret = [];
         $ezxmlIni = eZINI::instance('ezxml.ini');
 
         // Set link parameters for rendering children of link tag
@@ -200,7 +100,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         elseif ( $element->getAttribute( 'node_id' ) != null )
         {
             $nodeID = (int) $element->getAttribute( 'node_id' );
-            $node = isset( $this->NodeArray[$nodeID] ) ? $this->NodeArray[$nodeID] : null;
+            $node = $this->NodeArray[$nodeID] ?? null;
 
             if ( $node != null )
             {
@@ -277,8 +177,9 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function initHandlerEmbed( $element, &$attributes, &$siblingParams, &$parentParams )
     {
+        $nodeID = null;
         // default return value in case of errors
-        $ret = array( 'no_render' => true );
+        $ret = ['no_render' => true];
 
         $tplSuffix = '';
         $objectID = $element->getAttribute( 'object_id' );
@@ -360,15 +261,15 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
             $templateName = $element->nodeName . '_denied';
         }
 
-        $objectParameters = array();
-        $excludeAttrs = array( 'view', 'class', 'node_id', 'object_id' );
+        $objectParameters = [];
+        $excludeAttrs = ['view', 'class', 'node_id', 'object_id'];
 
         foreach ( $attributes as $attrName => $value )
         {
            if ( !in_array( $attrName, $excludeAttrs ) )
            {
-               if ( strpos( $attrName, ':' ) !== false )
-                   $attrName = substr( $attrName, strpos( $attrName, ':' ) + 1 );
+               if ( str_contains( (string) $attrName, ':' ) )
+                   $attrName = substr( (string) $attrName, strpos( (string) $attrName, ':' ) + 1 );
 
                $objectParameters[$attrName] = $value;
                unset( $attributes[$attrName] );
@@ -378,13 +279,9 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         if ( isset( $parentParams['link_parameters'] ) )
             $linkParameters = $parentParams['link_parameters'];
         else
-            $linkParameters = array();
+            $linkParameters = [];
 
-        $ret = array( 'template_name' => $templateName,
-                      'tpl_vars' => array( 'object' => $object,
-                                           'link_parameters' => $linkParameters,
-                                           'object_parameters' => $objectParameters ),
-                      'design_keys' => array( 'class_identifier' => $object->attribute( 'class_identifier' ) ) );
+        $ret = ['template_name' => $templateName, 'tpl_vars' => ['object' => $object, 'link_parameters' => $linkParameters, 'object_parameters' => $objectParameters], 'design_keys' => ['class_identifier' => $object->attribute( 'class_identifier' )]];
 
         if ( $tplSuffix == '_node')
             $ret['tpl_vars']['node'] = $node;
@@ -413,8 +310,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         if ( $colCount )
             $colCount--;
 
-        $ret = array( 'tpl_vars' => array( 'col_count' => $colCount,
-                                           'row_count' => $rowCount ) );
+        $ret = ['tpl_vars' => ['col_count' => $colCount, 'row_count' => $rowCount]];
         return $ret;
     }
 
@@ -427,7 +323,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function initHandlerTr( $element, &$attributes, &$siblingParams, &$parentParams )
     {
-        $ret = array();
+        $ret = [];
         if( !isset( $siblingParams['table_row_count'] ) )
             $siblingParams['table_row_count'] = 0;
         else
@@ -440,13 +336,12 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         if ( $colCount )
             $colCount--;
 
-        $ret = array( 'tpl_vars' => array( 'row_count' => $parentParams['table_row_count'],
-                                           'col_count' => $colCount ) );
+        $ret = ['tpl_vars' => ['row_count' => $parentParams['table_row_count'], 'col_count' => $colCount]];
 
         // Allow overrides based on table class
         $parent = $element->parentNode;
         if ( $parent instanceof DOMElement && $parent->hasAttribute('class') )
-            $ret['design_keys'] = array( 'table_classification' => $parent->getAttribute('class') );
+            $ret['design_keys'] = ['table_classification' => $parent->getAttribute('class')];
 
         return $ret;
     }
@@ -458,13 +353,12 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
         else
             $siblingParams['table_col_count']++;
 
-        $ret = array( 'tpl_vars' => array( 'col_count' => &$siblingParams['table_col_count'],
-                                           'row_count' => &$parentParams['table_row_count'] ) );
+        $ret = ['tpl_vars' => ['col_count' => &$siblingParams['table_col_count'], 'row_count' => &$parentParams['table_row_count']]];
 
         // Allow overrides based on table class
         $parent = $element->parentNode->parentNode;
         if ( $parent instanceof DOMElement && $parent->hasAttribute('class') )
-            $ret['design_keys'] = array( 'table_classification' => $parent->getAttribute('class') );
+            $ret['design_keys'] = ['table_classification' => $parent->getAttribute('class')];
 
         if ( !$this->RenderParagraphInTableCells
                 && self::childTagCount( $element ) == 1 )
@@ -489,7 +383,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function initHandlerCustom( $element, &$attributes, &$siblingParams, &$parentParams )
 {
-        $ret = array( 'template_name' => $attributes['name'] );
+        $ret = ['template_name' => $attributes['name']];
         return $ret;
     }
 
@@ -502,7 +396,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
 
         if ( ( $parent->nodeName == 'li' && self::childTagCount( $parent ) == 1 ) ||
-             ( in_array( $parent->nodeName, array( 'td', 'th' ) ) && !$this->RenderParagraphInTableCells && self::childTagCount( $parent ) == 1 ) )
+             ( in_array( $parent->nodeName, ['td', 'th'] ) && !$this->RenderParagraphInTableCells && self::childTagCount( $parent ) == 1 ) )
 
         {
             return $childrenOutput;
@@ -541,7 +435,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
             $lastTagInline = $childOutput[0];
         }
-        return array( false, $tagText );
+        return [false, $tagText];
     }
 
     /* Count child elemnts, ignoring whitespace and text
@@ -561,7 +455,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function renderInline( $element, $childrenOutput, $vars )
     {
-        $renderedArray = array();
+        $renderedArray = [];
         $lastTagInline = null;
         $inlineContent = '';
 
@@ -576,12 +470,12 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
                  ( $childOutput[0] === true && !isset( $childrenOutput[ $key + 1 ] ) ) )
             {
                 $tagText = $this->renderTag( $element, $inlineContent, $vars );
-                $renderedArray[] = array( true, $tagText );
+                $renderedArray[] = [true, $tagText];
                 $inlineContent = '';
             }
 
             if ( $childOutput[0] === false )// is block
-                $renderedArray[] = array( false, $childOutput[1] );
+                $renderedArray[] = [false, $childOutput[1]];
 
             $lastTagInline = $childOutput[0];
 
@@ -591,7 +485,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
     function renderLine( $element, $childrenOutput, $vars )
     {
-        $renderedArray = array();
+        $renderedArray = [];
         $lastTagInline = null;
         $inlineContent = '';
 
@@ -605,7 +499,7 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
 
             if ( $childOutput[0] === false && $lastTagInline === true )
             {
-                $renderedArray[] = array( true, $inlineContent );
+                $renderedArray[] = [true, $inlineContent];
                 $inlineContent = '';
             }
             elseif ( $childOutput[0] === true && !isset( $childrenOutput[ $key + 1 ] ) )
@@ -620,14 +514,14 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
                 if ( $next && $next->nodeName == 'line' )
                 {
                     $tagText = $this->renderTag( $element, $inlineContent, $vars );
-                    $renderedArray[] = array( true, $tagText );
+                    $renderedArray[] = [true, $tagText];
                 }
                 else
-                    $renderedArray[] = array( true, $inlineContent );
+                    $renderedArray[] = [true, $inlineContent];
             }
 
             if ( $childOutput[0] === false )// is block
-                $renderedArray[] = array( false, $childOutput[1] );
+                $renderedArray[] = [false, $childOutput[1]];
 
             $lastTagInline = $childOutput[0];
         }
@@ -655,22 +549,22 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
             $tagText .= $childOutput[1];
         }
 
-        return array( false, $tagText );
+        return [false, $tagText];
     }
 
     function renderText( $element, $childrenOutput, $vars )
     {
         if ( $element->parentNode->nodeName != 'literal' )
         {
-            if ( trim( $element->textContent ) === ''
+            if ( trim( (string) $element->textContent ) === ''
                 && ( ( $element->previousSibling && $element->previousSibling->nodeName === 'line' )
                     || ( $element->nextSibling && $element->nextSibling->nodeName === 'line' ) ) )
             {
                 // spaces before or after a line element are irrelevant
-                return array( true, '' );
+                return [true, ''];
             }
-            $text = htmlspecialchars( $element->textContent );
-            $text = str_replace( array( '&amp;nbsp;', "\xC2\xA0" ), '&nbsp;', $text);
+            $text = htmlspecialchars( (string) $element->textContent );
+            $text = str_replace( ['&amp;nbsp;', "\xC2\xA0"], '&nbsp;', $text);
             // Get rid of linebreak and spaces stored in xml file
             $text = str_replace( "\n", '', $text );
 
@@ -687,20 +581,20 @@ class eZXHTMLXMLOutput extends eZXMLOutputHandler
             $text = $element->textContent;
         }
 
-        return array( true, $text );
+        return [true, $text];
     }
 
 
     /// Array of parameters for rendering tags that are children of 'link' tag
-    public $LinkParameters = array();
+    public $LinkParameters = [];
 
-    public $HeaderCount = array();
+    public $HeaderCount = [];
 
     /**
      * Stack of section levels saved when entering tables.
      * @var array
      */
-    protected $SectionLevelStack = array();
+    protected $SectionLevelStack = [];
 
     public $RenderParagraphInTableCells = true;
 }

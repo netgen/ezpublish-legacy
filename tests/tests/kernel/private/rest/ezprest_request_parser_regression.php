@@ -23,7 +23,7 @@ class ezpRestHttpRequestParserRegression extends ezpRegressionTest
 {
     public function __construct()
     {
-        $this->readDirRecursively( dirname( __FILE__ ) . '/request_parser_data', $this->files, 'data' );
+        $this->readDirRecursively( __DIR__ . '/request_parser_data', $this->files, 'data' );
 
         parent::__construct();
     }
@@ -52,6 +52,12 @@ class ezpRestHttpRequestParserRegression extends ezpRegressionTest
 
     public function testRunRegression( $name )
     {
+        $server = null;
+        $get = null;
+        $post = null;
+        $files = null;
+        $request = null;
+        $cookies = null;
         include $name;
         $_SERVER = $server;
         $_GET = $get;
@@ -94,7 +100,7 @@ class ezpRestHttpRequestParserRegression extends ezpRegressionTest
 
     public static function suite()
     {
-        return new ezpTestRegressionSuite( __CLASS__ );
+        return new ezpTestRegressionSuite( self::class );
     }
 }
 ?>

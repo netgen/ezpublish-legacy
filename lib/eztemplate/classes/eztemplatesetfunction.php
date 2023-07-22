@@ -35,22 +35,24 @@
 
 class eZTemplateSetFunction
 {
-    const SCOPE_RELATIVE = 1;
-    const SCOPE_ROOT = 2;
-    const SCOPE_GLOBAL = 3;
+    final public const SCOPE_RELATIVE = 1;
+    final public const SCOPE_ROOT = 2;
+    final public const SCOPE_GLOBAL = 3;
 
     /**
      * Initializes the function with the function names $setName and $letName.
      *
-     * @param string $setName
-     * @param string $letName
-     * @param string $defaultName
+     * @param string $SetName
+     * @param string $LetName
+     * @param string $DefaultName
      */
-    public function __construct( $setName = 'set', $letName = 'let', $defaultName = 'default' )
+    public function __construct(
+        /// The name of the set function
+        public $SetName = 'set',
+        public $LetName = 'let',
+        public $DefaultName = 'default'
+    )
     {
-        $this->SetName = $setName;
-        $this->LetName = $letName;
-        $this->DefaultName = $defaultName;
     }
 
     /*!
@@ -58,26 +60,12 @@ class eZTemplateSetFunction
     */
     function functionList()
     {
-        return array( $this->SetName, $this->LetName, $this->DefaultName );
+        return [$this->SetName, $this->LetName, $this->DefaultName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->LetName => array( 'parameters' => true,
-                                               'static' => false,
-                                               'tree-transformation' => true,
-                                               'transform-children' => true,
-                                               'transform-parameters' => true ),
-                      $this->SetName => array( 'parameters' => true,
-                                               'static' => false,
-                                               'tree-transformation' => true,
-                                               'transform-children' => true,
-                                               'transform-parameters' => true ),
-                      $this->DefaultName => array( 'parameters' => true,
-                                                   'static' => false,
-                                                   'tree-transformation' => true,
-                                                   'transform-children' => true,
-                                                   'transform-parameters' => true ) );
+        return [$this->LetName => ['parameters' => true, 'static' => false, 'tree-transformation' => true, 'transform-children' => true, 'transform-parameters' => true], $this->SetName => ['parameters' => true, 'static' => false, 'tree-transformation' => true, 'transform-children' => true, 'transform-parameters' => true], $this->DefaultName => ['parameters' => true, 'static' => false, 'tree-transformation' => true, 'transform-children' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -115,8 +103,8 @@ class eZTemplateSetFunction
                     $namespaceValue = eZTemplateNodeTool::elementConstantValue( $parameters['-name'] );
                 }
 
-                $variableList = array();
-                $setVarNodes = array();
+                $variableList = [];
+                $setVarNodes = [];
                 foreach ( array_keys( $parameters ) as $parameterName )
                 {
                     if ( $parameterName == '-name' or $parameterName == '-scope'  )
@@ -128,7 +116,7 @@ class eZTemplateSetFunction
 
                     $setVarNodes[] = eZTemplateNodeTool::createVariableNode(
                             false, $parameterData, eZTemplateNodeTool::extractFunctionNodePlacement( $node ),
-                            array(), array( $namespaceValue, $scope, $parameterName ),
+                            [], [$namespaceValue, $scope, $parameterName],
                             ( $functionName == $this->SetName ), ( $functionName != $this->DefaultName ),
                             false, ( $functionName == $this->DefaultName ) );
 
@@ -149,15 +137,15 @@ class eZTemplateSetFunction
                     $childNodes = eZTemplateNodeTool::extractFunctionNodeChildren( $node );
                     if ( !is_array( $childNodes ) )
                     {
-                        $childNodes = array();
+                        $childNodes = [];
                     }
                 }
                 else
                 {
-                    $childNodes = array();
+                    $childNodes = [];
                 }
 
-                $unsetVarNodes = array();
+                $unsetVarNodes = [];
 
                 if ( ( $functionName == $this->LetName or $functionName == $this->DefaultName ) and
                      $namespaceValue )
@@ -169,10 +157,8 @@ class eZTemplateSetFunction
                 {
                     foreach( $variableList as $parameterName )
                     {
-                        $unsetVarNodes[] = eZTemplateNodeTool::createVariableUnsetNode( array( $namespaceValue,
-                                                                                               eZTemplate::NAMESPACE_SCOPE_RELATIVE,
-                                                                                               $parameterName ),
-                                                                                        array( 'remember_set' => $functionName == $this->DefaultName ) );
+                        $unsetVarNodes[] = eZTemplateNodeTool::createVariableUnsetNode( [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName],
+                                                                                        ['remember_set' => $functionName == $this->DefaultName] );
                     }
                 }
 
@@ -190,7 +176,7 @@ class eZTemplateSetFunction
     function defineVariables( $tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, &$currentNamespace )
     {
         $oldCurrentNamespace = $currentNamespace;
-        $definedVariables = array();
+        $definedVariables = [];
         foreach ( array_keys( $functionParameters ) as $key )
         {
             $item =& $functionParameters[$key];
@@ -218,14 +204,13 @@ class eZTemplateSetFunction
             }
         }
         $currentNamespace = $name;
-        return array( $definedVariables,
-                      $oldCurrentNamespace );
+        return [$definedVariables, $oldCurrentNamespace];
     }
 
     function createDefaultVariables( $tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, &$currentNamespace )
     {
         $oldCurrentNamespace = $currentNamespace;
-        $definedVariables = array();
+        $definedVariables = [];
         foreach ( array_keys( $functionParameters ) as $key )
         {
             $item =& $functionParameters[$key];
@@ -246,8 +231,7 @@ class eZTemplateSetFunction
             }
         }
         $currentNamespace = $name;
-        return array( $definedVariables,
-                      $oldCurrentNamespace );
+        return [$definedVariables, $oldCurrentNamespace];
     }
 
     function cleanupVariables( $tpl, $rootNamespace, &$currentNamespace, $setData )
@@ -309,7 +293,7 @@ class eZTemplateSetFunction
                 $name = "$rootNamespace:$name";
         }
 
-        $definedVariables = array();
+        $definedVariables = [];
         if ( $functionName == $this->SetName )
         {
             foreach ( array_keys( $functionParameters ) as $key )
@@ -342,11 +326,11 @@ class eZTemplateSetFunction
         }
         else if ( $functionName == $this->DefaultName )
         {
-            $definedVariables = eZTemplateSetFunction::createDefaultVariables( $tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, $currentNamespace );
+            $definedVariables = (new eZTemplateSetFunction())->createDefaultVariables($tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, $currentNamespace);
         }
         else
         {
-            $definedVariables = eZTemplateSetFunction::defineVariables( $tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, $currentNamespace );
+            $definedVariables = (new eZTemplateSetFunction())->defineVariables($tpl, $functionParameters, $functionPlacement, $name, $rootNamespace, $currentNamespace);
         }
         if ( $functionName == $this->LetName or
              $functionName == $this->DefaultName )
@@ -359,7 +343,7 @@ class eZTemplateSetFunction
                     $tpl->processNode( $child, $textElements, $rootNamespace, $name );
                 }
             }
-            eZTemplateSetFunction::cleanupVariables( $tpl, $rootNamespace, $currentNamespace, $definedVariables );
+            (new eZTemplateSetFunction())->cleanupVariables($tpl, $rootNamespace, $currentNamespace, $definedVariables);
         }
     }
 
@@ -368,15 +352,8 @@ class eZTemplateSetFunction
     */
     function hasChildren()
     {
-        return array( $this->SetName => false,
-                      $this->LetName => true,
-                      $this->DefaultName => true );
+        return [$this->SetName => false, $this->LetName => true, $this->DefaultName => true];
     }
-
-    /// The name of the set function
-    public $SetName;
-    public $LetName;
-    public $DefaultName;
 }
 
 ?>

@@ -13,23 +13,20 @@
  */
 class ezpExtension
 {
-    public $name;
-
     /**
      * Array of multiton instances (Multiton pattern)
      *
      * @see getInstance
      */
-    private static $instances = array();
+    private static array $instances = [];
 
     /**
      * ezpExtension constructor.
      *
      * @param string $name Name of the extension
      */
-    protected function __construct( $name )
+    protected function __construct(public $name)
     {
-        $this->name = $name;
     }
 
     /**
@@ -55,7 +52,7 @@ class ezpExtension
      */
     public function getLoadingOrder()
     {
-        $return = array( 'before' => array(), 'after' => array() );
+        $return = ['before' => [], 'after' => []];
 
         if ( is_readable( $XMLDependencyFile = eZExtension::baseDirectory() . "/{$this->name}/extension.xml" ) )
         {
@@ -109,7 +106,7 @@ class ezpExtension
         // try extension.xml first
         if ( is_readable( $XMLFilePath = eZExtension::baseDirectory() . "/{$this->name}/extension.xml" ) )
         {
-            $infoFields = array( 'name', 'description', 'version', 'copyright', 'author', 'license', 'info_url' );
+            $infoFields = ['name', 'description', 'version', 'copyright', 'author', 'license', 'info_url'];
 
             libxml_use_internal_errors( true );
             $xml = simplexml_load_file( $XMLFilePath );
@@ -119,7 +116,7 @@ class ezpExtension
                 eZDebug::writeError( libxml_get_errors(), "ezpExtension({$this->name})::getInfo()" );
                 return null;
             }
-            $return = array();
+            $return = [];
             $metadataNode = $xml->metadata;
 
             // standard extension metadata
@@ -155,9 +152,9 @@ class ezpExtension
         {
             include_once( $infoFilePath );
             $className = $this->name . 'Info';
-            if ( is_callable( array( $className, 'info' ) ) )
+            if ( is_callable( [$className, 'info'] ) )
             {
-                $result = call_user_func_array( array( $className, 'info' ), array() );
+                $result = call_user_func_array( [$className, 'info'], [] );
                 if ( is_array( $result ) )
                 {
                     return $result;

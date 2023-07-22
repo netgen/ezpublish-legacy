@@ -16,7 +16,7 @@
 
 class eZDefaultConfirmOrderHandler
 {
-    function execute( $params = array() )
+    function execute( $params = [] )
     {
         $ini = eZINI::instance();
         $sendOrderEmail = $ini->variable( 'ShopSettings', 'SendOrderEmail' );

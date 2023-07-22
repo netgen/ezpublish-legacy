@@ -17,20 +17,20 @@ class eZNodeAssignment extends eZPersistentObject
 {
     // Bit 0 is used to mark if the action is to be performed or not
     // A value of 0 means ignore and 1 means execute
-    const OP_CODE_NOP =          0;
-    const OP_CODE_EXECUTE =      1;
+    final public const OP_CODE_NOP =          0;
+    final public const OP_CODE_EXECUTE =      1;
     // Create the node at specified location
-    const OP_CODE_CREATE_NOP =   2;
-    const OP_CODE_CREATE =       3;
+    final public const OP_CODE_CREATE_NOP =   2;
+    final public const OP_CODE_CREATE =       3;
     // Move the node to new location
-    const OP_CODE_MOVE_NOP =     4;
-    const OP_CODE_MOVE =         5;
+    final public const OP_CODE_MOVE_NOP =     4;
+    final public const OP_CODE_MOVE =         5;
     // Remove existing node
-    const OP_CODE_REMOVE_NOP =   6;
-    const OP_CODE_REMOVE =       7;
+    final public const OP_CODE_REMOVE_NOP =   6;
+    final public const OP_CODE_REMOVE =       7;
     // Set (update/create) values for node
-    const OP_CODE_SET_NOP =      8;
-    const OP_CODE_SET =          9;
+    final public const OP_CODE_SET_NOP =      8;
+    final public const OP_CODE_SET =          9;
 
     public function __construct( $row )
     {
@@ -41,82 +41,29 @@ class eZNodeAssignment extends eZPersistentObject
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         // Used for the remote id of the node assignment itself
-                                         'remote_id' => array( 'name' => 'RemoteID',
-                                                               'datatype' => 'string',
-                                                               'default' => 0,
-                                                               'required' => true ),
-                                         'contentobject_id' => array( 'name' => 'ContentobjectID',
-                                                                      'datatype' => 'integer',
-                                                                      'default' => 0,
-                                                                      'required' => true,
-                                                                      'foreign_class' => 'eZContentObject',
-                                                                      'foreign_attribute' => 'id',
-                                                                      'multiplicity' => '1..*' ),
-                                         'contentobject_version' => array( 'name' => 'ContentObjectVersion',
-                                                                           'datatype' => 'integer',
-                                                                           'default' => 0,
-                                                                           'required' => true ),
-                                         'parent_node' => array( 'name' => 'ParentNode',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZContentObjectTreeNode',
-                                                                 'foreign_attribute' => 'node_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'sort_field' => array( 'name' => 'SortField',
-                                                                'datatype' => 'integer',
-                                                                'default' => eZContentObjectTreeNode::SORT_FIELD_PATH,
-                                                                'required' => true ),
-                                         'sort_order' => array( 'name' => 'SortOrder',
-                                                                'datatype' => 'integer',
-                                                                'default' => eZContentObjectTreeNode::SORT_ORDER_ASC,
-                                                                'required' => true ),
-                                         'is_main' => array( 'name' => 'Main',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'from_node_id' => array( 'name' => 'FromNodeID',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => 0,
-                                                                  'required' => true,
-                                                                  'foreign_class' => 'eZContentObjectTreeNode',
-                                                                  'foreign_attribute' => 'node_id',
-                                                                  'multiplicity' => '1..*' ),
-                                         // Used for the remote id of the corresponding tree node (not the parent tree node!)
-                                         'parent_remote_id' => array( 'name' => 'ParentRemoteID',
-                                                                      'datatype' => 'string',
-                                                                      'default' => '',
-                                                                      'required' => false ),
-                                         'is_hidden' => array( 'name' => 'Hidden',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => false ),
-                                         'priority' => array( 'name' => 'Priority',
-                                                               'datatype' => 'integer',
-                                                               'default' => 0,
-                                                               'required' => false ),
-                                         'op_code' => array( 'name' => 'OpCode',
-                                                             'datatype' => 'int',
-                                                             'default' => 0, // eZNodeAssignment::OP_CODE_NOP
-                                                             'required' => true ) ),
-                      'keys' => array( 'id' ),
-                      "function_attributes" => array( "parent_node_obj"      => "getParentNode",
-                                                      "parent_contentobject" => "getParentObject",
-                                                      "node"                 => "fetchNode",
-                                                      'is_nop_operation'     => 'isNopOperation',
-                                                      'is_create_operation'  => 'isCreateOperation',
-                                                      'is_move_operation'    => 'isMoveOperation',
-                                                      'is_remove_operation'  => 'isRemoveOperation',
-                                                      'is_set_operation'     => 'isSetOperation',
-                                                      'temp_node'            => 'tempNode' ),
-                      "increment_key" => "id",
-                      'class_name' => 'eZNodeAssignment',
-                      'name' => 'eznode_assignment' );
+        return ['fields' => [
+            'id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true],
+            // Used for the remote id of the node assignment itself
+            'remote_id' => ['name' => 'RemoteID', 'datatype' => 'string', 'default' => 0, 'required' => true],
+            'contentobject_id' => ['name' => 'ContentobjectID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObject', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'],
+            'contentobject_version' => ['name' => 'ContentObjectVersion', 'datatype' => 'integer', 'default' => 0, 'required' => true],
+            'parent_node' => ['name' => 'ParentNode', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'],
+            'sort_field' => ['name' => 'SortField', 'datatype' => 'integer', 'default' => eZContentObjectTreeNode::SORT_FIELD_PATH, 'required' => true],
+            'sort_order' => ['name' => 'SortOrder', 'datatype' => 'integer', 'default' => eZContentObjectTreeNode::SORT_ORDER_ASC, 'required' => true],
+            'is_main' => ['name' => 'Main', 'datatype' => 'integer', 'default' => 0, 'required' => true],
+            'from_node_id' => ['name' => 'FromNodeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'],
+            // Used for the remote id of the corresponding tree node (not the parent tree node!)
+            'parent_remote_id' => ['name' => 'ParentRemoteID', 'datatype' => 'string', 'default' => '', 'required' => false],
+            'is_hidden' => ['name' => 'Hidden', 'datatype' => 'integer', 'default' => 0, 'required' => false],
+            'priority' => ['name' => 'Priority', 'datatype' => 'integer', 'default' => 0, 'required' => false],
+            'op_code' => [
+                'name' => 'OpCode',
+                'datatype' => 'int',
+                'default' => 0,
+                // eZNodeAssignment::OP_CODE_NOP
+                'required' => true,
+            ],
+        ], 'keys' => ['id'], "function_attributes" => ["parent_node_obj"      => "getParentNode", "parent_contentobject" => "getParentObject", "node"                 => "fetchNode", 'is_nop_operation'     => 'isNopOperation', 'is_create_operation'  => 'isCreateOperation', 'is_move_operation'    => 'isMoveOperation', 'is_remove_operation'  => 'isRemoveOperation', 'is_set_operation'     => 'isSetOperation', 'temp_node'            => 'tempNode'], "increment_key" => "id", 'class_name' => 'eZNodeAssignment', 'name' => 'eznode_assignment'];
     }
 
     function tempNode()
@@ -188,7 +135,7 @@ class eZNodeAssignment extends eZPersistentObject
         return $this->OpCode == eZNodeAssignment::OP_CODE_SET;
     }
 
-    static function create( $parameters = array() )
+    static function create( $parameters = [] )
     {
         if ( !isset( $parameters['contentobject_id'] ) )
         {
@@ -266,8 +213,7 @@ class eZNodeAssignment extends eZPersistentObject
         {
             $parentNodeID =(int) $parentNodeID;
             $contentObjectID =(int) $contentObjectID;
-            $cond = array( 'parent_node' => $parentNodeID,
-                           'contentobject_id' => $contentObjectID );
+            $cond = ['parent_node' => $parentNodeID, 'contentobject_id' => $contentObjectID];
             $nodeAssignment = eZPersistentObject::fetchObject( eZNodeAssignment::definition(),
                                                                null,
                                                                $cond,
@@ -389,8 +335,7 @@ class eZNodeAssignment extends eZPersistentObject
 
     static function fetchForObject( $contentObjectID, $version = 1, $main = 0, $asObject = true )
     {
-        $cond = array( 'contentobject_id' => $contentObjectID,
-                       'contentobject_version' => $version );
+        $cond = ['contentobject_id' => $contentObjectID, 'contentobject_version' => $version];
         if( $main > 0 )
         {
             $cond['is_main'] = 1;
@@ -406,9 +351,7 @@ class eZNodeAssignment extends eZPersistentObject
 
     static function fetch( $contentObjectID, $version = 1, $parentNode = 0 ,$asObject = true )
     {
-        $cond = array( 'contentobject_id' => $contentObjectID,
-                       'contentobject_version' => $version,
-                       'parent_node' => $parentNode );
+        $cond = ['contentobject_id' => $contentObjectID, 'contentobject_version' => $version, 'parent_node' => $parentNode];
         return eZPersistentObject::fetchObject( eZNodeAssignment::definition(),
                                                 null,
                                                 $cond,
@@ -431,7 +374,7 @@ class eZNodeAssignment extends eZPersistentObject
     */
     static function fetchByID( $id ,$asObject = true )
     {
-        $cond = array( 'id' => $id );
+        $cond = ['id' => $id];
         return eZPersistentObject::fetchObject( eZNodeAssignment::definition(),
                                                 null, $cond,
                                                 $asObject );
@@ -443,7 +386,7 @@ class eZNodeAssignment extends eZPersistentObject
     */
     static function fetchListByID( $idList ,$asObject = true )
     {
-        $cond = array( 'id' => array( $idList ) );
+        $cond = ['id' => [$idList]];
         return eZPersistentObject::fetchObjectList( eZNodeAssignment::definition(),
                                                     null, $cond, null, null,
                                                     $asObject );
@@ -494,7 +437,7 @@ class eZNodeAssignment extends eZPersistentObject
         $nodeAssignmentArray = $db->arrayQuery( $sql );
         if( $asObject )
         {
-            $result = array();
+            $result = [];
             foreach( $nodeAssignmentArray as $nodeAssignment )
             {
                 $result[] = new eZNodeAssignment( $nodeAssignment );
@@ -510,16 +453,7 @@ class eZNodeAssignment extends eZPersistentObject
 
     function cloneNodeAssignment( $nextVersionNumber = 1, $contentObjectID = false )
     {
-        $assignmentRow = array( 'contentobject_id' => $this->attribute( 'contentobject_id' ),
-                                'contentobject_version' => $nextVersionNumber,
-                                'remote_id' => $this->attribute( 'remote_id' ),
-                                'parent_node' => $this->attribute( 'parent_node' ),
-                                'sort_field' => $this->attribute( 'sort_field' ),
-                                'sort_order' => $this->attribute( 'sort_order' ),
-                                'is_main' => $this->attribute( 'is_main' ),
-                                'is_hidden' => $this->attribute( 'is_hidden' ),
-                                'priority' => $this->attribute( 'priority' ),
-                                'parent_remote_id' => $this->attribute( 'parent_remote_id' ) );
+        $assignmentRow = ['contentobject_id' => $this->attribute( 'contentobject_id' ), 'contentobject_version' => $nextVersionNumber, 'remote_id' => $this->attribute( 'remote_id' ), 'parent_node' => $this->attribute( 'parent_node' ), 'sort_field' => $this->attribute( 'sort_field' ), 'sort_order' => $this->attribute( 'sort_order' ), 'is_main' => $this->attribute( 'is_main' ), 'is_hidden' => $this->attribute( 'is_hidden' ), 'priority' => $this->attribute( 'priority' ), 'parent_remote_id' => $this->attribute( 'parent_remote_id' )];
         if ( $contentObjectID !== false )
             $assignmentRow['contentobject_id'] = $contentObjectID;
         return eZNodeAssignment::create( $assignmentRow );
@@ -549,7 +483,7 @@ class eZNodeAssignment extends eZPersistentObject
     {
         $assignments = eZNodeAssignment::fetchForObject( $objectID, $version );
 
-        if ( count( $assignments ) == 0 )
+        if ( (is_countable($assignments) ? count( $assignments ) : 0) == 0 )
             return true;
 
         // check: if there is already main assignment for the object then we should do nothing

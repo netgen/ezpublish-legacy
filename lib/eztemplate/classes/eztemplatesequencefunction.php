@@ -34,7 +34,6 @@ class eZTemplateSequenceFunction
 {
     public function __construct()
     {
-        $this->SequenceName = 'sequence';
     }
 
     /*!
@@ -42,7 +41,7 @@ class eZTemplateSequenceFunction
     */
     function functionList()
     {
-        $functionList = array( $this->SequenceName );
+        $functionList = [$this->SequenceName];
         return $functionList;
     }
 
@@ -51,19 +50,16 @@ class eZTemplateSequenceFunction
      */
     function functionTemplateHints()
     {
-        return array( $this->SequenceName => array( 'parameters' => true,
-                                                    'static' => false,
-                                                    'transform-parameters' => true,
-                                                    'tree-transformation' => true ) );
+        return [$this->SequenceName => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     function templateNodeSequenceCreate( &$node, $tpl, $parameters, $nameValue, $loopValue )
     {
-        $newNodes = array();
+        $newNodes = [];
 
         $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['loop'],
                                                               eZTemplateNodeTool::extractFunctionNodePlacement( $node ),
-                                                              array( 'text-result' => false ), '_array' );
+                                                              ['text-result' => false], '_array' );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$GLOBALS['eZTemplateSequence-$nameValue'] = array( 'iteration' => 0, 'index' => 0, 'loop' => \$_array );\n" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$tpl->setVariable( 'item', \$GLOBALS['eZTemplateSequence-$nameValue']['loop'][0],  \$namespace );\n" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$tpl->setVariable( 'iteration', 0, \$namespace );\n" );
@@ -74,7 +70,7 @@ class eZTemplateSequenceFunction
 
     function templateNodeSequenceIterate( &$node, $tpl, $parameters, $nameValue )
     {
-        $newNodes = array();
+        $newNodes = [];
 
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$_seq_var = &\$GLOBALS['eZTemplateSequence-$nameValue'];\n" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "++\$_seq_var['index'];\n++\$_seq_var['iteration'];" );
@@ -88,7 +84,7 @@ class eZTemplateSequenceFunction
     function templateNodeTransformation( $functionName, &$node,
                                          $tpl, $parameters, $privateData )
     {
-        $newNodes = array();
+        $newNodes = [];
         $namespaceValue = false;
         $varName = 'match';
 
@@ -119,7 +115,7 @@ else
         {
             $newNodes = $this->templateNodeSequenceIterate( $node, $tpl, $parameters, $nameValue );
         }
-        $retNodes = array_merge( array( $nameSpaceNode ),  $newNodes );
+        $retNodes = array_merge( [$nameSpaceNode],  $newNodes );
         return $retNodes;
     }
 
@@ -149,7 +145,7 @@ else
         $name = $tpl->elementValue( $params["name"], $rootNamespace, $currentNamespace, $functionPlacement );
         $seq_var =& $GLOBALS["eZTemplateSequence-$name"];
         if ( !is_array( $seq_var ) )
-            $seq_var = array();
+            $seq_var = [];
         if ( $loop !== null )
         {
             $seq_var["loop"] = $loop;
@@ -162,7 +158,7 @@ else
             $iteration =& $seq_var["iteration"];
             ++$iteration;
             ++$index;
-            if ( $index >= count( $seq_var["loop"] ) )
+            if ( $index >= (is_countable($seq_var["loop"]) ? count( $seq_var["loop"] ) : 0) )
                 $index = 0 ;
         }
         $tpl->setVariable( "item", $seq_var["loop"][$seq_var["index"]], $tpl->mergeNamespace( $rootNamespace, $name ) );
@@ -178,7 +174,7 @@ else
     }
 
     /// Name of sequence function
-    public $SequenceName;
+    public $SequenceName = 'sequence';
 }
 
 ?>

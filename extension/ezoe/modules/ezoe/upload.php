@@ -42,7 +42,7 @@ if ( isset( $Params['ContentType'] ) && $Params['ContentType'] !== '' )
 
 if ( $objectID === 0  || $objectVersion === 0 )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, array( '%parameter' => 'ObjectID/ObjectVersion' ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid or missing parameter: %parameter', null, ['%parameter' => 'ObjectID/ObjectVersion'] );
    eZExecution::cleanExit();
 }
 
@@ -54,7 +54,7 @@ if ( $user instanceOf eZUser )
 }
 else
 {
-    $result = array('accessWord' => 'no');
+    $result = ['accessWord' => 'no'];
 }
 
 if ( $result['accessWord'] === 'no' )
@@ -68,12 +68,12 @@ if ( $result['accessWord'] === 'no' )
 $object    = eZContentObject::fetch( $objectID );
 $http      = eZHTTPTool::instance();
 $imageIni  = eZINI::instance( 'image.ini' );
-$params    = array('dataMap' => array('image'));
+$params    = ['dataMap' => ['image']];
 
 
 if ( !$object instanceof eZContentObject || !$object->canEdit() )
 {
-   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'ObjectId', '%value' => $objectID ) );
+   echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'ObjectId', '%value' => $objectID] );
    eZExecution::cleanExit();
 }
 
@@ -86,7 +86,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
     $version   = eZContentObjectVersion::fetchVersion( $objectVersion, $objectID );
     if ( !$version )
     {
-        echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, array( '%parameter' => 'ObjectVersion', '%value' => $objectVersion ) );
+        echo ezpI18n::tr( 'design/standard/ezoe', 'Invalid parameter: %parameter = %value', null, ['%parameter' => 'ObjectVersion', '%value' => $objectVersion] );
         eZExecution::cleanExit();
     }
     $upload = new eZContentUpload();
@@ -95,13 +95,13 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
     if ( $http->hasPostVariable( 'location' ) )
     {
         $location = $http->postVariable( 'location' );
-        if ( $location === 'auto' || trim( $location ) === '' ) $location = false;
+        if ( $location === 'auto' || trim( (string) $location ) === '' ) $location = false;
     }
 
     $objectName = '';
     if ( $http->hasPostVariable( 'objectName' ) )
     {
-        $objectName = trim( $http->postVariable( 'objectName' ) );
+        $objectName = trim( (string) $http->postVariable( 'objectName' ) );
     }
 
     try
@@ -127,7 +127,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
         {
             //post pattern: ContentObjectAttribute_attribute-identifier
             $base = 'ContentObjectAttribute_'. $key;
-            $postVar = trim( $http->postVariable( $base, '' ) );
+            $postVar = trim( (string) $http->postVariable( $base, '' ) );
             if ( $postVar !== '' )
             {
                 switch ( $attr->attribute( 'data_type_string' ) )
@@ -185,10 +185,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
 
         $operationResult = eZOperationHandler::execute(
             'content', 'publish',
-            array(
-                'object_id' => $newObjectID,
-                'version' => $uploadVersion->attribute( 'version' )
-            )
+            ['object_id' => $newObjectID, 'version' => $uploadVersion->attribute( 'version' )]
         );
         $newObject = eZContentObject::fetch( $newObjectID );
         $newObjectName = $newObject->attribute( 'name' );
@@ -201,7 +198,7 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
             eZContentObject::RELATION_EMBED
         );
         echo '<html><head><title>HiddenUploadFrame</title><script type="text/javascript">';
-        echo 'window.parent.eZOEPopupUtils.selectByEmbedId( ' . $newObjectID . ', ' . $newObjectNodeID . ', ' . json_encode( $newObjectName ) . ' );';
+        echo 'window.parent.eZOEPopupUtils.selectByEmbedId( ' . $newObjectID . ', ' . $newObjectNodeID . ', ' . json_encode( $newObjectName, JSON_THROW_ON_ERROR ) . ' );';
         echo '</script></head><body></body></html>';
     }
     catch ( InvalidArgumentException $e )
@@ -213,13 +210,13 @@ if ( $http->hasPostVariable( 'uploadButton' ) || $forcedUpload )
         echo '<p style="margin: 0; padding: 3px; color: red">' . htmlspecialchars( $e->getMessage() ) . '</p>';
         echo '</div></body></html>';
     }
-    catch ( RuntimeException $e )
+    catch ( RuntimeException )
     {
         echo '<html><head><title>HiddenUploadFrame</title><script type="text/javascript">';
         echo 'window.parent.document.getElementById("upload_in_progress").style.display = "none";';
         echo '</script></head><body><div style="position:absolute; top: 0px; left: 0px;background-color: white; width: 100%;">';
         foreach( $result['errors'] as $err )
-            echo '<p style="margin: 0; padding: 3px; color: red">' . htmlspecialchars( $err['description'] ) . '</p>';
+            echo '<p style="margin: 0; padding: 3px; color: red">' . htmlspecialchars( (string) $err['description'] ) . '</p>';
         echo '</div></body></html>';
     }
     eZDB::checkTransactionCounter();
@@ -234,17 +231,17 @@ $groups             = $contentIni->variable( 'RelationGroupSettings', 'Groups' )
 $defaultGroup       = $contentIni->variable( 'RelationGroupSettings', 'DefaultGroup' );
 $imageDatatypeArray = $siteIni->variable( 'ImageDataTypeSettings', 'AvailableImageDataTypes' );
 
-$classGroupMap         = array();
-$groupClassLists       = array();
-$groupedRelatedObjects = array();
+$classGroupMap         = [];
+$groupClassLists       = [];
+$groupedRelatedObjects = [];
 $relatedObjects        = $object->relatedContentObjectArray( $objectVersion );
 // $hasContentTypeGroup   = false;
 // $contentTypeGroupName  = $contentType . 's';
 
 foreach ( $groups as $groupName )
 {
-    $groupedRelatedObjects[$groupName] = array();
-    $setting                     = ucfirst( $groupName ) . 'ClassList';
+    $groupedRelatedObjects[$groupName] = [];
+    $setting                     = ucfirst( (string) $groupName ) . 'ClassList';
     $groupClassLists[$groupName] = $contentIni->variable( 'RelationGroupSettings', $setting );
     foreach ( $groupClassLists[$groupName] as $classIdentifier )
     {
@@ -253,7 +250,7 @@ foreach ( $groups as $groupName )
     }
 }
 
-$groupedRelatedObjects[$defaultGroup] = array();
+$groupedRelatedObjects[$defaultGroup] = [];
 
 foreach ( $relatedObjects as $relatedObjectKey => $relatedObject )
 {
@@ -261,7 +258,7 @@ foreach ( $relatedObjects as $relatedObjectKey => $relatedObject )
     $imageAttribute   = false;
     $relID            = $relatedObject->attribute( 'id' );
     $classIdentifier  = $relatedObject->attribute( 'class_identifier' );
-    $groupName        = isset( $classGroupMap[$classIdentifier] ) ? $classGroupMap[$classIdentifier] : $defaultGroup;
+    $groupName        = $classGroupMap[$classIdentifier] ?? $defaultGroup;
 
     // if ( $hasContentTypeGroup === true && $contentTypeGroupName !== $groupName ) continue;
 
@@ -292,11 +289,7 @@ foreach ( $relatedObjects as $relatedObjectKey => $relatedObject )
             }
         }
     }
-    $item = array( 'object' => $relatedObjects[$relatedObjectKey],
-                   'id' => 'eZObject_' . $relID,
-                   'image_alias' => $srcString,
-                   'image_attribute' => $imageAttribute,
-                   'selected' => false );
+    $item = ['object' => $relatedObjects[$relatedObjectKey], 'id' => 'eZObject_' . $relID, 'image_alias' => $srcString, 'image_attribute' => $imageAttribute, 'selected' => false];
     $groupedRelatedObjects[$groupName][] = $item;
 }
 
@@ -308,17 +301,17 @@ $tpl->setVariable( 'related_contentobjects', $relatedObjects );
 $tpl->setVariable( 'grouped_related_contentobjects', $groupedRelatedObjects );
 $tpl->setVariable( 'content_type', $contentType );
 
-$contentTypeCase = ucfirst( $contentType );
+$contentTypeCase = ucfirst( (string) $contentType );
 if ( $contentIni->hasVariable( 'RelationGroupSettings', $contentTypeCase . 'ClassList' ) )
     $tpl->setVariable( 'class_filter_array', $contentIni->variable( 'RelationGroupSettings', $contentTypeCase . 'ClassList' ) );
 else
-    $tpl->setVariable( 'class_filter_array', array() );
+    $tpl->setVariable( 'class_filter_array', [] );
 
 $tpl->setVariable( 'content_type_name', rtrim( $contentTypeCase, 's' ) );
 
-$tpl->setVariable( 'persistent_variable', array() );
+$tpl->setVariable( 'persistent_variable', [] );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:ezoe/upload_' . $contentType . '.tpl' );
 $Result['pagelayout'] = 'design:ezoe/popup_pagelayout.tpl';
 $Result['persistent_variable'] = $tpl->variable( 'persistent_variable' );

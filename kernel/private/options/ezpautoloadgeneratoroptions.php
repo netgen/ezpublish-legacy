@@ -53,7 +53,7 @@
 
 class ezpAutoloadGeneratorOptions extends ezcBaseOptions
 {
-    public function __construct( array $options = array() )
+    public function __construct( array $options = [] )
     {
         $this->basePath = getcwd();
         $this->searchKernelFiles = false;
@@ -62,7 +62,7 @@ class ezpAutoloadGeneratorOptions extends ezcBaseOptions
         $this->searchTestFiles = false;
         $this->writeFiles = true;
         $this->outputDir = '';
-        $this->excludeDirs = array();
+        $this->excludeDirs = [];
         $this->displayProgress = false;
 
         parent::__construct( $options );

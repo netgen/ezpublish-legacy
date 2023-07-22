@@ -22,7 +22,7 @@ class eZKernelOperator
      */
     public function __construct( $name = "ezpreference" )
     {
-        $this->Operators = array( $name );
+        $this->Operators = [$name];
     }
 
     /*!
@@ -46,28 +46,20 @@ class eZKernelOperator
     */
     function namedParameterList()
     {
-        return array( 'ezpreference' => array( 'name' => array( 'type' => 'string',
-                                                                'required' => true,
-                                                                'default' => false ) ) );
+        return ['ezpreference' => ['name' => ['type' => 'string', 'required' => true, 'default' => false]]];
     }
 
     function operatorTemplateHints()
     {
-        return array( 'ezpreference' => array( 'input' => false,
-                                               'output' => true,
-                                               'parameters' => 1,
-                                               'element-transformation' => true,
-                                               'transform-parameters' => true,
-                                               'input-as-parameter' => false,
-                                               'element-transformation-func' => 'preferencesTransformation') );
+        return ['ezpreference' => ['input' => false, 'output' => true, 'parameters' => 1, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => false, 'element-transformation-func' => 'preferencesTransformation']];
     }
 
     function preferencesTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                         $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        if ( count( $parameters[0] ) == 0 )
+        if ( (is_countable($parameters[0]) ? count( $parameters[0] ) : 0) == 0 )
             return false;
-        $values = array();
+        $values = [];
         if ( eZTemplateNodeTool::isConstantElement( $parameters[0] ) )
         {
             $name = eZTemplateNodeTool::elementConstantValue( $parameters[0] );
@@ -78,8 +70,8 @@ class eZKernelOperator
             $nameText = '%1%';
             $values[] = $parameters[0];
         }
-        return array( eZTemplateNodeTool::createCodePieceElement( "%output% = eZPreferences::value( $nameText );\n",
-                                                                  $values ) );
+        return [eZTemplateNodeTool::createCodePieceElement( "%output% = eZPreferences::value( $nameText );\n",
+                                                                  $values )];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )

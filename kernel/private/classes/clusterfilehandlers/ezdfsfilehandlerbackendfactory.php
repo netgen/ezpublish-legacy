@@ -12,7 +12,7 @@
  */
 class eZDFSFileHandlerBackendFactory
 {
-    private static $instance;
+    private static ?\eZDFSFileHandlerDFSBackendInterface $instance = null;
 
     /**
      * Builds the configured DFSBackend handler

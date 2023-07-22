@@ -18,7 +18,7 @@ $errors = false;
  */
 function applyChanges( $module, $http, $vatTypeArray = false )
 {
-    $errors = array();
+    $errors = [];
     if ( $vatTypeArray === false )
         $vatTypeArray = eZVatType::fetchList( true, true );
 
@@ -73,7 +73,7 @@ function generateUniqueVatTypeName( $vatTypes )
     {
         $typeName = $type->attribute( 'name' );
 
-        if ( !preg_match( "/^$commonPart (\d+)/", $typeName, $matches ) )
+        if ( !preg_match( "/^$commonPart (\d+)/", (string) $typeName, $matches ) )
             continue;
 
         $curNumber = $matches[1];
@@ -93,7 +93,7 @@ function generateUniqueVatTypeName( $vatTypes )
 function findDependencies( $vatTypeIDList, &$deps, &$haveDeps, &$canRemove )
 {
     // Find dependencies (products and/or VAT rules).
-    $deps = array();
+    $deps = [];
     $haveDeps = false;
     $canRemove = true;
     foreach ( $vatTypeIDList as $vatID )
@@ -113,10 +113,7 @@ function findDependencies( $vatTypeIDList, &$deps, &$haveDeps, &$canRemove )
         if ( $nClasses )
             $canRemove = false;
 
-        $deps[$vatID] = array( 'name' => $vatName,
-                               'affected_rules_count' => $nRules,
-                               'affected_products_count' => $nProducts,
-                               'affected_classes_count' => $nClasses );
+        $deps[$vatID] = ['name' => $vatName, 'affected_rules_count' => $nRules, 'affected_products_count' => $nProducts, 'affected_classes_count' => $nClasses];
 
         if ( !$haveDeps && ( $nRules > 0 || $nProducts > 0 ) )
             $haveDeps = true;
@@ -143,7 +140,7 @@ elseif ( $module->isCurrentAction( 'SaveChanges' ) )
 elseif ( $module->isCurrentAction( 'Remove' ) )
 {
     $vatIDsToRemove = $module->actionParameter( 'vatTypeIDList' );
-    $deps = array();
+    $deps = [];
     $haveDeps = false;
     $canRemove = true;
     findDependencies( $vatIDsToRemove, $deps, $haveDeps, $canRemove );
@@ -158,7 +155,7 @@ elseif ( $module->isCurrentAction( 'Remove' ) )
 
         $allVatTypes = eZVatType::fetchList( true, true );
 
-        if ( ( count( $allVatTypes ) - count( $vatIDsToRemove ) ) == 0 )
+        if ( ( (is_countable($allVatTypes) ? count( $allVatTypes ) : 0) - (is_countable($vatIDsToRemove) ? count( $vatIDsToRemove ) : 0) ) == 0 )
         {
             $errorMsg = 'You cannot remove all VAT types. ' .
                         'If you do not neet to charge any VAT for your ' .
@@ -173,10 +170,9 @@ elseif ( $module->isCurrentAction( 'Remove' ) )
         $tpl->setVariable( 'errors', $errors ); // array of error messages, false if there are no errors
         $tpl->setVariable( 'dependencies', $deps );
         $tpl->setVariable( 'vat_type_ids', join( ',', $vatIDsToRemove ) );
-        $path = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'VAT types' ),
-                              'url'  => false ) );
+        $path = [['text' => ezpI18n::tr( 'kernel/shop', 'VAT types' ), 'url'  => false]];
 
-        $Result = array();
+        $Result = [];
         $Result['path'] = $path;
         $Result['content'] = $tpl->fetch( "design:shop/removevattypes.tpl" );
         return;
@@ -228,12 +224,11 @@ $tpl->setVariable( "vattype_array", $vatTypeArray );
 $tpl->setVariable( "module", $module );
 $tpl->setVariable( 'errors', $errors );
 
-$path = array();
-$path[] = array( 'text' => ezpI18n::tr( 'kernel/shop', 'VAT types' ),
-                 'url' => false );
+$path = [];
+$path[] = ['text' => ezpI18n::tr( 'kernel/shop', 'VAT types' ), 'url' => false];
 
 
-$Result = array();
+$Result = [];
 $Result['path'] = $path;
 $Result['content'] = $tpl->fetch( "design:shop/vattype.tpl" );
 

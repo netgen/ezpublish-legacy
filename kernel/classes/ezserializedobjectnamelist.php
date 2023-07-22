@@ -10,12 +10,10 @@
 
 class eZSerializedObjectNameList
 {
-    const ALWAYS_AVAILABLE_STR = 'always-available';
+    final public const ALWAYS_AVAILABLE_STR = 'always-available';
 
     public function __construct( $serializedNamesString = false )
     {
-        $this->DefaultLanguage = null;
-
         if ( $serializedNamesString )
             $this->initFromSerializedList( $serializedNamesString );
     }
@@ -31,8 +29,7 @@ class eZSerializedObjectNameList
         if ( !$languageLocale )
             $languageLocale = $this->defaultLanguageLocale();
 
-        $serializedNameList = serialize( array( $languageLocale => $nameString,
-                                                eZSerializedObjectNameList::ALWAYS_AVAILABLE_STR => $languageLocale ) );
+        $serializedNameList = serialize( [$languageLocale => $nameString, eZSerializedObjectNameList::ALWAYS_AVAILABLE_STR => $languageLocale] );
         $this->initFromSerializedList( $serializedNameList );
     }
 
@@ -73,17 +70,17 @@ class eZSerializedObjectNameList
 
     function isEmpty()
     {
-        return ( count( $this->NameList ) == 0 );
+        return ( (is_countable($this->NameList) ? count( $this->NameList ) : 0) == 0 );
     }
 
     function unserializeNames( $serializedNamesString )
     {
-        $this->NameList = array();
+        $this->NameList = [];
         if ( $serializedNamesString )
         {
             $this->NameList = @unserialize( $serializedNamesString );
             if ( $this->NameList === false || !is_array( $this->NameList ) )
-                $this->NameList = array();
+                $this->NameList = [];
         }
 
         $this->setHasDirtyData( false );
@@ -99,7 +96,7 @@ class eZSerializedObjectNameList
 
     function alwaysAvailableLanguageLocale()
     {
-        $languageLocale = isset( $this->NameList[eZSerializedObjectNameList::ALWAYS_AVAILABLE_STR] ) ? $this->NameList[eZSerializedObjectNameList::ALWAYS_AVAILABLE_STR] : false;
+        $languageLocale = $this->NameList[eZSerializedObjectNameList::ALWAYS_AVAILABLE_STR] ?? false;
         return $languageLocale;
     }
 
@@ -304,7 +301,7 @@ class eZSerializedObjectNameList
 
     function nameListCount()
     {
-        return count( $this->nameList );
+        return is_countable($this->nameList) ? count( $this->nameList ) : 0;
     }
 
     function setNameList( $nameListArray )
@@ -314,7 +311,7 @@ class eZSerializedObjectNameList
 
     function resetNameList()
     {
-        $this->setNameList( array() );
+        $this->setNameList( [] );
     }
 
     function removeName( $languageLocale )
@@ -434,23 +431,22 @@ class eZSerializedObjectNameList
 
     function prioritizedLanguagesJsArray()
     {
-        $langList = array();
+        $langList = [];
         $languages = $this->prioritizedLanguages();
         foreach ( $languages as $key => $language )
         {
-            $langList[] = array( 'locale' => $language->attribute( 'locale' ),
-                                 'name'   => $language->attribute( 'name' ) );
+            $langList[] = ['locale' => $language->attribute( 'locale' ), 'name'   => $language->attribute( 'name' )];
         }
 
         if ( $langList )
-            return json_encode( $langList );
+            return json_encode( $langList, JSON_THROW_ON_ERROR );
 
         return '[]';
     }
 
     function languageLocaleList()
     {
-        $languageLocaleList = array();
+        $languageLocaleList = [];
 
         if ( is_array( $this->NameList ) && count( $this->NameList ) > 0 )
         {
@@ -471,7 +467,7 @@ class eZSerializedObjectNameList
     */
     function languages()
     {
-        $languages = array();
+        $languages = [];
 
         $languageLocaleList = $this->languageLocaleList();
         foreach( $languageLocaleList as $languageLocale )
@@ -490,7 +486,7 @@ class eZSerializedObjectNameList
         $availableLanguages = $this->prioritizedLanguages();
         $availableLanguagesCodes = array_keys( $availableLanguages );
 
-        $languages = array();
+        $languages = [];
         foreach ( eZContentLanguage::prioritizedLanguages() as $language )
         {
             $languageCode = $language->attribute( 'locale' );
@@ -583,7 +579,7 @@ class eZSerializedObjectNameList
                 {
                     if ( is_array( $languageMap ) )
                     {
-                        $languageLocale = isset( $languageMap[$nameLanguageLocale] ) ? $languageMap[$nameLanguageLocale] : false;
+                        $languageLocale = $languageMap[$nameLanguageLocale] ?? false;
 
                         if( $languageLocale && $languageLocale != 'skip' )
                         {
@@ -620,7 +616,7 @@ class eZSerializedObjectNameList
 
     public $NameList;
     public $HasDirtyData;
-    public $DefaultLanguage;
+    public $DefaultLanguage = null;
 }
 
 ?>

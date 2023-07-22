@@ -12,10 +12,7 @@ class eZContentObjectStateTest extends ezpDatabaseTestCase
 {
     public function providerCreateWithInvalidIdentifier()
     {
-        return array(
-            array( 'WithUpperCaseChars' ),
-            array( str_repeat( 'x', 46 ) )
-        );
+        return [['WithUpperCaseChars'], [str_repeat( 'x', 46 )]];
     }
 
     /**
@@ -23,20 +20,17 @@ class eZContentObjectStateTest extends ezpDatabaseTestCase
      */
     public function testCreateWithInvalidIdentifier( $identifier )
     {
-        $row = array( 'identifier' => $identifier );
+        $row = ['identifier' => $identifier];
         $state = new eZContentObjectState( $row );
         $trans = $state->translationByLocale( 'eng-GB' );
         $trans->setAttribute( 'name', $identifier );
-        $messages = array();
-        $this->assertFalse( $state->isValid( $messages ), "Invalid state identifier '$identifier' was accepted" );
+        $messages = [];
+        static::assertFalse($state->isValid( $messages ), "Invalid state identifier '$identifier' was accepted");
     }
 
     public function providerCreateWithvalidIdentifier()
     {
-        return array(
-            array( 'lowercasechars' ),
-            array( str_repeat( 'x', 45 ) )
-        );
+        return [['lowercasechars'], [str_repeat( 'x', 45 )]];
     }
 
     /**
@@ -44,12 +38,12 @@ class eZContentObjectStateTest extends ezpDatabaseTestCase
      */
     public function testCreateWithvalidIdentifier( $identifier )
     {
-        $row = array( 'identifier' => $identifier );
+        $row = ['identifier' => $identifier];
         $state = new eZContentObjectState( $row );
         $trans = $state->translationByLocale( 'eng-GB' );
         $trans->setAttribute( 'name', $identifier );
-        $messages = array();
-        $this->assertTrue( $state->isValid( $messages ), "Valid state identifier '$identifier' was refused" );
+        $messages = [];
+        static::assertTrue($state->isValid( $messages ), "Valid state identifier '$identifier' was refused");
     }
 
     public static function suite()

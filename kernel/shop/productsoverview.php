@@ -28,7 +28,7 @@ if ( $module->isCurrentAction( 'ShowProducts' ) )
 $productClassList = eZShopFunctions::productClassList();
 
 // find selected product class
-if ( count( $productClassList ) > 0 )
+if ( (is_countable($productClassList) ? count( $productClassList ) : 0) > 0 )
 {
     if ( $productClassIdentifier )
     {
@@ -51,17 +51,16 @@ if ( count( $productClassList ) > 0 )
 if ( is_object( $productClass ) )
     $priceAttributeIdentifier = eZShopFunctions::priceAttributeIdentifier( $productClass );
 
-switch ( eZPreferences::value( 'productsoverview_list_limit' ) )
-{
-    case '2': { $limit = 25; } break;
-    case '3': { $limit = 50; } break;
-    default:  { $limit = 10; } break;
-}
+$limit = match (eZPreferences::value( 'productsoverview_list_limit' )) {
+    '2' => 25,
+    '3' => 50,
+    default => 10,
+};
 
 $sortingField = eZPreferences::value( 'productsoverview_sorting_field' );
 $sortingOrder = eZPreferences::value( 'productsoverview_sorting_order' );
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'product_class_list', $productClassList );
@@ -72,9 +71,8 @@ $tpl->setVariable( 'sorting_order', $sortingOrder );
 $tpl->setVariable( 'limit', $limit );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/productsoverview.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/shop', 'Products overview' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/shop', 'Products overview' ), 'url' => false]];
 
 ?>

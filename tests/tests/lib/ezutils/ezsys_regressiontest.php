@@ -20,7 +20,7 @@ class eZSysRegressionTest extends ezpRegressionTest
     public function __construct()
     {
         // load tests
-        $this->readDirRecursively( dirname( __FILE__ ) . '/server', $this->files, 'php' );
+        $this->readDirRecursively( __DIR__ . '/server', $this->files, 'php' );
 
         // call parent (including sorting $this->files as set above)
         parent::__construct();
@@ -31,7 +31,7 @@ class eZSysRegressionTest extends ezpRegressionTest
      */
     public static function suite()
     {
-        return new ezpTestRegressionSuite( __CLASS__ );
+        return new ezpTestRegressionSuite( self::class );
     }
 
     /**
@@ -61,27 +61,13 @@ class eZSysRegressionTest extends ezpRegressionTest
     protected function skip( $file )
     {
         // Uncomment the tests that you want to skip,  name = > pattern
-        $skipTests = array(
-                // 'rootUri' => 'vh/root/',
-                // 'utf8Uri' => 'vh/utf8/',
-                // 'viewUri' => 'vh/view/',
-                // 'Linux' => '/linux',
-                // 'Windows' => '/win',
-                // 'Mac' => '/mac',
-                // 'Freebsd' => '/freebsd',
-                // 'Solaris' => '/solaris',
-                // 'Virtualhost' => 'server/vh/',
-                // 'NonVirtualhost' => 'server/nvh/',
-                // 'Apache' => '_apache',
-                // 'IIS' => '_iis',
-                // 'Nginx' => '_nginx',
-            );
+        $skipTests = [];
 
         foreach ( $skipTests as $testName => $testPattern )
         {
-            if ( strpos( $file, $testPattern ) !== false )
+            if ( str_contains( $file, $testPattern ) )
             {
-                $this->markTestSkipped( "Test environment is configured to skip {$testName} tests." );
+                static::markTestSkipped("Test environment is configured to skip {$testName} tests.");
                 return true;
             }
         }
@@ -114,35 +100,35 @@ class eZSysRegressionTest extends ezpRegressionTest
         if ( $testData['PHP_OS'] === 'WINNT' )
         {
             $os = 'Windows';
-            $this->assertEquals( "win32", $instance->OSType, "Did not get correct $os 'OSType' value" );
-            $this->assertEquals( "windows", $instance->OS, "Did not get correct $os 'OS' value" );
-            $this->assertEquals( "win32", $instance->FileSystemType, "Did not get correct $os 'FileSystemType' value" );
-            $this->assertEquals( "\\", $instance->FileSeparator, "Did not get correct $os 'FileSeparator' value" );
-            $this->assertEquals( "\r\n", $instance->LineSeparator, "Did not get correct $os 'LineSeparator' value" );
-            $this->assertEquals( ";", $instance->EnvSeparator, "Did not get correct $os 'EnvSeparator' value" );
-            $this->assertEquals( '"', $instance->ShellEscapeCharacter, "Did not get correct $os 'ShellEscapeCharacter' value" );
-            $this->assertEquals( '.bak', $instance->BackupFilename, "Did not get correct $os 'BackupFilename' value" );
+            static::assertEquals("win32", $instance->OSType, "Did not get correct $os 'OSType' value");
+            static::assertEquals("windows", $instance->OS, "Did not get correct $os 'OS' value");
+            static::assertEquals("win32", $instance->FileSystemType, "Did not get correct $os 'FileSystemType' value");
+            static::assertEquals("\\", $instance->FileSeparator, "Did not get correct $os 'FileSeparator' value");
+            static::assertEquals("\r\n", $instance->LineSeparator, "Did not get correct $os 'LineSeparator' value");
+            static::assertEquals(";", $instance->EnvSeparator, "Did not get correct $os 'EnvSeparator' value");
+            static::assertEquals('"', $instance->ShellEscapeCharacter, "Did not get correct $os 'ShellEscapeCharacter' value");
+            static::assertEquals('.bak', $instance->BackupFilename, "Did not get correct $os 'BackupFilename' value");
         }
         else // unix (incl Darwin)
         {
             $os = 'Unix';
-            $this->assertEquals( "unix", $instance->OSType, "Did not get correct $os 'OSType' value" );
+            static::assertEquals("unix", $instance->OSType, "Did not get correct $os 'OSType' value");
 
             if ( $testData['PHP_OS'] === 'Linux' )
-                $this->assertEquals( "linux", $instance->OS, "Did not get correct $os 'OS' value" );
+                static::assertEquals("linux", $instance->OS, "Did not get correct $os 'OS' value");
             else if (  $testData['PHP_OS'] === 'FreeBSD' )
-                $this->assertEquals( "freebsd", $instance->OS, "Did not get correct $os 'OS' value" );
+                static::assertEquals("freebsd", $instance->OS, "Did not get correct $os 'OS' value");
             else if (  $testData['PHP_OS'] === 'Darwin' )
-                $this->assertEquals( "darwin", $instance->OS, "Did not get correct $os 'OS' value" );
+                static::assertEquals("darwin", $instance->OS, "Did not get correct $os 'OS' value");
             else
-                $this->assertEquals( false, $instance->OS, "Did not get correct $os 'OS' value" );
+                static::assertEquals(false, $instance->OS, "Did not get correct $os 'OS' value");
 
-            $this->assertEquals( "unix", $instance->FileSystemType, "Did not get correct $os 'FileSystemType' value" );
-            $this->assertEquals( "/",    $instance->FileSeparator, "Did not get correct $os 'FileSeparator' value" );
-            $this->assertEquals( "\n",   $instance->LineSeparator, "Did not get correct $os 'LineSeparator' value" );
-            $this->assertEquals( ":",    $instance->EnvSeparator, "Did not get correct $os 'EnvSeparator' value" );
-            $this->assertEquals( "'",    $instance->ShellEscapeCharacter, "Did not get correct $os 'ShellEscapeCharacter' value" );
-            $this->assertEquals( '~',    $instance->BackupFilename, "Did not get correct $os 'BackupFilename' value" );
+            static::assertEquals("unix", $instance->FileSystemType, "Did not get correct $os 'FileSystemType' value");
+            static::assertEquals("/", $instance->FileSeparator, "Did not get correct $os 'FileSeparator' value");
+            static::assertEquals("\n", $instance->LineSeparator, "Did not get correct $os 'LineSeparator' value");
+            static::assertEquals(":", $instance->EnvSeparator, "Did not get correct $os 'EnvSeparator' value");
+            static::assertEquals("'", $instance->ShellEscapeCharacter, "Did not get correct $os 'ShellEscapeCharacter' value");
+            static::assertEquals('~', $instance->BackupFilename, "Did not get correct $os 'BackupFilename' value");
         }
 
         // Uri test: vh / nvh part
@@ -151,19 +137,19 @@ class eZSysRegressionTest extends ezpRegressionTest
         else
             $expected = '';
 
-        $this->assertEquals( $expected, $instance->IndexFile, "The IndexFile was not expected value" );
+        static::assertEquals($expected, $instance->IndexFile, "The IndexFile was not expected value");
 
 
         // Uri test: sub path part
         if ( isset( $testData['__out']['WWWDir'] ) )
             $wwwDir = $testData['__out']['WWWDir'];
-        elseif ( strpos( $testData['_SERVER']['SCRIPT_NAME'], 'index.php' ) !== false )// .htaccess or nvh
-            $wwwDir = rtrim( str_replace( 'index.php', '', $testData['_SERVER']['SCRIPT_NAME'] ), '\/' );
+        elseif ( str_contains( (string) $testData['_SERVER']['SCRIPT_NAME'], 'index.php' ) )// .htaccess or nvh
+            $wwwDir = rtrim( str_replace( 'index.php', '', (string) $testData['_SERVER']['SCRIPT_NAME'] ), '\/' );
         else
             $wwwDir = '';
 
-        $this->assertEquals( $wwwDir, $instance->WWWDir, "The WWWDir was not expected value" );
-        $this->assertEquals( rtrim( str_replace( 'index.php', '', $testData['_SERVER']['SCRIPT_FILENAME'] ), '\/' ) . '/', $instance->SiteDir, "The SiteDir was not expected value" );
+        static::assertEquals($wwwDir, $instance->WWWDir, "The WWWDir was not expected value");
+        static::assertEquals(rtrim( str_replace( 'index.php', '', (string) $testData['_SERVER']['SCRIPT_FILENAME'] ), '\/' ) . '/', $instance->SiteDir, "The SiteDir was not expected value");
 
 
         // Uri test: uri part
@@ -176,7 +162,7 @@ class eZSysRegressionTest extends ezpRegressionTest
         else
             $expected = '';
 
-        $this->assertEquals( $expected, $instance->RequestURI, "The RequestURI was not expected value" );
+        static::assertEquals($expected, $instance->RequestURI, "The RequestURI was not expected value");
     }
 }
 ?>

@@ -11,30 +11,20 @@ require_once 'autoload.php';
 $cli = eZCLI::instance();
 
 $script = eZScript::instance(
-    array(
-        'description' => "Fixes stale object relations for non-translatable objecrelation attributes. See issue EZP-25065\n",
-        'use-session' => true,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => "Fixes stale object relations for non-translatable objecrelation attributes. See issue EZP-25065\n", 'use-session' => true, 'use-modules' => false, 'use-extensions' => true]
 );
 $script->startup();
 
 $options = $script->getOptions(
     "[dry-run][iteration-sleep:][iteration-limit:]",
     "",
-    array(
-        'dry-run' => 'Dry run'
-    )
+    ['dry-run' => 'Dry run']
 );
 $optDryRun = (bool)$options['dry-run'];
 $optIterationSleep = (int)$options['iteration-sleep'] ?: 1;
 $optIterationLimit = (int)$options['iteration-limit'] ?: 10;
 
-$limit = array(
-    "offset" => 0,
-    "limit" => $optIterationLimit,
-);
+$limit = ["offset" => 0, "limit" => $optIterationLimit];
 
 $script->initialize();
 $db = eZDB::instance();
@@ -55,16 +45,16 @@ function parseRelationListIds( $relationListXml )
 {
     $relationListXml = trim( $relationListXml );
     if ( empty( $relationListXml ) )
-        return array();
+        return [];
 
     $xml = simplexml_load_string( $relationListXml );
     $list = $xml->{'relation-list'};
 
     if ( !( $list instanceof SimpleXMLElement ) ) {
-        return array();
+        return [];
     }
 
-    $contentIds = array();
+    $contentIds = [];
     foreach ( $list->children() as $item ) {
         $contentIds[] = (int)$item['contentobject-id'];
     }
@@ -134,7 +124,7 @@ do {
 
     $limit["offset"] += $optIterationLimit;
     sleep( $optIterationSleep );
-} while ( count($rows) == $optIterationLimit );
+} while ( (is_countable($rows) ? count($rows) : 0) == $optIterationLimit );
 
 $cli->output( "Update has been completed, please clear caches if necessary." );
 

@@ -6,14 +6,7 @@
  * @package kernel
  */
 
-$FunctionList = array();
-$FunctionList['role'] = array( 'name' => 'role',
-                               'operation_types' => array( 'read' ),
-                               'call_method' => array( 'class' => 'eZRoleFunctionCollection',
-                                                       'method' => 'fetchRole' ),
-                               'parameter_type' => 'standard',
-                               'parameters' => array( array( 'name' => 'role_id',
-                                                             'type' => 'integer',
-                                                             'required' => true ) ) );
+$FunctionList = [];
+$FunctionList['role'] = ['name' => 'role', 'operation_types' => ['read'], 'call_method' => ['class' => 'eZRoleFunctionCollection', 'method' => 'fetchRole'], 'parameter_type' => 'standard', 'parameters' => [['name' => 'role_id', 'type' => 'integer', 'required' => true]]];
 
 ?>

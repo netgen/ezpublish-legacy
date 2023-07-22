@@ -20,11 +20,14 @@ class eZTranslatorHandler
     /**
      * Constructor
      *
-     * @param bool $is_key_based
+     * @param bool $IsKeyBased
      */
-    public function __construct( $is_key_based )
+    public function __construct(
+        /// \privatesection
+        /// Tells whether the handler is key based or not
+        public $IsKeyBased
+    )
     {
-        $this->IsKeyBased = $is_key_based;
     }
 
     /*!
@@ -81,10 +84,6 @@ class eZTranslatorHandler
     {
         return null;
     }
-
-    /// \privatesection
-    /// Tells whether the handler is key based or not
-    public $IsKeyBased;
 }
 
 ?>

@@ -30,10 +30,10 @@
 
 class eZMultiPrice extends eZSimplePrice
 {
-    const CALCULATION_TYPE_VAT_INCLUDE = 1;
-    const CALCULATION_TYPE_VAT_EXCLUDE = 2;
-    const CALCULATION_TYPE_DISCOUNT_INCLUDE = 3;
-    const CALCULATION_TYPE_DISCOUNT_EXCLUDE = 4;
+    final public const CALCULATION_TYPE_VAT_INCLUDE = 1;
+    final public const CALCULATION_TYPE_VAT_EXCLUDE = 2;
+    final public const CALCULATION_TYPE_DISCOUNT_INCLUDE = 3;
+    final public const CALCULATION_TYPE_DISCOUNT_EXCLUDE = 4;
 
     public function __construct( $classAttribute, $contentObjectAttribute, $storedPrice = null )
     {
@@ -54,15 +54,7 @@ class eZMultiPrice extends eZSimplePrice
     */
     function attributes()
     {
-        return array_unique( array_merge( array( 'currency_list',
-                                                 'auto_currency_list',
-                                                 'price_list',
-                                                 'auto_price_list',
-                                                 'custom_price_list',
-                                                 'inc_vat_price_list',
-                                                 'ex_vat_price_list',
-                                                 'discount_inc_vat_price_list',
-                                                 'discount_ex_vat_price_list' ),
+        return array_unique( array_merge( ['currency_list', 'auto_currency_list', 'price_list', 'auto_price_list', 'custom_price_list', 'inc_vat_price_list', 'ex_vat_price_list', 'discount_inc_vat_price_list', 'discount_ex_vat_price_list'],
                                           eZSimplePrice::attributes() ) );
     }
 
@@ -113,58 +105,18 @@ class eZMultiPrice extends eZSimplePrice
     */
     function attribute( $attr )
     {
-        switch ( $attr )
-        {
-            case 'currency_list':
-            {
-                return $this->currencyList();
-            } break;
-
-            case 'auto_currency_list':
-            {
-                return $this->autoCurrencyList();
-            } break;
-
-            case 'price_list':
-            {
-                return $this->priceList();
-            } break;
-
-            case 'inc_vat_price_list':
-            {
-                return $this->incVATPriceList();
-            } break;
-
-            case 'ex_vat_price_list':
-            {
-                return $this->exVATPriceList();
-            } break;
-
-            case 'discount_inc_vat_price_list':
-            {
-                return $this->discountIncVATPriceList();
-            } break;
-
-            case 'discount_ex_vat_price_list':
-            {
-                return $this->discountExVATPriceList();
-            } break;
-
-            case 'auto_price_list':
-            {
-                return $this->autoPriceList();
-            } break;
-
-            case 'custom_price_list':
-            {
-                return $this->customPriceList();
-            } break;
-
-            default :
-            {
-                return eZSimplePrice::attribute( $attr );
-            } break;
-        }
+        return match ($attr) {
+            'currency_list' => $this->currencyList(),
+            'auto_currency_list' => $this->autoCurrencyList(),
+            'price_list' => $this->priceList(),
+            'inc_vat_price_list' => $this->incVATPriceList(),
+            'ex_vat_price_list' => $this->exVATPriceList(),
+            'discount_inc_vat_price_list' => $this->discountIncVATPriceList(),
+            'discount_ex_vat_price_list' => $this->discountExVATPriceList(),
+            'auto_price_list' => $this->autoPriceList(),
+            'custom_price_list' => $this->customPriceList(),
+            default => eZSimplePrice::attribute( $attr ),
+        };
     }
 
     /*!
@@ -233,11 +185,11 @@ class eZMultiPrice extends eZSimplePrice
 
             if ( !$this->PriceList )
             {
-                $this->PriceList = array();
+                $this->PriceList = [];
             }
         }
 
-        $priceList = array();
+        $priceList = [];
         if ( $type !== false )
         {
             foreach ( $this->priceList() as $currencyCode => $price )
@@ -280,7 +232,7 @@ class eZMultiPrice extends eZSimplePrice
     {
         $priceList = $this->priceList( $priceType );
 
-        $calculatedPriceList = array();
+        $calculatedPriceList = [];
         foreach ( $priceList as $key => $price )
         {
             switch ( $calculationType )
@@ -491,7 +443,7 @@ class eZMultiPrice extends eZSimplePrice
 
     function storePriceList()
     {
-        if ( isset( $this->PriceList ) && count( $this->PriceList ) > 0 )
+        if ( isset( $this->PriceList ) && (is_countable($this->PriceList) ? count( $this->PriceList ) : 0) > 0 )
         {
             $priceList = $this->priceList();
             foreach ( $priceList as $price )

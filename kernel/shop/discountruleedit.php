@@ -38,19 +38,8 @@ if ( $http->hasPostVariable( 'DiscardButton' ) )
 
 if ( $http->hasPostVariable( 'BrowseProductButton' ) )
 {
-    eZContentBrowse::browse( array( 'action_name' => 'FindProduct',
-                                    'description_template' => 'design:shop/browse_discountproduct.tpl',
-                                    'keys' => array( 'discountgroup_id' => $discountGroupID,
-                                                     'discountrule_id' => $discountRuleID ),
-                                    'content' => array( 'discountgroup_id' => $discountGroupID,
-                                                        'discountrule_id' => $discountRuleID ),
-                                    'persistent_data' => array( 'discountrule_name' => $http->postVariable( 'discountrule_name' ),
-                                                                'discountrule_percent' => $http->postVariable( 'discountrule_percent' ),
-                                                                'Contentclasses' => ( $http->hasPostVariable( 'Contentclasses' ) )? json_encode( $http->postVariable( 'Contentclasses' ) ): '',
-                                                                'Sections' => ( $http->hasPostVariable( 'Sections' ) )? json_encode( $http->postVariable( 'Sections' ) ): '',
-                                                                'Products' => ( $http->hasPostVariable( 'Products' ) )? json_encode( $http->postVariable( 'Products' ) ): '' ),
-                                    'from_page' => "/shop/discountruleedit/$discountGroupID/$discountRuleID" ),
-                             $module );
+    eZContentBrowse::browse( $module,
+                             ['action_name' => 'FindProduct', 'description_template' => 'design:shop/browse_discountproduct.tpl', 'keys' => ['discountgroup_id' => $discountGroupID, 'discountrule_id' => $discountRuleID], 'content' => ['discountgroup_id' => $discountGroupID, 'discountrule_id' => $discountRuleID], 'persistent_data' => ['discountrule_name' => $http->postVariable( 'discountrule_name' ), 'discountrule_percent' => $http->postVariable( 'discountrule_percent' ), 'Contentclasses' => ( $http->hasPostVariable( 'Contentclasses' ) )? json_encode( $http->postVariable( 'Contentclasses' ), JSON_THROW_ON_ERROR ): '', 'Sections' => ( $http->hasPostVariable( 'Sections' ) )? json_encode( $http->postVariable( 'Sections' ), JSON_THROW_ON_ERROR ): '', 'Products' => ( $http->hasPostVariable( 'Products' ) )? json_encode( $http->postVariable( 'Products' ), JSON_THROW_ON_ERROR ): ''], 'from_page' => "/shop/discountruleedit/$discountGroupID/$discountRuleID"] );
     return;
 }
 
@@ -62,39 +51,37 @@ if ( $http->hasPostVariable( 'discountrule_name' ) )
     $discountRuleName = $http->postVariable( 'discountrule_name' );
     $discountRulePercent = $locale->internalNumber( $http->postVariable( 'discountrule_percent' ) );
 
-    $discountRuleSelectedClasses = array();
+    $discountRuleSelectedClasses = [];
     if ( $http->hasPostVariable( 'Contentclasses' ) && $http->postVariable( 'Contentclasses' ) )
     {
         $discountRuleSelectedClasses = $http->postVariable( 'Contentclasses' );
         if ( !is_array( $discountRuleSelectedClasses ) )
         {
-            $discountRuleSelectedClasses = json_decode( $discountRuleSelectedClasses );
+            $discountRuleSelectedClasses = json_decode( (string) $discountRuleSelectedClasses, null, 512, JSON_THROW_ON_ERROR );
         }
     }
 
-    $discountRuleSelectedSections = array();
+    $discountRuleSelectedSections = [];
     if ( $http->hasPostVariable( 'Sections' ) && $http->postVariable( 'Sections' ) )
     {
         $discountRuleSelectedSections = $http->postVariable( 'Sections' );
         if ( !is_array( $discountRuleSelectedSections ) )
         {
-            $discountRuleSelectedSections = json_decode( $discountRuleSelectedSections );
+            $discountRuleSelectedSections = json_decode( (string) $discountRuleSelectedSections, null, 512, JSON_THROW_ON_ERROR );
         }
     }
 
-    $discountRuleSelectedProducts = array();
+    $discountRuleSelectedProducts = [];
     if ( $http->hasPostVariable( 'Products' ) && $http->postVariable( 'Products' ) )
     {
         $discountRuleSelectedProducts = $http->postVariable( 'Products' );
         if ( !is_array( $discountRuleSelectedProducts ) )
         {
-            $discountRuleSelectedProducts = json_decode( $discountRuleSelectedProducts );
+            $discountRuleSelectedProducts = json_decode( (string) $discountRuleSelectedProducts, null, 512, JSON_THROW_ON_ERROR );
         }
     }
 
-    $discountRule = array( 'id' => $discountRuleID ,
-                           'name' => $discountRuleName,
-                           'discount_percent' => $discountRulePercent );
+    $discountRule = ['id' => $discountRuleID, 'name' => $discountRuleName, 'discount_percent' => $discountRulePercent];
 }
 else
 {
@@ -108,7 +95,7 @@ else
             return $Module->handleError( eZError::KERNEL_NOT_AVAILABLE, 'kernel' );
         }
 
-        $discountRuleSelectedClasses = array();
+        $discountRuleSelectedClasses = [];
         $discountRuleSelectedClassesValues = eZDiscountSubRuleValue::fetchBySubRuleID( $discountRuleID, 0, false );
         foreach( $discountRuleSelectedClassesValues as $value )
         {
@@ -119,7 +106,7 @@ else
             $discountRuleSelectedClasses[] = -1;
         }
 
-        $discountRuleSelectedSections = array();
+        $discountRuleSelectedSections = [];
         $discountRuleSelectedSectionsValues = eZDiscountSubRuleValue::fetchBySubRuleID( $discountRuleID, 1, false );
         foreach( $discountRuleSelectedSectionsValues as $value )
         {
@@ -141,13 +128,11 @@ else
         // does not exist => create new one, but do not store...
         $discountRuleName = ezpI18n::tr( 'design/admin/shop/discountruleedit', 'New discount rule' );
         $discountRulePercent = 0.0;
-        $discountRuleSelectedClasses = array( -1 );
-        $discountRuleSelectedSections = array( -1 );
-        $discountRuleSelectedProducts = array();
+        $discountRuleSelectedClasses = [-1];
+        $discountRuleSelectedSections = [-1];
+        $discountRuleSelectedProducts = [];
 
-        $discountRule = array( 'id' => 0,
-                               'name' => $discountRuleName,
-                               'discount_percent' => $discountRulePercent );
+        $discountRule = ['id' => 0, 'name' => $discountRuleName, 'discount_percent' => $discountRulePercent];
     }
 }
 
@@ -180,7 +165,7 @@ if ( $http->hasPostVariable( 'DeleteProductButton' ) )
     }
 }
 
-$productList = array();
+$productList = [];
 foreach ( $discountRuleSelectedProducts as $productID )
 {
     $object = eZContentObject::fetch( $productID );
@@ -205,7 +190,7 @@ if ( $http->hasPostVariable( 'StoreButton' ) )
         $discountRuleID = $discountRule->attribute( 'id' );
     }
 
-    $discountRule->setAttribute( 'name', trim( $http->postVariable( 'discountrule_name' ) ) );
+    $discountRule->setAttribute( 'name', trim( (string) $http->postVariable( 'discountrule_name' ) ) );
     $discountRule->setAttribute( 'discount_percent', $http->postVariable( 'discountrule_percent' ) );
     $discountRule->setAttribute( 'limitation', '*' );
 
@@ -250,7 +235,7 @@ if ( $http->hasPostVariable( 'StoreButton' ) )
 }
 
 $classList = eZContentClass::fetchList();
-$productClassList = array();
+$productClassList = [];
 foreach ( $classList as $class )
 {
     if ( eZShopFunctions::isProductClass( $class ) )
@@ -275,9 +260,8 @@ $tpl->setVariable( 'product_list', $productList );
 $tpl->setVariable( 'class_any_selected', in_array( -1, $discountRuleSelectedClasses ) );
 $tpl->setVariable( 'section_any_selected', in_array( -1, $discountRuleSelectedSections ) );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:shop/discountruleedit.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Editing rule' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Editing rule' )]];
 
 ?>

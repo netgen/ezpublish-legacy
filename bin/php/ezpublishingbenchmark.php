@@ -21,20 +21,13 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => "eZ Publish Parallel publishing benchmark",
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => "eZ Publish Parallel publishing benchmark", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[b:|batches-count:][c:|content-class:][l:|concurrency-level:][p:|parent-node:][g|generate-content]",
 "",
-array( 'content-class'     => "Identifier of the content class used for testing [default: article]",
-       'concurrency-level' => "Parallel processes to use [default: 20]",
-       'generate-content'  => "Wether content should  be generated or not (not fully supported yet) [default: off]",
-       'parent-node'       => "Container content should be created in [default: 2]",
-       'batches-count'     => "How many times a concurrent batch should be started [default: 1]" ) );
+['content-class'     => "Identifier of the content class used for testing [default: article]", 'concurrency-level' => "Parallel processes to use [default: 20]", 'generate-content'  => "Wether content should  be generated or not (not fully supported yet) [default: off]", 'parent-node'       => "Container content should be created in [default: 2]", 'batches-count'     => "How many times a concurrent batch should be started [default: 1]"] );
 $sys = eZSys::instance();
 
 $script->initialize();
@@ -75,8 +68,8 @@ $cli->output( " * mysql.innodb_lock_wait_timeout: $mysqlInnoDBLockWaitTimeout se
 $cli->output( " * mysql.max_connections: $mysqlMaxConnections" );
 $cli->output();
 
-$currentJobs = array();
-$signalQueue = array();
+$currentJobs = [];
+$signalQueue = [];
 
 for( $iteration = 0; $iteration < $optBatchesCount; $iteration++ )
 {

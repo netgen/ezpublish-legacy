@@ -15,14 +15,11 @@ require_once 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => "Processes the eZ Publish publishing queue",
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => "Processes the eZ Publish publishing queue", 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 $script->startup();
 
 // check required pcntl functions (ubuntu 11 disables them by default)
-$pcntlFunctions = array( 'pcntl_fork', 'pcntl_signal', 'pcntl_waitpid', 'pcntl_wexitstatus' );
+$pcntlFunctions = ['pcntl_fork', 'pcntl_signal', 'pcntl_waitpid', 'pcntl_wexitstatus'];
 foreach( $pcntlFunctions as $pcntlFunction )
 {
     if ( !function_exists( $pcntlFunction ) )
@@ -39,8 +36,7 @@ $options = $script->getOptions(
     // arguments definition
     "",
     // options documentation
-    array( 'daemon' => 'Run in the background',
-           'pid-file' => 'PID file' ) );
+    ['daemon' => 'Run in the background', 'pid-file' => 'PID file'] );
 $sys = eZSys::instance();
 
 $script->initialize();
@@ -57,7 +53,7 @@ else
 }
 
 // check if run folder exists
-$pidFileDirectory = dirname( $pidFile );
+$pidFileDirectory = dirname( (string) $pidFile );
 if ( !file_exists( $pidFileDirectory ) )
 {
     if ( !mkdir( $pidFileDirectory ) )

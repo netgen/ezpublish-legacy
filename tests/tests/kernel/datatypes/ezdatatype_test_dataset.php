@@ -13,34 +13,6 @@
 class ezpDatatypeTestDataSet extends ezcBaseStruct
 {
     /**
-     * The fromString value
-     *
-     * @var string
-     */
-    public $fromString = '';
-
-    /**
-     * Integer data
-     *
-     * @var int
-     */
-    public $dataInt = null;
-
-    /**
-     * Text data
-     *
-     * @var string
-     */
-    public $dataText = '';
-
-    /**
-     * Float data
-     *
-     * @var float
-     */
-    public $dataFloat = '0';
-
-    /**
      * Content the datatype should return
      * @var mixed
      */
@@ -55,12 +27,8 @@ class ezpDatatypeTestDataSet extends ezcBaseStruct
      * @param float $dataFloat
      * @param
      */
-    public function __construct( $fromString = '', $dataInt = null, $dataText = '', $dataFloat = '0' )
+    public function __construct(public $fromString = '', public $dataInt = null, public $dataText = '', public $dataFloat = '0')
     {
-        $this->fromString = $fromString;
-        $this->dataFloat = $dataFloat;
-        $this->dataInt = $dataInt;
-        $this->dataText = $dataText;
     }
 
     /**

@@ -76,9 +76,7 @@ class eZDiffContent
 
     function attributes()
     {
-        return array( 'changes',
-                      'old_content',
-                      'new_content' );
+        return ['changes', 'old_content', 'new_content'];
     }
 
     function hasAttribute( $name )

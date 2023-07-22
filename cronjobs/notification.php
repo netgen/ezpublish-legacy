@@ -8,7 +8,7 @@
  * @package kernel
  */
 
-$event = eZNotificationEvent::create( 'ezcurrenttime', array() );
+$event = eZNotificationEvent::create( 'ezcurrenttime', [] );
 
 $event->store();
 $cli->output( "Starting notification event processing" );

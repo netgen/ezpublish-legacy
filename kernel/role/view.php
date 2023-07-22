@@ -28,10 +28,8 @@ if ( $http->hasPostVariable( 'EditRoleButton' ) )
 // Redirect to content node browse in the user tree
 if ( $http->hasPostVariable( 'AssignRoleButton' ) )
 {
-    eZContentBrowse::browse( array( 'action_name' => 'AssignRole',
-                                    'from_page' => '/role/assign/' . $roleID,
-                                    'cancel_page' => '/role/view/'. $roleID ),
-                             $Module );
+    eZContentBrowse::browse( $Module,
+                             ['action_name' => 'AssignRole', 'from_page' => '/role/assign/' . $roleID, 'cancel_page' => '/role/view/'. $roleID] );
 
     return;
 }
@@ -105,11 +103,8 @@ $tpl->setVariable( 'user_array', $userArray );
 
 $Module->setTitle( 'View role - ' . $role->attribute( 'name' ) );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:role/view.tpl' );
-$Result['path'] = array( array( 'text' => 'Role',
-                                'url' => 'role/list' ),
-                         array( 'text' => $role->attribute( 'name' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => 'Role', 'url' => 'role/list'], ['text' => $role->attribute( 'name' ), 'url' => false]];
 
 ?>

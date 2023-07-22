@@ -28,7 +28,7 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
      */
     public function testFetchAliasesFromNodeList()
     {
-        $nodeArray = array();
+        $nodeArray = [];
 
         // 1) Create a few objects/nodes
         for( $i = 0; $i < 5; $i++ )
@@ -38,26 +38,23 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
             $object->publish();
 
             $nodeID = $object->mainNode->attribute( 'node_id' );
-            $nodeArray[ $nodeID ] = array(
-                'node_id' => $nodeID,
-                'path_identification_string' => $object->mainNode->attribute( 'path_identification_string' ),
-            );
+            $nodeArray[ $nodeID ] = ['node_id' => $nodeID, 'path_identification_string' => $object->mainNode->attribute( 'path_identification_string' )];
         }
         $nodeIDArray = array_keys( $nodeArray );
 
         // 2) Call the method with the above list
         $aliasList = eZContentObjectTreeNode::fetchAliasesFromNodeList( $nodeIDArray );
-        $this->assertEquals( count( $nodeArray ), count( $aliasList ) );
+        static::assertEquals(count( $nodeArray ), count( $aliasList ));
         foreach( $aliasList as $alias )
         {
-            $this->assertArrayHasKey( 'node_id', $alias );
-            $this->assertArrayHasKey( 'path_identification_string', $alias );
+            static::assertArrayHasKey('node_id', $alias);
+            static::assertArrayHasKey('path_identification_string', $alias);
 
             $nodeID = $alias['node_id'];
             $baseNodeData = $nodeArray[$nodeID];
 
-            $this->assertEquals( $baseNodeData['node_id'], $alias['node_id'] );
-            $this->assertEquals( $baseNodeData['path_identification_string'], $alias['path_identification_string'] );
+            static::assertEquals($baseNodeData['node_id'], $alias['node_id']);
+            static::assertEquals($baseNodeData['path_identification_string'], $alias['path_identification_string']);
         }
     }
 
@@ -75,11 +72,12 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
      */
     public function testFindMainNodeArray()
     {
+        $objectsIDArray = [];
         // 1) Check that the method returns null on an empty array
-        $this->assertNull( eZContentObjectTreeNode::findMainNodeArray( array() ) );
+        static::assertNull(eZContentObjectTreeNode::findMainNodeArray( [] ));
 
         // 2) Create a few objects/nodes
-        $objectIDArray = $objectsArray = $nodesIDArray = array();
+        $objectIDArray = $objectsArray = $nodesIDArray = [];
         for( $i = 0; $i < 5; $i++ )
         {
             $object = new ezpObject( 'article', 2 );
@@ -93,16 +91,14 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
         $mainNodeArray = eZContentObjectTreeNode::findMainNodeArray( $objectsIDArray );
 
         // 4) Check the result
-        $this->assertEquals( count( $objectsIDArray ), count( $mainNodeArray ),
-             "Return value count doesn't matche parameter count" );
+        static::assertEquals(count( $objectsIDArray ), count( $mainNodeArray ), "Return value count doesn't matche parameter count");
         foreach( $mainNodeArray as $mainNode )
         {
             $mainNodeContentObjectID = $mainNode->attribute( 'contentobject_id' );
 
-            $this->assertInstanceOf( 'eZContentObjectTreeNode', $mainNode );
-            $this->assertTrue( $mainNode->attribute( 'is_main' ) );
-            $this->assertTrue( in_array( $mainNodeContentObjectID, $objectsIDArray ),
-                "A returned node's contentobject_id isn't part of the original parameters" );
+            static::assertInstanceOf('eZContentObjectTreeNode', $mainNode);
+            static::assertTrue($mainNode->attribute( 'is_main' ));
+            static::assertTrue(in_array( $mainNodeContentObjectID, $objectsIDArray ), "A returned node's contentobject_id isn't part of the original parameters");
         }
     }
 
@@ -114,8 +110,9 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
      */
     public function testGetParentNodeIdListByContentObjectID()
     {
+        $containerIDArray = [];
         // Create a few containers with a few children below each
-        $childrenIDArray = $childrenParentIDArray = array();
+        $childrenIDArray = $childrenParentIDArray = [];
         for ( $i = 0; $i < 3; $i++ )
         {
             $folder = new ezpObject( 'folder', 2 );
@@ -139,12 +136,10 @@ class eZContentObjectTreeNodeTest extends ezpDatabaseTestCase
         // First test without grouping
         $parentNodeIDArray = eZContentObjectTreeNode::getParentNodeIdListByContentObjectID(
             $childrenIDArray, false );
-        $this->assertEquals( count( $childrenIDArray ), count( $parentNodeIDArray ),
-            "count of returned items doesn't match the parameters count" );
+        static::assertEquals(count( $childrenIDArray ), count( $parentNodeIDArray ), "count of returned items doesn't match the parameters count");
         foreach( $parentNodeIDArray as $parentNodeID )
         {
-            $this->assertTrue( in_array( $parentNodeID, $containerIDArray ),
-                "Returned parent_node_id $parentNodeID isn't in the list of created nodes" );
+            static::assertTrue(in_array( $parentNodeID, $containerIDArray ), "Returned parent_node_id $parentNodeID isn't in the list of created nodes");
         }
     }
 }

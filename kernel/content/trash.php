@@ -14,9 +14,9 @@ if ( isset( $Params['UserParameters'] ) )
 }
 else
 {
-    $UserParameters = array();
+    $UserParameters = [];
 }
-$viewParameters = array( 'offset' => $Offset, 'namefilter' => false );
+$viewParameters = ['offset' => $Offset, 'namefilter' => false];
 $viewParameters = array_merge( $viewParameters, $UserParameters );
 
 $http = eZHTTPTool::instance();
@@ -38,7 +38,7 @@ if ( $http->hasPostVariable( 'RemoveButton' )  )
 
                 $objectList = eZPersistentObject::fetchObjectList( eZContentObject::definition(),
                                                                    null,
-                                                                   array( 'id' => $deleteID ),
+                                                                   ['id' => $deleteID],
                                                                    null,
                                                                    null,
                                                                    true );
@@ -64,11 +64,11 @@ else if ( $http->hasPostVariable( 'EmptyButton' )  )
             // Fetch 100 objects at a time, to limit transaction size
             $objectList = eZPersistentObject::fetchObjectList( eZContentObject::definition(),
                                                                null,
-                                                               array( 'status' => eZContentObject::STATUS_ARCHIVED ),
+                                                               ['status' => eZContentObject::STATUS_ARCHIVED],
                                                                null,
                                                                100,
                                                                true );
-            if ( count( $objectList ) < 1 )
+            if ( count( (array) $objectList ) < 1 )
                 break;
 
             foreach ( $objectList as $object )
@@ -86,10 +86,9 @@ else if ( $http->hasPostVariable( 'EmptyButton' )  )
 $tpl = eZTemplate::factory();
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/trash.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/content', 'Trash' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/content', 'Trash' ), 'url' => false]];
 
 
 ?>

@@ -23,24 +23,13 @@ if ( !isset( $Offset ) )
 
 $children_list_limit = eZPreferences::value( "reverse_children_list_limit" );
 
-switch  ( $children_list_limit )
-{
-    case 0:
-        $pageLimit = 10;
-        break;
-    case 1:
-        $pageLimit = 10;
-        break;
-    case 2:
-        $pageLimit = 25;
-        break;
-    case 3:
-        $pageLimit = 50;
-        break;
-    default:
-        $pageLimit = 10;
-        break;
-}
+$pageLimit = match ($children_list_limit) {
+    0 => 10,
+    1 => 10,
+    2 => 25,
+    3 => 50,
+    default => 10,
+};
 
 if ( $Offset < $pageLimit )
     $Offset = 0;
@@ -56,7 +45,7 @@ $http->setSessionVariable( 'userRedirectURIReverseObjects', $userRedirectURI );
 
 $db = eZDB::instance();
 
-$deleteIDArray = array();
+$deleteIDArray = [];
 
 $contentObjectTreeNode = eZContentObjectTreeNode::fetch( $NodeID );
 if ( !$contentObjectTreeNode )
@@ -104,18 +93,17 @@ if ( $rowsCount > 0 )
                                        and obj.current_version = link.from_contentobject_version
                                        and not ( $path_strings_where )
 
-                                ", array( 'limit' => $pageLimit,
-                                          'offset' => $Offset ) );
+                                ", ['limit' => $pageLimit, 'offset' => $Offset] );
 }
 else
 {
-    $rows = array();
+    $rows = [];
 }
 
-$childrenList = array(); // Contains children of Nodes from $deleteIDArray
+$childrenList = []; // Contains children of Nodes from $deleteIDArray
 
 // Fetch number of reverse related objects for each of the items being removed.
-$reverselistCountChildrenArray = array();
+$reverselistCountChildrenArray = [];
 foreach( $rows as $child )
 {
     $contentObject = eZContentObject::fetchByNodeID( $child['node_id'] );
@@ -126,7 +114,7 @@ foreach( $rows as $child )
 }
 
 $contentObjectName = $contentObjectTreeNode->attribute('name');
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $tpl = eZTemplate::factory();
 
@@ -138,7 +126,7 @@ $tpl->setVariable( 'reverse_list_count_children_array', $reverselistCountChildre
 $tpl->setVariable( 'reverse_list_children_count', count( $reverselistCountChildrenArray ) );
 $tpl->setVariable( 'node_id',  $NodeID );
 
-$Result = array();
+$Result = [];
 
 $contentObject = $contentObjectTreeNode->attribute( 'object' );
 if ( $contentObject )
@@ -155,7 +143,6 @@ if ( $contentObject )
 }
 
 $Result['content'] = $tpl->fetch( "design:content/reverserelatedlist.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/content', "\"$contentObjectName\": Sub items that are used by other objects" ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/content', "\"$contentObjectName\": Sub items that are used by other objects" )]];
 
 ?>

@@ -23,7 +23,7 @@ function removeSelectedGroups( $http, &$groups, $base )
                 $list_in_group = eZWorkflowGroupLink::fetchWorkflowList( 0, $group_id, $asObject = true);
                 $workflow_list = eZWorkflow::fetchList( );
 
-                $list = array();
+                $list = [];
                 foreach( $workflow_list as $workflow )
                 {
                     foreach( $list_in_group as $group )
@@ -61,7 +61,7 @@ if ( $http->hasPostVariable( "EditGroupButton" ) && $http->hasPostVariable( "Edi
 
 if ( $http->hasPostVariable( "NewGroupButton" ) )
 {
-    $params = array();
+    $params = [];
 
     $Module->redirectTo( $Module->functionURI( "groupedit" ) );
     return;
@@ -71,10 +71,7 @@ $sorting = null;
 
 if ( !isset( $TemplateData ) or !is_array( $TemplateData ) )
 {
-    $TemplateData = array( array( "name" => "groups",
-                                  "http_base" => "ContentClass",
-                                  "data" => array( "command" => "group_list",
-                                                   "type" => "class" ) ) );
+    $TemplateData = [["name" => "groups", "http_base" => "ContentClass", "data" => ["command" => "group_list", "type" => "class"]]];
 }
 
 $Module->setTitle( ezpI18n::tr( 'kernel/workflow', 'Workflow group list' ) );
@@ -85,7 +82,7 @@ foreach( $TemplateData as $tpldata )
 {
     $tplname = $tpldata["name"];
     $data = $tpldata["data"];
-    $asObject = isset( $data["as_object"] ) ? $data["as_object"] : true;
+    $asObject = $data["as_object"] ?? true;
     $base = $tpldata["http_base"];
     unset( $list );
     $list = eZWorkflowGroup::fetchList( $asObject );
@@ -95,12 +92,9 @@ foreach( $TemplateData as $tpldata )
 
 $tpl->setVariable( "module", $Module );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:workflow/grouplist.tpl" );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/workflow', 'Group list' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/workflow', 'Workflow' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/workflow', 'Group list' ), 'url' => false]];
 
 
 ?>

@@ -18,26 +18,7 @@ class eZPolicyLimitationValue extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'limitation_id' => array( 'name' => 'LimitationID',
-                                                                   'datatype' => 'integer',
-                                                                   'default' => 0,
-                                                                   'required' => true,
-                                                                   'foreign_class' => 'eZPolicyLimitation',
-                                                                   'foreign_attribute' => 'id',
-                                                                   'multiplicity' => '1..*' ),
-                                         'value' => array( 'name' => 'Value',
-                                                           'datatype' => 'text',
-                                                           'default' => '',
-                                                           'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "sort" => array( "value" => "asc" ),
-                      "class_name" => "eZPolicyLimitationValue",
-                      "name" => "ezpolicy_limitation_value" );
+        static $definition = ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'limitation_id' => ['name' => 'LimitationID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZPolicyLimitation', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'value' => ['name' => 'Value', 'datatype' => 'text', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "sort" => ["value" => "asc"], "class_name" => "eZPolicyLimitationValue", "name" => "ezpolicy_limitation_value"];
         return $definition;
     }
 
@@ -48,7 +29,7 @@ class eZPolicyLimitationValue extends eZPersistentObject
      */
     static function createNew( $limitationID, $value )
     {
-        $limitationValue = new eZPolicyLimitationValue( array() );
+        $limitationValue = new eZPolicyLimitationValue( [] );
         $limitationValue->setAttribute( 'limitation_id', $limitationID );
         $limitationValue->setAttribute( 'value', $value );
         $limitationValue->store();
@@ -63,9 +44,7 @@ class eZPolicyLimitationValue extends eZPersistentObject
     */
     static function create( $limitationID, $value )
     {
-        $row = array( 'id' => null,
-                      'limitation_id' => $limitationID,
-                      'value' => $value );
+        $row = ['id' => null, 'limitation_id' => $limitationID, 'value' => $value];
         return new eZPolicyLimitationValue( $row );
     }
 
@@ -82,7 +61,7 @@ class eZPolicyLimitationValue extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZPolicyLimitationValue::definition(),
                                                     null,
-                                                    array( 'limitation_id' => $limitationID ),
+                                                    ['limitation_id' => $limitationID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -96,7 +75,7 @@ class eZPolicyLimitationValue extends eZPersistentObject
     {
         if ( $policyID )
         {
-            $limitationIDList = array();
+            $limitationIDList = [];
             $limitations = eZPolicyLimitation::fetchByPolicyID( $policyID, false );
             foreach ( $limitations as $limitationArray )
             {
@@ -105,13 +84,12 @@ class eZPolicyLimitationValue extends eZPersistentObject
             if  ( count( $limitationIDList ) > 0 )
             {
                 eZPersistentObject::removeObject( eZPolicyLimitationValue::definition(),
-                                                  array( 'limitation_id' => array( $limitationIDList  ),
-                                                         "value" => $value ) );
+                                                  ['limitation_id' => [$limitationIDList], "value" => $value] );
                 return;
             }
         }
         eZPersistentObject::removeObject( eZPolicyLimitationValue::definition(),
-                                          array( "value" => $value ) );
+                                          ["value" => $value] );
     }
 
     public $LimitationID;

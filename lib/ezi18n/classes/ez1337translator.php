@@ -31,8 +31,6 @@ class eZ1337Translator extends eZTranslatorHandler
     public function __construct()
     {
         parent::__construct( false );
-
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -54,20 +52,12 @@ class eZ1337Translator extends eZTranslatorHandler
     */
     function leetify( $text )
     {
-        $text = preg_replace( "/to/", "2", $text );
+        $text = preg_replace( "/to/", "2", (string) $text );
         $text = preg_replace( "/for/", "4", $text );
         $text = preg_replace( "/ate/", "8", $text );
         $text = preg_replace( "/you/", "u", $text );
-        $text = preg_replace( array( "/l/",
-                                     "/e/",
-                                     "/o/",
-                                     "/a/",
-                                     "/t/" ),
-                              array( "1",
-                                     "3",
-                                     "0",
-                                     "4",
-                                     "7" ), $text );
+        $text = preg_replace( ["/l/", "/e/", "/o/", "/a/", "/t/"],
+                              ["1", "3", "0", "4", "7"], $text );
         return $text;
     }
 
@@ -101,7 +91,7 @@ class eZ1337Translator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached 1337 translations
-    public $Messages;
+    public $Messages = [];
 }
 
 ?>

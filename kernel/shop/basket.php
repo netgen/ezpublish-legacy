@@ -34,7 +34,7 @@ if ( $http->hasPostVariable( "ActionAddToBasket" ) )
     if ( $http->hasPostVariable( 'eZOption' ) )
         $optionList = $http->postVariable( 'eZOption' );
     else
-        $optionList = array();
+        $optionList = [];
 
     $fromPage = '';
     if ( $http->hasSessionVariable( 'LastAccessesURI' ) )
@@ -64,7 +64,7 @@ if ( $http->hasPostVariable( "RemoveProductItemButton" ) )
         if ( $http->hasPostVariable( "RemoveProductItemDeleteList" ) )
             $itemList = $http->postVariable( "RemoveProductItemDeleteList" );
         else
-            $itemList = array();
+            $itemList = [];
 
         $i = 0;
 
@@ -195,7 +195,7 @@ if ( $http->hasSessionVariable( 'DoCheckoutAutomatically' ) )
     }
 }
 
-$removedItems = array();
+$removedItems = [];
 
 if ( $http->hasPostVariable( "CheckoutButton" ) or ( $doCheckout === true ) )
 {
@@ -285,7 +285,7 @@ if ( $http->hasPostVariable( "CheckoutButton" ) or ( $doCheckout === true ) )
         else
         {
             $basket = eZBasket::currentBasket();
-            $removedItems = array();
+            $removedItems = [];
             foreach ( $itemList as $item )
             {
                 $removedItems[] = $item;
@@ -334,8 +334,7 @@ if ( $shippingInfo !== null )
     $tpl->setVariable( 'total_inc_shipping_inc_vat', $totalIncShippingIncVat );
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/basket.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Basket' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/shop', 'Basket' )]];
 ?>

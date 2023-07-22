@@ -16,7 +16,7 @@
 
 class eZTemplateTreeCache
 {
-    const CODE_DATE = 1044440833;
+    final public const CODE_DATE = 1_044_440_833;
 
     /*!
      \static
@@ -26,7 +26,7 @@ class eZTemplateTreeCache
     {
         $templateCache =& $GLOBALS['eZTemplateTreeCacheTable'];
         if ( !is_array( $templateCache ) )
-            $templateCache = array();
+            $templateCache = [];
         return $templateCache;
     }
 
@@ -83,18 +83,12 @@ class eZTemplateTreeCache
         }
         else
         {
-            $templateCache[$key] = array();
+            $templateCache[$key] = [];
         }
         $ini = eZINI::instance();
         $debug = $ini->variable( 'TemplateSettings', 'Debug' ) == 'enabled';
         $templateCache[$key]['root'] =& $root;
-        $templateCache[$key]['info'] = array( 'original_key' => $originalKey,
-                                              'key' => $key,
-                                              'uri' => $uri,
-                                              'debug' => $debug,
-                                              'resource' => $res,
-                                              'template_path' => $templatePath,
-                                              'resource_parameters' => $extraParameters );
+        $templateCache[$key]['info'] = ['original_key' => $originalKey, 'key' => $key, 'uri' => $uri, 'debug' => $debug, 'resource' => $res, 'template_path' => $templatePath, 'resource_parameters' => $extraParameters];
     }
 
     /*!
@@ -128,7 +122,7 @@ class eZTemplateTreeCache
         $cacheDirectory =& $GLOBALS['eZTemplateTreeCacheDirectory'];
         if ( !isset( $cacheDirectory ) )
         {
-            $cacheDirectory = eZDir::path( array( eZSys::cacheDirectory(), 'template/tree' ) );
+            $cacheDirectory = eZDir::path( [eZSys::cacheDirectory(), 'template/tree'] );
         }
         return $cacheDirectory;
     }
@@ -141,9 +135,9 @@ class eZTemplateTreeCache
     {
         $internalCharset = eZTextCodec::internalCharset();
         $extraName = '';
-        if ( preg_match( "#^.+/(.*)\.tpl$#", $templateFilepath, $matches ) )
+        if ( preg_match( "#^.+/(.*)\.tpl$#", (string) $templateFilepath, $matches ) )
             $extraName = '-' . $matches[1];
-        else if ( preg_match( "#^(.*)\.tpl$#", $templateFilepath, $matches ) )
+        else if ( preg_match( "#^(.*)\.tpl$#", (string) $templateFilepath, $matches ) )
             $extraName = '-' . $matches[1];
         $cacheFileKey = "$key-$internalCharset";
         $cacheFileName = md5( $cacheFileKey ) . $extraName . '.php';
@@ -193,9 +187,7 @@ class eZTemplateTreeCache
         $cacheFileName = eZTemplateTreeCache::treeCacheFilename( $key, $templateFilepath );
 
         $php = new eZPHPCreator( eZTemplateTreeCache::cacheDirectory(), $cacheFileName );
-        $variables = $php->restore( array( 'info' => 'TemplateInfo',
-                                           'root' => 'TemplateRoot',
-                                           'cache-date' => 'eZTemplateTreeCacheCodeDate' ) );
+        $variables = $php->restore( ['info' => 'TemplateInfo', 'root' => 'TemplateRoot', 'cache-date' => 'eZTemplateTreeCacheCodeDate'] );
         if ( $variables['cache-date'] != eZTemplateTreeCache::CODE_DATE )
             return false;
         $cache =& $templateCache[$key];

@@ -22,10 +22,10 @@
 
 class eZMultiplexerType extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = "ezmultiplexer";
-    const VERSION_OPTION_FIRST_ONLY = 1;
-    const VERSION_OPTION_EXCEPT_FIRST = 2;
-    const VERSION_OPTION_ALL = 3;
+    final public const WORKFLOW_TYPE_STRING = "ezmultiplexer";
+    final public const VERSION_OPTION_FIRST_ONLY = 1;
+    final public const VERSION_OPTION_EXCEPT_FIRST = 2;
+    final public const VERSION_OPTION_ALL = 3;
 
     /*!
      Constructor
@@ -41,20 +41,20 @@ class eZMultiplexerType extends eZWorkflowEventType
         {
             case 'selected_sections':
             {
-                $attributeValue = trim( $event->attribute( 'data_text1' ) );
-                $returnValue = empty( $attributeValue ) ? array( -1 ) : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text1' ) );
+                $returnValue = empty( $attributeValue ) ? [-1] : explode( ',', $attributeValue );
             }break;
 
             case 'selected_classes':
             {
-                $attributeValue = trim( $event->attribute( 'data_text5' ) );
-                $returnValue = empty( $attributeValue ) ? array( -1 ) : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute( 'data_text5' ) );
+                $returnValue = empty( $attributeValue ) ? [-1] : explode( ',', $attributeValue );
             }break;
 
             case 'selected_usergroups':
             {
-                $attributeValue = trim( $event->attribute('data_text2') );
-                $returnValue = empty( $attributeValue ) ? array() : explode( ',', $attributeValue );
+                $attributeValue = trim( (string) $event->attribute('data_text2') );
+                $returnValue = empty( $attributeValue ) ? [] : explode( ',', $attributeValue );
             }break;
 
             case 'selected_workflow':
@@ -64,7 +64,7 @@ class eZMultiplexerType extends eZWorkflowEventType
 
             case 'language_list':
             {
-                $returnValue = array();
+                $returnValue = [];
                 $attributeValue = $event->attribute( 'data_int2' );
                 if ( $attributeValue != 0 )
                 {
@@ -89,21 +89,12 @@ class eZMultiplexerType extends eZWorkflowEventType
 
     function typeFunctionalAttributes()
     {
-        return array( 'selected_sections',
-                      'selected_usergroups',
-                      'selected_classes',
-                      'selected_workflow',
-                      'language_list',
-                      'version_option' );
+        return ['selected_sections', 'selected_usergroups', 'selected_classes', 'selected_workflow', 'language_list', 'version_option'];
     }
 
     function attributes()
     {
-        return array_merge( array( 'sections',
-                                   'languages',
-                                   'contentclass_list',
-                                   'workflow_list',
-                                   'usergroups' ),
+        return array_merge( ['sections', 'languages', 'contentclass_list', 'workflow_list', 'usergroups'],
                             eZWorkflowEventType::attributes() );
     }
 
@@ -137,8 +128,8 @@ class eZMultiplexerType extends eZWorkflowEventType
             {
                 $groups = eZPersistentObject::fetchObjectList(
                     eZContentObject::definition(),
-                    array( 'id', 'name' ),
-                    array( 'contentclass_id' => 3, 'status' => eZContentObject::STATUS_PUBLISHED ),
+                    ['id', 'name'],
+                    ['contentclass_id' => 3, 'status' => eZContentObject::STATUS_PUBLISHED],
                     null,
                     null,
                     false
@@ -155,9 +146,9 @@ class eZMultiplexerType extends eZWorkflowEventType
 
             case 'contentclass_list':
             {
-                $classes = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, array( 'name' => 'asc' ) );
-                $classList = array();
-                for ( $i = 0; $i < count( $classes ); $i++ )
+                $classes = eZContentClass::fetchList( eZContentClass::VERSION_STATUS_DEFINED, true, false, ['name' => 'asc'] );
+                $classList = [];
+                for ( $i = 0; $i < (is_countable($classes) ? count( $classes ) : 0); $i++ )
                 {
                     $classList[$i]['Name'] = $classes[$i]->attribute( 'name' );
                     $classList[$i]['value'] = $classes[$i]->attribute( 'id' );
@@ -169,8 +160,8 @@ class eZMultiplexerType extends eZWorkflowEventType
             case 'workflow_list':
             {
                 $workflows = eZWorkflow::fetchList();
-                $workflowList = array();
-                for ( $i = 0; $i < count( $workflows ); $i++ )
+                $workflowList = [];
+                for ( $i = 0; $i < (is_countable($workflows) ? count( $workflows ) : 0); $i++ )
                 {
                     $workflowList[$i]['Name'] = $workflows[$i]->attribute( 'name' );
                     $workflowList[$i]['value'] = $workflows[$i]->attribute( 'id' );
@@ -184,6 +175,7 @@ class eZMultiplexerType extends eZWorkflowEventType
 
     function execute( $process, $event )
     {
+        $eventLog = null;
         $processParameters = $process->attribute( 'parameter_list' );
         $storeProcessParameters = false;
         $classID = false;
@@ -230,8 +222,8 @@ class eZMultiplexerType extends eZWorkflowEventType
             }
         }
 
-        $userArray = explode( ',', $event->attribute( 'data_text2' ) );
-        $classArray = explode( ',', $event->attribute( 'data_text5' ) );
+        $userArray = explode( ',', (string) $event->attribute( 'data_text2' ) );
+        $classArray = explode( ',', (string) $event->attribute( 'data_text5' ) );
         $languageMask = $event->attribute( 'data_int2' );
 
         if ( !isset( $processParameters['user_id'] ) )
@@ -275,7 +267,7 @@ class eZMultiplexerType extends eZWorkflowEventType
              ( in_array( -1, $classArray ) ||
                in_array( $classID, $classArray ) ) )
         {
-            $sectionArray = explode( ',', $event->attribute( 'data_text1' ) );
+            $sectionArray = explode( ',', (string) $event->attribute( 'data_text1' ) );
 
             if ( in_array( $sectionID, $sectionArray ) ||
                  in_array( -1, $sectionArray ) )
@@ -283,10 +275,7 @@ class eZMultiplexerType extends eZWorkflowEventType
                 $workflowToRun = $event->attribute( 'data_int1' );
 
                 $childParameters = array_merge( $processParameters,
-                                                array( 'workflow_id' => $workflowToRun,
-                                                       'user_id' => $userID,
-                                                       'parent_process_id' => $process->attribute( 'id' )
-                                                       ) );
+                                                ['workflow_id' => $workflowToRun, 'user_id' => $userID, 'parent_process_id' => $process->attribute( 'id' )] );
 
                 $childProcessKey = eZWorkflowProcess::createKey( $childParameters );
 
@@ -363,7 +352,7 @@ class eZMultiplexerType extends eZWorkflowEventType
             $sectionsArray = $http->postVariable( $sectionsVar );
             if ( in_array( '-1', $sectionsArray ) )
             {
-                $sectionsArray = array( -1 );
+                $sectionsArray = [-1];
             }
             $sectionsString = implode( ',', $sectionsArray );
             $event->setAttribute( "data_text1", $sectionsString );
@@ -375,7 +364,7 @@ class eZMultiplexerType extends eZWorkflowEventType
             $languageArray = $http->postVariable( $languageVar );
             if ( in_array( '-1', $languageArray ) )
             {
-                $languageArray = array();
+                $languageArray = [];
             }
             $languageMask = 0;
             foreach ( $languageArray as $languageID )
@@ -403,7 +392,7 @@ class eZMultiplexerType extends eZWorkflowEventType
             $classesArray = $http->postVariable( $classesVar );
             if ( in_array( '-1', $classesArray ) )
             {
-                $classesArray = array( -1 );
+                $classesArray = [-1];
             }
             $classesString = implode( ',', $classesArray );
             $event->setAttribute( "data_text5", $classesString );

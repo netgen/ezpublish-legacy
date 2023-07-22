@@ -37,37 +37,30 @@ class eZMultiPriceTypeRegression extends ezpDatabaseTestCase
         $currencyCode = 'EUR';
 
         // create currency
-        $currencyParams = array(
-            'code' => $currencyCode,
-            'symbol' => false,
-            'locale' => 'eng-GB',
-            'custom_rate_value' => 0,
-            'rate_factor' => 1 );
+        $currencyParams = ['code' => $currencyCode, 'symbol' => false, 'locale' => 'eng-GB', 'custom_rate_value' => 0, 'rate_factor' => 1];
 
         $currency = eZCurrencyData::create( $currencyCode, '€', 'eng-GB', 0, 0, 1 );
         $currency->store();
 
         $currencyID = $currency->attribute( 'id' );
-        $this->assertInternalType( 'integer', $currencyID );
+        static::assertInternalType('integer', $currencyID);
 
         // create VAT type
-        $row = array( 'name' => 'Test', 'percentage' => 10.0 );
+        $row = ['name' => 'Test', 'percentage' => 10.0];
         $vatType = new eZVatType( $row );
         $vatType->store();
         $vatTypeID = $vatType->attribute( 'id' );
-        $this->assertInternalType( 'integer', $vatTypeID );
+        static::assertInternalType('integer', $vatTypeID);
 
-        $class = eZContentClass::create( false, array( 'name' => 'eZMultiPrice::testMultipleCallsToCalculatedPrice',
-                                                       'identifier' => 'ezmultiprice_test' ) );
+        $class = eZContentClass::create( false, ['name' => 'eZMultiPrice::testMultipleCallsToCalculatedPrice', 'identifier' => 'ezmultiprice_test'] );
         $class->store();
         $classID = $class->attribute( 'id' );
-        $this->assertInternalType( 'integer', $classID );
+        static::assertInternalType('integer', $classID);
 
         $attributes = $class->fetchAttributes();
 
         // add class attributes
-        $newAttribute = eZContentClassAttribute::create( $classID, 'ezmultiprice', array( 'name' => 'Test',
-                                                                                          'identifier' => 'test' ) );
+        $newAttribute = eZContentClassAttribute::create( $classID, 'ezmultiprice', ['name' => 'Test', 'identifier' => 'test'] );
         $dataType = $newAttribute->dataType();
         $dataType->initializeClassAttribute( $newAttribute );
         $newAttribute->setAttribute( eZMultiPriceType::DEFAULT_CURRENCY_CODE_FIELD, $currencyCode );
@@ -95,20 +88,20 @@ class eZMultiPriceTypeRegression extends ezpDatabaseTestCase
 
         // test values
         $firstIncVatPriceList = $multiPrice->attribute( 'inc_vat_price_list' );
-        $this->assertArrayHasKey( 'EUR', $firstIncVatPriceList );
+        static::assertArrayHasKey('EUR', $firstIncVatPriceList);
         $firstCallValue = $firstIncVatPriceList['EUR']->attribute( 'value' );
 
         $secondIncVatPriceList = $multiPrice->attribute( 'inc_vat_price_list' );
-        $this->assertArrayHasKey( 'EUR', $secondIncVatPriceList );
+        static::assertArrayHasKey('EUR', $secondIncVatPriceList);
         $secondCallValue = $secondIncVatPriceList['EUR']->attribute( 'value' );
 
-        $this->assertEquals( $firstCallValue, $secondCallValue );
+        static::assertEquals($firstCallValue, $secondCallValue);
 
         $thirdIncVatPriceList = $multiPrice->attribute( 'inc_vat_price_list' );
-        $this->assertArrayHasKey( 'EUR', $thirdIncVatPriceList );
+        static::assertArrayHasKey('EUR', $thirdIncVatPriceList);
         $thirdCallValue = $thirdIncVatPriceList['EUR']->attribute( 'value' );
 
-        $this->assertEquals( $firstCallValue, $thirdCallValue );
+        static::assertEquals($firstCallValue, $thirdCallValue);
     }
 }
 

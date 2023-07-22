@@ -19,62 +19,7 @@ class eZRSSExportItem extends eZPersistentObject
 {
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'rssexport_id' => array( 'name' => 'RSSExportID',
-                                                                  'datatype' => 'integer',
-                                                                  'default' => '',
-                                                                  'required' => true,
-                                                                  'foreign_class' => 'eZRSSExport',
-                                                                  'foreign_attribute' => 'id',
-                                                                  'multiplicity' => '1..*' ),
-                                         'source_node_id' => array( 'name' => 'SourceNodeID',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => '',
-                                                                    'required' => true,
-                                                                    'foreign_class' => 'eZContentObjectTreeNode',
-                                                                    'foreign_attribute' => 'node_id',
-                                                                    'multiplicity' => '1..*' ),
-                                         'class_id' => array( 'name' => 'ClassID',
-                                                              'datatype' => 'integer',
-                                                              'default' => '',
-                                                              'required' => true,
-                                                              'foreign_class' => 'eZContentClass',
-                                                              'foreign_attribute' => 'id',
-                                                              'multiplicity' => '1..*' ),
-                                         'description' => array( 'name' => 'Description',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'category' => array( 'name' => 'Category',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => false ),
-                                         'title' => array( 'name' => 'Title',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         'enclosure' => array( 'name' => 'Enclosure',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => false ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         'subnodes' => array( 'name' => 'Subnodes',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ) ),
-                      'keys' => array( 'id', 'status' ),
-                      'function_attributes' => array( 'class_attributes' => 'classAttributes',
-                                                      'source_node' => 'sourceNode',
-                                                      'source_path' => 'sourcePath' ),
-                      'increment_key' => 'id',
-                      'class_name' => 'eZRSSExportItem',
-                      'name' => 'ezrss_export_item' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'rssexport_id' => ['name' => 'RSSExportID', 'datatype' => 'integer', 'default' => '', 'required' => true, 'foreign_class' => 'eZRSSExport', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'source_node_id' => ['name' => 'SourceNodeID', 'datatype' => 'integer', 'default' => '', 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], 'class_id' => ['name' => 'ClassID', 'datatype' => 'integer', 'default' => '', 'required' => true, 'foreign_class' => 'eZContentClass', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'description' => ['name' => 'Description', 'datatype' => 'string', 'default' => '', 'required' => true], 'category' => ['name' => 'Category', 'datatype' => 'string', 'default' => '', 'required' => false], 'title' => ['name' => 'Title', 'datatype' => 'string', 'default' => '', 'required' => true], 'enclosure' => ['name' => 'Enclosure', 'datatype' => 'string', 'default' => '', 'required' => false], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'subnodes' => ['name' => 'Subnodes', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id', 'status'], 'function_attributes' => ['class_attributes' => 'classAttributes', 'source_node' => 'sourceNode', 'source_path' => 'sourcePath'], 'increment_key' => 'id', 'class_name' => 'eZRSSExportItem', 'name' => 'ezrss_export_item'];
     }
 
     /*!
@@ -86,16 +31,7 @@ class eZRSSExportItem extends eZPersistentObject
     */
     static function create( $rssexport_id )
     {
-        $row = array( 'id' => null,
-                      'rssexport_id' => $rssexport_id,
-                      'source_node_id' => 0,
-                      'class_id' => 1,
-                      'url_id' => '',
-                      'description' => '',
-                      'title' => '',
-                      'enclosure' => '',
-                      'status' => eZRSSExport::STATUS_DRAFT,
-                      'subnodes' => 0);
+        $row = ['id' => null, 'rssexport_id' => $rssexport_id, 'source_node_id' => 0, 'class_id' => 1, 'url_id' => '', 'description' => '', 'title' => '', 'enclosure' => '', 'status' => eZRSSExport::STATUS_DRAFT, 'subnodes' => 0];
         return new eZRSSExportItem( $row );
     }
 
@@ -123,7 +59,7 @@ class eZRSSExportItem extends eZPersistentObject
             if ( isset( $objectNode ) )
             {
                 $path_array = $objectNode->attribute( 'path_array' );
-                $path_array_count = count( $path_array );
+                $path_array_count = is_countable($path_array) ? count( $path_array ) : 0;
                 for ( $i = 0; $i < $path_array_count; ++$i )
                 {
                     $treenode = eZContentObjectTreeNode::fetch( $path_array[$i], false, false );
@@ -165,8 +101,7 @@ class eZRSSExportItem extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZRSSExportItem::definition(),
                                                 null,
-                                                array( "id" => $id,
-                                                       'status' => $status ),
+                                                ["id" => $id, 'status' => $status],
                                                 $asObject );
     }
 
@@ -181,13 +116,13 @@ class eZRSSExportItem extends eZPersistentObject
     static function fetchFilteredList( $cond, $asObject = true, $status = eZRSSExport::STATUS_VALID )
     {
         return eZPersistentObject::fetchObjectList( eZRSSExportItem::definition(),
-                                                    null, $cond, array( 'id' => 'asc',
-                                                                        'status' => $status ), null,
+                                                    null, $cond, ['id' => 'asc', 'status' => $status], null,
                                                     $asObject );
     }
 
     static function getAttributeMappings( $rssSources )
     {
+        $attributeMappings = [];
         if( is_array( $rssSources ) && count( $rssSources ) )
         {
             foreach( $rssSources as $rssSource )
@@ -196,15 +131,15 @@ class eZRSSExportItem extends eZPersistentObject
                 $node = eZContentObjectTreeNode::fetch( $rssSource->SourceNodeID );
                 if ( is_object( $node ) )
                 {
-                    $attributeMappings[] = array( $rssSource, $node );
+                    $attributeMappings[] = [$rssSource, $node];
                 }
             }
 
             // sort the array so nodes with deeper path are first
             // for class attribute to RSS field mapping
             usort( $attributeMappings, function ( $a, $b ) {
-                $a_cnt = count( $a[1]->attribute( 'path_array' ) );
-                $b_cnt = count( $b[1]->attribute( 'path_array' ) );
+                $a_cnt = is_countable($a[1]->attribute( 'path_array' )) ? count( $a[1]->attribute( 'path_array' ) ) : 0;
+                $b_cnt = is_countable($b[1]->attribute( 'path_array' )) ? count( $b[1]->attribute( 'path_array' ) ) : 0;
 
                 return ( $a_cnt == $b_cnt ) ? 0 : ( ( $a_cnt > $b_cnt ) ? 1 : -1 );
             });
@@ -237,19 +172,10 @@ class eZRSSExportItem extends eZPersistentObject
                     $depth = 0;
                 }
 
-                $nodesParams[] = array( 'ParentNodeID' => $rssSource->SourceNodeID,
-                                        'ResultID' => $rssSource->ID,
-                                        'Depth' => $depth,
-                                        'DepthOperator' => 'eq',
-                                        'MainNodeOnly' => $objectListFilter['main_node_only'],
-                                        'ClassFilterType' => 'include',
-                                        'ClassFilterArray' => array( intval( $rssSource->ClassID ) )
-                                       );
+                $nodesParams[] = ['ParentNodeID' => $rssSource->SourceNodeID, 'ResultID' => $rssSource->ID, 'Depth' => $depth, 'DepthOperator' => 'eq', 'MainNodeOnly' => $objectListFilter['main_node_only'], 'ClassFilterType' => 'include', 'ClassFilterArray' => [intval( $rssSource->ClassID )]];
             }
 
-            $listParams = array( 'Limit' => $objectListFilter['number_of_objects'],
-                                 'SortBy' => array( 'published', false )
-                                );
+            $listParams = ['Limit' => $objectListFilter['number_of_objects'], 'SortBy' => ['published', false]];
 
             $nodeList = eZContentObjectTreeNode::subTreeMultiPaths( $nodesParams, $listParams );
         }

@@ -12,47 +12,7 @@ class eZProductCollectionItemOption extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'item_id' => array( 'name' => 'ItemID',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZProductCollectionItem',
-                                                             'foreign_attribute' => 'id',
-                                                             'multiplicity' => '1..*' ),
-                                         'option_item_id' => array( 'name' => 'OptionItemID',
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true,
-                                                                    'foreign_class' => 'eZProductCollectionItemOption',
-                                                                    'foreign_attribute' => 'id',
-                                                                    'multiplicity' => '1..*' ),
-                                         'object_attribute_id' => array( 'name' => 'ObjectAttributeID',
-                                                                         'datatype' => 'integer',
-                                                                         'default' => 0,
-                                                                         'required' => true,
-                                                                         'foreign_class' => 'eZContentObjectAttribute',
-                                                                         'foreign_attribute' => 'id',
-                                                                         'multiplicity' => '1..*' ),
-                                         'name' => array( 'name' => 'Name',
-                                                          'datatype' => 'string',
-                                                          'default' => '',
-                                                          'required' => true ),
-                                         'value' => array( 'name' => 'Value',
-                                                           'datatype' => 'string',
-                                                           'default' => '',
-                                                           'required' => true ),
-                                         'price' => array( 'name' => 'Price',
-                                                           'datatype' => 'float',
-                                                           'default' => 0,
-                                                           'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZProductCollectionItemOption",
-                      "name" => "ezproductcollection_item_opt" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'item_id' => ['name' => 'ItemID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZProductCollectionItem', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'option_item_id' => ['name' => 'OptionItemID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZProductCollectionItemOption', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'object_attribute_id' => ['name' => 'ObjectAttributeID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], 'name' => ['name' => 'Name', 'datatype' => 'string', 'default' => '', 'required' => true], 'value' => ['name' => 'Value', 'datatype' => 'string', 'default' => '', 'required' => true], 'price' => ['name' => 'Price', 'datatype' => 'float', 'default' => 0, 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZProductCollectionItemOption", "name" => "ezproductcollection_item_opt"];
     }
 
     /**
@@ -67,12 +27,7 @@ class eZProductCollectionItemOption extends eZPersistentObject
      */
     static function create( $productCollectionItemID, $optionItemID, $optionName, $optionValue, $optionPrice, $attributeID )
     {
-        $row = array( 'item_id' => $productCollectionItemID,
-                      'option_item_id' => $optionItemID,
-                      'name' => $optionName,
-                      'value' => $optionValue,
-                      'price' => $optionPrice,
-                      'object_attribute_id' => $attributeID );
+        $row = ['item_id' => $productCollectionItemID, 'option_item_id' => $optionItemID, 'name' => $optionName, 'value' => $optionValue, 'price' => $optionPrice, 'object_attribute_id' => $attributeID];
         return new eZProductCollectionItemOption( $row );
     }
 
@@ -113,8 +68,8 @@ class eZProductCollectionItemOption extends eZPersistentObject
     static function fetchList( $productCollectionItemID, $asObject = true )
     {
         return eZPersistentObject::fetchObjectList( eZProductCollectionItemOption::definition(),
-                                                    null, array( "item_id" => $productCollectionItemID ),
-                                                    array( "id" => "ASC"  ),
+                                                    null, ["item_id" => $productCollectionItemID],
+                                                    ["id" => "ASC"],
                                                     null,
                                                     $asObject );
     }

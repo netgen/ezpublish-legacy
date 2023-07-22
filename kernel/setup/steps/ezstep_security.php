@@ -58,12 +58,11 @@ class eZStepSecurity extends eZStepInstaller
         $this->Tpl->setVariable( 'path', realpath( '.' ) );
 
         // Return template and data to be shown
-        $result = array();
+        $result = [];
         // Display template
         $result['content'] = $this->Tpl->fetch( 'design:setup/init/security.tpl' );
-        $result['path'] = array( array( 'text' => ezpI18n::tr( 'design/standard/setup/init',
-                                                          'Securing site' ),
-                                        'url' => false ) );
+        $result['path'] = [['text' => ezpI18n::tr( 'design/standard/setup/init',
+                                                          'Securing site' ), 'url' => false]];
         return $result;
     }
 }

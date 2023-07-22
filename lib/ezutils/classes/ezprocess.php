@@ -16,7 +16,7 @@
 */
 class eZProcess
 {
-    static function run( $file, $Params = array(), $params_as_var = false )
+    static function run( $file, $Params = [], $params_as_var = false )
     {
         return eZProcess::instance()->runFile( $Params, $file, $params_as_var );
     }

@@ -22,14 +22,14 @@ if ( !$module->hasActionParameter( 'LanguageCode' ) )
 {
     eZDebug::writeError( 'Missing LanguageCode parameter for action ' . $module->currentAction(),
                          'class/translation' );
-    return $module->redirectToView( 'view', array( $classID ) );
+    return $module->redirectToView( 'view', [$classID] );
 }
 
 $languageCode = $module->actionParameter( 'LanguageCode' );
 
 if ( $module->isCurrentAction( 'Cancel' ) )
 {
-    return $module->redirectToView( 'view', array( $classID ), array( 'Language' => $languageCode ) );
+    return $module->redirectToView( 'view', [$classID], ['Language' => $languageCode] );
 }
 
 $class = eZContentClass::fetch( $classID );
@@ -53,13 +53,13 @@ if ( $module->isCurrentAction( 'UpdateInitialLanguage' ) )
         }
     }
 
-    return $module->redirectToView( 'view', array( $classID ), array( 'Language' => $languageCode ) );
+    return $module->redirectToView( 'view', [$classID], ['Language' => $languageCode] );
 }
 else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
 {
     if ( !$module->hasActionParameter( 'LanguageID' ) )
     {
-        return $module->redirectToView( 'view', array( $classID ), array( 'Language' => $languageCode ) );
+        return $module->redirectToView( 'view', [$classID], ['Language' => $languageCode] );
     }
 
     $languageIDArray = $module->actionParameter( 'LanguageID' );
@@ -78,10 +78,10 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
         if ( !$class->hasNameInLanguage( $languageCode ) )
             $languageCode = $class->alwaysAvailableLanguageLocale();
 
-        return $module->redirectToView( 'view', array( $classID ), array( 'Language' => $languageCode ) );
+        return $module->redirectToView( 'view', [$classID], ['Language' => $languageCode] );
     }
 
-    $languages = array();
+    $languages = [];
     foreach( $languageIDArray as $languageID )
     {
         $language = eZContentLanguage::fetch( $languageID );
@@ -93,7 +93,7 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
 
     if ( !$languages )
     {
-        return $module->redirectToView( 'view', array( $classID ), array( $languageCode ) );
+        return $module->redirectToView( 'view', [$classID], [$languageCode] );
     }
 
     $tpl = eZTemplate::factory();
@@ -103,10 +103,9 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
     $tpl->setVariable( 'language_code', $languageCode );
     $tpl->setVariable( 'languages', $languages );
 
-    $Result = array();
+    $Result = [];
     $Result['content'] = $tpl->fetch( 'design:class/removetranslation.tpl' );
-    $Result['path'] = array( array( 'url' => false,
-                                    'text' => ezpI18n::tr( 'kernel/class', 'Remove translation' ) ) );
+    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/class', 'Remove translation' )]];
 
     return;
 }

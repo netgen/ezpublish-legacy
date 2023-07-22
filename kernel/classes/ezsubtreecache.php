@@ -34,7 +34,7 @@ class eZSubtreeCache
             if ( $nodeList )
             {
                 if ( !is_array( $nodeList ) )
-                    $nodeList = array( $nodeList );
+                    $nodeList = [$nodeList];
 
                 eZSubtreeCache::cleanup( $nodeList );
             }
@@ -57,7 +57,7 @@ class eZSubtreeCache
         foreach ( $nodeList as $node )
         {
             $pathString = $node->attribute( 'path_string' );
-            $pathString = trim( $pathString, '/' );
+            $pathString = trim( (string) $pathString, '/' );
             $nodeListID = explode( '/', $pathString );
 
             foreach( $nodeListID as $nodeID )

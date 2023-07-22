@@ -14,9 +14,7 @@ if ( !defined( 'MAX_AGE' ) )
 // Ensure to deactivate pagelayout and debug output in case we're going through index_tree_menu.php
 $Result['pagelayout'] = false;
 eZDebug::updateSettings(
-    array(
-         'debug-enabled' => false
-    )
+    ['debug-enabled' => false]
 );
 
 // We use aggressive browser caching by default, by manually set appropriate HTTP headers.
@@ -27,7 +25,7 @@ if ( isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) && $useCacheHeaders )
     header( $_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified' );
     header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + MAX_AGE ) . ' GMT' );
     header( 'Cache-Control: max-age=' . MAX_AGE );
-    header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', strtotime( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) . ' GMT' );
+    header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', strtotime( (string) $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) ) . ' GMT' );
     header( 'Pragma: ' );
 
     $Result['content'] = '';
@@ -43,10 +41,7 @@ if ( $contentstructuremenuINI->variable( 'TreeMenu', 'Dynamic' ) != 'enabled' )
 {
     header( $_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden' );
     $Result['content'] = json_encode(
-        array(
-             'error'    => ezpI18n::tr( 'kernel/content/treemenu', 'Cannot display the treemenu because it is disabled.' ),
-             'code'     => 403
-        )
+        ['error'    => ezpI18n::tr( 'kernel/content/treemenu', 'Cannot display the treemenu because it is disabled.' ), 'code'     => 403], JSON_THROW_ON_ERROR
     );
     return;
 }
@@ -67,13 +62,7 @@ $handler = false;
 if ( $contentstructuremenuINI->variable( 'TreeMenu', 'UseCache' ) == 'enabled' and
      $siteINI->variable( 'TemplateSettings', 'TemplateCache' ) == 'enabled' )
 {
-    list( $handler, $cacheFileContent ) = eZTemplateCacheBlock::retrieve( array(
-        'content_structure',
-        $nodeID,
-        $showHidden,
-        $user->roleIDList(),
-        $user->limitValueList(),
-        $accessName ), $nodeID, -1 );
+    [$handler, $cacheFileContent] = eZTemplateCacheBlock::retrieve( ['content_structure', $nodeID, $showHidden, $user->roleIDList(), $user->limitValueList(), $accessName], $nodeID, -1 );
 
     if ( !( $cacheFileContent  instanceof eZClusterFileFailure ) )
     {
@@ -84,7 +73,7 @@ if ( $contentstructuremenuINI->variable( 'TreeMenu', 'UseCache' ) == 'enabled' a
             header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', $Params['Modified'] ) . ' GMT' );
             header( 'Pragma: ' );
             header( 'Content-Type: application/json' );
-            header( 'Content-Length: ' . strlen( $cacheFileContent ) );
+            header( 'Content-Length: ' . strlen( (string) $cacheFileContent ) );
         }
 
         $Result['content'] = $cacheFileContent;
@@ -102,11 +91,7 @@ if ( !$node )
 else if ( !$node->canRead() )
 {
     $jsonText= json_encode(
-        array(
-            'error_code' => -1,
-            'error_message' => ezpI18n::tr( 'kernel/content', 'You do not have enough rights to access the requested node' ),
-            'node_id' => $nodeID,
-        )
+        ['error_code' => -1, 'error_message' => ezpI18n::tr( 'kernel/content', 'You do not have enough rights to access the requested node' ), 'node_id' => $nodeID], JSON_THROW_ON_ERROR
     );
 
     header( $_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden' );
@@ -117,8 +102,7 @@ else if ( !$node->canRead() )
 }
 else
 {
-    $conditions = array( 'Depth' => '1',
-                         'SortBy' => $node->sortArray() );
+    $conditions = ['Depth' => '1', 'SortBy' => $node->sortArray()];
 
     $showClasses = $contentstructuremenuINI->variable( 'TreeMenu', 'ShowClasses' );
     if ( $showClasses )
@@ -138,13 +122,13 @@ else
     {
         if ( !is_array( $sortBy ) )
         {
-            $sortBy = array( $sortBy );
+            $sortBy = [$sortBy];
         }
 
-        $sortArray = array();
+        $sortArray = [];
         foreach ( $sortBy as $sortCondition )
         {
-            $conditionArray = explode( '/', $sortCondition, 2 );
+            $conditionArray = explode( '/', (string) $sortCondition, 2 );
             if ( isset( $conditionArray[1] ) && $conditionArray[1] == 'descending' )
             {
                 $conditionArray[1] = false;
@@ -163,24 +147,24 @@ else
 
     $createHereMenu = $contentstructuremenuINI->variable( 'TreeMenu', 'CreateHereMenu' );
 
-    $response = array();
+    $response = [];
     $response['error_code'] = 0;
     $response['node_id'] = $node->NodeID;
-    $response['children_count'] = count( $children );
-    $response['children'] = array();
+    $response['children_count'] = count( (array) $children );
+    $response['children'] = [];
 
     $httpCharset = eZTextCodec::httpCharset();
 
     foreach ( $children as $child )
     {
         $childObject = $child->object();
-        $childResponse = array();
+        $childResponse = [];
         $childResponse['node_id'] = (int)$child->NodeID;
         $childResponse['object_id'] = (int)$child->ContentObjectID;
         $object = $child->object();
         $childResponse['class_id'] = (int)$object->ClassID;
         $childResponse['has_children'] = $child->subTreeCount( $conditions ) > 0;
-        $childResponse['name'] = htmlentities( $child->getName(), ENT_COMPAT, $httpCharset );
+        $childResponse['name'] = htmlentities( (string) $child->getName(), ENT_COMPAT, $httpCharset );
         $childResponse['url'] = $child->url();
         // force system url on empty urls (root node)
         if ( $childResponse['url'] === '' )
@@ -192,7 +176,7 @@ else
         $childResponse['is_invisible'] = (bool)$child->IsInvisible;
         if ( $createHereMenu == 'full' )
         {
-            $childResponse['class_list'] = array();
+            $childResponse['class_list'] = [];
             foreach ( $child->canCreateClassList() as $class )
             {
                 $childResponse['class_list'][] = (int)$class['id'];
@@ -204,7 +188,7 @@ else
         eZContentObject::clearCache();
     }
 
-    $jsonText= json_encode( $response );
+    $jsonText= json_encode( $response, JSON_THROW_ON_ERROR );
 
     $codec = eZTextCodec::instance( $httpCharset, 'unicode' );
     $jsonTextArray = $codec->convertString( $jsonText );
@@ -236,8 +220,7 @@ else
 
     if ( $handler )
     {
-        $handler->storeCache( array( 'scope' => 'template-block',
-                                     'binarydata' => $jsonText ) );
+        $handler->storeCache( ['scope' => 'template-block', 'binarydata' => $jsonText] );
     }
 }
 

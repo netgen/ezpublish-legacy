@@ -18,14 +18,12 @@ abstract class ezpRestMvcController extends ezcMvcController
      *
      * @var string
      */
-    const CACHE_ID = 'ezpRestMvcController';
+    final public const CACHE_ID = 'ezpRestMvcController';
 
     /**
      * Default response groups returned by the controller
-     *
-     * @var array
      */
-    private $defaultResponsegroups = array();
+    private array $defaultResponsegroups = [];
 
     /**
      * @var eZINI
@@ -87,7 +85,6 @@ abstract class ezpRestMvcController extends ezcMvcController
     /**
      * Sets default response groups
      *
-     * @param array $defaultResponseGroups
      *
      * @return void
      */
@@ -117,12 +114,7 @@ abstract class ezpRestMvcController extends ezcMvcController
      */
     protected function getContentVariable( $name )
     {
-        if ( isset( $this->request->contentVariables[$name] ) )
-        {
-            return $this->request->contentVariables[$name];
-        }
-
-        return null;
+        return $this->request->contentVariables[$name] ?? null;
     }
 
     /**
@@ -151,7 +143,7 @@ abstract class ezpRestMvcController extends ezcMvcController
                 self::CACHE_ID,
                 $this->getCacheLocation(),
                 'ezpRestCacheStorageClusterObject',
-                array( 'ttl' => $this->getActionTTL() )
+                ['ttl' => $this->getActionTTL()]
             );
             self::$isCacheCreated = true;
         }
@@ -218,7 +210,7 @@ abstract class ezpRestMvcController extends ezcMvcController
         $result->status = new ezpRestStatusResponse(
             ezpHttpResponseCodes::OK,
             'Allowed methods are: ' . $methods,
-            array( 'Allow' => $methods )
+            ['Allow' => $methods]
         );
         return $result;
     }
@@ -282,12 +274,7 @@ abstract class ezpRestMvcController extends ezcMvcController
     {
         $routingInfos = $this->getRouter()->getRoutingInformation();
 
-        $aCacheId = array(
-            ezpRestPrefixFilterInterface::getApiProviderName(),
-            ezpRestPrefixFilterInterface::getApiVersion(),
-            $routingInfos->controllerClass,
-            $routingInfos->action
-        );
+        $aCacheId = [ezpRestPrefixFilterInterface::getApiProviderName(), ezpRestPrefixFilterInterface::getApiVersion(), $routingInfos->controllerClass, $routingInfos->action];
         // Add internal variables, caught in the URL. See ezpRestHttpRequestParser::fillVariables()
         // Also add content variables
         foreach ( $this->request->contentVariables + $this->request->variables as $name => $val )

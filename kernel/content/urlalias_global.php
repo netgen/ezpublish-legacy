@@ -10,7 +10,7 @@ $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
 
 $Offset = $Params['Offset'];
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $tpl = eZTemplate::factory();
 $limit = 20;
@@ -18,7 +18,7 @@ $limit = 20;
 // TODO: For PHP 5, merge similar code in urlalias.php and urlalias_global.php into a function/class.
 
 $infoCode = 'no-errors'; // This will be modified if info/warning is given to user.
-$infoData = array(); // Extra parameters can be added to this array
+$infoData = []; // Extra parameters can be added to this array
 $aliasText = false;
 $aliasDestinationText = false;
 $aliasOutputText = false;
@@ -27,14 +27,14 @@ $aliasOutputDestinationText = false;
 if ( $Module->isCurrentAction( 'RemoveAllAliases' ) )
 {
     $filter = new eZURLAliasQuery();
-    $filter->actionTypesEx = array( 'eznode', 'nop' );
+    $filter->actionTypesEx = ['eznode', 'nop'];
     $filter->offset = 0;
     $filter->limit = 50;
 
     while ( true )
     {
         $aliasList = $filter->fetchAll();
-        if ( count( $aliasList ) == 0 )
+        if ( (is_countable($aliasList) ? count( $aliasList ) : 0) == 0 )
             break;
         foreach ( $aliasList as $alias )
         {
@@ -53,10 +53,10 @@ else if ( $Module->isCurrentAction( 'RemoveAlias' ) )
     {
         $elementList = $http->postVariable( 'ElementList' );
         if ( !is_array( $elementList ) )
-            $elementList = array();
+            $elementList = [];
         foreach ( $elementList as $element )
         {
-            if ( preg_match( "#^([0-9]+).([a-fA-F0-9]+).([a-zA-Z0-9-]+)$#", $element, $matches ) )
+            if ( preg_match( "#^([0-9]+).([a-fA-F0-9]+).([a-zA-Z0-9-]+)$#", (string) $element, $matches ) )
             {
                 $parentID = (int)$matches[1];
                 $textMD5  = $matches[2];
@@ -69,10 +69,10 @@ else if ( $Module->isCurrentAction( 'RemoveAlias' ) )
 }
 else if ( $Module->isCurrentAction( 'NewAlias' ) )
 {
-    $aliasText = trim( $Module->actionParameter( 'AliasSourceText' ) );
+    $aliasText = trim( (string) $Module->actionParameter( 'AliasSourceText' ) );
     $aliasDestinationTextUnmodified = $Module->actionParameter( 'AliasDestinationText' );
-    $aliasDestinationText = trim( $aliasDestinationTextUnmodified, " \t\r\n\0\x0B/" );
-    $isAlwaysAvailable = $http->hasPostVariable( 'AllLanguages' ) && strlen( trim( $http->postVariable( 'AllLanguages' ) ) ) > 0;
+    $aliasDestinationText = trim( (string) $aliasDestinationTextUnmodified, " \t\r\n\0\x0B/" );
+    $isAlwaysAvailable = $http->hasPostVariable( 'AllLanguages' ) && strlen( trim( (string) $http->postVariable( 'AllLanguages' ) ) ) > 0;
     $languageCode = $Module->actionParameter( 'LanguageCode' );
     $language = eZContentLanguage::fetchByLocale( $languageCode );
     $aliasRedirects  = $http->hasPostVariable( 'AliasRedirects' ) && $http->postVariable( 'AliasRedirects' );
@@ -86,7 +86,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
     {
         $infoCode = "error-no-alias-text";
     }
-    else if ( strlen( trim( $aliasDestinationTextUnmodified ) ) == 0 )
+    else if ( strlen( trim( (string) $aliasDestinationTextUnmodified ) ) == 0 )
     {
         $infoCode = "error-no-alias-destination-text";
     }
@@ -102,7 +102,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
         if ( !$action )
         {
             $elements = eZURLAliasML::fetchByPath( $aliasDestinationText );
-            if ( count( $elements ) > 0 )
+            if ( (is_countable($elements) ? count( $elements ) : 0) > 0 )
             {
                 $action = $elements[0]->attribute( 'action' );
                 $linkID = $elements[0]->attribute( 'link' );
@@ -124,7 +124,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
             if ( $result['status'] === eZURLAliasML::LINK_ALREADY_TAKEN )
             {
                 $lastElements = eZURLAliasML::fetchByPath( $result['path'] );
-                if ( count ( $lastElements ) > 0 )
+                if ( (is_countable($lastElements) ? count ( $lastElements ) : 0) > 0 )
                 {
                     $lastElement  = $lastElements[0];
                     $infoCode = "feedback-alias-exists";
@@ -137,7 +137,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
             else if ( $result['status'] === true )
             {
                 $aliasText = $result['path'];
-                if ( strcmp( $aliasText, $origAliasText ) != 0 )
+                if ( strcmp( (string) $aliasText, $origAliasText ) != 0 )
                 {
                     $infoCode = "feedback-alias-cleanup";
                     $infoData['orig_alias']  = $origAliasText;
@@ -155,7 +155,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
                 $aliasOutputText = false;
                 $aliasOutputDestinationText = false;
             }
-            if ( preg_match( "#^eznode:(.+)$#", $action, $matches ) )
+            if ( preg_match( "#^eznode:(.+)$#", (string) $action, $matches ) )
             {
                 $infoData['node_id'] = $matches[1];
             }
@@ -164,14 +164,7 @@ else if ( $Module->isCurrentAction( 'NewAlias' ) )
 }
 
 // User preferences
-$limitList = array( array( 'id'    => 1,
-                           'value' => 10 ),
-                    array( 'id'    => 2,
-                           'value' => 25 ),
-                    array( 'id'    => 3,
-                           'value' => 50 ),
-                    array( 'id'    => 4,
-                           'value' => 100 ) );
+$limitList = [['id'    => 1, 'value' => 10], ['id'    => 2, 'value' => 25], ['id'    => 3, 'value' => 50], ['id'    => 4, 'value' => 100]];
 $limitID = eZPreferences::value( 'admin_urlalias_list_limit' );
 foreach ( $limitList as $limitEntry )
 {
@@ -185,16 +178,15 @@ if ( !in_array( $limitID, $limitIDs ) )
 
 // Fetch global custom aliases (excluding eznode)
 $filter = new eZURLAliasQuery();
-$filter->actionTypesEx = array( 'eznode', 'nop' );
+$filter->actionTypesEx = ['eznode', 'nop'];
 $filter->offset = $Offset;
 $filter->limit = $limitValues[$limitID];
 
 // Prime the internal data for the template, for PHP5 this is no longer needed since objects will not be copied anymore in the template code.
 $count = $filter->count();
 $aliasList = $filter->fetchAll();
-$path = array();
-$path[] = array( 'url'  => false,
-                 'text' => ezpI18n::tr( 'kernel/content/urlalias_global', 'Global URL aliases' ) );
+$path = [];
+$path[] = ['url'  => false, 'text' => ezpI18n::tr( 'kernel/content/urlalias_global', 'Global URL aliases' )];
 
 $languages = eZContentLanguage::prioritizedLanguages();
 
@@ -208,7 +200,7 @@ $tpl->setVariable( 'limitList', $limitList );
 $tpl->setVariable( 'limitID', $limitID );
 $tpl->setVariable( 'view_parameters', $viewParameters );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:content/urlalias_global.tpl' );
 $Result['path'] = $path;
 

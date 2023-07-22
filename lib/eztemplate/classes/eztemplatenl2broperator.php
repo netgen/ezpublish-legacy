@@ -24,7 +24,6 @@ class eZTemplateNl2BrOperator
      */
     public function __construct()
     {
-        $this->Operators = array( 'nl2br' );
         $this->Nl2brName = 'nl2br';
     }
 
@@ -41,31 +40,25 @@ class eZTemplateNl2BrOperator
     */
     function namedParameterList()
     {
-        return array( );
+        return [];
     }
 
     function operatorTemplateHints()
     {
-        return array( $this->Nl2brName => array( 'input' => true,
-                                                 'output' => true,
-                                                 'parameters' => true,
-                                                 'element-transformation' => true,
-                                                 'transform-parameters' => true,
-                                                 'input-as-parameter' => true,
-                                                 'element-transformation-func' => 'nl2brTransformation') );
+        return [$this->Nl2brName => ['input' => true, 'output' => true, 'parameters' => true, 'element-transformation' => true, 'transform-parameters' => true, 'input-as-parameter' => true, 'element-transformation-func' => 'nl2brTransformation']];
     }
 
     function nl2brTransformation( $operatorName, &$node, $tpl, &$resourceData,
                                   $element, $lastElement, $elementList, $elementTree, &$parameters )
     {
-        $values = array();
+        $values = [];
         $function = $operatorName;
 
-        if ( ( count( $parameters ) != 1) )
+        if ( ( (is_countable($parameters) ? count( $parameters ) : 0) != 1) )
         {
             return false;
         }
-        $newElements = array();
+        $newElements = [];
 
         $values[] = $parameters[0];
         $code = "%output% = nl2br( %1% );\n";
@@ -81,11 +74,11 @@ class eZTemplateNl2BrOperator
     {
         $operatorValue = str_replace( "\n",
                                       "<br />",
-                                      $operatorValue );
+                                      (string) $operatorValue );
     }
 
     /// The array of operators, used for registering operators
-    public $Operators;
+    public $Operators = ['nl2br'];
 }
 
 ?>

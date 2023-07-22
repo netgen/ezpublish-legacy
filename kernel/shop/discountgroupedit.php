@@ -44,7 +44,7 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( "module", $module );
 $tpl->setVariable( "discount_group", $discountGroup );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/discountgroupedit.tpl" );
 
 ?>

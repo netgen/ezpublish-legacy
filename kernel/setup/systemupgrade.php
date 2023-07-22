@@ -22,7 +22,7 @@ if ( $Module->isCurrentAction( 'MD5Check' ) )
         $tpl->setVariable( 'failure_reason',
                            ezpI18n::tr( 'kernel/setup', 'File %1 does not exist. '.
                                     'You should copy it from the recent eZ Publish distribution.',
-                                    null, array( eZMD5::CHECK_SUM_LIST_FILE ) ) );
+                                    null, [eZMD5::CHECK_SUM_LIST_FILE] ) );
     }
     else
     {
@@ -73,10 +73,10 @@ if ( $Module->isCurrentAction( 'DBCheck' ) )
     // (we might as well convert $dbSchema to generic format and diff in generic format,
     // but eZDbSchemaChecker::diff does not know how to re-localize the generated sql
     $dbSchema->transformSchema( $originalSchema, true );
-    $differences = eZDbSchemaChecker::diff( $dbSchema->schema( array( 'format' => 'local', 'force_autoincrement_rebuild' => true ) ), $originalSchema );
+    $differences = eZDbSchemaChecker::diff( $dbSchema->schema( ['format' => 'local', 'force_autoincrement_rebuild' => true] ), $originalSchema );
     $sqlDiff = $dbSchema->generateUpgradeFile( $differences );
 
-    if ( strlen( $sqlDiff ) == 0 )
+    if ( strlen( (string) $sqlDiff ) == 0 )
     {
         $tpl->setVariable( 'upgrade_sql', 'ok' );
     }
@@ -86,8 +86,7 @@ if ( $Module->isCurrentAction( 'DBCheck' ) )
     }
 }
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:setup/systemupgrade.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/setup', 'System Upgrade' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/setup', 'System Upgrade' )]];
 ?>

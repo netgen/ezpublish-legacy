@@ -31,9 +31,9 @@
 
 class eZMultiOption2Type extends eZDataType
 {
-    const DEFAULT_NAME_VARIABLE = "_ezmultioption2_default_name_";
-    const MAX_CHILD_LEVEL = 50;
-    const DATA_TYPE_STRING = "ezmultioption2";
+    final public const DEFAULT_NAME_VARIABLE = "_ezmultioption2_default_name_";
+    final public const MAX_CHILD_LEVEL = 50;
+    final public const DATA_TYPE_STRING = "ezmultioption2";
 
     /*!
      Constructor to initialize the datatype.
@@ -41,7 +41,7 @@ class eZMultiOption2Type extends eZDataType
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Multi-option2", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
     }
 
     /*!
@@ -97,12 +97,12 @@ class eZMultiOption2Type extends eZDataType
 
             $optionRulesArray = $http->hasPostVariable( $base . "_data_multioption_rule_for" )
                                  ? $http->postVariable( $base . "_data_multioption_rule_for" )
-                                 : array();
-            $rules = array();
+                                 : [];
+            $rules = [];
             foreach( $optionRulesArray  as $ruleFor )
             {
                 $parentMultioptionIDList = $http->postVariable( $base . "_data_rule_parent_multioption_id_" . $ruleFor );
-                $rule = array();
+                $rule = [];
                 foreach ( $parentMultioptionIDList as $parentMultioptionID )
                 {
                     $parentMultioptionData = $optiongroup->findMultiOption( $parentMultioptionID );
@@ -112,8 +112,8 @@ class eZMultiOption2Type extends eZDataType
 
                     $ruleData = $http->hasPostVariable( $base . "_data_multioption_rule_" . $ruleFor . '_' . $parentMultioptionID )
                                  ? $http->postVariable( $base . "_data_multioption_rule_" . $ruleFor . '_' . $parentMultioptionID )
-                                : array();
-                    if ( count( $parentMultioptionOptionList ) == count( $ruleData ) )
+                                : [];
+                    if ( (is_countable($parentMultioptionOptionList) ? count( $parentMultioptionOptionList ) : 0) == (is_countable($ruleData) ? count( $ruleData ) : 0) )
                         continue;
                     $rule[$parentMultioptionID] = $ruleData;
                 }
@@ -145,12 +145,12 @@ class eZMultiOption2Type extends eZDataType
                               ? $http->postVariable( $base . "_data_optiongroup_id_" .
                                                       $contentObjectAttribute->attribute( "id" ) . '_' .
                                                       $parentOptionGroup->attribute( 'group_id' ) )
-                              : array();
-        $optionGroupNameList = count( $optionGroupIDArray ) > 0
+                              : [];
+        $optionGroupNameList = (is_countable($optionGroupIDArray) ? count( $optionGroupIDArray ) : 0) > 0
              ? $http->postVariable( $base . "_data_optiongroup_name_" .
                                     $contentObjectAttribute->attribute( "id" )  . '_' .
                                     $parentOptionGroup->attribute( 'group_id' ) )
-             : array();
+             : [];
         foreach ( $optionGroupIDArray as $key => $optionGroupID )
         {
             unset( $optionGroup );
@@ -178,7 +178,7 @@ class eZMultiOption2Type extends eZDataType
                  ? $http->postVariable( $base . "_data_multioption_id_" .
                                         $contentObjectAttribute->attribute( "id" ). '_' .
                                         $optionGroupID )
-                              : array();
+                              : [];
             foreach( $multioptionIDArray as $multioptionID )
             {
 
@@ -205,7 +205,7 @@ class eZMultiOption2Type extends eZDataType
                                 ? $http->postVariable( $base . "_data_option_option_id_" .
                                                        $contentObjectAttribute->attribute( "id" ) . '_' .
                                                        $optionGroupID . '_' .  $multioptionID )
-                                : array();
+                                : [];
 
                 $optionValueArray = $http->hasPostVariable( $base . "_data_option_value_" .
                                                             $contentObjectAttribute->attribute( "id" ) . '_' .
@@ -213,7 +213,7 @@ class eZMultiOption2Type extends eZDataType
                      ? $http->postVariable( $base . "_data_option_value_" .
                                             $contentObjectAttribute->attribute( "id" ) . '_' .
                                             $optionGroupID . '_' .  $multioptionID )
-                     : array();
+                     : [];
                 $http->postVariable( $base . "_data_option_value_" .
                                             $contentObjectAttribute->attribute( "id" ) . '_' .
                                      $optionGroupID . '_' .  $multioptionID );
@@ -226,8 +226,8 @@ class eZMultiOption2Type extends eZDataType
                      ? $http->postVariable( $base . "_data_option_additional_price_" .
                                             $contentObjectAttribute->attribute( "id" ) . '_' .
                                             $optionGroupID . '_' .  $multioptionID )
-                     : array();
-                for ( $i = 0; $i < count( $optionCountArray ); $i++ )
+                     : [];
+                for ( $i = 0; $i < (is_countable($optionCountArray) ? count( $optionCountArray ) : 0); $i++ )
                 {
                     $isSelectable = $http->hasPostVariable( $base . "_data_option_is_selectable_" .
                                                             $contentObjectAttribute->attribute( "id" ) . '_' .
@@ -269,7 +269,7 @@ class eZMultiOption2Type extends eZDataType
     */
     function customObjectAttributeHTTPAction( $http, $action, $contentObjectAttribute, $parameters )
     {
-        $actionlist = explode( "_", $action );
+        $actionlist = explode( "_", (string) $action );
         if ( $actionlist[0] == "new-option" )
         {
             $rootGroup = $contentObjectAttribute->content();
@@ -328,7 +328,7 @@ class eZMultiOption2Type extends eZDataType
             $multioptionID = $actionlist[2];
             $postvarname = "ContentObjectAttribute" . "_data_option_remove_" . $contentObjectAttribute->attribute( "id" ) . "_" .
                             $groupID . "_" . $multioptionID;
-            $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : array();
+            $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : [];
 
             $group = $rootGroup->findGroup( $groupID );
 
@@ -362,7 +362,7 @@ class eZMultiOption2Type extends eZDataType
             $rootGroup = $contentObjectAttribute->content();
             $groupID = $actionlist[1];
             $postvarname = "ContentObjectAttribute" . "_data_multioption_remove_" . $contentObjectAttribute->attribute( "id" ) . "_" . $groupID;
-            $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : array();
+            $array_remove = $http->hasPostVariable( $postvarname ) ? $http->postVariable( $postvarname ) : [];
 
             $group = $rootGroup->findGroup( $groupID );
 
@@ -370,7 +370,7 @@ class eZMultiOption2Type extends eZDataType
             {
                 $group->removeMultiOptions( $array_remove );
                 $rootGroup->cleanupRules();
-                if ( count( $group->attribute( 'multioption_list') ) == 0 )
+                if ( (is_countable($group->attribute( 'multioption_list')) ? count( $group->attribute( 'multioption_list') ) : 0) == 0 )
                 {
                     $rootGroup->removeChildGroup( $group->attribute( 'group_id' ) );
                 }
@@ -390,7 +390,7 @@ class eZMultiOption2Type extends eZDataType
         else if ( $actionlist[0] == "reset-rules" )
         {
             $rootGroup = $contentObjectAttribute->content();
-            $rootGroup->Rules = array();
+            $rootGroup->Rules = [];
             $contentObjectAttribute->setContent( $rootGroup );
             $contentObjectAttribute->store();
 
@@ -431,21 +431,16 @@ class eZMultiOption2Type extends eZDataType
             $browseTypeINIVariable = $ini->variable( 'ObjectRelationDataTypeSettings', 'ClassAttributeStartNode' );
             foreach( $browseTypeINIVariable as $value )
             {
-                list( $classAttributeID, $type ) = explode( ';',$value );
+                [$classAttributeID, $type] = explode( ';',(string) $value );
                 if ( $classAttributeID == $contentObjectAttribute->attribute( 'contentclassattribute_id' ) && strlen( $type ) > 0 )
                 {
                     $browseType = $type;
                     break;
                 }
             }
-            eZContentBrowse::browse( array( 'action_name' => 'AddRelatedObject_' . $contentObjectAttribute->attribute( 'id' ),
-                                            'type' =>  $browseType,
-                                            'browse_custom_action' => array( 'name' => 'CustomActionButton[' . $contentObjectAttribute->attribute( 'id' ) .
-                                                                             '_set-object_'. $actionlist[1] . '_' . $actionlist[2] . '_' .$actionlist[3] . ']',
-                                                                             'value' => $contentObjectAttribute->attribute( 'id' ) ),
-                                                'persistent_data' => array( 'HasObjectInput' => 0 ),
-                                                'from_page' => $redirectionURI ),
-                                         $module );
+            eZContentBrowse::browse( $module,
+                                         ['action_name' => 'AddRelatedObject_' . $contentObjectAttribute->attribute( 'id' ), 'type' =>  $browseType, 'browse_custom_action' => ['name' => 'CustomActionButton[' . $contentObjectAttribute->attribute( 'id' ) .
+                                                                          '_set-object_'. $actionlist[1] . '_' . $actionlist[2] . '_' .$actionlist[3] . ']', 'value' => $contentObjectAttribute->attribute( 'id' )], 'persistent_data' => ['HasObjectInput' => 0], 'from_page' => $redirectionURI] );
 
         }
         else if ( $actionlist[0] == "remove-object" )
@@ -480,10 +475,7 @@ class eZMultiOption2Type extends eZDataType
         $option = $optiongroup->findOption( false, $optionID );
         if ( $option )
         {
-            return array( 'id' => $option['option_id'],
-                          'name' => $option['multioption_name'],
-                          'value' => $option['value'],
-                          'additional_price' => $option['additional_price'] );
+            return ['id' => $option['option_id'], 'name' => $option['multioption_name'], 'value' => $option['value'], 'additional_price' => $option['additional_price']];
         }
         return null;
     }
@@ -496,7 +488,7 @@ class eZMultiOption2Type extends eZDataType
     {
         $groups = $contentObjectAttribute->content();
         $grouplist = $groups->attribute( 'optiongroup_list' );
-        return count( $grouplist ) > 0;
+        return (is_countable($grouplist) ? count( $grouplist ) : 0) > 0;
     }
 
     /*!
@@ -538,7 +530,7 @@ class eZMultiOption2Type extends eZDataType
         $optiongroup = $objectAttribute->attribute( 'content' );
         $rules = $optiongroup->Rules;
 
-        $validationErrors = array();
+        $validationErrors = [];
 
 
         foreach( $data as $moptionID => $selectedItem )
@@ -665,7 +657,7 @@ class eZMultiOption2Type extends eZDataType
     {
         $optionGroup = new eZMultiOption2( $classAttribute->attribute( 'data_text1' ) );
         $db = eZDB::instance();
-        return array( 'data_text' => "'" . $db->escapeString( $optionGroup->xmlString() ) . "'" );
+        return ['data_text' => "'" . $db->escapeString( $optionGroup->xmlString() ) . "'"];
     }
 }
 

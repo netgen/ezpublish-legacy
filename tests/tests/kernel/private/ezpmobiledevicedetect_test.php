@@ -21,9 +21,9 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
 
         // Enable mobile device detection
         ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'DetectMobileDevice', 'enabled' );
-        ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileSiteAccessList', array( 'eng' ) );
+        ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileSiteAccessList', ['eng'] );
 
-        $this->mobileDeviceDetect = $this->getMock( 'ezpMobileDeviceDetect', null, array( $this->getMock( 'ezpMobileDeviceRegexpFilter', null ) ) );
+        $this->mobileDeviceDetect = $this->getMock( 'ezpMobileDeviceDetect', null, [$this->getMock( 'ezpMobileDeviceRegexpFilter', null )] );
     }
 
     public function tearDown()
@@ -41,7 +41,7 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
      */
     public function testIsEnabled()
     {
-        $this->assertTrue( $this->mobileDeviceDetect->isEnabled() );
+        static::assertTrue($this->mobileDeviceDetect->isEnabled());
     }
 
     /**
@@ -52,7 +52,7 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     {
         ezpINIHelper::setINISetting( 'site.ini', 'SiteAccessSettings', 'MobileSiteAccessList', '' );
 
-        $this->assertFalse( $this->mobileDeviceDetect->isEnabled() );
+        static::assertFalse($this->mobileDeviceDetect->isEnabled());
     }
 
     /**
@@ -63,8 +63,8 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertTrue( $this->mobileDeviceDetect->isMobileDevice() );
-        $this->assertEquals( 'IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias() );
+        static::assertTrue($this->mobileDeviceDetect->isMobileDevice());
+        static::assertEquals('IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias());
 
     }
 
@@ -76,7 +76,7 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertTrue( $this->mobileDeviceDetect->isMobileDevice() );
+        static::assertTrue($this->mobileDeviceDetect->isMobileDevice());
     }
 
     /**
@@ -87,7 +87,7 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertEquals( 'IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias() );
+        static::assertEquals('IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias());
     }
 
     /**
@@ -98,8 +98,8 @@ class ezpMobileDeviceDetectTest extends ezpTestCase
     {
         $mobileDeviceDetectFilter = $this->mobileDeviceDetect->getFilter();
 
-        $this->assertNotNull( $mobileDeviceDetectFilter );
-        $this->assertInstanceOf( 'ezpMobileDeviceDetectFilterInterface', $mobileDeviceDetectFilter );
+        static::assertNotNull($mobileDeviceDetectFilter);
+        static::assertInstanceOf('ezpMobileDeviceDetectFilterInterface', $mobileDeviceDetectFilter);
 
     }
 }

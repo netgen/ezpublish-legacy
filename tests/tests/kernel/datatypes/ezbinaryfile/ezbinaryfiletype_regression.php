@@ -55,7 +55,7 @@ class eZBinaryFileTypeRegression extends ezpDatabaseTestCase
         foreach ( $files as $file )
         {
             // Read stored path, move to trash, and read stored path again
-            $this->assertNotEquals( $file, null );
+            static::assertNotEquals($file, null);
 
             $storedFileInfo = $file->storedFileInfo();
             $storedFilePath = $storedFileInfo['filepath'];
@@ -68,7 +68,7 @@ class eZBinaryFileTypeRegression extends ezpDatabaseTestCase
             $storedFileInfo = $file->storedFileInfo();
             $storedFilePathAfterTrash = $storedFileInfo['filepath'];
 
-            $this->assertNotEquals( $storedFilePath, $storedFilePathAfterTrash, 'The stored file should be renamed when trashed' );
+            static::assertNotEquals($storedFilePath, $storedFilePathAfterTrash, 'The stored file should be renamed when trashed');
         }
     }
 }

@@ -15,9 +15,9 @@ $mainNodeID = (int) $http->hasPostVariable( 'MainNodeID' ) ? $http->postVariable
 // Prepend or append the hash string with a salt, and md5 the resulting hash
 // Example: use is login name as salt, and a 'secret password' as hash sent to the user
 if ( $http->hasPostVariable( 'HashSaltPrepend' ) )
-    $hash =  md5( trim( $http->postVariable( 'HashSaltPrepend' ) ) . $hash );
+    $hash =  md5( trim( (string) $http->postVariable( 'HashSaltPrepend' ) ) . $hash );
 else if ( $http->hasPostVariable( 'HashSaltAppend' ) )
-    $hash =  md5( $hash . trim( $http->postVariable( 'HashSaltAppend' ) ) );
+    $hash =  md5( $hash . trim( (string) $http->postVariable( 'HashSaltAppend' ) ) );
 
 
 // Check if key exists
@@ -46,9 +46,7 @@ if ( $accountKey )
     if ( eZOperationHandler::operationIsAvailable( 'user_activation' ) )
     {
         $operationResult = eZOperationHandler::execute( 'user',
-                                                        'activation', array( 'user_id'    => $userID,
-                                                                             'user_hash'  => $hash,
-                                                                             'is_enabled' => true ) );
+                                                        'activation', ['user_id'    => $userID, 'user_hash'  => $hash, 'is_enabled' => true] );
     }
     else
     {
@@ -56,7 +54,7 @@ if ( $accountKey )
     }
 
     // execute operation to publish the user object
-    $publishResult = eZOperationHandler::execute( 'user' , 'register', array( 'user_id'=> $userID ) );
+    $publishResult = eZOperationHandler::execute( 'user' , 'register', ['user_id'=> $userID] );
     if( $publishResult['status'] === eZModuleOperationInfo::STATUS_HALTED )
     {
         $isPending = true;
@@ -96,12 +94,9 @@ $tpl->setVariable( 'account_activated', $accountActivated );
 $tpl->setVariable( 'already_active', $alreadyActive );
 $tpl->setVariable( 'is_pending' , $isPending );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:user/activate.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'kernel/user', 'User' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'kernel/user', 'Activate' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'kernel/user', 'User' ), 'url' => false], ['text' => ezpI18n::tr( 'kernel/user', 'Activate' ), 'url' => false]];
 $ini = eZINI::instance();
 if ( $ini->variable( 'SiteSettings', 'LoginPage' ) == 'custom' )
     $Result['pagelayout'] = 'loginpagelayout.tpl';

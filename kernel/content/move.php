@@ -17,6 +17,6 @@ $NodeID = $Params['NodeID'];
 
 $Module->setCurrentAction( 'MoveNodeRequest', 'action' );
 $Module->setActionParameter( 'NodeID', $NodeID, 'action' );
-return $Module->run( 'action', array( $NodeID ) );
+return $Module->run( 'action', [$NodeID] );
 
 ?>

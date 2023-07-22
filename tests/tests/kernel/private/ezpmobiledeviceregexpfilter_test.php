@@ -37,8 +37,8 @@ class ezpMobileDeviceRegexpFilterTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertTrue( $this->mobileDeviceDetect->isMobileDevice() );
-        $this->assertEquals( 'IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias() );
+        static::assertTrue($this->mobileDeviceDetect->isMobileDevice());
+        static::assertEquals('IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias());
     }
 
     /**
@@ -49,7 +49,7 @@ class ezpMobileDeviceRegexpFilterTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertTrue( $this->mobileDeviceDetect->isMobileDevice() );
+        static::assertTrue($this->mobileDeviceDetect->isMobileDevice());
     }
 
     /**
@@ -60,6 +60,6 @@ class ezpMobileDeviceRegexpFilterTest extends ezpTestCase
     {
         $this->mobileDeviceDetect->process();
 
-        $this->assertEquals( 'IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias() );
+        static::assertEquals('IPhoneDevice', $this->mobileDeviceDetect->getUserAgentAlias());
     }
 }

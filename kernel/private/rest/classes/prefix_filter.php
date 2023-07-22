@@ -130,20 +130,20 @@ abstract class ezpRestPrefixFilterInterface
         {
             // Remove the first occurrence of version token
             $versionSearch = '/' . $this->versionToken;
-            $versionPos = strpos( $this->request->uri, $versionSearch );
+            $versionPos = strpos( (string) $this->request->uri, $versionSearch );
             if ( $versionPos !== false )
             {
-                $this->request->uri = substr_replace( $this->request->uri, '', $versionPos, strlen( $versionSearch ) );
+                $this->request->uri = substr_replace( (string) $this->request->uri, '', $versionPos, strlen( $versionSearch ) );
             }
         }
         if ( !empty( $this->apiProviderToken ) )
         {
             // Remove the first occurrence of API provider token
             $providerSearch = '/' . $this->apiProviderToken;
-            $providerPos = strpos( $this->request->uri, $providerSearch );
+            $providerPos = strpos( (string) $this->request->uri, $providerSearch );
             if ( $providerPos !== false )
             {
-                $this->request->uri = substr_replace( $this->request->uri, '', $providerPos, strlen( $providerSearch ) );
+                $this->request->uri = substr_replace( (string) $this->request->uri, '', $providerPos, strlen( $providerSearch ) );
             }
         }
     }

@@ -47,8 +47,8 @@ class eZRSSExportTest extends ezpDatabaseTestCase
         $this->ezp_admin_id = $admin->attribute('contentobject_id');
         $this->ezp_admin_email = $admin->attribute('email');
 
-        $this->test_data_folder = dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'ezrss' . DIRECTORY_SEPARATOR;
-        $this->remote_id_map = array( '894c0959925a6ac47c915b7c8fb6376c', '935f192b93cbadbbf93d7b031bdceb70' );
+        $this->test_data_folder = __DIR__ . DIRECTORY_SEPARATOR . 'ezrss' . DIRECTORY_SEPARATOR;
+        $this->remote_id_map = ['894c0959925a6ac47c915b7c8fb6376c', '935f192b93cbadbbf93d7b031bdceb70'];
     }
 
     /**
@@ -191,7 +191,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 1; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -206,7 +206,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
 
     }
@@ -215,7 +215,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 1; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -230,7 +230,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -238,7 +238,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 1; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -253,7 +253,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -264,7 +264,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 2; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -281,7 +281,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -292,7 +292,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 2; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -309,7 +309,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -320,7 +320,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 2; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -337,7 +337,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -350,7 +350,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ );
 
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 1; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -365,7 +365,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
 
         $expected = $this->cleanRSSFeed( file_get_contents( $this->test_data_folder . __FUNCTION__ . '.xml' ) );
 
-        $this->assertEquals( $expected, $rssContent );
+        static::assertEquals($expected, $rssContent);
         $this->removeObjects( $articles );
     }
 
@@ -377,7 +377,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
     public function testFeedWithSpecialCharacters()
     {
         $folderId = $this->createEZPFolder( __FUNCTION__ . ' like &' );
-        $articles = array();
+        $articles = [];
         for ( $i = 0; $i < 2; $i++ )
         {
             $articles[] = $this->createEZPArticle(
@@ -387,7 +387,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
             );
         }
 
-        $types = array( '2.0', '1.0', 'ATOM' );
+        $types = ['2.0', '1.0', 'ATOM'];
         foreach ( $types as $type )
         {
             $rssExport = $this->createEZPRSSExport(
@@ -398,7 +398,7 @@ class eZRSSExportTest extends ezpDatabaseTestCase
             $xml = $rssExport->attribute( 'rss-xml-content' );
             $dom = new DomDocument( '1.0' );
             $valid = $dom->loadXML( $xml, LIBXML_NOERROR | LIBXML_NOWARNING );
-            $this->assertTrue( $valid, 'Feed ' . $type . ' is not valid' );
+            static::assertTrue($valid, 'Feed ' . $type . ' is not valid');
         }
 
         $this->removeObjects( $articles );

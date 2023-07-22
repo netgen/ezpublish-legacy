@@ -15,8 +15,8 @@ class eZSiteDataTest extends ezpDatabaseTestCase
      */
     public function testPersistentObjectInterface()
     {
-        $this->assertTrue( is_subclass_of( 'eZSiteData', 'eZPersistentObject' ) );
-        $this->assertTrue( method_exists( 'eZSiteData', 'definition' ) );
+        static::assertTrue(is_subclass_of( 'eZSiteData', 'eZPersistentObject' ));
+        static::assertTrue(method_exists( 'eZSiteData', 'definition' ));
     }
 
     /**
@@ -25,12 +25,12 @@ class eZSiteDataTest extends ezpDatabaseTestCase
     public function testORMImplementation()
     {
         $def = eZSiteData::definition();
-        $this->assertEquals( 'eZSiteData', $def['class_name'] );
-        $this->assertEquals( 'ezsite_data', $def['name'] );
+        static::assertEquals('eZSiteData', $def['class_name']);
+        static::assertEquals('ezsite_data', $def['name']);
 
         $fields = $def['fields'];
-        $this->assertArrayHasKey( 'name', $fields );
-        $this->assertArrayHasKey( 'value', $fields );
+        static::assertArrayHasKey('name', $fields);
+        static::assertArrayHasKey('value', $fields);
     }
 
     /**
@@ -39,17 +39,14 @@ class eZSiteDataTest extends ezpDatabaseTestCase
     public function testFetchByName()
     {
         $name = 'foo';
-        $row = array(
-            'name'      => $name,
-            'value'     => 'bar'
-        );
+        $row = ['name'      => $name, 'value'     => 'bar'];
 
         $obj = new eZSiteData( $row );
         $obj->store();
         unset( $obj );
 
         $res = eZSiteData::fetchByName( $name );
-        $this->assertInstanceOf( 'eZSiteData', $res );
+        static::assertInstanceOf('eZSiteData', $res);
 
         $res->remove();
     }
@@ -64,7 +61,7 @@ class eZSiteDataTest extends ezpDatabaseTestCase
         unset( $obj );
 
         $res = eZSiteData::fetchByName( 'foo' );
-        $this->assertInstanceOf( 'eZSiteData', $res );
+        static::assertInstanceOf('eZSiteData', $res);
 
         $res->remove();
     }

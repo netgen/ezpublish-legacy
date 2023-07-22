@@ -19,72 +19,7 @@ class eZMedia extends eZPersistentObject
 {
     static function definition()
     {
-        static $definition = array( "fields" => array( "contentobject_attribute_id" => array( 'name' => "ContentObjectAttributeID",
-                                                                                'datatype' => 'integer',
-                                                                                'default' => 0,
-                                                                                'required' => true,
-                                                                                'foreign_class' => 'eZContentObjectAttribute',
-                                                                                'foreign_attribute' => 'id',
-                                                                                'multiplicity' => '1..*' ),
-                                         "version" => array( 'name' => "Version",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         "filename" => array( 'name' => "Filename",
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ),
-                                         "original_filename" => array( 'name' => "OriginalFilename",
-                                                                       'datatype' => 'string',
-                                                                       'default' => '',
-                                                                       'required' => true ),
-                                         "mime_type" => array( 'name' => "MimeType",
-                                                               'datatype' => 'string',
-                                                               'default' => '',
-                                                               'required' => true ),
-                                         "width" => array( 'name' => "Width",
-                                                           'datatype' => 'integer',
-                                                           'default' => 0,
-                                                           'required' => true ),
-                                         "height" => array( 'name' => "Height",
-                                                            'datatype' => 'integer',
-                                                            'default' => 0,
-                                                            'required' => true ),
-                                         "has_controller" => array( 'name' => "HasController",
-                                                                    'datatype' => 'integer',
-                                                                    'default' => 0,
-                                                                    'required' => true ),
-                                         "controls" => array( 'name' => "Controls",
-                                                              'datatype' => 'string',
-                                                              'default' => '',
-                                                              'required' => true ),
-                                         "is_autoplay" => array( 'name' => "IsAutoplay",
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true ),
-                                         "pluginspage" => array( 'name' => "Pluginspage",
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         "quality" => array( 'name' => 'Quality',
-                                                             'datatype' => 'string',
-                                                             'default' => '',
-                                                             'required' => true ),
-                                         "is_loop" => array( 'name' => "IsLoop",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ) ),
-                      "keys" => array( "contentobject_attribute_id", "version" ),
-                      'function_attributes' => array( 'filesize' => 'filesize',
-                                                      'filepath' => 'filepath',
-                                                      'mime_type_category' => 'mimeTypeCategory',
-                                                      'mime_type_part' => 'mimeTypePart' ),
-                      "relations" => array( "contentobject_attribute_id" => array( "class" => "ezcontentobjectattribute",
-                                                                                   "field" => "id" ),
-                                            "version" => array( "class" => "ezcontentobjectattribute",
-                                                                "field" => "version" )),
-                      "class_name" => "eZMedia",
-                      "name" => "ezmedia" );
+        static $definition = ["fields" => ["contentobject_attribute_id" => ['name' => "ContentObjectAttributeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectAttribute', 'foreign_attribute' => 'id', 'multiplicity' => '1..*'], "version" => ['name' => "Version", 'datatype' => 'integer', 'default' => 0, 'required' => true], "filename" => ['name' => "Filename", 'datatype' => 'string', 'default' => '', 'required' => true], "original_filename" => ['name' => "OriginalFilename", 'datatype' => 'string', 'default' => '', 'required' => true], "mime_type" => ['name' => "MimeType", 'datatype' => 'string', 'default' => '', 'required' => true], "width" => ['name' => "Width", 'datatype' => 'integer', 'default' => 0, 'required' => true], "height" => ['name' => "Height", 'datatype' => 'integer', 'default' => 0, 'required' => true], "has_controller" => ['name' => "HasController", 'datatype' => 'integer', 'default' => 0, 'required' => true], "controls" => ['name' => "Controls", 'datatype' => 'string', 'default' => '', 'required' => true], "is_autoplay" => ['name' => "IsAutoplay", 'datatype' => 'integer', 'default' => 0, 'required' => true], "pluginspage" => ['name' => "Pluginspage", 'datatype' => 'string', 'default' => '', 'required' => true], "quality" => ['name' => 'Quality', 'datatype' => 'string', 'default' => '', 'required' => true], "is_loop" => ['name' => "IsLoop", 'datatype' => 'integer', 'default' => 0, 'required' => true]], "keys" => ["contentobject_attribute_id", "version"], 'function_attributes' => ['filesize' => 'filesize', 'filepath' => 'filepath', 'mime_type_category' => 'mimeTypeCategory', 'mime_type_part' => 'mimeTypePart'], "relations" => ["contentobject_attribute_id" => ["class" => "ezcontentobjectattribute", "field" => "id"], "version" => ["class" => "ezcontentobjectattribute", "field" => "version"]], "class_name" => "eZMedia", "name" => "ezmedia"];
         return $definition;
     }
 
@@ -110,32 +45,19 @@ class eZMedia extends eZPersistentObject
 
     function mimeTypeCategory()
     {
-        $types = explode( "/", $this->attribute( "mime_type" ) );
+        $types = explode( "/", (string) $this->attribute( "mime_type" ) );
         return $types[0];
     }
 
     function mimeTypePart()
     {
-        $types = explode( "/", $this->attribute( "mime_type" ) );
+        $types = explode( "/", (string) $this->attribute( "mime_type" ) );
         return $types[1];
     }
 
     static function create( $contentObjectAttributeID, $version )
     {
-        $row = array( "contentobject_attribute_id" => $contentObjectAttributeID,
-                      "version" => $version,
-                      "filename" => "",
-                      "original_filename" => "",
-                      "mime_type" => "",
-                      "width" => "0",
-                      "height" => "0",
-                      "controller" => true,
-                      "autoplay" => true,
-                      "pluginspage" => "",
-                      "is_loop" => false,
-                      "quality" => "",
-                      "controls" => ""
-                      );
+        $row = ["contentobject_attribute_id" => $contentObjectAttributeID, "version" => $version, "filename" => "", "original_filename" => "", "mime_type" => "", "width" => "0", "height" => "0", "controller" => true, "autoplay" => true, "pluginspage" => "", "is_loop" => false, "quality" => "", "controls" => ""];
         return new eZMedia( $row );
     }
 
@@ -145,7 +67,7 @@ class eZMedia extends eZPersistentObject
         {
             return eZPersistentObject::fetchObjectList( eZMedia::definition(),
                                                         null,
-                                                        array( "contentobject_attribute_id" => $id ),
+                                                        ["contentobject_attribute_id" => $id],
                                                         null,
                                                         null,
                                                         $asObject );
@@ -154,8 +76,7 @@ class eZMedia extends eZPersistentObject
         {
             return eZPersistentObject::fetchObject( eZMedia::definition(),
                                                     null,
-                                                    array( "contentobject_attribute_id" => $id,
-                                                           "version" => $version ),
+                                                    ["contentobject_attribute_id" => $id, "version" => $version],
                                                     $asObject );
         }
     }
@@ -166,7 +87,7 @@ class eZMedia extends eZPersistentObject
         {
             return eZPersistentObject::fetchObjectList( eZMedia::definition(),
                                                         null,
-                                                        array( 'filename' => $filename ),
+                                                        ['filename' => $filename],
                                                         null,
                                                         null,
                                                         $asObject );
@@ -175,8 +96,7 @@ class eZMedia extends eZPersistentObject
         {
             return eZPersistentObject::fetchObject( eZMedia::definition(),
                                                     null,
-                                                    array( 'filename' => $filename,
-                                                           'version' => $version ),
+                                                    ['filename' => $filename, 'version' => $version],
                                                     $asObject );
         }
     }
@@ -190,24 +110,23 @@ class eZMedia extends eZPersistentObject
      */
     static function fetchByContentObjectID( $contentObjectID, $languageCode = null, $asObject = true )
     {
-        $condition = array();
+        $condition = [];
         $condition['contentobject_id'] = $contentObjectID;
         $condition['data_type_string'] = 'ezmedia';
         if ( $languageCode != null )
         {
             $condition['language_code'] = $languageCode;
         }
-        $custom = array( array( 'operation' => 'DISTINCT id',
-                             'name' => 'id' ) );
+        $custom = [['operation' => 'DISTINCT id', 'name' => 'id']];
         $ids = eZPersistentObject::fetchObjectList( eZContentObjectAttribute::definition(),
-                                             array(),
+                                             [],
                                              $condition,
                                              null,
                                              null,
                                              false,
                                              false,
                                              $custom );
-        $mediaFiles = array();
+        $mediaFiles = [];
         foreach ( $ids as $id )
         {
             $mediaFileObjectAttribute = eZMedia::fetch( $id['id'], null, $asObject );
@@ -221,13 +140,12 @@ class eZMedia extends eZPersistentObject
         if( $version == null )
         {
             eZPersistentObject::removeObject( eZMedia::definition(),
-                                              array( "contentobject_attribute_id" => $id ) );
+                                              ["contentobject_attribute_id" => $id] );
         }
         else
         {
             eZPersistentObject::removeObject( eZMedia::definition(),
-                                              array( "contentobject_attribute_id" => $id,
-                                                     "version" => $version ) );
+                                              ["contentobject_attribute_id" => $id, "version" => $version] );
         }
     }
 
@@ -242,14 +160,11 @@ class eZMedia extends eZPersistentObject
         $group = '';
         $type = '';
         if ( $mimeType )
-            list( $group, $type ) = explode( '/', $mimeType );
+            [$group, $type] = explode( '/', (string) $mimeType );
 
         $filePath = $storageDir . '/original/' . $group . '/' . $fileName;
 
-        return array( 'filename' => $fileName,
-                      'original_filename' => $originalFileName,
-                      'filepath' => $filePath,
-                      'mime_type' => $mimeType );
+        return ['filename' => $fileName, 'original_filename' => $originalFileName, 'filepath' => $filePath, 'mime_type' => $mimeType];
     }
 
     public $ContentObjectAttributeID;

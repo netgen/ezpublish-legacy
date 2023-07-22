@@ -60,30 +60,26 @@ class ezjscAjaxContent
      * @param array $aliasList
      * @return string
      */
-    public static function getHttpAccept( $default = 'xhtml', $aliasList = array( 'html' => 'xhtml',
-                                                                                  'json' => 'json',
-                                                                                  'javascript' => 'json',
-                                                                                  'xml' => 'xml',
-                                                                                  'text' => 'text' ) )
+    public static function getHttpAccept( $default = 'xhtml', $aliasList = ['html' => 'xhtml', 'json' => 'json', 'javascript' => 'json', 'xml' => 'xml', 'text' => 'text'] )
     {
-        $acceptList = array();
+        $acceptList = [];
 
         if ( isset($_POST['http_accept']) )
-            $acceptList = explode( ',', $_POST['http_accept'] );
+            $acceptList = explode( ',', (string) $_POST['http_accept'] );
         else if ( isset($_POST['HTTP_ACCEPT']) )
-            $acceptList = explode( ',', $_POST['HTTP_ACCEPT'] );
+            $acceptList = explode( ',', (string) $_POST['HTTP_ACCEPT'] );
         else if ( isset($_GET['http_accept']) )
-            $acceptList = explode( ',', $_GET['http_accept'] );
+            $acceptList = explode( ',', (string) $_GET['http_accept'] );
         else if ( isset($_GET['HTTP_ACCEPT']) )
-            $acceptList = explode( ',', $_GET['HTTP_ACCEPT'] );
+            $acceptList = explode( ',', (string) $_GET['HTTP_ACCEPT'] );
         else if ( isset($_SERVER['HTTP_ACCEPT']) )
-            $acceptList = explode( ',', $_SERVER['HTTP_ACCEPT'] );
+            $acceptList = explode( ',', (string) $_SERVER['HTTP_ACCEPT'] );
 
         foreach( $acceptList as $accept )
         {
             foreach( $aliasList as $alias => $returnType )
             {
-                if ( strpos( $accept, $alias ) !== false )
+                if ( str_contains( $accept, $alias ) )
                 {
                     $default = $returnType;
                     break 2;
@@ -99,11 +95,10 @@ class ezjscAjaxContent
      * Will simply implode the return value if array and not xml or
      * json is prefered return type.
      *
-     * @param mixed $ret
      * @param string $type
      * @return string
      */
-    public static function autoEncode( $ret, $type = null )
+    public static function autoEncode( mixed $ret, $type = null )
     {
         if ( $type === null )
             $type = self::getHttpAccept( );
@@ -111,7 +106,7 @@ class ezjscAjaxContent
         if ( $type === 'xml' )
             return self::xmlEncode( $ret );
         else if ( $type === 'json' )
-            return json_encode( $ret );
+            return json_encode( $ret, JSON_THROW_ON_ERROR );
         else
             return self::textEncode( $ret );
     }
@@ -119,31 +114,29 @@ class ezjscAjaxContent
     /**
      * Encodes mixed value to string or comma seperated list of strings
      *
-     * @param mixed $mix
      * @return string
      */
-    public static function textEncode( $mix )
+    public static function textEncode( mixed $mix )
     {
         if ( is_array( $mix ) )
-            return implode(',', array_map( array('ezjscAjaxContent', 'textEncode'), array_filter( $mix ) ) );
+            return implode(',', array_map( ['ezjscAjaxContent', 'textEncode'], array_filter( $mix ) ) );
 
-        return htmlspecialchars( $mix );
+        return htmlspecialchars( (string) $mix );
     }
 
     /**
      * Function for encoding content object(s) or node(s) to simplified
      * json objects, xml or array hash
      *
-     * @param mixed $obj
      * @param array $params
      * @param string $type
      * @return mixed
      */
-    public static function nodeEncode( $obj, $params = array(), $type = 'json' )
+    public static function nodeEncode( mixed $obj, $params = [], $type = 'json' )
     {
         if ( is_array( $obj ) )
         {
-            $ret = array();
+            $ret = [];
             foreach ( $obj as $ob )
             {
                 $ret[] = self::simplify( $ob, $params );
@@ -157,7 +150,7 @@ class ezjscAjaxContent
         if ( $type === 'xml' )
             return self::xmlEncode( $ret );
         else if ( $type === 'json' )
-            return json_encode( $ret );
+            return json_encode( $ret, JSON_THROW_ON_ERROR );
         else
             return $ret;
     }
@@ -165,15 +158,14 @@ class ezjscAjaxContent
     /**
      * Function for simplifying a content object or node
      *
-     * @param mixed $obj
      * @param array $params
      * @return array
      */
-    public static function simplify( $obj, $params = array() )
+    public static function simplify( mixed $obj, $params = [] )
     {
         if ( !$obj )
         {
-            return array();
+            return [];
         }
         else if ( $obj instanceof eZContentObject)
         {
@@ -188,7 +180,7 @@ class ezjscAjaxContent
         else if( isset( $params['fetchNodeFunction'] ) && method_exists( $obj, $params['fetchNodeFunction'] ) )
         {
             // You can supply fetchNodeFunction parameter to be able to support other node related classes
-            $node = call_user_func( array( $obj, $params['fetchNodeFunction'] ) );
+            $node = call_user_func( [$obj, $params['fetchNodeFunction']] );
             if ( !$node instanceof eZContentObjectTreeNode )
             {
                 return '';
@@ -205,15 +197,19 @@ class ezjscAjaxContent
         }
 
         $ini = eZINI::instance( 'site.ini' );
-        $params = array_merge( array(
-                            'dataMap' => array(), // collection of identifiers you want to load, load all with array('all')
-                            'fetchPath' => false, // fetch node path
-                            'fetchSection' => false, // fetch section
-                            'fetchChildrenCount' => false,
-                            'dataMapType' => array(), //if you want to filter datamap by type
-                            'loadImages' => false,
-                            'imagePreGenerateSizes' => array('small') //Pre generated images, loading all can be quite time consuming
-        ), $params );
+        $params = array_merge( [
+            'dataMap' => [],
+            // collection of identifiers you want to load, load all with array('all')
+            'fetchPath' => false,
+            // fetch node path
+            'fetchSection' => false,
+            // fetch section
+            'fetchChildrenCount' => false,
+            'dataMapType' => [],
+            //if you want to filter datamap by type
+            'loadImages' => false,
+            'imagePreGenerateSizes' => ['small'],
+        ], $params );
 
         if ( !isset( $params['imageSizes'] ) )// list of available image sizes
         {
@@ -222,14 +218,14 @@ class ezjscAjaxContent
         }
 
         if ( $params['imageSizes'] === null || !isset( $params['imageSizes'][0] ) )
-            $params['imageSizes'] = array();
+            $params['imageSizes'] = [];
 
         if (  !isset( $params['imageDataTypes'] ) )
             $params['imageDataTypes'] = $ini->variable( 'ImageDataTypeSettings', 'AvailableImageDataTypes' );
 
-        $ret                            	= array();
-        $attributeArray                	= array();
-        $ret['name']                    	= htmlentities( $contentObject->attribute( 'name' ), ENT_QUOTES, "UTF-8" );
+        $ret                            	= [];
+        $attributeArray                	= [];
+        $ret['name']                    	= htmlentities( (string) $contentObject->attribute( 'name' ), ENT_QUOTES, "UTF-8" );
         $ret['contentobject_id']        	= $ret['id'] = (int) $contentObject->attribute( 'id' );
         $ret['contentobject_remote_id'] 	= $contentObject->attribute( 'remote_id' );
         $ret['contentobject_state']     	= implode( ", ", $contentObject->attribute( 'state_identifier_array' ) );
@@ -257,13 +253,11 @@ class ezjscAjaxContent
             $creator = $contentObject->attribute( 'current' )->attribute('creator');
             if ( $creator instanceof eZContentObject )
             {
-                $ret['creator'] = array( 'id'   => $creator->attribute( 'id' ),
-                                         'name' => $creator->attribute('name') );
+                $ret['creator'] = ['id'   => $creator->attribute( 'id' ), 'name' => $creator->attribute('name')];
             }
             else
             {
-                $ret['creator'] = array( 'id'   => $contentObject->attribute( 'current' )->attribute('creator_id'),
-                                         'name' => null );// user has been deleted
+                $ret['creator'] = ['id'   => $contentObject->attribute( 'current' )->attribute('creator_id'), 'name' => null];// user has been deleted
             }
         }
 
@@ -274,14 +268,14 @@ class ezjscAjaxContent
 
             $operatorValue = $contentObject->attribute( 'class_identifier' );
 
-            $operatorParameters = array( array( array( 1, 'small' ) ) );
-            $namedParameters = array();
+            $operatorParameters = [[[1, 'small']]];
+            $namedParameters = [];
 
             $operatorName = 'class_icon';
 
             $operator->modify(
                 $tpl, $operatorName, $operatorParameters, '', '',
-                $operatorValue, $namedParameters, array()
+                $operatorValue, $namedParameters, []
             );
 
             $ret['class_icon'] = $operatorValue;
@@ -292,8 +286,8 @@ class ezjscAjaxContent
             $thumbUrl = '';
             $thumbWidth = 0;
             $thumbHeight = 0;
-            $thumbDataType = isset( $params['thumbDataType'] ) ? $params['thumbDataType'] : 'ezimage';
-            $thumbImageSize = isset( $params['thumbImageSize'] ) ? $params['thumbImageSize'] : 'small';
+            $thumbDataType = $params['thumbDataType'] ?? 'ezimage';
+            $thumbImageSize = $params['thumbImageSize'] ?? 'small';
 
             foreach( $contentObject->attribute( 'data_map' ) as $key => $atr )
             {
@@ -308,7 +302,7 @@ class ezjscAjaxContent
                         eZDebug::writeError( "Image alias does not exist: '{$thumbImageSize}', missing from image.ini?",
                             __METHOD__ );
 
-                    $thumbUrl = isset( $imageAlias['full_path'] ) ? $imageAlias['full_path'] : '';
+                    $thumbUrl = $imageAlias['full_path'] ?? '';
                     $thumbWidth = isset( $imageAlias['width'] ) ? (int) $imageAlias['width'] : 0;
                     $thumbHeight = isset( $imageAlias['height'] ) ? (int) $imageAlias['height'] : 0;
 
@@ -331,12 +325,7 @@ class ezjscAjaxContent
             $section = eZSection::fetch( $ret['section_id']  );
             if ( $section instanceof eZSection )
             {
-                $ret['section'] = array(
-                    'id'                         => $section->attribute('id'),
-                    'name'                       => $section->attribute('name'),
-                    'navigation_part_identifier' => $section->attribute('navigation_part_identifier'),
-                    'locale'                     => $section->attribute('locale'),
-                );
+                $ret['section'] = ['id'                         => $section->attribute('id'), 'name'                       => $section->attribute('name'), 'navigation_part_identifier' => $section->attribute('navigation_part_identifier'), 'locale'                     => $section->attribute('locale')];
             }
             else
             {
@@ -375,7 +364,7 @@ class ezjscAjaxContent
 
             if ( $params['fetchPath'] )
             {
-                $ret['path'] = array();
+                $ret['path'] = [];
                 foreach ( $node->attribute( 'path' ) as $n )
                 {
                     $ret['path'][] = self::simplify( $n );
@@ -402,7 +391,7 @@ class ezjscAjaxContent
             $ret['is_container']     = (int) $class->attribute( 'is_container' );
         }
 
-        $ret['image_attributes'] = array();
+        $ret['image_attributes'] = [];
 
         if ( is_array( $params['dataMap'] ) && is_array(  $params['dataMapType'] ) )
         {
@@ -436,7 +425,7 @@ class ezjscAjaxContent
                 if ( in_array( $dataTypeString, $params['imageDataTypes'], true) && $atr->hasContent() )
                 {
                     $content    = $atr->attribute( 'content' );
-                    $imageArray = array();
+                    $imageArray = [];
                     if ( $content != null )
                     {
                         foreach( $params['imageSizes'] as $size )
@@ -496,11 +485,10 @@ class ezjscAjaxContent
     /**
      * Encodes simple multilevel array and hash values to valid xml string
      *
-     * @param mixed $hash
      * @param string $childName
      * @return string
-    */
-    public static function xmlEncode( $hash, $childName = 'child' )
+     */
+    public static function xmlEncode( mixed $hash, $childName = 'child' )
     {
         $xml = new XmlWriter();
         $xml->openMemory();
@@ -517,11 +505,9 @@ class ezjscAjaxContent
     /**
      * Recursive xmlWriter function called by xmlEncode
      *
-     * @param XMLWriter $xml
-     * @param mixed $hash
      * @param string $childName
-    */
-    protected static function xmlWrite( XMLWriter $xml, $hash, $childName = 'child' )
+     */
+    protected static function xmlWrite( XMLWriter $xml, mixed $hash, $childName = 'child' )
     {
         foreach( $hash as $key => $value )
         {

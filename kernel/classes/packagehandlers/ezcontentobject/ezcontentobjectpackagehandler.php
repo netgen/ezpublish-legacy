@@ -16,21 +16,21 @@
 
 class eZContentObjectPackageHandler extends eZPackageHandler
 {
-    const MAX_LISTED_OBJECTS = 30;
+    final public const MAX_LISTED_OBJECTS = 30;
 
     // If number of objects in the package is bigger than this constant,
     // they are stored in separate files to prevent memory overflow.
     // 'null' means always use separate files
-    const STORE_OBJECTS_TO_SEPARATE_FILES_THRESHOLD = 100;
+    final public const STORE_OBJECTS_TO_SEPARATE_FILES_THRESHOLD = 100;
 
-    const INSTALL_OBJECTS_ERROR_RANGE_FROM = 1;
-    const INSTALL_OBJECTS_ERROR_RANGE_TO = 100;
-    const UNINSTALL_OBJECTS_ERROR_RANGE_FROM = 101;
-    const UNINSTALL_OBJECTS_ERROR_RANGE_TO = 200;
+    final public const INSTALL_OBJECTS_ERROR_RANGE_FROM = 1;
+    final public const INSTALL_OBJECTS_ERROR_RANGE_TO = 100;
+    final public const UNINSTALL_OBJECTS_ERROR_RANGE_FROM = 101;
+    final public const UNINSTALL_OBJECTS_ERROR_RANGE_TO = 200;
 
     public function __construct()
     {
-        parent::__construct( 'ezcontentobject', array( 'extract-install-content' => true ) );
+        parent::__construct( 'ezcontentobject', ['extract-install-content' => true] );
     }
 
     /*!
@@ -82,7 +82,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
 
     */
-    function explainInstallItem( $package, $installItem, $requestedInfo = array() )
+    function explainInstallItem( $package, $installItem, $requestedInfo = [] )
     {
         $this->Package = $package;
 
@@ -114,13 +114,13 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 $objectListNode = $content->getElementsByTagName( 'object-files-list' )->item( 0 );
                 $objectNodes = $objectListNode->getElementsByTagName( 'object-file' );
 
-                if ( count( $objectNodes ) > self::MAX_LISTED_OBJECTS )
+                if ( (is_countable($objectNodes) ? count( $objectNodes ) : 0) > self::MAX_LISTED_OBJECTS )
                 {
-                    return array( 'description' => ezpI18n::tr( 'kernel/package', '%number content objects', false,
-                                                           array( '%number' => count( $objectNodes ) ) ) );
+                    return ['description' => ezpI18n::tr( 'kernel/package', '%number content objects', false,
+                                                           ['%number' => is_countable($objectNodes) ? count( $objectNodes ) : 0] )];
                 }
 
-                $realObjectNodes = array();
+                $realObjectNodes = [];
                 foreach( $objectNodes as $objectNode )
                 {
                     $realObjectNode = $this->fetchObjectFromFile( $objectNode );
@@ -132,7 +132,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             }
 
             // create descriptions array
-            $objectNames = array();
+            $objectNames = [];
             foreach( $realObjectNodes as $objectNode )
             {
                 $objectName =
@@ -140,7 +140,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     ' (' . $objectNode->getAttributeNS( 'http://ez.no/ezobject', 'class_identifier' ) .')';
 
                 // get info about translations.
-                $languageInfo = array();
+                $languageInfo = [];
                 $versionList = $objectNode->getElementsByTagName( 'version-list' )->item( 0 );
                 $versions = $versionList->getElementsByTagName( 'version' );
                 foreach( $versions as $version )
@@ -152,10 +152,9 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     }
                 }
 
-                $objectNames[] = array( 'description' =>
+                $objectNames[] = ['description' =>
                                          ezpI18n::tr( 'kernel/package', 'Content object %objectname', false,
-                                                 array( '%objectname' => $objectName ) ),
-                                        'language_info' => $languageInfo );
+                                                 ['%objectname' => $objectName] ), 'language_info' => $languageInfo];
             }
             return $objectNames;
         }
@@ -174,7 +173,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
         if ( $isSubtree )
         {
-            $nodeArray = eZContentObjectTreeNode::subTreeByNodeID( array( 'AsObject' => false ), $nodeID );
+            $nodeArray = eZContentObjectTreeNode::subTreeByNodeID( ['AsObject' => false], $nodeID );
             foreach( $nodeArray as $node )
             {
                 $this->NodeIDArray[] = $node['node_id'];
@@ -191,7 +190,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     function generatePackage( $package, $options )
     {
         $this->Package = $package;
-        $remoteIDArray = array();
+        $remoteIDArray = [];
         $this->NodeIDArray = array_unique( $this->NodeIDArray );
         foreach( $this->NodeIDArray as $nodeID )
         {
@@ -208,7 +207,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
         $classIDArray = false;
         if ( $options['include_classes'] )
         {
-            $remoteIDArray['class'] = array();
+            $remoteIDArray['class'] = [];
             $classIDArray = $this->generateClassIDArray();
 
             foreach ( $classIDArray as $classID )
@@ -254,10 +253,10 @@ class eZContentObjectPackageHandler extends eZPackageHandler
         $filename = 'contentobjects';
         $this->Package->appendInstall( 'ezcontentobject', false, false, true,
                                        $filename, $this->contentObjectDirectory(),
-                                       array( 'content' => $packageRoot ) );
+                                       ['content' => $packageRoot] );
         $this->Package->appendInstall( 'ezcontentobject', false, false, false,
                                        $filename, $this->contentObjectDirectory(),
-                                       array( 'content' => false ) );
+                                       ['content' => false] );
     }
 
     /*!
@@ -403,7 +402,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     {
         $dom = new DOMDocument( '1.0', 'utf-8' );
         $fetchAliasListDOMNode = $dom->createElement( 'fetch-alias-list' );
-        $registeredAliases = array();
+        $registeredAliases = [];
 
         foreach( array_keys( $this->TemplateFileArray ) as $siteAccess )
         {
@@ -422,7 +421,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
                 $str = fread( $fp, filesize( $filename ) );
 
-                $matchArray = array();
+                $matchArray = [];
                 preg_match_all( "#.*fetch_alias\([ ]*([a-zA-Z0-9_]+)[ |,|)]+.*#U", $str, $matchArray, PREG_PATTERN_ORDER );
 
                 foreach( $matchArray[1] as $fetchAlias )
@@ -443,25 +442,25 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     {
                         foreach ( $fetchBlock['Constant'] as $matchKey => $value )
                         {
-                            if ( strpos( $matchKey, 'class_' ) === 0 &&
+                            if ( str_starts_with((string) $matchKey, 'class_') &&
                                  is_int( $value ) )
                             {
                                 $contentClass = eZContentClass::fetch( $value );
                                 $fetchBlock['Constant']['class_remote_id'] = $contentClass->attribute( 'remote_id' );
                             }
-                            if ( strpos( $matchKey, 'node_' ) === 0 &&
+                            if ( str_starts_with((string) $matchKey, 'node_') &&
                                  is_int( $value ) )
                             {
                                 $contentTreeNode = eZContentObjectTreeNode::fetch( $value );
                                 $fetchBlock['Constant']['node_remote_id'] = $contentTreeNode->attribute( 'remote_id' );
                             }
-                            if ( strpos( $matchKey, 'parent_node_' ) === 0 &&
+                            if ( str_starts_with((string) $matchKey, 'parent_node_') &&
                                  is_int( $value ) )
                             {
                                 $contentTreeNode = eZContentObjectTreeNode::fetch( $value );
                                 $fetchBlock['Constant']['parent_node_remote_id'] = $contentTreeNode->attribute( 'remote_id' );
                             }
-                            if ( strpos( $matchKey, 'object_' ) === 0 &&
+                            if ( str_starts_with((string) $matchKey, 'object_') &&
                                  is_int( $value ) )
                             {
                                 $contentObject = eZContentObject::fetch( $value );
@@ -490,7 +489,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
         foreach( array_keys( $this->OverrideSettingsArray ) as $siteAccess )
         {
-            $this->TemplateFileArray[$siteAccess] = array();
+            $this->TemplateFileArray[$siteAccess] = [];
             $overrideArray = eZTemplateDesignResource::overrideArray( $siteAccess );
 
             foreach( $this->OverrideSettingsArray[$siteAccess] as $override )
@@ -531,7 +530,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     */
     function createDOMNodeFromFile( $filename, $siteAccess, $filetype = false )
     {
-        $path = substr( $filename, strpos( $filename, '/', 7 ) );
+        $path = substr( (string) $filename, strpos( (string) $filename, '/', 7 ) );
 
         $dom = new DOMDocument( '1.0', 'utf-8' );
         $fileDOMNode = $dom->createElement( 'file' );
@@ -550,7 +549,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
         $pathNode->appendChild( $dom->createTextNode( $path ) );
         $fileDOMNode->appendChild( $pathNode );
 
-        $destinationPath = $this->Package->path() . '/' .  eZContentObjectPackageHandler::contentObjectDirectory() . '/' . $path;
+        $destinationPath = $this->Package->path() . '/' .  (new eZContentObjectPackageHandler())->contentObjectDirectory() . '/' . $path;
         eZDir::mkdir( eZDir::dirpath( $destinationPath ),  false,  true );
         eZFileHandler::copy( $filename, $destinationPath );
 
@@ -565,9 +564,9 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     */
     function &generateOverrideSettingsArray( $siteAccessArray, $minimalTemplateSet )
     {
-        $datatypeHash = array();
-        $simpleMatchList = array();
-        $regexpMatchList = array();
+        $datatypeHash = [];
+        $simpleMatchList = [];
+        $regexpMatchList = [];
         foreach ( $siteAccessArray as $siteAccess )
         {
             $overrideINI = eZINI::instance( 'override.ini', 'settings', null, null, true );
@@ -575,7 +574,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             $overrideINI->loadCache();
 
             $matchBlock = false;
-            $blockMatchArray = array();
+            $blockMatchArray = [];
 
             foreach( array_keys( $this->NodeObjectArray ) as $nodeID )
             {
@@ -585,7 +584,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 $contentObject = $contentNode->attribute( 'object' );
                 $contentClass = $contentObject->attribute( 'content_class' );
                 $attributeList = $contentClass->fetchAttributes( false, false, false );
-                $datatypeList = array();
+                $datatypeList = [];
                 foreach ( $attributeList as $attribute )
                 {
                     $datatypeList[] = $attribute['data_type_string'];
@@ -629,7 +628,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     if ( isset( $blockData['Match'] ) )
                         $matchSettings = $blockData['Match'];
 
-                    $matchValue = array();
+                    $matchValue = [];
                     $validMatch = true;
                     $hasMatchType = false;
                     if ( $matchSettings )
@@ -733,7 +732,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     if ( !$hasMatchType )
                     {
                         // Datatype match, we include overrides for datatype templates
-                        if ( preg_match( "#^content/datatype/[a-zA-Z]+/(" . $datatypeText . ")\\.tpl$#", $sourceName ) )
+                        if ( preg_match( "#^content/datatype/[a-zA-Z]+/(" . $datatypeText . ")\\.tpl$#", (string) $sourceName ) )
                         {
                             $validMatch = true;
                             $hasMatchType = true;
@@ -747,7 +746,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                         {
                             foreach ( $regexpMatchList as $regexpMatch )
                             {
-                                if ( preg_match( $regexpMatch, $sourceName ) )
+                                if ( preg_match( $regexpMatch, (string) $sourceName ) )
                                 {
                                     $validMatch = true;
                                     $hasMatchType = true;
@@ -796,7 +795,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     */
     function &generateClassIDArray()
     {
-        $classIDArray = array();
+        $classIDArray = [];
         foreach( $this->NodeObjectArray as $nodeObject )
         {
             $contentObject = $nodeObject->object();
@@ -863,8 +862,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     $published = $object->attribute( 'published' );
                     if ( $modified > $published )
                     {
-                        $choosenAction = $this->errorChoosenAction( eZContentObject::PACKAGE_ERROR_MODIFIED,
-                                                                    $installParameters, false, $this->HandlerType );
+                        $choosenAction = static::errorChoosenAction(eZContentObject::PACKAGE_ERROR_MODIFIED, $installParameters, false, $this->HandlerType);
 
                         if ( $choosenAction == eZContentObject::PACKAGE_KEEP )
                         {
@@ -872,19 +870,15 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                         }
                         if ( $choosenAction != eZContentObject::PACKAGE_DELETE )
                         {
-                            $installParameters['error'] = array( 'error_code' => eZContentObject::PACKAGE_ERROR_MODIFIED,
-                                                                 'element_id' => $objectRemoteID,
-                                                                 'description' => ezpI18n::tr( 'kernel/package',
-                                                                                          "Object '%objectname' has been modified since installation. Are you sure you want to remove it?",
-                                                                                          false, array( '%objectname' => $name ) ),
-                                                                 'actions' => array( eZContentObject::PACKAGE_DELETE => ezpI18n::tr( 'kernel/package', 'Remove' ),
-                                                                                     eZContentObject::PACKAGE_KEEP => ezpI18n::tr( 'kernel/package', 'Keep object' ) ) );
+                            $installParameters['error'] = ['error_code' => eZContentObject::PACKAGE_ERROR_MODIFIED, 'element_id' => $objectRemoteID, 'description' => ezpI18n::tr( 'kernel/package',
+                                                     "Object '%objectname' has been modified since installation. Are you sure you want to remove it?",
+                                                     false, ['%objectname' => $name] ), 'actions' => [eZContentObject::PACKAGE_DELETE => ezpI18n::tr( 'kernel/package', 'Remove' ), eZContentObject::PACKAGE_KEEP => ezpI18n::tr( 'kernel/package', 'Keep object' )]];
                             return false;
                         }
                     }
 
                     $assignedNodes = $object->attribute( 'assigned_nodes' );
-                    $assignedNodeIDArray = array();
+                    $assignedNodeIDArray = [];
                     foreach( $assignedNodes as $node )
                     {
                         $assignedNodeIDArray[] = $node->attribute( 'node_id' );
@@ -896,8 +890,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
                     if ( $childrenCount > 0 )
                     {
-                        $choosenAction = $this->errorChoosenAction( eZContentObject::PACKAGE_ERROR_HAS_CHILDREN,
-                                                                    $installParameters, false, $this->HandlerType );
+                        $choosenAction = static::errorChoosenAction(eZContentObject::PACKAGE_ERROR_HAS_CHILDREN, $installParameters, false, $this->HandlerType);
 
                         if ( $choosenAction == eZContentObject::PACKAGE_KEEP )
                         {
@@ -905,14 +898,9 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                         }
                         if ( $choosenAction != eZContentObject::PACKAGE_DELETE )
                         {
-                            $installParameters['error'] = array( 'error_code' => eZContentObject::PACKAGE_ERROR_HAS_CHILDREN,
-                                                                 'element_id' => $objectRemoteID,
-                                                                 'description' => ezpI18n::tr( 'kernel/package',
-                                                                                          "Object '%objectname' has %childrencount sub-item(s) that will be removed.",
-                                                                                          false, array( '%objectname' => $name,
-                                                                                                        '%childrencount' => $childrenCount ) ),
-                                                                 'actions' => array( eZContentObject::PACKAGE_DELETE => ezpI18n::tr( 'kernel/package', "Remove object and its sub-item(s)" ),
-                                                                                     eZContentObject::PACKAGE_KEEP => ezpI18n::tr( 'kernel/package', 'Keep object' ) ) );
+                            $installParameters['error'] = ['error_code' => eZContentObject::PACKAGE_ERROR_HAS_CHILDREN, 'element_id' => $objectRemoteID, 'description' => ezpI18n::tr( 'kernel/package',
+                                                     "Object '%objectname' has %childrencount sub-item(s) that will be removed.",
+                                                     false, ['%objectname' => $name, '%childrencount' => $childrenCount] ), 'actions' => [eZContentObject::PACKAGE_DELETE => ezpI18n::tr( 'kernel/package', "Remove object and its sub-item(s)" ), eZContentObject::PACKAGE_KEEP => ezpI18n::tr( 'kernel/package', 'Keep object' )]];
                             return false;
                         }
                     }
@@ -1038,9 +1026,9 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             }
             unset( $realObjectNode );
 
-            if ( isset( $installParameters['error'] ) && count( $installParameters['error'] ) )
+            if ( isset( $installParameters['error'] ) && (is_countable($installParameters['error']) ? count( $installParameters['error'] ) : 0) )
             {
-                $installParameters['error'] = array();
+                $installParameters['error'] = [];
             }
         }
 
@@ -1056,7 +1044,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             }
             else
             {
-                $remoteID = substr( $objectNode->getAttribute( 'filename' ), 7, 32 );
+                $remoteID = substr( (string) $objectNode->getAttribute( 'filename' ), 7, 32 );
             }
 
             // Begin from the object that we started from in the previous cycle
@@ -1113,8 +1101,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 $contentObject = eZContentObject::fetch( $nodeInfo['contentobject_id'] );
                 if ( is_object( $contentObject ) && $contentObject->attribute( 'current_version' ) == $nodeInfo['contentobject_version'] )
                 {
-                   eZOperationHandler::execute( 'content', 'publish', array( 'object_id' => $nodeInfo['contentobject_id'],
-                                                                              'version' =>  $nodeInfo['contentobject_version'] ) );
+                   eZOperationHandler::execute( 'content', 'publish', ['object_id' => $nodeInfo['contentobject_id'], 'version' =>  $nodeInfo['contentobject_version']] );
                 }
                 if ( isset( $nodeInfo['is_main'] ) && $nodeInfo['is_main'] )
                 {
@@ -1190,7 +1177,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
         {
             return true;
         }
-        $siteAccessDesignPathArray = array();
+        $siteAccessDesignPathArray = [];
         $templateRootPath = $package->path() . '/' . $subdirectory;
         foreach( $templateList->getElementsByTagName( 'file' ) as $fileNode )
         {
@@ -1261,7 +1248,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             return true;
         }
 
-        $overrideINIArray = array();
+        $overrideINIArray = [];
         foreach( $overrideListNode->getElementsByTagName( 'block' ) as $blockNode )
         {
             if ( isset( $parameters['site_access_map'][$blockNode->getAttribute( 'site-access' )] ) )
@@ -1284,7 +1271,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 $overrideINIArray[$newSiteAccess] = eZINI::instance( 'override.ini.append.php', "settings/siteaccess/$newSiteAccess", null, null, true );
             }
 
-            $blockArray = array();
+            $blockArray = [];
             $blockName = $blockNode->getAttribute( 'name' );
             $blockArray[$blockName] = eZContentObjectPackageHandler::createArrayFromDOMNode( $blockNode->getElementsByTagName( $blockName )->item( 0 ) );
 
@@ -1348,7 +1335,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             return true;
         }
 
-        $fetchAliasINIArray = array();
+        $fetchAliasINIArray = [];
         foreach( $fetchAliasListNode->getElementsByTagName( 'fetch-alias' ) as $blockNode )
         {
             if ( isset( $parameters['site_access_map'][$blockNode->getAttribute( 'site-access' )] ) )
@@ -1365,7 +1352,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 $fetchAliasINIArray[$newSiteAccess] = eZINI::instance( 'fetchalias.ini.append.php', "settings/siteaccess/$newSiteAccess", null, null, true );
             }
 
-            $blockArray = array();
+            $blockArray = [];
             $blockName = $blockNode->getAttribute( 'name' );
             $blockArray[$blockName] = eZContentObjectPackageHandler::createArrayFromDOMNode( $blockNode->getElementsByTagName( $blockName )->item( 0 ) );
 
@@ -1375,28 +1362,28 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             {
                 foreach( $blockArray[$blockName]['Constant'] as $matchKey => $value )
                 {
-                    if ( strpos( $matchKey, 'class_' ) === 0 &&
+                    if ( str_starts_with($matchKey, 'class_') &&
                          is_int( $value ) )
                     {
                         $contentClass = eZContentClass::fetchByRemoteID( $blockArray[$blockName]['Constant']['class_remote_id'] );
                         $blockArray[$blockName]['Constant'][$matchKey] = $contentClass->attribute( 'id' );
                         unset( $blockArray[$blockName]['Constant']['class_remote_id'] );
                     }
-                    if( strpos( $matchKey, 'node_' ) === 0 &&
+                    if( str_starts_with($matchKey, 'node_') &&
                         is_int( $value ) )
                     {
                         $contentTreeNode = eZContentObjectTreeNode::fetchByRemoteID( $blockArray[$blockName]['Constant']['node_remote_id'] );
                         $blockArray[$blockName]['Constant'][$matchKey] = $contentTreeNode->attribute( 'node_id' );
                         unset( $blockArray[$blockName]['Constant']['node_remote_id'] );
                     }
-                    if( strpos( $matchKey, 'parent_node_' ) === 0 &&
+                    if( str_starts_with($matchKey, 'parent_node_') &&
                         is_int( $value ) )
                     {
                         $contentTreeNode = eZContentObjectTreeNode::fetchByRemoteID( $blockArray[$blockName]['Constant']['parent_node_remote_id'] );
                         $blockArray[$blockName]['Constant'][$matchKey] = $contentTreeNode->attribute( 'node_id' );
                         unset( $blockArray[$blockName]['Constant']['parent_node_remote_id'] );
                     }
-                    if( strpos( $matchKey, 'object_' ) === 0 &&
+                    if( str_starts_with($matchKey, 'object_') &&
                         is_int( $value ) )
                     {
                         $contentObject = eZContentObject::fetchByRemoteID( $blockArray[$blockName]['Constant']['object_remote_id'] );
@@ -1419,7 +1406,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
     function add( $packageType, $package, $cli, $parameters )
     {
-        $options = array();
+        $options = [];
         foreach ( $parameters['node-list'] as $nodeItem )
         {
             $nodeIDList = $nodeItem['node-id-list'];
@@ -1461,38 +1448,28 @@ class eZContentObjectPackageHandler extends eZPackageHandler
     */
     function handleParameters( $packageType, $package, $cli, $type, $arguments )
     {
-        $nodeList = array();
+        $nodeList = [];
         $includeClasses = true;
         $includeTemplates = true;
-        $siteAccessList = array();
+        $siteAccessList = [];
         $nodeAssignmentType = 'main';
         $relatedObjectType = 'selected';
         $embedObjectType = 'selected';
         $versionType = 'current';
-        $languageList = array();
+        $languageList = [];
         $minimalTemplateSet = false;
-        $nodeItem = array( 'node-id-list' => array() );
-        $longOptions = array( 'include-classes' => 'include-classes',
-                              'include-templates' => 'include-templates',
-                              'exclude-classes' => 'exclude-classes',
-                              'exclude-templates' => 'exclude-templates',
-                              'language' => 'language',
-                              'current-version' => 'current-version',
-                              'all-versions' => 'all-versions',
-                              'node-main' => 'node-main',
-                              'node-selected' => 'node-selected',
-                              'siteaccess' => 'siteaccess',
-                              'minimal-template-set' => 'minimal-template-set' );
-        $shortOptions = array();
+        $nodeItem = ['node-id-list' => []];
+        $longOptions = ['include-classes' => 'include-classes', 'include-templates' => 'include-templates', 'exclude-classes' => 'exclude-classes', 'exclude-templates' => 'exclude-templates', 'language' => 'language', 'current-version' => 'current-version', 'all-versions' => 'all-versions', 'node-main' => 'node-main', 'node-selected' => 'node-selected', 'siteaccess' => 'siteaccess', 'minimal-template-set' => 'minimal-template-set'];
+        $shortOptions = [];
         $error = false;
         foreach ( $arguments as $argument )
         {
             if ( $argument[0] == '-' )
             {
-                if ( strlen( $argument ) > 1 and
+                if ( strlen( (string) $argument ) > 1 and
                      $argument[1] == '-' )
                 {
-                    $option = substr( $argument, 2 );
+                    $option = substr( (string) $argument, 2 );
                     $valuePos = strpos( $option, '=' );
                     $optionValue = false;
                     if ( $valuePos !== false )
@@ -1507,7 +1484,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 }
                 else
                 {
-                    $option = substr( $argument, 1 );
+                    $option = substr( (string) $argument, 1 );
                     if ( isset( $shortOptions[$option] ) )
                         $optionName = $shortOptions[$option];
                     else
@@ -1518,7 +1495,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     if ( count( $nodeItem['node-id-list'] ) > 0 )
                     {
                         $nodeList[] = $nodeItem;
-                        $nodeItem['node-id-list'] = array();
+                        $nodeItem['node-id-list'] = [];
                     }
                     $includeClasses = ( $optionName == 'include-classes' );
                 }
@@ -1527,7 +1504,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                     if ( count( $nodeItem['node-id-list'] ) > 0 )
                     {
                         $nodeList[] = $nodeItem;
-                        $nodeItem['node-id-list'] = array();
+                        $nodeItem['node-id-list'] = [];
                     }
                     $includeTemplates = ( $optionName == 'include-templates' );
                 }
@@ -1541,11 +1518,11 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 }
                 else if ( $optionName == 'siteaccess' )
                 {
-                    $siteAccessList = explode( ',', $optionValue );
+                    $siteAccessList = explode( ',', (string) $optionValue );
                 }
                 else if ( $optionName == 'language' )
                 {
-                    $languageList = explode( ',', $optionValue );
+                    $languageList = explode( ',', (string) $optionValue );
                 }
                 else if ( $optionName == 'current-version' )
                 {
@@ -1577,7 +1554,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 else
                 {
                     $path = $argument;
-                    if ( preg_match( "#(.+)/\*$#", $path, $matches ) )
+                    if ( preg_match( "#(.+)/\*$#", (string) $path, $matches ) )
                     {
                         $path = $matches[1];
                     }
@@ -1594,9 +1571,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
                 }
                 if ( $nodeID )
                 {
-                    $nodeItem['node-id-list'][] = array( 'id' => $nodeID,
-                                                         'subtree' => true,
-                                                         'node' => &$node );
+                    $nodeItem['node-id-list'][] = ['id' => $nodeID, 'subtree' => true, 'node' => &$node];
                 }
                 if ( $error )
                     return false;
@@ -1621,17 +1596,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             $ini = eZINI::instance();
             $siteAccessList[] = $ini->variable( 'SiteSettings', 'DefaultAccess' );
         }
-        return array( 'node-list' => $nodeList,
-                      'include-classes' => $includeClasses,
-                      'include-templates' => $includeTemplates,
-                      'siteaccess-list' => $siteAccessList,
-                      'language-list' => $languageList,
-                      'node-assignment-type' => $nodeAssignmentType,
-                      'related-type' => $relatedObjectType,
-                      'embed-type' => $embedObjectType,
-                      'version-type' => $versionType,
-                      'minimal-template-set' => $minimalTemplateSet,
-                      );
+        return ['node-list' => $nodeList, 'include-classes' => $includeClasses, 'include-templates' => $includeTemplates, 'siteaccess-list' => $siteAccessList, 'language-list' => $languageList, 'node-assignment-type' => $nodeAssignmentType, 'related-type' => $relatedObjectType, 'embed-type' => $embedObjectType, 'version-type' => $versionType, 'minimal-template-set' => $minimalTemplateSet];
     }
 
     function contentObjectDirectory()
@@ -1693,7 +1658,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
             return null;
         }
 
-        $retArray = array();
+        $retArray = [];
         foreach ( $domNode->childNodes as $childNode )
         {
             if ( $childNode->nodeType != XML_ELEMENT_NODE )
@@ -1703,7 +1668,7 @@ class eZContentObjectPackageHandler extends eZPackageHandler
 
             if ( !isset( $retArray[$childNode->localName] ) )
             {
-                $retArray[$childNode->localName] = array();
+                $retArray[$childNode->localName] = [];
             }
 
             // If the node has children we create an array for this element
@@ -1725,13 +1690,13 @@ class eZContentObjectPackageHandler extends eZPackageHandler
         return $retArray;
     }
 
-    public $NodeIDArray = array();
-    public $RootNodeIDArray = array();
-    public $NodeObjectArray = array();
-    public $ObjectArray = array();
-    public $RootNodeObjectArray = array();
-    public $OverrideSettingsArray = array();
-    public $TemplateFileArray = array();
+    public $NodeIDArray = [];
+    public $RootNodeIDArray = [];
+    public $NodeObjectArray = [];
+    public $ObjectArray = [];
+    public $RootNodeObjectArray = [];
+    public $OverrideSettingsArray = [];
+    public $TemplateFileArray = [];
     public $Package = null;
 
     // Static class variables - replacing match values in override.ini

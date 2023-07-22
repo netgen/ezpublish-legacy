@@ -15,15 +15,9 @@ set_time_limit( 0 );
 
 $cli = eZCLI::instance();
 $script = eZScript::instance(
-    array(
-        'description' => 'Script responsible for disabling user accounts with suspicious user login (containing < and >)',
-        'use-session' => false,
-        'use-modules' => false,
-        'use-extensions' => true
-    )
+    ['description' => 'Script responsible for disabling user accounts with suspicious user login (containing < and >)', 'use-session' => false, 'use-modules' => false, 'use-extensions' => true]
 );
-$options = $script->getOptions( '[disable]', '', array( '-q' => 'Quiet mode',
-                                                        'disable' => 'Disabling user accounts with suspicious user login.' ) );
+$options = $script->getOptions( '[disable]', '', ['-q' => 'Quiet mode', 'disable' => 'Disabling user accounts with suspicious user login.'] );
 
 $cli = eZCLI::instance();
 

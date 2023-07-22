@@ -14,7 +14,7 @@ $discountGroupArray = eZDiscountRule::fetchList();
 
 if ( $http->hasPostVariable( "AddDiscountGroupButton" ) )
 {
-    $params = array();
+    $params = [];
     $Module->redirectTo( $Module->functionURI( "discountgroupedit" ) );
     return;
 }
@@ -48,8 +48,7 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( "discountgroup_array", $discountGroupArray );
 $tpl->setVariable( "module", $module );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:shop/discountgroup.tpl" );
-$Result['path'] = array( array( 'url' => '/shop/discountgroup/',
-                                'text' => ezpI18n::tr( 'kernel/shop', 'Discount group' ) ) );
+$Result['path'] = [['url' => '/shop/discountgroup/', 'text' => ezpI18n::tr( 'kernel/shop', 'Discount group' )]];
 ?>

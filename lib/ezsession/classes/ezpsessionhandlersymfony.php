@@ -51,7 +51,7 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
         }
 
         $sfHandler = $this->storage->getSaveHandler();
-        ezpEvent::getInstance()->notify( 'session/destroy', array( $sessionId ) );
+        ezpEvent::getInstance()->notify( 'session/destroy', [$sessionId] );
         if ( method_exists( $sfHandler, 'destroy' ) )
         {
             return $sfHandler->destroy( $sessionId );
@@ -70,7 +70,7 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
         $this->storage->regenerate( $updateBackendData );
         $newSessionId = session_id();
 
-        ezpEvent::getInstance()->notify( 'session/regenerate', array( $oldSessionId, $newSessionId ) );
+        ezpEvent::getInstance()->notify( 'session/regenerate', [$oldSessionId, $newSessionId] );
 
         if ( $updateBackendData )
         {
@@ -78,8 +78,8 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
             $escOldKey = $db->escapeString( $oldSessionId );
             $escNewKey = $db->escapeString( $newSessionId );
             $escUserID = $db->escapeString( eZSession::userID() );
-            eZSession::triggerCallback( 'regenerate_pre', array( $db, $escNewKey, $escOldKey, $escUserID ) );
-            eZSession::triggerCallback( 'regenerate_post', array( $db, $escNewKey, $escOldKey, $escUserID ) );
+            eZSession::triggerCallback( 'regenerate_pre', [$db, $escNewKey, $escOldKey, $escUserID] );
+            eZSession::triggerCallback( 'regenerate_post', [$db, $escNewKey, $escOldKey, $escUserID] );
         }
         return true;
     }
@@ -91,15 +91,15 @@ class ezpSessionHandlerSymfony extends ezpSessionHandler
             return false;
         }
 
-        ezpEvent::getInstance()->notify( 'session/gc', array( $maxLifeTime ) );
+        ezpEvent::getInstance()->notify( 'session/gc', [$maxLifeTime] );
         $db = eZDB::instance();
-        eZSession::triggerCallback( 'gc_pre', array( $db, $maxLifeTime ) );
+        eZSession::triggerCallback( 'gc_pre', [$db, $maxLifeTime] );
         $sfHandler = $this->storage->getSaveHandler();
         if ( method_exists( $sfHandler, 'gc' ) )
         {
             $sfHandler->gc( $maxLifeTime );
         }
-        eZSession::triggerCallback( 'gc_post', array( $db, $maxLifeTime ) );
+        eZSession::triggerCallback( 'gc_post', [$db, $maxLifeTime] );
         return false;
     }
 

@@ -26,7 +26,7 @@ class eZNotificationEventFilter
         $availableHandlers = eZNotificationEventFilter::availableHandlers();
         do
         {
-            $eventList = eZNotificationEvent::fetchUnhandledList( array( 'offset' => $offset, 'length' => $limit ) );
+            $eventList = eZNotificationEvent::fetchUnhandledList( ['offset' => $offset, 'length' => $limit] );
             foreach( $eventList as $event )
             {
                 $db = eZDB::instance();
@@ -67,7 +67,7 @@ class eZNotificationEventFilter
         $baseDirectory = eZExtension::baseDirectory();
         $notificationINI = eZINI::instance( 'notification.ini' );
         $availableHandlers = $notificationINI->variable( 'NotificationEventHandlerSettings', 'AvailableNotificationEventTypes' );
-        $repositoryDirectories = array();
+        $repositoryDirectories = [];
         $extensionDirectories = $notificationINI->variable( 'NotificationEventHandlerSettings', 'ExtensionDirectories' );
         foreach ( $extensionDirectories as $extensionDirectory )
         {
@@ -75,7 +75,7 @@ class eZNotificationEventFilter
             if ( file_exists( $extensionPath ) )
                 $repositoryDirectories[] = $extensionPath;
         }
-        $handlers = array();
+        $handlers = [];
         foreach( $availableHandlers as $handlerString )
         {
             $eventHandler = eZNotificationEventFilter::loadHandler( $repositoryDirectories, $handlerString );
@@ -103,7 +103,7 @@ class eZNotificationEventFilter
 
         foreach ( $repositoryDirectories as $repositoryDirectory )
         {
-            $repositoryDirectory = trim( $repositoryDirectory, '/' );
+            $repositoryDirectory = trim( (string) $repositoryDirectory, '/' );
             $includeFile = "{$repositoryDirectory}/{$handlerString}/{$handlerString}handler.php";
             if ( file_exists( $includeFile ) )
             {

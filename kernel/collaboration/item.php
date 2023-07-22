@@ -19,7 +19,7 @@ $collabItem = eZCollaborationItem::fetch( $ItemID );
 
 if ( !$collabItem->userIsParticipant( eZUser::currentUser() ) )
 {
-    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array() );
+    return $Module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', [] );
 }
 
 $collabHandler = $collabItem->handler();
@@ -27,21 +27,18 @@ $collabItem->handleView( $ViewMode );
 $template = $collabHandler->template( $ViewMode );
 $collabTitle = $collabItem->title();
 
-$viewParameters = array( 'offset' => $Offset );
+$viewParameters = ['offset' => $Offset];
 
 $tpl = eZTemplate::factory();
 
 $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'collab_item', $collabItem );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( $template );
 
 $collabHandler->readItem( $collabItem );
 
-$Result['path'] = array( array( 'url' => 'collaboration/view/summary',
-                                'text' => ezpI18n::tr( 'kernel/collaboration', 'Collaboration' ) ),
-                         array( 'url' => false,
-                                'text' => $collabTitle ) );
+$Result['path'] = [['url' => 'collaboration/view/summary', 'text' => ezpI18n::tr( 'kernel/collaboration', 'Collaboration' )], ['url' => false, 'text' => $collabTitle]];
 
 ?>

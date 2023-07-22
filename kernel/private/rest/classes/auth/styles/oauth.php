@@ -78,17 +78,11 @@ class ezpRestOauthAuthenticationStyle extends ezpRestAuthenticationStyle impleme
      */
     function processLoginRequired( ezcMvcResult $res, $reasons, $errorMap = null )
     {
-        $reasonText = array();
+        $reasonText = [];
 
         if ( $errorMap === null )
         {
-            $errorMap = array(
-                'ezpOauthFilter' => array(
-                    ezpOauthFilter::STATUS_TOKEN_INVALID            => 'Token has expired.',
-                    ezpOauthFilter::STATUS_TOKEN_EXPIRED            => 'Token has expired, please refresh it.',
-                    ezpOauthFilter::STATUS_TOKEN_INSUFFICIENT_SCOPE => 'You do have do have sufficient scope to access this resource.',
-                ),
-            );
+            $errorMap = ['ezpOauthFilter' => [ezpOauthFilter::STATUS_TOKEN_INVALID            => 'Token has expired.', ezpOauthFilter::STATUS_TOKEN_EXPIRED            => 'Token has expired, please refresh it.', ezpOauthFilter::STATUS_TOKEN_INSUFFICIENT_SCOPE => 'You do have do have sufficient scope to access this resource.']];
         }
 
         foreach ( $reasons as $line )

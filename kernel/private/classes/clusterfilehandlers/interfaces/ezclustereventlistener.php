@@ -90,7 +90,6 @@ interface eZClusterEventListener
     /**
      * Notifies of a deleteByDirList operation
      *
-     * @param array $dirList
      * @param string $commonPath
      * @param string $commonSuffix
      * @return void

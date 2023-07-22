@@ -19,10 +19,7 @@ class eZKeyword
 {
     function attributes()
     {
-        return array( 'keywords',
-                      'keyword_string',
-                      'related_objects',
-                      'related_nodes' );
+        return ['keywords', 'keyword_string', 'related_objects', 'related_nodes'];
     }
 
     function hasAttribute( $name )
@@ -64,7 +61,7 @@ class eZKeyword
     {
         if ( !is_array( $keywordString ) )
         {
-            $keywordArray = explode( ',', $keywordString );
+            $keywordArray = explode( ',', (string) $keywordString );
             $keywordArray = array_unique ( $keywordArray );
         }
         foreach ( array_keys( $keywordArray ) as $key )
@@ -89,7 +86,7 @@ class eZKeyword
         // Get already existing keywords
         if ( count( $this->KeywordArray ) > 0 )
         {
-            $escapedKeywordArray = array();
+            $escapedKeywordArray = [];
             foreach( $this->KeywordArray as $keyword )
             {
                 $keyword = $db->escapeString( $keyword );
@@ -100,11 +97,11 @@ class eZKeyword
         }
         else
         {
-            $existingWords = array();
+            $existingWords = [];
         }
 
-        $newWordArray = array();
-        $existingWordArray = array();
+        $newWordArray = [];
+        $existingWordArray = [];
         // Find out which words to store
         foreach ( $this->KeywordArray as $keyword )
         {
@@ -126,20 +123,20 @@ class eZKeyword
             }
             else
             {
-                $existingWordArray[] = array( 'keyword' => $keyword, 'id' => $wordID );
+                $existingWordArray[] = ['keyword' => $keyword, 'id' => $wordID];
             }
         }
 
         // Store every new keyword
-        $addRelationWordArray = array();
+        $addRelationWordArray = [];
         foreach ( $newWordArray as $keyword )
         {
-            $keyword = trim( $keyword );
+            $keyword = trim( (string) $keyword );
             $keyword = $db->escapeString( $keyword );
             $db->query( "INSERT INTO ezkeyword ( keyword, class_id ) VALUES ( '$keyword', '$classID' )" );
 
             $keywordID = $db->lastSerialID( 'ezkeyword', 'id' );
-            $addRelationWordArray[] = array( 'keyword' => $keywordID, 'id' => $keywordID );
+            $addRelationWordArray[] = ['keyword' => $keywordID, 'id' => $keywordID];
         }
 
         $attributeID = $attribute->attribute( 'id' );
@@ -151,7 +148,7 @@ class eZKeyword
                                                    AND ezkeyword_attribute_link.objectattribute_id='$attributeID'" );
         }
         else
-            $currentWordArray = array();
+            $currentWordArray = [];
 
         foreach ( $existingWordArray as $existingWord )
         {
@@ -171,7 +168,7 @@ class eZKeyword
         }
 
         // Find the current words no longer used
-        $removeWordRelationIDArray = array();
+        $removeWordRelationIDArray = [];
         foreach ( $currentWordArray as $currentWord )
         {
             $stillUsed = false;
@@ -278,7 +275,7 @@ class eZKeyword
         $return = false;
         if ( $this->ObjectAttributeID )
         {
-            $return = array();
+            $return = [];
 
             // Fetch words
             $db = eZDB::instance();
@@ -286,7 +283,7 @@ class eZKeyword
             $wordArray = $db->arrayQuery( "SELECT * FROM ezkeyword_attribute_link
                                            WHERE objectattribute_id='" . $this->ObjectAttributeID ."' " );
 
-            $keywordIDArray = array();
+            $keywordIDArray = [];
             // Fetch the objects which have one of these words
             foreach ( $wordArray as $word )
             {
@@ -302,7 +299,7 @@ class eZKeyword
                                                         ezcontentobject_attribute.id = ezkeyword_attribute_link.objectattribute_id
                                                         AND  objectattribute_id <> '" . $this->ObjectAttributeID ."' " );
 
-                $objectIDArray = array();
+                $objectIDArray = [];
                 foreach ( $objectArray as $object )
                 {
                     $objectIDArray[] = $object['contentobject_id'];
@@ -327,7 +324,7 @@ class eZKeyword
     }
 
     /// Contains the keywords
-    public $KeywordArray = array();
+    public $KeywordArray = [];
 
     /// Contains the ID attribute if fetched
     public $ObjectAttributeID = false;

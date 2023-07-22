@@ -86,7 +86,7 @@ class ezjscPackerTemplateFunctions
 {
     function operatorList()
     {
-        return array( 'ezscript', 'ezscript_require', 'ezscript_load', 'ezscriptfiles', 'ezcss', 'ezcss_require', 'ezcss_load', 'ezcssfiles'  );
+        return ['ezscript', 'ezscript_require', 'ezscript_load', 'ezscriptfiles', 'ezcss', 'ezcss_require', 'ezcss_load', 'ezcssfiles'];
     }
 
     function namedParameterPerOperator()
@@ -99,57 +99,19 @@ class ezjscPackerTemplateFunctions
         static $def = null;
         if ( $def === null )
         {
-            $def = array( 'ezscript' => array( 'script_array' => array( 'type' => 'array',
-                                                  'required' => true,
-                                                  'default' => array() ),
-                                               'type' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => 'text/javascript' ),
-                                               'language' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => '' ),// Opt in, not valid xhtml/html5
-                                               'charset' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => 'utf-8' ),
-                                               'pack_level' => array( 'type' => 'integer',
-                                                  'required' => false,
-                                                  'default' => 2 )),
-                          'ezscriptfiles' => array( 'script_array' => array( 'type' => 'array',
-                                                  'required' => true,
-                                                  'default' => array() ),
-                                               'pack_level' => array( 'type' => 'integer',
-                                                  'required' => false,
-                                                  'default' => 2 ),
-                                            'ignore_loaded' => array( 'type' => 'bool',
-                                                  'required' => false,
-                                                  'default' => false )),
-                          'ezcss' => array( 'css_array' => array( 'type' => 'array',
-                                                  'required' => true,
-                                                  'default' => array() ),
-                                            'media' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => 'all' ),
-                                            'type' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => 'text/css' ),
-                                            'rel' => array( 'type' => 'string',
-                                                  'required' => false,
-                                                  'default' => 'stylesheet' ),
-                                            'charset' => array( 'type' => 'string', // Deprecated (not valid html)
-                                                  'required' => false,
-                                                  'default' => '' ),
-                                            'pack_level' => array( 'type' => 'integer',
-                                                  'required' => false,
-                                                  'default' => 3 ) ),
-                          'ezcssfiles' => array( 'css_array' => array( 'type' => 'array',
-                                                  'required' => true,
-                                                  'default' => array() ),
-                                            'pack_level' => array( 'type' => 'integer',
-                                                  'required' => false,
-                                                  'default' => 3 ),
-                                            'ignore_loaded' => array( 'type' => 'bool',
-                                                  'required' => false,
-                                                  'default' => false ) ));
+            $def = ['ezscript' => [
+                'script_array' => ['type' => 'array', 'required' => true, 'default' => []],
+                'type' => ['type' => 'string', 'required' => false, 'default' => 'text/javascript'],
+                'language' => ['type' => 'string', 'required' => false, 'default' => ''],
+                // Opt in, not valid xhtml/html5
+                'charset' => ['type' => 'string', 'required' => false, 'default' => 'utf-8'],
+                'pack_level' => ['type' => 'integer', 'required' => false, 'default' => 2],
+            ], 'ezscriptfiles' => ['script_array' => ['type' => 'array', 'required' => true, 'default' => []], 'pack_level' => ['type' => 'integer', 'required' => false, 'default' => 2], 'ignore_loaded' => ['type' => 'bool', 'required' => false, 'default' => false]], 'ezcss' => ['css_array' => ['type' => 'array', 'required' => true, 'default' => []], 'media' => ['type' => 'string', 'required' => false, 'default' => 'all'], 'type' => ['type' => 'string', 'required' => false, 'default' => 'text/css'], 'rel' => ['type' => 'string', 'required' => false, 'default' => 'stylesheet'], 'charset' => [
+                'type' => 'string',
+                // Deprecated (not valid html)
+                'required' => false,
+                'default' => '',
+            ], 'pack_level' => ['type' => 'integer', 'required' => false, 'default' => 3]], 'ezcssfiles' => ['css_array' => ['type' => 'array', 'required' => true, 'default' => []], 'pack_level' => ['type' => 'integer', 'required' => false, 'default' => 3], 'ignore_loaded' => ['type' => 'bool', 'required' => false, 'default' => false]]];
 
             // Definition for _require and _load is the same as main functons, so copy to keep code size down
             $def['ezscript_require'] = $def['ezscript'];
@@ -166,13 +128,10 @@ class ezjscPackerTemplateFunctions
     /**
      * Template operator function for all functions defined on this class
      *
-     * @param eZTemplate $tpl
      * @param string $operatorName
-     * @param array $operatorParameters
      * @param string $rootNamespace
      * @param string $currentNamespace
      * @param null|mixed $operatorValue
-     * @param array $namedParameters
      */
     function modify( eZTemplate $tpl, $operatorName, array $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, array $namedParameters )
     {
@@ -299,8 +258,9 @@ class ezjscPackerTemplateFunctions
      */
     static public function setPersistentArray( $key, $value, eZTemplate $tpl, $append = true, $arrayUnique = false, $returnArrayDiff = false, $override = false )
     {
+        $moduleResult = [];
         $isPageLayout = false;
-        $persistentVariable = array();
+        $persistentVariable = [];
         if ( $tpl->hasVariable('module_result') )
         {
             $isPageLayout = true;
@@ -327,7 +287,7 @@ class ezjscPackerTemplateFunctions
             {
                 eZDebug::writeError( 'persistent_variable was not an array and where cleared, see ezjscore requriments!', __METHOD__ );
             }
-            $persistentVariable = array();
+            $persistentVariable = [];
         }
 
         // make a copy in case we need to diff value in the end
@@ -347,14 +307,14 @@ class ezjscPackerTemplateFunctions
                 else if ( $append )
                     $persistentVariable[ $key ][] = $value;
                 else
-                    $persistentVariable[ $key ] = array_merge( array( $value ), $persistentVariable[ $key ] );
+                    $persistentVariable[ $key ] = array_merge( [$value], $persistentVariable[ $key ] );
             }
             else
             {
                 if ( is_array( $value ) )
                     $persistentVariable[ $key ] = $value;
                 else
-                    $persistentVariable[ $key ] = array( $value );
+                    $persistentVariable[ $key ] = [$value];
             }
         }
         else
@@ -400,10 +360,10 @@ class ezjscPackerTemplateFunctions
     {
         if ( !is_array( $array ) )
         {
-            return array( $array );
+            return [$array];
         }
 
-        $arrayFlatten = array();
+        $arrayFlatten = [];
         while( !empty( $array ) )
         {
              $item = array_shift( $array );
@@ -426,9 +386,7 @@ class ezjscPackerTemplateFunctions
     {
         if ( $key !== null )
         {
-            if ( isset( self::$persistentVariable[ $key ] ) )
-                return self::$persistentVariable[ $key ];
-            return null;
+            return self::$persistentVariable[ $key ] ?? null;
         }
         return self::$persistentVariable;
     }
@@ -437,7 +395,7 @@ class ezjscPackerTemplateFunctions
     static protected $persistentVariable = null;
 
     // Internal flag for already loaded types
-    static protected $loaded = array();
+    static protected $loaded = [];
 }
 
 ?>

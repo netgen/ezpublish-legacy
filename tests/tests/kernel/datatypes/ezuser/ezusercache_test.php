@@ -10,7 +10,7 @@
 
 class eZUserCacheTest extends ezpDatabaseTestCase
 {
-    private $userId;
+    private ?int $userId = null;
 
     public function __construct()
     {
@@ -41,7 +41,7 @@ class eZUserCacheTest extends ezpDatabaseTestCase
         eZUser::instance( $this->userId );
 
         $cacheFilePath = eZUser::getCacheDir( $this->userId ) . "/user-data-{$this->userId}.cache.php";
-        $this->assertFalse( file_exists( $cacheFilePath ) );
+        static::assertFalse(file_exists( $cacheFilePath ));
     }
 }
 ?>

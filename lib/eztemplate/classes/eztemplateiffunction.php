@@ -36,7 +36,7 @@
 
 class eZTemplateIfFunction
 {
-    const FUNCTION_NAME = 'if';
+    final public const FUNCTION_NAME = 'if';
 
     /*!
      * Returns an array of the function names, required for eZTemplate::registerFunctions.
@@ -44,7 +44,7 @@ class eZTemplateIfFunction
     function functionList()
     {
         //eZDebug::writeDebug( "if::functionList()" );
-        $functionList = array( eZTemplateIfFunction::FUNCTION_NAME );
+        $functionList = [eZTemplateIfFunction::FUNCTION_NAME];
         return $functionList;
     }
 
@@ -55,8 +55,7 @@ class eZTemplateIfFunction
      */
     function attributeList()
     {
-        return array( 'elseif'    => false,
-                      'else'      => false );
+        return ['elseif'    => false, 'else'      => false];
     }
 
 
@@ -65,10 +64,7 @@ class eZTemplateIfFunction
      */
     function functionTemplateHints()
     {
-        return array( eZTemplateIfFunction::FUNCTION_NAME => array( 'parameters' => true,
-                                                             'static' => false,
-                                                             'transform-parameters' => true,
-                                                             'tree-transformation' => true ) );
+        return [eZTemplateIfFunction::FUNCTION_NAME => ['parameters' => true, 'static' => false, 'transform-parameters' => true, 'tree-transformation' => true]];
     }
 
     /*!
@@ -78,16 +74,16 @@ class eZTemplateIfFunction
                                          $tpl, $parameters, $privateData )
     {
         $tpl->ElseifCounter++;
-        $newNodes       = array();
-        $nodesToPrepend = array();
-        $nodesToAppend  = array();
+        $newNodes       = [];
+        $nodesToPrepend = [];
+        $nodesToAppend  = [];
         $nodePlacement  = eZTemplateNodeTool::extractFunctionNodePlacement( $node );
-        $uniqid        =  md5( $nodePlacement[2] ) . "_" . $tpl->ElseifCounter;
+        $uniqid        =  md5( (string) $nodePlacement[2] ) . "_" . $tpl->ElseifCounter;
         $children       = eZTemplateNodeTool::extractFunctionNodeChildren( $node );
 
 
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "// if begins" );
-        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, array( 'treat-value-as-non-object' => true ), 'if_cond' );
+        $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameters['condition'], $nodePlacement, ['treat-value-as-non-object' => true], 'if_cond' );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( \$if_cond )\n{" );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
 
@@ -108,14 +104,14 @@ class eZTemplateIfFunction
                         $compiledElseifCondition = eZTemplateCompiler::processElementTransformationList( $tpl, $child, $childFunctionArgs['condition'], $privateData );
                         $nodesToPrepend[] = eZTemplateNodeTool::createVariableNode( false, $compiledElseifCondition,
                                                                                     $nodePlacement,
-                                                                                    array( 'text-result' => true ),
+                                                                                    ['text-result' => true],
                                                                                     "elseif_cond_$uniqid" );
                         $newNodes[] = eZTemplateNodeTool::createSpacingDecreaseNode();
                         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "}\nelseif ( \$elseif_cond_$uniqid )\n{" );
                         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
                         $nodesToAppend[] = eZTemplateNodeTool::createVariableUnsetNode( "elseif_cond_$uniqid" );
                         // increment unique elseif counter
-                        $uniqid        =  md5( $nodePlacement[2] ) . "_" . ++$tpl->ElseifCounter;
+                        $uniqid        =  md5( (string) $nodePlacement[2] ) . "_" . ++$tpl->ElseifCounter;
                     }
                     elseif ( $childFunctionName == 'else' )
                     {
@@ -131,7 +127,7 @@ class eZTemplateIfFunction
                         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$skipDelimiter = true;\ncontinue;\n" );
 
                     // let other functions (ones not listed in the conditions above) be transformed
-                    if ( in_array( $childFunctionName, array( 'elseif', 'else', 'break', 'continue', 'skip' ) ) )
+                    if ( in_array( $childFunctionName, ['elseif', 'else', 'break', 'continue', 'skip'] ) )
                          continue;
                 }
                 $newNodes[] = $child;
@@ -153,7 +149,7 @@ class eZTemplateIfFunction
      */
     function process( $tpl, &$textElements, $functionName, $functionChildren, $functionParameters, $functionPlacement, $rootNamespace, $currentNamespace )
     {
-        if ( count( $functionParameters ) == 0 || !count( $functionParameters['condition'] ) )
+        if ( (is_countable($functionParameters) ? count( $functionParameters ) : 0) == 0 || !(is_countable($functionParameters['condition']) ? count( $functionParameters['condition'] ) : 0) )
         {
             eZDebug::writeError( "Not enough arguments passed to 'if' function." );
             return;
@@ -202,7 +198,7 @@ class eZTemplateIfFunction
                         continue;
                     }
 
-                    if ( !isset( $childFunctionArgs['condition'] ) || !count( $childFunctionArgs['condition'] ) ) // no arguments passes to 'elseif' (should not happen)
+                    if ( !isset( $childFunctionArgs['condition'] ) || !(is_countable($childFunctionArgs['condition']) ? count( $childFunctionArgs['condition'] ) : 0) ) // no arguments passes to 'elseif' (should not happen)
                         $elseifValue = false;
                     else
                         $elseifValue = $tpl->elementValue( $childFunctionArgs['condition'], $rootNamespace, $currentNamespace, $functionPlacement );
@@ -217,19 +213,19 @@ class eZTemplateIfFunction
                 {
                     if ( !$show )
                             continue;
-                    return array( 'breakFunctionFound' => 1 );
+                    return ['breakFunctionFound' => 1];
                 }
                 elseif ( $childFunctionName == 'continue' )
                 {
                     if ( !$show )
                             continue;
-                    return array( 'continueFunctionFound' => 1 );
+                    return ['continueFunctionFound' => 1];
                 }
                 elseif ( $childFunctionName == 'skip' )
                 {
                     if ( !$show )
                             continue;
-                    return array( 'skipFunctionFound' => 1 );
+                    return ['skipFunctionFound' => 1];
                 }
             }
 

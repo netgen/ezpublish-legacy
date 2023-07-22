@@ -53,7 +53,7 @@ class SpellChecker {
 	 * @return {Array} Array of suggestions for the specified word.
 	 */
 	function &getSuggestions($lang, $word) {
-		return array();
+		return [];
 	}
 
 	/**
@@ -62,7 +62,7 @@ class SpellChecker {
 	 * @param {String} $str Message to send back to user.
 	 */
 	function throwError($str) {
-		echo '{"result":null,"id":null,"error":{"errstr":"' . addslashes($str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}';
+		echo '{"result":null,"id":null,"error":{"errstr":"' . addslashes((string) $str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}';
 		eZDB::checkTransactionCounter();
 		eZExecution::cleanExit();
 	}

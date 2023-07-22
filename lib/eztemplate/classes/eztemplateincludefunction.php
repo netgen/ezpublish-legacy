@@ -34,11 +34,14 @@ class eZTemplateIncludeFunction
     /**
      * Initializes the function with the function name $inc_name.
      *
-     * @param string $inc_name
+     * @param string $IncludeName
      */
-    public function __construct( $inc_name = "include" )
+    public function __construct(
+        /// \privatesection
+        /// The name of the include function
+        public $IncludeName = "include"
+    )
     {
-        $this->IncludeName = $inc_name;
     }
 
     /*!
@@ -46,16 +49,12 @@ class eZTemplateIncludeFunction
     */
     function functionList()
     {
-        return array( $this->IncludeName );
+        return [$this->IncludeName];
     }
 
     function functionTemplateHints()
     {
-        return array( $this->IncludeName => array( 'parameters' => true,
-                                                   'static' => false,
-                                                   'transform-children' => true,
-                                                   'tree-transformation' => true,
-                                                   'transform-parameters' => true ) );
+        return [$this->IncludeName => ['parameters' => true, 'static' => false, 'transform-children' => true, 'tree-transformation' => true, 'transform-parameters' => true]];
     }
 
     function templateNodeTransformation( $functionName, &$node,
@@ -94,9 +93,9 @@ class eZTemplateIncludeFunction
         if ( $includeNodes === false )
             return false;
 
-        $newNodes = array();
+        $newNodes = [];
 
-        $variableList = array();
+        $variableList = [];
         $uniqID = md5( uniqid('inc') );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$oldRestoreIncludeArray" . "_$uniqID = isset( \$restoreIncludeArray ) ? \$restoreIncludeArray : array();\n".
                                                                "\$restoreIncludeArray = array();\n");
@@ -111,8 +110,8 @@ class eZTemplateIncludeFunction
                                                                    "elseif ( !isset( \$vars[( isset( $namespaceName ) ? $namespaceName : '' )]['$parameterName'] ) ) \n".
                                                                    "    \$restoreIncludeArray[] = array( ( isset( $namespaceName ) ? $namespaceName : '' ), '$parameterName', 'unset' );\n" );
 
-            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, array(),
-                                                                  array( $namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName ) );
+            $newNodes[] = eZTemplateNodeTool::createVariableNode( false, $parameterData, false, [],
+                                                                  [$namespaceValue, eZTemplate::NAMESPACE_SCOPE_RELATIVE, $parameterName] );
             $variableList[] = $parameterName;
         }
 
@@ -155,8 +154,8 @@ class eZTemplateIncludeFunction
                 $name = $currentNamespace;
         }
         reset( $params );
-        $whatParamsShouldBeUnset = array();
-        $whatParamsShouldBeReplaced = array();
+        $whatParamsShouldBeUnset = [];
+        $whatParamsShouldBeReplaced = [];
         while ( ( $key = key( $params ) ) !== null )
         {
             $item =& $params[$key];
@@ -202,6 +201,7 @@ class eZTemplateIncludeFunction
     */
     static function handleInclude( &$textElements, &$uri, $tpl, $rootNamespace, $name )
     {
+        $extraParameters = null;
         $tpl->processURI( $uri, true, $extraParameters, $textElements, $name, $name );
     }
 
@@ -212,10 +212,6 @@ class eZTemplateIncludeFunction
     {
         return false;
     }
-
-    /// \privatesection
-    /// The name of the include function
-    public $IncludeName;
 }
 
 ?>

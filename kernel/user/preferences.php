@@ -29,8 +29,7 @@ else
 if ( eZOperationHandler::operationIsAvailable( 'user_preferences' ) )
 {
     $operationResult = eZOperationHandler::execute( 'user',
-                                                    'preferences', array( 'key'    => $key,
-                                                                          'value'  => $value ) );
+                                                    'preferences', ['key'    => $key, 'value'  => $value] );
 }
 else
 {
@@ -89,7 +88,7 @@ else if ( isset( $_SERVER['HTTP_REFERER'] ) )
     $redirectURI = implode( '/', $exploded );
 
     // Protect against redirect loop
-    if ( strpos( $redirectURI, '/user/preferences/set'  ) !== false )
+    if ( str_contains( $redirectURI, '/user/preferences/set'  ) )
         $module->redirectTo( '/' );
     else
         eZRedirectManager::redirectTo( $module, /* $default = */ false, /* $view = */ true, /* $disallowed = */ false, $redirectURI );

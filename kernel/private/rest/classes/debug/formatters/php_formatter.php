@@ -26,21 +26,18 @@ class ezpRestDebugPHPFormatter implements ezcDebugOutputFormatter
      */
     public function generateOutput( array $writerData, array $timerData )
     {
-        return array(
-            'Logs'      => $this->getLog( $writerData ),
-            'Timer'     => $this->getTimingsAccumulator( $timerData )
-        );
+        return ['Logs'      => $this->getLog( $writerData ), 'Timer'     => $this->getTimingsAccumulator( $timerData )];
     }
 
     /**
      * Returns a PHP array containing the output based on $writerData.
      *
-     * @param array $writerData
      * @return array
      */
     public function getLog( array $writerData )
     {
-        $result = array();
+        $w = null;
+        $result = [];
 
         foreach( $writerData as $w )
         {
@@ -64,7 +61,7 @@ class ezpRestDebugPHPFormatter implements ezcDebugOutputFormatter
     public function getTimingsAccumulator( array $timerData )
     {
         $groups = $this->getGroups( $timerData );
-        $res = array();
+        $res = [];
 
         if ( sizeof( $groups ) > 0 )
         {
@@ -84,7 +81,7 @@ class ezpRestDebugPHPFormatter implements ezcDebugOutputFormatter
                     $groupInfos->percent = $percent.' %';
                     $groupInfos->count = $element->count;
                     $groupInfos->average = $average;
-                    $groupInfos->switches = array();
+                    $groupInfos->switches = [];
 
                     foreach ( $element->switchTime as $switch )
                     {
@@ -125,13 +122,13 @@ class ezpRestDebugPHPFormatter implements ezcDebugOutputFormatter
      */
     private function getGroups( array $timers )
     {
-        $groups = array();
+        $groups = [];
         foreach ( $timers as $time )
         {
             if ( !isset( $groups[$time->group] ) )
             {
                 $groups[$time->group] = new ezcDebugStructure();
-                $groups[$time->group]->elements = array();
+                $groups[$time->group]->elements = [];
                 $groups[$time->group]->count = 0;
                 $groups[$time->group]->elapsedTime = 0;
                 $groups[$time->group]->startTime = INF;  // Infinite high number.
@@ -188,7 +185,7 @@ class ezpRestDebugPHPFormatter implements ezcDebugOutputFormatter
      */
     public function formatStackTrace( ezcDebugStacktraceIterator $stackTrace )
     {
-        $res = array();
+        $res = [];
         foreach ( $stackTrace as $index => $element )
         {
             $function = ( isset( $element['class'] ) ? "{$element['class']}::" : '' )

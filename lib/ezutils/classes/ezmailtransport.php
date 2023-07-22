@@ -33,12 +33,9 @@ class eZMailTransport
     {
         $ini = eZINI::instance();
 
-        $transportType = trim( $ini->variable( 'MailSettings', 'Transport' ) );
+        $transportType = trim( (string) $ini->variable( 'MailSettings', 'Transport' ) );
 
-        $optionArray = array( 'iniFile'      => 'site.ini',
-                              'iniSection'   => 'MailSettings',
-                              'iniVariable'  => 'TransportAlias',
-                              'handlerIndex' => strtolower( $transportType ) );
+        $optionArray = ['iniFile'      => 'site.ini', 'iniSection'   => 'MailSettings', 'iniVariable'  => 'TransportAlias', 'handlerIndex' => strtolower( $transportType )];
         $options = new ezpExtensionOptions( $optionArray );
         $transportClass = eZExtension::getHandlerClass( $options );
 

@@ -98,17 +98,15 @@ class eZAutoLinkOperatorTest extends ezpTestCase
 
         $operatorValue = $argument;
 
-        $operatorParameters = array();
+        $operatorParameters = [];
 
-        $namedParameters = array(
-            'max_chars'  => $maxChars
-        );
+        $namedParameters = ['max_chars'  => $maxChars];
 
         $operator->modify(
             $tpl, $operatorName, $operatorParameters, '', '', $operatorValue, $namedParameters, false
         );
 
-        $this->assertEquals( $expectedResult, $operatorValue );
+        static::assertEquals($expectedResult, $operatorValue);
         // -------------------------------------------------------------------
         // TEST TEAR DOWN ----------------------------------------------------
         $ini->setVariable( 'SiteAccessSettings', 'RemoveSiteAccessIfDefaultAccess', $orgRemoveSiteaccess );
@@ -122,9 +120,7 @@ class eZAutoLinkOperatorTest extends ezpTestCase
      */
      private function setSiteAccess( $accessName )
      {
-         eZSiteAccess::change( array( 'name' => $accessName,
-                                      'type' => eZSiteAccess::TYPE_URI,
-                                      'uri_part' => array( $accessName ) ) );
+         eZSiteAccess::change( ['name' => $accessName, 'type' => eZSiteAccess::TYPE_URI, 'uri_part' => [$accessName]] );
      }
 }
 

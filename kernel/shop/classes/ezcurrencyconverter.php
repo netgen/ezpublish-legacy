@@ -18,10 +18,10 @@
 
 class eZCurrencyConverter
 {
-    const ROUNDING_TYPE_NONE = 1;
-    const ROUNDING_TYPE_ROUND = 2;
-    const ROUNDING_TYPE_CEIL = 3;
-    const ROUNDING_TYPE_FLOOR = 4;
+    final public const ROUNDING_TYPE_NONE = 1;
+    final public const ROUNDING_TYPE_ROUND = 2;
+    final public const ROUNDING_TYPE_CEIL = 3;
+    final public const ROUNDING_TYPE_FLOOR = 4;
 
     public function __construct()
     {
@@ -131,9 +131,9 @@ class eZCurrencyConverter
             $ini = eZINI::instance( 'shop.ini' );
 
             $mathType = $ini->variable( 'MathSettings', 'MathHandler' );
-            $mathType = strtolower( $mathType );
+            $mathType = strtolower( (string) $mathType );
 
-            $params = array( 'scale' => $ini->variable( 'MathSettings', 'MathScale' ) );
+            $params = ['scale' => $ini->variable( 'MathSettings', 'MathScale' )];
 
             $this->setMathHandler( eZPHPMath::create( $mathType, $params ) );
         }
@@ -162,7 +162,7 @@ class eZCurrencyConverter
         {
             $ini = eZINI::instance( 'shop.ini' );
 
-            $roundingType = 'EZ_CURRENCY_CONVERTER_ROUNDING_TYPE_' . strtoupper( $ini->variable( 'MathSettings', 'RoundingType' ) );
+            $roundingType = 'EZ_CURRENCY_CONVERTER_ROUNDING_TYPE_' . strtoupper( (string) $ini->variable( 'MathSettings', 'RoundingType' ) );
             if ( !defined( "self::{$roundingType}" ) )
                 $roundingType = self::ROUNDING_TYPE_NONE;
 

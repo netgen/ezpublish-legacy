@@ -9,7 +9,7 @@
  */
 class eZMatrixTypeTest extends eZDatatypeAbstractTest
 {
-    public function __construct( $name = null, array $data = array(), $dataName = '' )
+    public function __construct( $name = null, array $data = [], $dataName = '' )
     {
         $this->setDatatype( 'ezmatrix' );
         $this->setDataSet( 'default', $this->defaultDataSet() );

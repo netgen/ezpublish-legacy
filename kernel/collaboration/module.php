@@ -6,37 +6,12 @@
  * @package kernel
  */
 
-$Module = array( 'name' => 'eZCollaboration' );
+$Module = ['name' => 'eZCollaboration'];
 
-$ViewList = array();
-$ViewList['action'] = array(
-    'script' => 'action.php',
-    "default_navigation_part" => 'ezmynavigationpart',
-    'default_action' => array( array( 'name' => 'Custom',
-                                      'type' => 'post',
-                                      'parameters' => array( 'CollaborationActionCustom',
-                                                             'CollaborationTypeIdentifier',
-                                                             'CollaborationItemID' ) ) ),
-    'post_action_parameters' => array( 'Custom' => array( 'TypeIdentifer' => 'CollaborationTypeIdentifier',
-                                                          'ItemID' => 'CollaborationItemID' ) ),
-    'params' => array() );
-$ViewList['view'] = array(
-    'script' => 'view.php',
-    "default_navigation_part" => 'ezmynavigationpart',
-    'params' => array( 'ViewMode' ),
-    "unordered_params" => array( "language" => "Language",
-                                 "offset" => "Offset" ) );
-$ViewList['item'] = array(
-    'script' => 'item.php',
-    "default_navigation_part" => 'ezmynavigationpart',
-    'params' => array( 'ViewMode', 'ItemID' ),
-    "unordered_params" => array( "language" => "Language",
-                                 "offset" => "Offset" ) );
-$ViewList['group'] = array(
-    'script' => 'group.php',
-    "default_navigation_part" => 'ezmynavigationpart',
-    'params' => array( 'ViewMode', 'GroupID' ),
-    "unordered_params" => array( "language" => "Language",
-                                 "offset" => "Offset" ) );
+$ViewList = [];
+$ViewList['action'] = ['script' => 'action.php', "default_navigation_part" => 'ezmynavigationpart', 'default_action' => [['name' => 'Custom', 'type' => 'post', 'parameters' => ['CollaborationActionCustom', 'CollaborationTypeIdentifier', 'CollaborationItemID']]], 'post_action_parameters' => ['Custom' => ['TypeIdentifer' => 'CollaborationTypeIdentifier', 'ItemID' => 'CollaborationItemID']], 'params' => []];
+$ViewList['view'] = ['script' => 'view.php', "default_navigation_part" => 'ezmynavigationpart', 'params' => ['ViewMode'], "unordered_params" => ["language" => "Language", "offset" => "Offset"]];
+$ViewList['item'] = ['script' => 'item.php', "default_navigation_part" => 'ezmynavigationpart', 'params' => ['ViewMode', 'ItemID'], "unordered_params" => ["language" => "Language", "offset" => "Offset"]];
+$ViewList['group'] = ['script' => 'group.php', "default_navigation_part" => 'ezmynavigationpart', 'params' => ['ViewMode', 'GroupID'], "unordered_params" => ["language" => "Language", "offset" => "Offset"]];
 
 ?>

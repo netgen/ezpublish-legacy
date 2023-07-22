@@ -43,7 +43,7 @@ if ( $http->hasPostVariable( 'RemoveButton' ) )
         $deletedSettingArray = $http->postVariable( 'RemoveSettingsArray' );
         foreach ( $deletedSettingArray as $deletedSetting )
         {
-            list( $block, $setting ) = explode( ':', $deletedSetting );
+            [$block, $setting] = explode( ':', (string) $deletedSetting );
 
             if ( is_array( $placements[$block][$setting] ) )
             {
@@ -59,7 +59,7 @@ if ( $http->hasPostVariable( 'RemoveButton' ) )
             }
 
             // Get extension name if exists, $placement might be "extension:ezdhtml"
-            $exploded = explode( ':', $placement );
+            $exploded = explode( ':', (string) $placement );
             $extension = ( $exploded[0] === 'extension' || $exploded[0] === 'ext-siteaccess' )
                         ? $exploded[1]
                         : false;
@@ -110,7 +110,7 @@ if ( $http->hasPostVariable( 'ChangeINIFile' ) or
 
     $blocks = $ini->groups();
     $placements = $ini->groupPlacements();
-    $settings = array();
+    $settings = [];
     $blockCount = 0;
     $totalSettingCount = 0;
 
@@ -128,8 +128,8 @@ if ( $http->hasPostVariable( 'ChangeINIFile' ) or
             switch ( $type )
             {
                 case 'array':
-                    if ( count( $settingKey ) == 0 )
-                        $settings[$block]['content'][$setting]['content'] = array();
+                    if ( (is_countable($settingKey) ? count( $settingKey ) : 0) == 0 )
+                        $settings[$block]['content'][$setting]['content'] = [];
 
                     foreach( $settingKey as $settingElementKey=>$settingElementValue )
                     {
@@ -138,7 +138,7 @@ if ( $http->hasPostVariable( 'ChangeINIFile' ) or
                         {
                             // Make a space after the ';' to make it possible for
                             // the browser to break long lines
-                            $settings[$block]['content'][$setting]['content'][$settingElementKey]['content'] = str_replace( ';', "; ", $settingElementValue );
+                            $settings[$block]['content'][$setting]['content'][$settingElementKey]['content'] = str_replace( ';', "; ", (string) $settingElementValue );
                         }
                         else
                         {
@@ -154,11 +154,11 @@ if ( $http->hasPostVariable( 'ChangeINIFile' ) or
                     }
                     break;
                 case 'string':
-                    if( strpos( $settingKey, ';' ) )
+                    if( strpos( (string) $settingKey, ';' ) )
                     {
                         // Make a space after the ';' to make it possible for
                         // the browser to break long lines
-                        $settingArray = str_replace( ';', "; ", $settingKey );
+                        $settingArray = str_replace( ';', "; ", (string) $settingKey );
                         $settings[$block]['content'][$setting]['content'] = $settingArray;
                     }
                     else
@@ -221,7 +221,7 @@ foreach ( eZINI::globalOverrideDirs() as $iniDataSet )
 }
 
 // extract all .ini files without path
-$iniFiles = preg_replace('%.*/%', '', $iniFiles );
+$iniFiles = preg_replace('%.*/%', '', (string) $iniFiles );
 // remove *.ini[.append.php] from file name
 $iniFiles = preg_replace('%\.ini.*%', '.ini', $iniFiles );
 sort( $iniFiles );
@@ -230,11 +230,8 @@ $tpl->setVariable( 'ini_files', array_unique( $iniFiles ) );
 $tpl->setVariable( 'siteaccess_list', $siteAccessList );
 $tpl->setVariable( 'current_siteaccess', $currentSiteAccess );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:settings/view.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'settings/view', 'Settings' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'settings/view', 'View' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'settings/view', 'Settings' ), 'url' => false], ['text' => ezpI18n::tr( 'settings/view', 'View' ), 'url' => false]];
 
 ?>

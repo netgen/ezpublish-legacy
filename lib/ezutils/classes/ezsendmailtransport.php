@@ -23,7 +23,7 @@ class eZSendmailTransport extends eZMailTransport
         $ini = eZINI::instance();
         $sendmailOptions = '';
         $emailFrom = $mail->sender();
-        $emailSender = isset( $emailFrom['email'] ) ? $emailFrom['email'] : false;
+        $emailSender = $emailFrom['email'] ?? false;
         if ( !$emailSender || ( is_countable( $emailSender ) && count( $emailSender) <= 0 ) )
             $emailSender = $ini->variable( 'MailSettings', 'EmailSender' );
         if ( !$emailSender )
@@ -43,7 +43,7 @@ class eZSendmailTransport extends eZMailTransport
         {
             $message = $mail->body();
             $sys = eZSys::instance();
-            $excludeHeaders = array( 'Subject' );
+            $excludeHeaders = ['Subject'];
             // If not Windows PHP mail() implementation, we can not specify a To: header in the $additional_headers parameter,
             // because then there will be 2 To: headers in the resulting e-mail.
             // However, we can use "undisclosed-recipients:;" in $to.
@@ -52,7 +52,7 @@ class eZSendmailTransport extends eZMailTransport
                 $excludeHeaders[] = 'To';
                 $insertUndisclosedRecipient = $ini->variable( 'MailSettings', 'SendmailInsertUndisclosedRecipient' );
                 $recipientText = $insertUndisclosedRecipient == 'disabled' ? '' : 'undisclosed-recipients:;';
-                $receiverEmailText = count( $mail->ReceiverElements ) > 0 ? $mail->receiverEmailText() : $recipientText;
+                $receiverEmailText = (is_countable($mail->ReceiverElements) ? count( $mail->ReceiverElements ) : 0) > 0 ? $mail->receiverEmailText() : $recipientText;
             }
             // If Windows PHP mail() implementation, we can specify a To: header in the $additional_headers parameter,
             // it will be used as the only To: header.
@@ -71,9 +71,9 @@ class eZSendmailTransport extends eZMailTransport
                 $excludeHeaders[] = 'Bcc';
             }
 
-            $extraHeaders = $mail->headerText( array( 'exclude-headers' => $excludeHeaders ) );
+            $extraHeaders = $mail->headerText( ['exclude-headers' => $excludeHeaders] );
 
-            $returnedValue = mail( $receiverEmailText, $mail->subject(), $message, $extraHeaders, $sendmailOptions );
+            $returnedValue = mail( (string) $receiverEmailText, (string) $mail->subject(), (string) $message, $extraHeaders, $sendmailOptions );
             if ( $returnedValue === false )
             {
                 eZDebug::writeError( 'An error occurred while sending e-mail. Check the Sendmail error message for further information (usually in /var/log/messages)',

@@ -17,16 +17,16 @@
 
 class eZMediaType extends eZDataType
 {
-    const DATA_TYPE_STRING = "ezmedia";
-    const MAX_FILESIZE_FIELD = 'data_int1';
-    const MAX_FILESIZE_VARIABLE = '_ezmedia_max_filesize_';
-    const TYPE_FIELD = "data_text1";
-    const TYPE_VARIABLE = "_ezmedia_type_";
+    final public const DATA_TYPE_STRING = "ezmedia";
+    final public const MAX_FILESIZE_FIELD = 'data_int1';
+    final public const MAX_FILESIZE_VARIABLE = '_ezmedia_max_filesize_';
+    final public const TYPE_FIELD = "data_text1";
+    final public const TYPE_VARIABLE = "_ezmedia_type_";
 
     public function __construct()
     {
         parent::__construct( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Media", 'Datatype name' ),
-                           array( 'serialize_supported' => true ) );
+                           ['serialize_supported' => true] );
         $this->FileExtensionBlackListValidator = new eZFileExtensionBlackListValidator();
     }
 
@@ -55,7 +55,7 @@ class eZMediaType extends eZDataType
             $media = eZMedia::create( $contentObjectAttributeID, $version );
 
             $contentClassAttribute = $contentObjectAttribute->contentClassAttribute();
-            $pluginPage = eZMediaType::pluginPage( $contentClassAttribute->attribute( 'data_text1' ) );
+            $pluginPage = (new eZMediaType())->pluginPage($contentClassAttribute->attribute( 'data_text1' ));
 
             $media->setAttribute( 'quality', 'high' );
             $media->setAttribute( 'pluginspage', $pluginPage );
@@ -76,14 +76,14 @@ class eZMediaType extends eZDataType
         if ( $version == null )
             $mediaFiles = eZMedia::fetch( $contentObjectAttributeID, null );
         else
-            $mediaFiles = array( eZMedia::fetch( $contentObjectAttributeID, $version ) );
+            $mediaFiles = [eZMedia::fetch( $contentObjectAttributeID, $version )];
 
         foreach ( $mediaFiles as $mediaFile )
         {
             if ( $mediaFile == null )
                 continue;
             $mimeType =  $mediaFile->attribute( "mime_type" );
-            list( $prefix, $suffix ) = explode( '/', $mimeType );
+            [$prefix, $suffix] = explode( '/', (string) $mimeType );
             $orig_dir = $storage_dir . '/original/' . $prefix;
             $fileName = $mediaFile->attribute( "filename" );
 
@@ -93,7 +93,7 @@ class eZMediaType extends eZDataType
             $filePath = $orig_dir . "/" . $fileName;
             $file = eZClusterFileHandler::instance( $filePath );
 
-            if ( $file->exists() and count( $mediaObjectsWithSameFileName ) <= 1 )
+            if ( $file->exists() and (is_countable($mediaObjectsWithSameFileName) ? count( $mediaObjectsWithSameFileName ) : 0) <= 1 )
             {
                 // create dest filename in the same manner as eZHTTPFile::store()
                 // grab file's suffix
@@ -102,9 +102,9 @@ class eZMediaType extends eZDataType
                 if ( $fileSuffix )
                     $fileSuffix = '.' . $fileSuffix;
                 // grab filename without suffix
-                $fileBaseName = basename( $fileName, $fileSuffix );
+                $fileBaseName = basename( (string) $fileName, $fileSuffix );
                 // create dest filename
-                $newFileName = md5( $fileBaseName . microtime() . mt_rand() ) . $fileSuffix;
+                $newFileName = md5( $fileBaseName . microtime() . random_int(0, mt_getrandmax()) ) . $fileSuffix;
                 $newFilePath = $orig_dir . "/" . $newFileName;
 
                 // rename the file, and update the database data
@@ -129,7 +129,7 @@ class eZMediaType extends eZDataType
             foreach ( $mediaFiles as $mediaFile )
             {
                 $mimeType =  $mediaFile->attribute( "mime_type" );
-                list( $prefix, $suffix ) = explode('/', $mimeType );
+                [$prefix, $suffix] = explode('/', (string) $mimeType );
 //                $orig_dir = "var/storage/original/" . $prefix;
                 $orig_dir = $storage_dir . '/original/' . $prefix;
                 $fileName = $mediaFile->attribute( "filename" );
@@ -151,7 +151,7 @@ class eZMediaType extends eZDataType
             {
                 $mimeType =  $currentBinaryFile->attribute( "mime_type" );
                 $currentFileName = $currentBinaryFile->attribute( "filename" );
-                list( $prefix, $suffix ) = is_string( $mimeType ) && $mimeType ? explode( '/', $mimeType ) : array( null, null );
+                [$prefix, $suffix] = is_string( $mimeType ) && $mimeType ? explode( '/', $mimeType ) : [null, null];
 //              $orig_dir = "var/storage/original/" . $prefix;
                 $orig_dir = $storage_dir . '/original/' . $prefix;
                 foreach ( $mediaFiles as $mediaFile )
@@ -247,10 +247,8 @@ class eZMediaType extends eZDataType
         {
             if ( empty( $GLOBALS['eZMediaTypeWarningAdded'] ) )
             {
-                eZAppendWarningItem( array( 'error' => array( 'type' => 'kernel',
-                                                              'number' => eZError::KERNEL_NOT_AVAILABLE ),
-                                            'text' => ezpI18n::tr( 'kernel/classes/datatypes',
-                                                              'File uploading is not enabled. Please contact the site administrator to enable it.' ) ) );
+                eZAppendWarningItem( ['error' => ['type' => 'kernel', 'number' => eZError::KERNEL_NOT_AVAILABLE], 'text' => ezpI18n::tr( 'kernel/classes/datatypes',
+                                  'File uploading is not enabled. Please contact the site administrator to enable it.' )] );
                 $GLOBALS['eZMediaTypeWarningAdded'] = true;
             }
         }
@@ -264,27 +262,14 @@ class eZMediaType extends eZDataType
     function pluginPage( $mediaType )
     {
         $pluginPage = '';
-        switch( $mediaType )
-        {
-            case 'flash':
-                $pluginPage = "http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash";
-            break;
-            case 'quick_time':
-                $pluginPage = "http://quicktime.apple.com";
-            break;
-            case 'real_player' :
-                $pluginPage = "http://www.real.com/";
-            break;
-            case 'silverlight':
-                $pluginPage = "http://go.microsoft.com/fwlink/?LinkID=108182";
-            break;
-            case 'windows_media_player' :
-                $pluginPage = "http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=6,4,7,1112" ;
-            break;
-            default:
-                $pluginPage = "";
-            break;
-        }
+        $pluginPage = match ($mediaType) {
+            'flash' => "http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash",
+            'quick_time' => "http://quicktime.apple.com",
+            'real_player' => "http://www.real.com/",
+            'silverlight' => "http://go.microsoft.com/fwlink/?LinkID=108182",
+            'windows_media_player' => "http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=6,4,7,1112",
+            default => "",
+        };
 
         return $pluginPage;
     }
@@ -295,7 +280,7 @@ class eZMediaType extends eZDataType
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
 
-        eZMediaType::checkFileUploads();
+        (new eZMediaType())->checkFileUploads();
 
         if ( $this->validateObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute ) !== eZInputValidator::STATE_ACCEPTED )
         {
@@ -304,7 +289,7 @@ class eZMediaType extends eZDataType
 
         $classAttribute = $contentObjectAttribute->contentClassAttribute();
         $player = $classAttribute->attribute( "data_text1" );
-        $pluginPage = eZMediaType::pluginPage( $player );
+        $pluginPage = (new eZMediaType())->pluginPage($player);
 
         $contentObjectAttributeID = $contentObjectAttribute->attribute( "id" );
         $version = $contentObjectAttribute->attribute( "version" );
@@ -367,7 +352,7 @@ class eZMediaType extends eZDataType
 
             $orig_dir = $mediaFile->storageDir( "original" );
             eZDebug::writeNotice( "dir=$orig_dir" );
-            $media->setAttribute( "filename", basename( $mediaFile->attribute( "filename" ) ) );
+            $media->setAttribute( "filename", basename( (string) $mediaFile->attribute( "filename" ) ) );
             $media->setAttribute( "original_filename", $mediaFile->attribute( "original_filename" ) );
             $media->setAttribute( "mime_type", $mime );
 
@@ -425,8 +410,7 @@ class eZMediaType extends eZDataType
                              $objectAttribute, $httpFile, $mimeData,
                              &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => false );
+        $result = ['errors' => [], 'require_storage' => false];
         $attributeID = $objectAttribute->attribute( 'id' );
 
         $media = eZMedia::fetch( $attributeID, $objectVersion );
@@ -436,19 +420,19 @@ class eZMediaType extends eZDataType
         $httpFile->setMimeType( $mimeData['name'] );
         if ( !$httpFile->store( "original", false, false ) )
         {
-            $result['errors'][] = array( 'description' => ezpI18n::tr( 'kernel/classes/datatypes/ezmedia',
+            $result['errors'][] = ['description' => ezpI18n::tr( 'kernel/classes/datatypes/ezmedia',
                                                         'Failed to store media file %filename. Please contact the site administrator.', null,
-                                                        array( '%filename' => $httpFile->attribute( "original_filename" ) ) ) );
+                                                        ['%filename' => $httpFile->attribute( "original_filename" )] )];
             return false;
         }
 
         $classAttribute = $objectAttribute->contentClassAttribute();
         $player = $classAttribute->attribute( "data_text1" );
-        $pluginPage = eZMediaType::pluginPage( $player );
+        $pluginPage = (new eZMediaType())->pluginPage($player);
 
         $media->setAttribute( "contentobject_attribute_id", $attributeID );
         $media->setAttribute( "version", $objectVersion );
-        $media->setAttribute( "filename", basename( $httpFile->attribute( "filename" ) ) );
+        $media->setAttribute( "filename", basename( (string) $httpFile->attribute( "filename" ) ) );
         $media->setAttribute( "original_filename", $httpFile->attribute( "original_filename" ) );
         $media->setAttribute( "mime_type", $mimeData['name'] );
 
@@ -493,18 +477,17 @@ class eZMediaType extends eZDataType
                                 $objectAttribute, $filePath,
                                 &$result )
     {
-        $result = array( 'errors' => array(),
-                         'require_storage' => false );
+        $result = ['errors' => [], 'require_storage' => false];
         $attributeID = $objectAttribute->attribute( 'id' );
 
         $media = eZMedia::fetch( $attributeID, $objectVersion );
         if ( $media === null )
             $media = eZMedia::create( $attributeID, $objectVersion );
 
-        $fileName = basename( $filePath );
+        $fileName = basename( (string) $filePath );
         $mimeData = eZMimeType::findByFileContents( $filePath );
         $storageDir = eZSys::storageDirectory();
-        list( $group, $type ) = explode( '/', $mimeData['name'] );
+        [$group, $type] = explode( '/', (string) $mimeData['name'] );
         $destination = $storageDir . '/original/' . $group;
 
         if ( !file_exists( $destination ) )
@@ -524,7 +507,7 @@ class eZMediaType extends eZDataType
         // grab filename without suffix
         $fileBaseName = basename( $fileName, $fileSuffix );
         // create dest filename
-        $destFileName = md5( $fileBaseName . microtime() . mt_rand() ) . $fileSuffix;
+        $destFileName = md5( $fileBaseName . microtime() . random_int(0, mt_getrandmax()) ) . $fileSuffix;
         $destination = $destination . '/' . $destFileName;
 
         copy( $filePath, $destination );
@@ -534,7 +517,7 @@ class eZMediaType extends eZDataType
 
         $classAttribute = $objectAttribute->contentClassAttribute();
         $player = $classAttribute->attribute( "data_text1" );
-        $pluginPage = eZMediaType::pluginPage( $player );
+        $pluginPage = (new eZMediaType())->pluginPage($player);
 
         $media->setAttribute( "contentobject_attribute_id", $attributeID );
         $media->setAttribute( "version", $objectVersion );
@@ -680,7 +663,7 @@ class eZMediaType extends eZDataType
 
         if ( is_object( $mediaFile ) )
         {
-            return implode( '|', array( $mediaFile->attribute( 'filepath' ), $mediaFile->attribute( 'original_filename' ) ) );
+            return implode( '|', [$mediaFile->attribute( 'filepath' ), $mediaFile->attribute( 'original_filename' )] );
         }
         else
             return '';
@@ -693,7 +676,7 @@ class eZMediaType extends eZDataType
         if( !$string )
             return true;
 
-        $result = array();
+        $result = [];
         return $this->insertRegularFile( $objectAttribute->attribute( 'object' ),
                                          $objectAttribute->attribute( 'version' ),
                                          $objectAttribute->attribute( 'language_code' ),
@@ -742,7 +725,7 @@ class eZMediaType extends eZDataType
             return $node;
         }
 
-        $fileKey = md5( mt_rand() );
+        $fileKey = md5( random_int(0, mt_getrandmax()) );
 
         $fileInfo = $mediaFile->storedFileInfo();
         $package->appendSimpleFile( $fileKey, $fileInfo['filepath'] );
@@ -784,7 +767,7 @@ class eZMediaType extends eZDataType
 
         $ini = eZINI::instance();
         $mimeType = $mediaNode->getAttribute( 'mime-type' );
-        list( $mimeTypeCategory, $mimeTypeName ) = explode( '/', $mimeType );
+        [$mimeTypeCategory, $mimeTypeName] = explode( '/', (string) $mimeType );
         $destinationPath = eZSys::storageDirectory() . '/original/' . $mimeTypeCategory . '/';
         if ( !file_exists( $destinationPath ) )
         {
@@ -794,10 +777,10 @@ class eZMediaType extends eZDataType
             }
         }
 
-        $basename = basename( $mediaNode->getAttribute( 'filename' ) );
+        $basename = basename( (string) $mediaNode->getAttribute( 'filename' ) );
         while ( file_exists( $destinationPath . $basename ) )
         {
-            $basename = substr( md5( mt_rand() ), 0, 8 ) . '.' . eZFile::suffix( $mediaNode->getAttribute( 'filename' ) );
+            $basename = substr( md5( random_int(0, mt_getrandmax()) ), 0, 8 ) . '.' . eZFile::suffix( $mediaNode->getAttribute( 'filename' ) );
         }
 
         eZFileHandler::copy( $sourcePath, $destinationPath . $basename );
@@ -830,7 +813,7 @@ class eZMediaType extends eZDataType
 
     /// \privatesection
     /// The file extension blacklist validator
-    private $FileExtensionBlackListValidator;
+    private readonly \eZFileExtensionBlackListValidator $FileExtensionBlackListValidator;
 }
 
 eZDataType::register( eZMediaType::DATA_TYPE_STRING, "eZMediaType" );

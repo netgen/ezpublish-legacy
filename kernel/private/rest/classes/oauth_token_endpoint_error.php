@@ -10,23 +10,18 @@
 
 class ezpOauthTokenEndpointErrorType
 {
-    const INVALID_REQUEST = "invalid_request";
-    const INVALID_CLIENT = "invalid_client";
-    const UNAUTHORIZED_CLIENT = "unauthorized_client";
-    const INVALID_GRANT = "invalid_grant";
-    const UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
-    const INVALID_SCOPE = "invalid_scope";
+    final public const INVALID_REQUEST = "invalid_request";
+    final public const INVALID_CLIENT = "invalid_client";
+    final public const UNAUTHORIZED_CLIENT = "unauthorized_client";
+    final public const INVALID_GRANT = "invalid_grant";
+    final public const UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
+    final public const INVALID_SCOPE = "invalid_scope";
 
     public static function httpCodeForError( $error )
     {
-        switch ( $error )
-        {
-            case self::UNAUTHORIZED_CLIENT:
-                return ezpHttpResponseCodes::UNAUTHORIZED;
-                break;
-            default:
-                return ezpHttpResponseCodes::BAD_REQUEST;
-                break;
-        }
+        return match ($error) {
+            self::UNAUTHORIZED_CLIENT => ezpHttpResponseCodes::UNAUTHORIZED,
+            default => ezpHttpResponseCodes::BAD_REQUEST,
+        };
     }
 }

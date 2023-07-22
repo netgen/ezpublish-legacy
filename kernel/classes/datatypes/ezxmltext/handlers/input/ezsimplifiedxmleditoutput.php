@@ -11,60 +11,7 @@
 // if ( !class_exists( 'eZXMLSchema' ) )
 class eZSimplifiedXMLEditOutput
 {
-    public $OutputTags = array(
-
-        'section'      => array( 'handler' => 'outputSection' ),
-
-        'embed'        => array( 'handler' => 'outputEmbed',
-                                 'attributes' => array( 'xhtml:id' => 'id',
-                                                       'object_id' => false,
-                                                       'node_id' => false,
-                                                       'show_path' => false ),
-                                 'isSingle' => true ),
-
-        'embed-inline' => array( 'handler' => 'outputEmbed',
-                                 'attributes' => array( 'xhtml:id' => 'id',
-                                                       'object_id' => false,
-                                                       'node_id' => false,
-                                                       'show_path' => false ),
-                                 'isSingle' => true ),
-
-        'object'       => array( 'handler' => 'outputObject',
-                                 'attributes' => array( 'xhtml:id' => 'id',
-                                                       'image:ezurl_target' => 'target',
-                                                       'image:ezurl_href' => 'href',
-                                                       'image:ezurl_id' => false ),
-                                 'isSingle' => true ),
-
-        'td'           => array( 'handler' => 'outputTd',
-                                 'attributes' => array( 'xhtml:width' => 'width',
-                                                       'xhtml:colspan' => 'colspan',
-                                                       'xhtml:rowspan' => 'rowspan' ) ),
-
-        'th'           => array( 'handler' => 'outputTd',
-                                 'attributes' => array( 'xhtml:width' => 'width',
-                                                       'xhtml:colspan' => 'colspan',
-                                                       'xhtml:rowspan' => 'rowspan' ) ),
-
-        'header'       => array( 'handler' => 'outputHeader' ),
-
-        'paragraph'    => array( 'handler' => 'outputParagraph' ),
-
-        'line'         => array( 'handler' => 'outputLine' ),
-
-        'link'         => array( 'handler' => 'outputLink',
-                                 'attributes' => array( 'xhtml:id' => 'id',
-                                                        'xhtml:title' => 'title',
-                                                        'url_id' => false,
-                                                        'object_id' => false,
-                                                        'node_id' => false,
-                                                        'show_path' => false,
-                                                        'ezurl_id' => false,
-                                                        'anchor_name' => false ) ),
-        'anchor'       => array( 'isSingle' => true ),
-
-        '#text'        => array( 'handler' => 'outputText' )
-        );
+    public $OutputTags = ['section'      => ['handler' => 'outputSection'], 'embed'        => ['handler' => 'outputEmbed', 'attributes' => ['xhtml:id' => 'id', 'object_id' => false, 'node_id' => false, 'show_path' => false], 'isSingle' => true], 'embed-inline' => ['handler' => 'outputEmbed', 'attributes' => ['xhtml:id' => 'id', 'object_id' => false, 'node_id' => false, 'show_path' => false], 'isSingle' => true], 'object'       => ['handler' => 'outputObject', 'attributes' => ['xhtml:id' => 'id', 'image:ezurl_target' => 'target', 'image:ezurl_href' => 'href', 'image:ezurl_id' => false], 'isSingle' => true], 'td'           => ['handler' => 'outputTd', 'attributes' => ['xhtml:width' => 'width', 'xhtml:colspan' => 'colspan', 'xhtml:rowspan' => 'rowspan']], 'th'           => ['handler' => 'outputTd', 'attributes' => ['xhtml:width' => 'width', 'xhtml:colspan' => 'colspan', 'xhtml:rowspan' => 'rowspan']], 'header'       => ['handler' => 'outputHeader'], 'paragraph'    => ['handler' => 'outputParagraph'], 'line'         => ['handler' => 'outputLine'], 'link'         => ['handler' => 'outputLink', 'attributes' => ['xhtml:id' => 'id', 'xhtml:title' => 'title', 'url_id' => false, 'object_id' => false, 'node_id' => false, 'show_path' => false, 'ezurl_id' => false, 'anchor_name' => false]], 'anchor'       => ['isSingle' => true], '#text'        => ['handler' => 'outputText']];
 
     // Call this function to obtain edit output string
 
@@ -101,7 +48,7 @@ class eZSimplifiedXMLEditOutput
 
         // Prepare attributes array
 
-        $attributes = array();
+        $attributes = [];
 
         if ( $element->hasAttributes() )
         {
@@ -290,10 +237,10 @@ class eZSimplifiedXMLEditOutput
         $thisOutputTag = $this->OutputTags[$element->nodeName];
         if ( isset( $thisOutputTag[$handlerName] ) )
         {
-            if ( is_callable( array( $this, $thisOutputTag[$handlerName] ) ) )
+            if ( is_callable( [$this, $thisOutputTag[$handlerName]] ) )
             {
-                $result = call_user_func_array( array( $this, $thisOutputTag[$handlerName] ),
-                                                array( $element, &$params, &$sectionLevel ) );
+                $result = call_user_func_array( [$this, $thisOutputTag[$handlerName]],
+                                                [$element, &$params, &$sectionLevel] );
             }
             else
             {
@@ -320,7 +267,7 @@ class eZSimplifiedXMLEditOutput
 
         if ( $element->parentNode->nodeName != 'literal' )
         {
-            $text = htmlspecialchars( $text );
+            $text = htmlspecialchars( (string) $text );
             $text = str_replace ( '&amp;nbsp;', '&nbsp;', $text);
             $text = str_replace( "\n", '', $text );
         }
@@ -346,7 +293,7 @@ class eZSimplifiedXMLEditOutput
     function outputParagraph( $element, &$attributes, &$sectionLevel )
     {
         $ret = null;
-        if ( count( $attributes ) == 0 )
+        if ( (is_countable($attributes) ? count( $attributes ) : 0) == 0 )
         {
             $next = $element->nextSibling;
             if ( $next )
@@ -387,9 +334,9 @@ class eZSimplifiedXMLEditOutput
     {
         $ret = null;
         $href = '';
-        $objectID = isset( $attributes['object_id'] ) ? $attributes['object_id'] : null;
-        $nodeID = isset( $attributes['node_id'] ) ? $attributes['node_id'] : null;
-        $showPath = isset( $attributes['show_path'] ) ? $attributes['show_path'] : null;
+        $objectID = $attributes['object_id'] ?? null;
+        $nodeID = $attributes['node_id'] ?? null;
+        $showPath = $attributes['show_path'] ?? null;
         if ( $objectID )
         {
             $href = 'ezobject://' .$objectID;
@@ -421,11 +368,11 @@ class eZSimplifiedXMLEditOutput
     {
         $ret = null;
         $href = '';
-        $linkID = isset( $attributes['url_id'] ) ? $attributes['url_id'] : null;
-        $objectID = isset( $attributes['object_id'] ) ? $attributes['object_id'] : null;
-        $nodeID = isset( $attributes['node_id'] ) ? $attributes['node_id'] : null;
-        $anchorName = isset( $attributes['anchor_name'] ) ? $attributes['anchor_name'] : null;
-        $showPath = isset( $attributes['show_path'] ) ? $attributes['show_path'] : null;
+        $linkID = $attributes['url_id'] ?? null;
+        $objectID = $attributes['object_id'] ?? null;
+        $nodeID = $attributes['node_id'] ?? null;
+        $anchorName = $attributes['anchor_name'] ?? null;
+        $showPath = $attributes['show_path'] ?? null;
 
         if ( $objectID )
         {
@@ -442,7 +389,7 @@ class eZSimplifiedXMLEditOutput
         }
         else
         {
-            $href = isset( $attributes['href'] ) ? $attributes['href'] : '';
+            $href = $attributes['href'] ?? '';
         }
 
         if ( $anchorName != null )
@@ -477,8 +424,8 @@ class eZSimplifiedXMLEditOutput
     */
     function createLinksArray( $dom )
     {
-        $links = array();
-        $node = array();
+        $links = [];
+        $node = [];
 
         if ( $dom )
         {
@@ -486,7 +433,7 @@ class eZSimplifiedXMLEditOutput
             $links = $dom->getElementsByTagName( "link" );
         }
 
-        $linkIDArray = array();
+        $linkIDArray = [];
         // Find all Link id's
         foreach ( $links as $link )
         {
@@ -518,6 +465,6 @@ class eZSimplifiedXMLEditOutput
     public $NestingLevel = 0;
 
     // Contains all links hashed by ID
-    public $LinkArray = array();
+    public $LinkArray = [];
 }
 ?>

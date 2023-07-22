@@ -15,7 +15,7 @@ $ini = eZINI::instance( 'content.ini' );
 $internalDraftsCleanUpLimit = $ini->hasVariable( 'VersionManagement', 'InternalDraftsCleanUpLimit' ) ?
                                  $ini->variable( 'VersionManagement', 'InternalDraftsCleanUpLimit' ) : 0;
 $durationSetting = $ini->hasVariable( 'VersionManagement', 'InternalDraftsDuration' ) ?
-                      $ini->variable( 'VersionManagement', 'InternalDraftsDuration' ) : array( 'hours' => 24 ); // by default, only remove drafts older than 1 day
+                      $ini->variable( 'VersionManagement', 'InternalDraftsDuration' ) : ['hours' => 24]; // by default, only remove drafts older than 1 day
 
 $isDurationSet = false;
 $duration = 0;

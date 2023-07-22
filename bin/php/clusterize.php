@@ -26,7 +26,7 @@ require_once 'autoload.php';
 function filePathForBinaryFile($fileName, $mimeType )
 {
     $storageDir = eZSys::storageDirectory();
-    list( $group, $type ) = explode( '/', $mimeType );
+    [$group, $type] = explode( '/', (string) $mimeType );
     $filePath = $storageDir . '/original/' . $group . '/' . $fileName;
     return $filePath;
 }
@@ -96,7 +96,7 @@ function copyFilesFromDB( $excludeScopes, $remove )
     foreach ( $filePathList as $filePath )
     {
         $cli->output( "- " . $filePath );
-        eZDir::mkdir( dirname( $filePath ), false, true );
+        eZDir::mkdir( dirname( (string) $filePath ), false, true );
         $fileHandler->fileFetch( $filePath );
 
         if ( $remove )
@@ -107,25 +107,17 @@ function copyFilesFromDB( $excludeScopes, $remove )
 }
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish (un)clusterize\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish (un)clusterize\n" .
                                                         "Script for moving var_dir files from " .
                                                         "filesystem to database and vice versa\n" .
                                                         "\n" .
-                                                        "./bin/php/clusterize.php" ),
-                                     'use-session'    => false,
-                                     'use-modules'    => false,
-                                     'use-extensions' => true ) );
+                                                        "./bin/php/clusterize.php" ), 'use-session'    => false, 'use-modules'    => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[u][skip-binary-files][skip-media-files][skip-images][r][n]",
                                 "",
-                                array( 'u'                 => 'Unclusterize',
-                                       'skip-binary-files' => 'Skip copying binary files',
-                                       'skip-media-files'  => 'Skip copying media files',
-                                       'skip-images'       => 'Skip copying images',
-                                       'r'                 => 'Remove files after copying',
-                                       'n'                 => 'Do not wait' ) );
+                                ['u'                 => 'Unclusterize', 'skip-binary-files' => 'Skip copying binary files', 'skip-media-files'  => 'Skip copying media files', 'skip-images'       => 'Skip copying images', 'r'                 => 'Remove files after copying', 'n'                 => 'Do not wait'] );
 
 $script->initialize();
 
@@ -156,7 +148,7 @@ if ( !is_object( $fileHandler ) )
 // configured handler
 elseif ( !$fileHandler->requiresClusterizing() )
 {
-    $message = "The current cluster handler (" . get_class( $fileHandler ) . ") " .
+    $message = "The current cluster handler (" . $fileHandler::class . ") " .
                "doesn't require/support running this script";
     $cli->output( $message );
     $script->shutdown( 0 );
@@ -175,7 +167,7 @@ if ( $clusterize )
 // unclusterize, from cluster => FS
 else
 {
-    $excludeScopes = array();
+    $excludeScopes = [];
     if ( !$copyFiles )
         $excludeScopes[] = 'binaryfile';
     if ( !$copyImages )

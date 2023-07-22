@@ -16,7 +16,7 @@ class ezpLanguageSwitcherOperator
 
     function operatorList()
     {
-        return array( 'language_switcher' );
+        return ['language_switcher'];
     }
 
     function namedParameterPerOperator()
@@ -26,9 +26,7 @@ class ezpLanguageSwitcherOperator
 
     function namedParameterList()
     {
-        return array( 'language_switcher' => array( 'destination' => array( 'type' => 'string',
-                                                                            'required' => false,
-                                                                            'default' => '' ) ) );
+        return ['language_switcher' => ['destination' => ['type' => 'string', 'required' => false, 'default' => '']]];
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters, $placement )
@@ -46,11 +44,11 @@ class ezpLanguageSwitcherOperator
                 }
 
                 // Append original query string if no query string has already been passed in $destination
-                if ( strpos( $destination, '?' ) === false )
+                if ( !str_contains( (string) $destination, '?' ) )
                     $destination .= eZSys::queryString();
 
                 $className = $ini->variable( 'RegionalSettings', 'LanguageSwitcherClass' );
-                $operatorValue = call_user_func( array( $className, 'setupTranslationSAList' ), $destination );
+                $operatorValue = call_user_func( [$className, 'setupTranslationSAList'], $destination );
             } break;
         }
     }

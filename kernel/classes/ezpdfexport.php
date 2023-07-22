@@ -17,96 +17,15 @@
 
 class eZPDFExport extends eZPersistentObject
 {
-    const VERSION_VALID = 0;
-    const VERSION_DRAFT = 1;
+    final public const VERSION_VALID = 0;
+    final public const VERSION_DRAFT = 1;
 
-    const CREATE_ONCE = 1;
-    const CREATE_ONFLY = 2;
+    final public const CREATE_ONCE = 1;
+    final public const CREATE_ONFLY = 2;
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         'title' => array( 'name' => 'Title',
-                                                           'datatype' => 'string',
-                                                           'default' => ezpI18n::tr( 'kernel/pdfexport', 'New PDF Export' ),
-                                                           'required' => true ),
-                                         'show_frontpage' => array( 'name' => 'DisplayFrontpage',
-                                                                       'datatype' => 'integer',
-                                                                       'default' => 1,
-                                                                       'required' => true ),
-                                         'intro_text' => array( 'name' => 'IntroText',
-                                                                'datatype' => 'text',
-                                                                'default' => '',
-                                                                'required' => false ),
-                                         'sub_text' => array( 'name' => 'SubText',
-                                                              'datatype' => 'text',
-                                                              'default' => '',
-                                                              'required' => false ),
-                                         'source_node_id' => array( 'name' => 'SourceNodeID',
-                                                                    'datatype' => 'int',
-                                                                    'default' => '',
-                                                                    'required' => true,
-                                                                    'foreign_class' => 'eZContentObjectTreeNode',
-                                                                    'foreign_attribute' => 'node_id',
-                                                                    'multiplicity' => '1..*' ),
-                                         'site_access' => array( 'name' => 'SiteAccess',
-                                                                 'datatype' => 'string',
-                                                                 'default' => '',
-                                                                 'required' => true ),
-                                         'modified' => array( 'name' => 'Modified',
-                                                              'datatype' => 'integer',
-                                                              'default' => 0,
-                                                              'required' => true ),
-                                         'modifier_id' => array( 'name' => 'ModifierID',
-                                                                 'datatype' => 'integer',
-                                                                 'default' => 0,
-                                                                 'required' => true,
-                                                                 'foreign_class' => 'eZUser',
-                                                                 'foreign_attribute' => 'contentobject_id',
-                                                                 'multiplicity' => '1..*' ),
-                                         'created' => array( 'name' => 'Created',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'creator_id' => array( 'name' => 'CreatorID',
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true,
-                                                                'foreign_class' => 'eZUser',
-                                                                'foreign_attribute' => 'contentobject_id',
-                                                                'multiplicity' => '1..*' ),
-                                         'export_structure' => array( 'name' => 'ExportStructure',
-                                                                      'datatype' => 'string',
-                                                                      'default' => 'tree',
-                                                                      'required' => false ),
-                                         'export_classes' => array( 'name' => 'ExportClasses',
-                                                                    'datatype' => 'string',
-                                                                    'default' => 0,
-                                                                    'required' => false ),
-                                         'pdf_filename' => array( 'name' => 'PDFFileName',
-                                                                   'datatype' => 'string',
-                                                                   'default' => 'file.pdf',
-                                                                   'required' => true ),
-                                         'status' => array( 'name' => 'Status',
-                                                            'datatype' => 'integer',
-                                                            'default' => eZPDFExport::CREATE_ONCE,
-                                                            'required' => true ),
-                                         'version' => array( 'name' => 'Version',
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ) ),
-                      'keys' => array( 'id', 'version' ),
-                      'function_attributes' => array ( 'modifier' => 'modifier',
-                                                       'source_node' => 'sourceNode',
-                                                       'filepath' => 'filepath',
-                                                       'export_classes_array' => 'exportClassesArray' ),
-                      'increment_key' => 'id',
-                      'sort' => array( 'title' => 'asc' ),
-                      'class_name' => 'eZPDFExport',
-                      'name' => 'ezpdf_export' );
+        return ['fields' => ['id' => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'title' => ['name' => 'Title', 'datatype' => 'string', 'default' => ezpI18n::tr( 'kernel/pdfexport', 'New PDF Export' ), 'required' => true], 'show_frontpage' => ['name' => 'DisplayFrontpage', 'datatype' => 'integer', 'default' => 1, 'required' => true], 'intro_text' => ['name' => 'IntroText', 'datatype' => 'text', 'default' => '', 'required' => false], 'sub_text' => ['name' => 'SubText', 'datatype' => 'text', 'default' => '', 'required' => false], 'source_node_id' => ['name' => 'SourceNodeID', 'datatype' => 'int', 'default' => '', 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*'], 'site_access' => ['name' => 'SiteAccess', 'datatype' => 'string', 'default' => '', 'required' => true], 'modified' => ['name' => 'Modified', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'modifier_id' => ['name' => 'ModifierID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'created' => ['name' => 'Created', 'datatype' => 'integer', 'default' => 0, 'required' => true], 'creator_id' => ['name' => 'CreatorID', 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], 'export_structure' => ['name' => 'ExportStructure', 'datatype' => 'string', 'default' => 'tree', 'required' => false], 'export_classes' => ['name' => 'ExportClasses', 'datatype' => 'string', 'default' => 0, 'required' => false], 'pdf_filename' => ['name' => 'PDFFileName', 'datatype' => 'string', 'default' => 'file.pdf', 'required' => true], 'status' => ['name' => 'Status', 'datatype' => 'integer', 'default' => eZPDFExport::CREATE_ONCE, 'required' => true], 'version' => ['name' => 'Version', 'datatype' => 'integer', 'default' => 0, 'required' => true]], 'keys' => ['id', 'version'], 'function_attributes' => ['modifier' => 'modifier', 'source_node' => 'sourceNode', 'filepath' => 'filepath', 'export_classes_array' => 'exportClassesArray'], 'increment_key' => 'id', 'sort' => ['title' => 'asc'], 'class_name' => 'eZPDFExport', 'name' => 'ezpdf_export'];
     }
 
     /*!
@@ -118,22 +37,7 @@ class eZPDFExport extends eZPersistentObject
     {
         $config = eZINI::instance( 'site.ini' );
         $dateTime = time();
-        $row = array( 'id' => null,
-                      'title' => ezpI18n::tr( 'kernel/pdfexport', 'New PDF Export' ),
-                      'show_frontpage' => 1,
-                      'intro_text' => '',
-                      'sub_text' => '',
-                      'source_node_id' => 0,
-                      'export_structure' => 'tree',
-                      'export_classes' => '',
-                      'site_access' => '',
-                      'pdf_filename' => 'file.pdf',
-                      'modifier_id' => $user_id,
-                      'modified' => $dateTime,
-                      'creator_id' => $user_id,
-                      'created' => $dateTime,
-                      'status' => 0,
-                      'version' => 1 );
+        $row = ['id' => null, 'title' => ezpI18n::tr( 'kernel/pdfexport', 'New PDF Export' ), 'show_frontpage' => 1, 'intro_text' => '', 'sub_text' => '', 'source_node_id' => 0, 'export_structure' => 'tree', 'export_classes' => '', 'site_access' => '', 'pdf_filename' => 'file.pdf', 'modifier_id' => $user_id, 'modified' => $dateTime, 'creator_id' => $user_id, 'created' => $dateTime, 'status' => 0, 'version' => 1];
         return new eZPDFExport( $row );
     }
 
@@ -175,8 +79,7 @@ class eZPDFExport extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZPDFExport::definition(),
                                                 null,
-                                                array( 'id' => $id,
-                                                       'version' => $version ),
+                                                ['id' => $id, 'version' => $version],
                                                 $asObject );
     }
 
@@ -208,7 +111,7 @@ class eZPDFExport extends eZPersistentObject
     {
         return eZPersistentObject::fetchObjectList( eZPDFExport::definition(),
                                                     null,
-                                                    array( 'version' => eZPDFExport::VERSION_VALID ),
+                                                    ['version' => eZPDFExport::VERSION_VALID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -243,30 +146,27 @@ class eZPDFExport extends eZPersistentObject
 
     function exportClassesArray()
     {
-        return explode( ':',  $this->attribute( 'export_classes' ) );
+        return explode( ':',  (string) $this->attribute( 'export_classes' ) );
     }
 
     function countGeneratingOnceExports( $filename = '' )
     {
-        $conditions = array( 'version' => eZPDFExport::VERSION_VALID,
-                             'status' =>  eZPDFExport::CREATE_ONCE,
-                             'pdf_filename' => $filename );
+        $conditions = ['version' => eZPDFExport::VERSION_VALID, 'status' =>  eZPDFExport::CREATE_ONCE, 'pdf_filename' => $filename];
 
         if ( $filename === '' && isset( $this ) )
         {
             $conditions['pdf_filename'] = $this->attribute( 'pdf_filename' );
-            $conditions['id'] = array( '<>', $this->attribute( 'id' ) );
+            $conditions['id'] = ['<>', $this->attribute( 'id' )];
         }
 
         $queryResult = eZPersistentObject::fetchObjectList( eZPDFExport::definition(),
-                                                            array(),
+                                                            [],
                                                             $conditions,
                                                             false,
                                                             null,
                                                             false,
                                                             null,
-                                                            array( array( 'operation' => 'count( * )',
-                                                                          'name' => 'count' ) ) );
+                                                            [['operation' => 'count( * )', 'name' => 'count']] );
         if ( isset( $queryResult[0]['count'] ) )
         {
             return ( int ) $queryResult[0]['count'];

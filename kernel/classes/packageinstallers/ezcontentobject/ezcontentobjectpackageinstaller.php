@@ -25,22 +25,10 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
      */
     public function __construct( $package, $type, $installItem )
     {
-        $steps = array();
-        $steps[] = array( 'id' => 'site_access',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Site access mapping' ),
-                          'methods' => array( 'initialize' => 'initializeSiteAccess',
-                                              'validate' => 'validateSiteAccess' ),
-                          'template' => 'site_access.tpl' );
-        $steps[] = array( 'id' => 'top_nodes',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Top node placements' ),
-                          'methods' => array( 'initialize' => 'initializeTopNodes',
-                                              'validate' => 'validateTopNodes' ),
-                          'template' => 'top_nodes.tpl' );
-        $steps[] = array( 'id' => 'advanced_options',
-                          'name' => ezpI18n::tr( 'kernel/package', 'Advanced options' ),
-                          'methods' => array( 'initialize' => 'initializeAdvancedOptions',
-                                              'validate' => 'validateAdvancedOptions' ),
-                          'template' => 'advanced_options.tpl' );
+        $steps = [];
+        $steps[] = ['id' => 'site_access', 'name' => ezpI18n::tr( 'kernel/package', 'Site access mapping' ), 'methods' => ['initialize' => 'initializeSiteAccess', 'validate' => 'validateSiteAccess'], 'template' => 'site_access.tpl'];
+        $steps[] = ['id' => 'top_nodes', 'name' => ezpI18n::tr( 'kernel/package', 'Top node placements' ), 'methods' => ['initialize' => 'initializeTopNodes', 'validate' => 'validateTopNodes'], 'template' => 'top_nodes.tpl'];
+        $steps[] = ['id' => 'advanced_options', 'name' => ezpI18n::tr( 'kernel/package', 'Advanced options' ), 'methods' => ['initialize' => 'initializeAdvancedOptions', 'validate' => 'validateAdvancedOptions'], 'template' => 'advanced_options.tpl'];
         parent::__construct(
             $package, $type, $installItem, ezpI18n::tr( 'kernel/package', 'Content object import' ), $steps
         );
@@ -69,7 +57,7 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
 
         if ( !isset( $persistentData['site_access_map'] ) )
         {
-            $persistentData['site_access_map'] = array();
+            $persistentData['site_access_map'] = [];
             $persistentData['site_access_available'] = $availableSiteAccessArray;
             $rootDOMNode = $this->rootDOMNode();
             $siteAccessListNode = $rootDOMNode->getElementsByTagName( 'site-access-list' )->item( 0 );
@@ -111,7 +99,7 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
     {
         if ( !isset( $persistentData['top_nodes_map'] ) )
         {
-            $persistentData['top_nodes_map'] = array();
+            $persistentData['top_nodes_map'] = [];
             $rootDOMNode = $this->rootDOMNode();
             $topNodeListNode = $rootDOMNode->getElementsByTagName( 'top-node-list' )->item( 0 );
 
@@ -121,10 +109,7 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
             $defaultPlacementName = $defaultPlacementNode->attribute( 'name' );
             foreach ( $topNodeListNode->getElementsByTagName( 'top-node' ) as $topNodeDOMNode )
             {
-                $persistentData['top_nodes_map'][(string)$topNodeDOMNode->getAttribute( 'node-id' )] = array( 'old_node_id' => $topNodeDOMNode->getAttribute( 'node-id' ),
-                                                                                                                'name' => $topNodeDOMNode->textContent,
-                                                                                                                'new_node_id' => $defaultPlacementNodeID,
-                                                                                                                'new_parent_name' => $defaultPlacementName );
+                $persistentData['top_nodes_map'][(string)$topNodeDOMNode->getAttribute( 'node-id' )] = ['old_node_id' => $topNodeDOMNode->getAttribute( 'node-id' ), 'name' => $topNodeDOMNode->textContent, 'new_node_id' => $defaultPlacementNodeID, 'new_parent_name' => $defaultPlacementName];
             }
         }
 
@@ -132,14 +117,8 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
         {
             if ( $http->hasPostVariable( 'BrowseNode_' . $topNodeArrayKey ) )
             {
-                eZContentBrowse::browse( array( 'action_name' => 'SelectObjectRelationNode',
-                                                'description_template' => 'design:package/installers/ezcontentobject/browse_topnode.tpl',
-                                                'from_page' => '/package/install',
-                                                'persistent_data' => array( 'PackageStep' => $http->postVariable( 'PackageStep' ),
-                                                                            'InstallerType' => $http->postVariable( 'InstallerType' ),
-                                                                            'InstallStepID' => $http->postVariable( 'InstallStepID' ),
-                                                                            'ReturnBrowse_' . $topNodeArrayKey => 1 ) ),
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         ['action_name' => 'SelectObjectRelationNode', 'description_template' => 'design:package/installers/ezcontentobject/browse_topnode.tpl', 'from_page' => '/package/install', 'persistent_data' => ['PackageStep' => $http->postVariable( 'PackageStep' ), 'InstallerType' => $http->postVariable( 'InstallerType' ), 'InstallStepID' => $http->postVariable( 'InstallStepID' ), 'ReturnBrowse_' . $topNodeArrayKey => 1]] );
             }
             else if ( $http->hasPostVariable( 'ReturnBrowse_' . $topNodeArrayKey ) && !$http->hasPostVariable( 'BrowseCancelButton' ) )
             {
@@ -163,8 +142,7 @@ class eZContentObjectPackageInstaller extends eZPackageInstallationHandler
         {
             if ( $persistentData['top_nodes_map'][$topNodeArrayKey]['new_node_id'] === false )
             {
-                $errorList[] = array( 'field' => ezpI18n::tr( 'kernel/package', 'Select parent nodes' ),
-                                      'description' => ezpI18n::tr( 'kernel/package', 'You must assign all nodes to new parent nodes.' ) );
+                $errorList[] = ['field' => ezpI18n::tr( 'kernel/package', 'Select parent nodes' ), 'description' => ezpI18n::tr( 'kernel/package', 'You must assign all nodes to new parent nodes.' )];
                 $validate = false;
                 break;
             }

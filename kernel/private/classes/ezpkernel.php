@@ -15,16 +15,11 @@
 class ezpKernel implements ezpWebBasedKernelHandler
 {
     /**
-     * @var ezpKernelHandler
-     */
-    private $kernelHandler;
-
-    /**
      * @var ezpKernel
      */
     protected static $instance = null;
 
-    public function __construct( ezpKernelHandler $kernelHandler )
+    public function __construct( private readonly ezpKernelHandler $kernelHandler )
     {
         /**
          * PHP 5.3.3 is our hard requirement
@@ -37,8 +32,6 @@ class ezpKernel implements ezpWebBasedKernelHandler
             "<a href=\"http://ez.no/\" >us, eZ Systems, on http://ez.no</a>. See you there :-)</p>";
             exit;
         }
-
-        $this->kernelHandler = $kernelHandler;
         self::$instance = $this;
     }
 
@@ -141,7 +134,7 @@ class ezpKernel implements ezpWebBasedKernelHandler
         {
             throw new LogicException(
                 'Cannot return the instance of '
-                . __CLASS__
+                . self::class
                 . ', it has not been instantiated'
             );
         }

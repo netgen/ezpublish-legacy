@@ -44,13 +44,13 @@ else if ( $currentAction == 'Store' )
 {
     $state->fetchHTTPPersistentVariables();
 
-    $messages = array();
+    $messages = [];
     $isValid = $state->isValid( $messages );
 
     if ( $isValid )
     {
         $state->store();
-        ezpEvent::getInstance()->notify( 'content/state/cache', array( $state->attribute( 'id' ) ) );
+        ezpEvent::getInstance()->notify( 'content/state/cache', [$state->attribute( 'id' )] );
         return $Module->redirectTo( $redirectUrl );
     }
 
@@ -63,25 +63,13 @@ $tpl->setVariable( 'group', $group );
 
 if ( $StateIdentifier === null )
 {
-    $path = array(
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'New' ) ),
-        array( 'url' => false, 'text' => $GroupIdentifier )
-    );
+    $path = [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'New' )], ['url' => false, 'text' => $GroupIdentifier]];
 }
 else
 {
-    $path = array(
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' ) ),
-        array( 'url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Edit' ) ),
-        array( 'url' => false, 'text' => $GroupIdentifier ),
-        array( 'url' => false, 'text' => $StateIdentifier ),
-    );
+    $path = [['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'State' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/state', 'Edit' )], ['url' => false, 'text' => $GroupIdentifier], ['url' => false, 'text' => $StateIdentifier]];
 }
 
-$Result = array(
-    'path' => $path,
-    'content' => $tpl->fetch( 'design:state/edit.tpl' )
-);
+$Result = ['path' => $path, 'content' => $tpl->fetch( 'design:state/edit.tpl' )];
 
 ?>

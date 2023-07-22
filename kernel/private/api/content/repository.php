@@ -17,14 +17,13 @@ class ezpContentRepository
     /**
      * Runs a content repository query using a given set of criteria
      *
-     * @param ezpContentCriteria $criteria
      * @return ezpContentList
      */
     public static function query( ezpContentCriteria $criteria )
     {
         $fetchParams = self::translateFetchParams( $criteria );
         $nodes = eZContentObjectTreeNode::subTreeByNodeID( $fetchParams->params, $fetchParams->rootNodeId );
-        $return = array();
+        $return = [];
         foreach( $nodes as $node )
         {
             $return[] = ezpContent::fromNode( $node );
@@ -34,7 +33,6 @@ class ezpContentRepository
 
     /**
      * Returns node count using a given set of criteria
-     * @param ezpContentCriteria $criteria
      * @return int
      */
     public static function queryCount( ezpContentCriteria $criteria )
@@ -61,8 +59,8 @@ class ezpContentRepository
     protected static function translateFetchParams( ezpContentCriteria $criteria )
     {
         $ret = new stdClass();
-        $ret->rootNodeId = array();
-        $ret->params = array();
+        $ret->rootNodeId = [];
+        $ret->params = [];
 
         /**
          * eZContentObjectTreeNode requires one or more root node IDs to perform a content request.
@@ -126,6 +124,6 @@ class ezpContentRepository
 
     }
 
-    private static $defaultRootNode = 1;
+    private static int $defaultRootNode = 1;
 }
 ?>

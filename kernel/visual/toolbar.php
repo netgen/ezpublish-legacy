@@ -9,8 +9,8 @@
 $http = eZHTTPTool::instance();
 $module = $Params['Module'];
 
-$currentSiteAccess = ( $Params['SiteAccess'] ) ? $Params['SiteAccess'] : false;
-$toolbarPosition = ( $Params['Position'] ) ? $Params['Position'] : false;
+$currentSiteAccess = $Params['SiteAccess'] ?: false;
+$toolbarPosition = $Params['Position'] ?: false;
 
 
 $http = eZHTTPTool::instance();
@@ -26,7 +26,7 @@ $ini = eZINI::instance( "toolbar.ini", 'settings', null, false, null, false );
 
 $iniAppend = eZINI::instance( 'toolbar.ini.append', $iniPath, null, false, null, true );
 
-$toolArray = array();
+$toolArray = [];
 if ( $iniAppend->hasVariable( "Toolbar_" . $toolbarPosition, "Tool" ) )
 {
     $toolArray =  $iniAppend->variable( "Toolbar_" . $toolbarPosition, "Tool" );
@@ -44,7 +44,7 @@ $currentAction = $module->currentAction();
 
 if ( $currentAction == 'BackToToolbars' )
 {
-    return $Module->redirectToView( 'toolbarlist', array() );
+    return $Module->redirectToView( 'toolbarlist', [] );
 }
 elseif ( $currentAction == 'SelectToolbarNode' )
 {
@@ -80,20 +80,20 @@ elseif ( $currentAction == 'NewTool' ||
          $currentAction == 'Browse' ||
          $currentAction == 'Remove' )
 {
-    $deleteToolArray = array();
+    $deleteToolArray = [];
     if ( $currentAction == 'Remove' &&
          $http->hasPostVariable( 'deleteToolArray' ) )
     {
         $deleteToolArray = $http->postVariable( 'deleteToolArray' );
     }
 
-    $updatedToolArray = array();
+    $updatedToolArray = [];
     $existingToolArray = $toolArray;
     $deleteToolKeys = array_keys( $deleteToolArray );
 
-    $positionMap = array();
-    $updatedBlockArray = array();
-    for ( $originalIndex = 0; $originalIndex < count( $existingToolArray ); ++$originalIndex )
+    $positionMap = [];
+    $updatedBlockArray = [];
+    for ( $originalIndex = 0; $originalIndex < (is_countable($existingToolArray) ? count( $existingToolArray ) : 0); ++$originalIndex )
     {
         $originalPlacement = $originalIndex + 1;
         if ( in_array( $originalIndex, $deleteToolArray ) )
@@ -105,7 +105,7 @@ elseif ( $currentAction == 'NewTool' ||
             $newIndex = $http->postVariable( 'placement_' . $originalIndex );
             if ( isset( $positionMap[$newIndex] ) )
             {
-                $newPositionMap = array();
+                $newPositionMap = [];
                 foreach ( $positionMap as $positionIndex => $positionOriginalIndex )
                 {
                     if ( $positionIndex > $newIndex )
@@ -131,8 +131,7 @@ elseif ( $currentAction == 'NewTool' ||
         {
             $actionParameters = $iniAppend->group( "Tool_" . $toolbarPosition . "_" . $toolName . "_" . $originalPlacement );
 
-            $updatedBlockArray[] = array( 'blockName' => "Tool_" . $toolbarPosition . "_" . $toolName . "_" . $newPlacement,
-                                          'parameters' => $actionParameters );
+            $updatedBlockArray[] = ['blockName' => "Tool_" . $toolbarPosition . "_" . $toolName . "_" . $newPlacement, 'parameters' => $actionParameters];
             $iniAppend->removeGroup( "Tool_" . $toolbarPosition . "_" . $toolName . "_" . $originalPlacement );
         }
         ++$newIndex;
@@ -171,29 +170,23 @@ elseif ( $currentAction == 'NewTool' ||
     if ( $currentAction == 'Browse' )
     {
         $browseArray = $http->postVariable( 'BrowseButton' );
-        if ( preg_match( "/_node$/", key( $browseArray ) ) )
+        if ( preg_match( "/_node$/", (string) key( $browseArray ) ) )
         {
-            if ( preg_match( "/(.+)_parameter_(.+)/", key( $browseArray ), $res ) )
+            if ( preg_match( "/(.+)_parameter_(.+)/", (string) key( $browseArray ), $res ) )
             {
-                eZContentBrowse::browse( array( 'action_name' => 'SelectToolbarNode',
-                                                'description_template' => false,
-                                                'persistent_data' => array( 'tool_index' => $res[1], 'parameter_name' => $res[2] ),
-                                                'from_page' => "/visual/toolbar/$currentSiteAccess/$toolbarPosition/" ),
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         ['action_name' => 'SelectToolbarNode', 'description_template' => false, 'persistent_data' => ['tool_index' => $res[1], 'parameter_name' => $res[2]], 'from_page' => "/visual/toolbar/$currentSiteAccess/$toolbarPosition/"] );
                 removeRelatedCache( $currentSiteAccess );
                 return;
             }
 
         }
-        else if ( preg_match( "/_subtree$/", key( $browseArray ) ) )
+        else if ( preg_match( "/_subtree$/", (string) key( $browseArray ) ) )
         {
-            if ( preg_match( "/(.+)_parameter_(.+)/", key( $browseArray ), $res ) )
+            if ( preg_match( "/(.+)_parameter_(.+)/", (string) key( $browseArray ), $res ) )
             {
-                eZContentBrowse::browse( array( 'action_name' => 'SelectToolbarNodePath',
-                                                'description_template' => false,
-                                                'persistent_data' => array( 'tool_index' => $res[1], 'parameter_name' => $res[2] ),
-                                                'from_page' => "/visual/toolbar/$currentSiteAccess/$toolbarPosition/" ),
-                                         $module );
+                eZContentBrowse::browse( $module,
+                                         ['action_name' => 'SelectToolbarNodePath', 'description_template' => false, 'persistent_data' => ['tool_index' => $res[1], 'parameter_name' => $res[2]], 'from_page' => "/visual/toolbar/$currentSiteAccess/$toolbarPosition/"] );
                 removeRelatedCache( $currentSiteAccess );
                 return;
             }
@@ -209,12 +202,12 @@ elseif ( $currentAction == 'Store' )
     $checkCurrAction = true;
 }
 
-$toolList = array();
+$toolList = [];
 foreach ( array_keys( $toolArray ) as $toolKey )
 {
     unset( $actionParameters );
-    $actionParameters = array();
-    $defaultActionParameters = array();
+    $actionParameters = [];
+    $defaultActionParameters = [];
     $actionDescription = false;
     $toolName = $toolArray[$toolKey];
     if ( $ini->hasGroup( "Tool_" . $toolName ) )
@@ -245,16 +238,16 @@ foreach ( array_keys( $toolArray ) as $toolKey )
     $actionParameters = array_merge( $defaultActionParameters, $actionParameters );
     if ( !$actionDescription )
     {
-        $actionDescription = array();
+        $actionDescription = [];
         foreach ( $actionParameters as $actionParameterKey => $actionParameter )
         {
             $actionDescription[$actionParameterKey] = $actionParameterKey;
         }
     }
     $removeNewBlock = true;
-    $newActionParameters = array();
-    $toolParameters = array();
-    $customInputList = array();
+    $newActionParameters = [];
+    $toolParameters = [];
+    $customInputList = [];
     if ( $http->hasPostVariable( 'CustomInputList' ) )
         $customInputList = $http->postVariable( 'CustomInputList' );
     foreach ( array_keys( $actionParameters ) as $key )
@@ -290,14 +283,13 @@ foreach ( array_keys( $toolArray ) as $toolKey )
             }
         }
 
-        $toolParameterArray = array();
+        $toolParameterArray = [];
         $toolParameterArray['name'] = $key;
         $toolParameterArray['value'] = $parameterValue;
         $toolParameterArray['description'] = $actionDescription[$key];
         $toolParameters[] = $toolParameterArray;
     }
-    $toolList[] = array( 'name' => $toolName,
-                         'parameters' => $toolParameters );
+    $toolList[] = ['name' => $toolName, 'parameters' => $toolParameters];
     if ( $storeList )
     {
         if ( count( $newActionParameters ) == 0 )
@@ -350,10 +342,9 @@ $tpl->setVariable( 'tool_list', $toolList );
 $tpl->setVariable( 'available_tool_list', $availableToolArray  );
 $tpl->setVariable( 'current_siteaccess', $currentSiteAccess );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/toolbar.tpl" );
-$Result['path'] = array( array( 'url' => 'visual/toolbarlist',
-                                'text' => ezpI18n::tr( 'kernel/design', 'Toolbar list' ) ) );
+$Result['path'] = [['url' => 'visual/toolbarlist', 'text' => ezpI18n::tr( 'kernel/design', 'Toolbar list' )]];
 
 function removeRelatedCache( $siteAccess )
 {
@@ -366,14 +357,14 @@ function removeRelatedCache( $siteAccess )
         $cacheDir = $siteINI->variable( 'FileSettings', 'CacheDir' );
         if ( $cacheDir[0] == "/" )
         {
-            $cacheDir = eZDir::path( array( $cacheDir ) );
+            $cacheDir = eZDir::path( [$cacheDir] );
         }
         else
         {
             if ( $siteINI->hasVariable( 'FileSettings', 'VarDir' ) )
             {
                 $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
-                $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+                $cacheDir = eZDir::path( [$varDir, $cacheDir] );
             }
         }
     }
@@ -381,7 +372,7 @@ function removeRelatedCache( $siteAccess )
     {
          $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
          $cacheDir = $ini->variable( 'FileSettings', 'CacheDir' );
-         $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+         $cacheDir = eZDir::path( [$varDir, $cacheDir] );
     }
     else
     {

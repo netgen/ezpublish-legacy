@@ -11,7 +11,7 @@ $cli->output( "Checking link ..." );
 
 $cronjobIni = eZINI::instance( 'cronjob.ini' );
 $siteURLs = $cronjobIni->variable( 'linkCheckSettings', 'SiteURL' );
-$linkList = eZURL::fetchList( array( 'only_published' => true ) );
+$linkList = eZURL::fetchList( ['only_published' => true] );
 foreach ( $linkList as $link )
 {
     $linkID = $link->attribute( 'id' );
@@ -19,19 +19,19 @@ foreach ( $linkList as $link )
     $isValid = $link->attribute( 'is_valid' );
 
     $cli->output( "check-" . $cli->stylize( 'emphasize', $url ) . " ", false );
-    if ( preg_match("/^(http:)/i", $url ) or
-         preg_match("/^(ftp:)/i", $url ) or
-         preg_match("/^(https:)/i", $url ) or
-         preg_match("/^(file:)/i", $url ) or
-         preg_match("/^(mailto:)/i", $url ) )
+    if ( preg_match("/^(http:)/i", (string) $url ) or
+         preg_match("/^(ftp:)/i", (string) $url ) or
+         preg_match("/^(https:)/i", (string) $url ) or
+         preg_match("/^(file:)/i", (string) $url ) or
+         preg_match("/^(mailto:)/i", (string) $url ) )
     {
-        if ( preg_match("/^(mailto:)/i", $url))
+        if ( preg_match("/^(mailto:)/i", (string) $url))
         {
             if ( eZSys::osType() != 'win32' )
             {
-                $url = trim( preg_replace("/^mailto:(.+)/i", "\\1", $url));
-                list($userName, $host) = explode( '@', $url );
-                list($host, $junk) = explode( '?', $host );
+                $url = trim( preg_replace("/^mailto:(.+)/i", "\\1", (string) $url));
+                [$userName, $host] = explode( '@', $url );
+                [$host, $junk] = explode( '?', $host );
                 $dnsCheck = checkdnsrr( $host,"MX" );
                 if ( !$dnsCheck )
                 {
@@ -47,9 +47,9 @@ foreach ( $linkList as $link )
                 }
             }
         }
-        else if ( preg_match("/^(http:)/i", $url ) or
-                  preg_match("/^(file:)/i", $url ) or
-                  preg_match("/^(ftp:)/i", $url ) )
+        else if ( preg_match("/^(http:)/i", (string) $url ) or
+                  preg_match("/^(file:)/i", (string) $url ) or
+                  preg_match("/^(ftp:)/i", (string) $url ) )
         {
             if ( !eZHTTPTool::getDataByURL( $url, true, 'eZ Publish Link Validator' ) )
             {
@@ -79,7 +79,7 @@ foreach ( $linkList as $link )
               // Check if it is a valid internal link.
               foreach ( $siteURLs as $siteURL )
               {
-                  $siteURL = preg_replace("/\/$/", "", $siteURL );
+                  $siteURL = preg_replace("/\/$/", "", (string) $siteURL );
                   $fp = @fopen( $siteURL . "/". $url, "r" );
                   if ( !$fp )
                   {

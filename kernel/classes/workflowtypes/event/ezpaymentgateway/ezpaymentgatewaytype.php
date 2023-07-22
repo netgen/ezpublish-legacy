@@ -18,9 +18,9 @@
 
 class eZPaymentGatewayType extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = 'ezpaymentgateway';
-    const GATEWAY_NOT_SELECTED = 0;
-    const GATEWAY_SELECTED = 1;
+    final public const WORKFLOW_TYPE_STRING = 'ezpaymentgateway';
+    final public const GATEWAY_NOT_SELECTED = 0;
+    final public const GATEWAY_SELECTED = 1;
 
     public function __construct()
     {
@@ -48,9 +48,9 @@ class eZPaymentGatewayType extends eZWorkflowEventType
             $process->setAttribute( 'event_state', eZPaymentGatewayType::GATEWAY_SELECTED );
             if ( !$this->selectGateway( $event ) )
             {
-                $process->Template = array();
+                $process->Template = [];
                 $process->Template['templateName'] = 'design:workflow/selectgateway.tpl';
-                $process->Template['templateVars'] = array ( 'event' => $event );
+                $process->Template['templateVars'] = ['event' => $event];
 
                 return eZWorkflowType::STATUS_FETCH_TEMPLATE_REPEAT;
             }
@@ -81,13 +81,13 @@ class eZPaymentGatewayType extends eZWorkflowEventType
         {
             case 'selected_gateways_types':
             {
-                return explode( ',', $event->attribute( 'data_text1' ) );
+                return explode( ',', (string) $event->attribute( 'data_text1' ) );
             }
             break;
 
             case 'selected_gateways':
             {
-                $selectedGatewaysTypes  = explode( ',', $event->attribute( 'data_text1' ) );
+                $selectedGatewaysTypes  = explode( ',', (string) $event->attribute( 'data_text1' ) );
                 return $this->getGateways( $selectedGatewaysTypes );
             }break;
 
@@ -102,12 +102,12 @@ class eZPaymentGatewayType extends eZWorkflowEventType
 
     function typeFunctionalAttributes( )
     {
-        return array( 'selected_gateways_types', 'selected_gateways', 'current_gateway' );
+        return ['selected_gateways_types', 'selected_gateways', 'current_gateway'];
     }
 
     function attributes()
     {
-        return array_merge( array( 'available_gateways' ),
+        return array_merge( ['available_gateways'],
                             eZWorkflowEventType::attributes() );
     }
 
@@ -116,16 +116,12 @@ class eZPaymentGatewayType extends eZWorkflowEventType
         return in_array( $attr, $this->attributes() );
     }
 
-    function attribute( $attr )
+    function attribute($attr)
     {
-        switch( $attr )
-        {
-            case 'available_gateways':
-            {
-                return $this->getGateways( array( -1 ) );
-            }break;
-        }
-        return eZWorkflowEventType::attribute( $attr );
+        return match ($attr) {
+            'available_gateways' => $this->getGateways( [-1] ),
+            default => eZWorkflowEventType::attribute( $attr ),
+        };
     }
 
     /*!
@@ -135,8 +131,8 @@ class eZPaymentGatewayType extends eZWorkflowEventType
 
     function loadAndRegisterGateways()
     {
-        eZPaymentGatewayType::loadAndRegisterBuiltInGateways();
-        eZPaymentGatewayType::loadAndRegisterExtensionGateways();
+        (new eZPaymentGatewayType())->loadAndRegisterBuiltInGateways();
+        (new eZPaymentGatewayType())->loadAndRegisterExtensionGateways();
     }
 
     /*!
@@ -200,7 +196,7 @@ class eZPaymentGatewayType extends eZWorkflowEventType
         $gateways =& $GLOBALS["eZPaymentGateways"];
         if ( !is_array( $gateways ) )
         {
-            $gateways = array();
+            $gateways = [];
         }
 
         if ( isset( $gateways[$gateway] ) )
@@ -209,7 +205,7 @@ class eZPaymentGatewayType extends eZWorkflowEventType
         }
         else
         {
-            $gateways[$gateway] = array( "class_name" => $class_name, "description" => $description );
+            $gateways[$gateway] = ["class_name" => $class_name, "description" => $description];
         }
     }
 
@@ -220,7 +216,7 @@ class eZPaymentGatewayType extends eZWorkflowEventType
     */
     function getGateways( $gatewaysTypes )
     {
-        $gateways           = array();
+        $gateways           = [];
         $availableGateways  = $GLOBALS[ 'eZPaymentGateways' ];
         if ( !is_array( $availableGateways ) ){
             return $gateways;
@@ -314,7 +310,7 @@ class eZPaymentGatewayType extends eZWorkflowEventType
 
     function selectGateway( $event )
     {
-        $selectedGatewaysTypes  = explode( ',', $event->attribute( 'data_text1' ) );
+        $selectedGatewaysTypes  = explode( ',', (string) $event->attribute( 'data_text1' ) );
 
         if ( count( $selectedGatewaysTypes ) == 1 && $selectedGatewaysTypes[0] != -1 )
         {
@@ -364,7 +360,7 @@ class eZPaymentGatewayType extends eZWorkflowEventType
             $gatewaysArray = $http->postVariable( $gatewaysVar );
             if ( in_array( '-1', $gatewaysArray ) )
             {
-                $gatewaysArray = array( -1 );
+                $gatewaysArray = [-1];
             }
 
             $gatewaysString = implode( ',', $gatewaysArray );

@@ -22,27 +22,16 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => "\nThis script performs tasks needed to upgrade to 4.1:\n" .
+$script = eZScript::instance( ['description' => "\nThis script performs tasks needed to upgrade to 4.1:\n" .
                                                        "\n- Converting custom:align attributes to align attiribute on supported tags" .
                                                        "\n- Setting missing align attribute on <embed> and <embed-inline> to align=right." .
-                                                       "\nYou can optionally perform only some of these tasks.",
-                                      'use-session' => false,
-                                      'use-modules' => false,
-                                      'use-extensions' => true ) );
+                                                       "\nYou can optionally perform only some of these tasks.", 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "[db-host:][db-user:][db-password:][db-database:][db-type:][skip-embed-align][skip-custom-align][custom-align-attribute]",
                                 '',
-                                array( 'db-host' => "Database host",
-                                       'db-user' => "Database user",
-                                       'db-password' => "Database password",
-                                       'db-database' => "Database name",
-                                       'db-type' => "Database type, e.g. mysql or postgresql",
-                                       'skip-embed-align' => "Skip adding align='right' on <embed> and <embed-inline> on tags that don't have these.",
-                                       'skip-custom-align' => "Skip converting custom:align attribute to align attribute on supported tags.",
-                                       'custom-align-attribute' => "Lets you specify name of custom:align attribute, default is 'align'."
-                                       ) );
+                                ['db-host' => "Database host", 'db-user' => "Database user", 'db-password' => "Database password", 'db-database' => "Database name", 'db-type' => "Database type, e.g. mysql or postgresql", 'skip-embed-align' => "Skip adding align='right' on <embed> and <embed-inline> on tags that don't have these.", 'skip-custom-align' => "Skip converting custom:align attribute to align attribute on supported tags.", 'custom-align-attribute' => "Lets you specify name of custom:align attribute, default is 'align'."] );
 $script->initialize();
 
 $dbUser = $options['db-user'];
@@ -60,7 +49,7 @@ if ( $options['custom-align-attribute'] )
 
 if ( $dbHost or $dbName or $dbUser or $dbImpl )
 {
-    $params = array( 'use_defaults' => false );
+    $params = ['use_defaults' => false];
     if ( $dbHost !== false )
         $params['server'] = $dbHost;
     if ( $dbUser !== false )
@@ -117,7 +106,7 @@ function convertCustomAlign( $doc, $xmlString, $customAlignAttribute, &$customAl
     $attribute = 'custom:' . $customAlignAttribute;
 
     // return if xml doesn't contain custom tag
-    if ( strpos( $xmlString, $attribute ) === false )
+    if ( !str_contains( (string) $xmlString, $attribute ) )
         return false;
 
     $schema = eZXMLSchema::instance();
@@ -152,7 +141,7 @@ $xmlFieldsQuery = "SELECT id, version, contentobject_id, data_text
                    FROM ezcontentobject_attribute
                    WHERE data_type_string = 'ezxmltext'";
 
-$xmlFieldsArray = $db->arrayQuery( $xmlFieldsQuery, array( "limit" => QUERY_LIMIT ) );
+$xmlFieldsArray = $db->arrayQuery( $xmlFieldsQuery, ["limit" => QUERY_LIMIT] );
 if ( !is_array( $xmlFieldsArray ) )
 {
     $cli->error( "SQL query error: $xmlFieldsQuery" );
@@ -161,7 +150,7 @@ if ( !is_array( $xmlFieldsArray ) )
 
 // We process the table by parts of QUERY_LIMIT number of records, $pass is the iteration number.
 $pass = 0;
-$customAlignTagList = array();
+$customAlignTagList = [];
 
 while( count( $xmlFieldsArray ) )
 {
@@ -172,7 +161,7 @@ while( count( $xmlFieldsArray ) )
     foreach ( $xmlFieldsArray as $xmlField )
     {
         $xmlString = $xmlField['data_text'];
-        if ( trim( $xmlString ) === ''  )
+        if ( trim( (string) $xmlString ) === ''  )
             continue;
 
         $doc = new DOMDocument( '1.0', 'utf-8' );
@@ -180,7 +169,7 @@ while( count( $xmlFieldsArray ) )
 
         if ( $success )
         {
-            $modificationList = array();
+            $modificationList = [];
 
             if ( !$skipEmbedAlign )
                 convertEmbedAlign( $doc, $modificationList );
@@ -192,7 +181,7 @@ while( count( $xmlFieldsArray ) )
             {
                 $xmlText = eZXMLTextType::domString( $doc );
                 if ( $db->bindingType() !== eZDBInterface::BINDING_NO )
-                    $xmlText = $db->bindVariable( $xmlText, array( 'name' => 'data_text' ) );
+                    $xmlText = $db->bindVariable( $xmlText, ['name' => 'data_text'] );
                 else
                     $xmlText = "'" . $db->escapeString( $xmlText ) . "'";
 
@@ -213,7 +202,7 @@ while( count( $xmlFieldsArray ) )
     }
 
     $pass++;
-    $xmlFieldsArray = $db->arrayQuery( $xmlFieldsQuery, array( "limit" => QUERY_LIMIT, "offset" => $pass * QUERY_LIMIT ) );
+    $xmlFieldsArray = $db->arrayQuery( $xmlFieldsQuery, ["limit" => QUERY_LIMIT, "offset" => $pass * QUERY_LIMIT] );
     if ( !is_array( $xmlFieldsArray ) )
     {
         $cli->error( "SQL query error: $xmlFieldsQuery" );

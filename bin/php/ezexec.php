@@ -12,23 +12,20 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "eZ Publish Script Executor\n\n" .
+$script = eZScript::instance( ['description' => ( "eZ Publish Script Executor\n\n" .
                                                         "Allows execution of simple PHP scripts which use eZ Publish functionality,\n" .
                                                         "when the script is called all necessary initialization is done\n" .
                                                         "\n" .
-                                                        "ezexec.php myscript.php" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
-                                     'use-extensions' => true ) );
+                                                        "ezexec.php myscript.php" ), 'use-session' => false, 'use-modules' => true, 'use-extensions' => true] );
 
 $script->startup();
 
 $options = $script->getOptions( "",
                                 "[scriptfile]",
-                                array() );
+                                [] );
 $script->initialize();
 
-if ( count( $options['arguments'] ) < 1 )
+if ( (is_countable($options['arguments']) ? count( $options['arguments'] ) : 0) < 1 )
 {
     $script->shutdown( 1, "Missing script file" );
 }

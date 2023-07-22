@@ -15,12 +15,11 @@ $offset = $Params['Offset'];
 
 if( eZPreferences::value( 'admin_role_list_limit' ) )
 {
-    switch( eZPreferences::value( 'admin_role_list_limit' ) )
-    {
-        case '2': { $limit = 25; } break;
-        case '3': { $limit = 50; } break;
-        default:  { $limit = 10; } break;
-    }
+    $limit = match (eZPreferences::value( 'admin_role_list_limit' )) {
+        '2' => 25,
+        '3' => 50,
+        default => 10,
+    };
 }
 else
 {
@@ -67,10 +66,10 @@ if ( $Module->isCurrentAction( 'AssignRole' ) )
 if ( $http->hasPostVariable( 'NewButton' )  )
 {
     $role = eZRole::createNew( );
-    return $Module->redirectToView( 'edit', array( $role->attribute( 'id' ) ) );
+    return $Module->redirectToView( 'edit', [$role->attribute( 'id' )] );
 }
 
-$viewParameters = array( 'offset' => $offset );
+$viewParameters = ['offset' => $offset];
 $tpl = eZTemplate::factory();
 
 $roles = eZRole::fetchByOffset( $offset, $limit, $asObject = true, $ignoreTemp = true );
@@ -84,8 +83,7 @@ $tpl->setVariable( 'view_parameters', $viewParameters );
 $tpl->setVariable( 'limit', $limit );
 
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:role/list.tpl' );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/role', 'Role list' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/role', 'Role list' )]];
 ?>

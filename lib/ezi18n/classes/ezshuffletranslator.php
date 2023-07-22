@@ -27,7 +27,6 @@ class eZShuffleTranslator extends eZTranslatorHandler
         parent::__construct( false );
 
         $this->MaxChars = $max_chars;
-        $this->Messages = array();
     }
 
     function findMessage( $context, $source, $comment = null )
@@ -43,11 +42,11 @@ class eZShuffleTranslator extends eZTranslatorHandler
     */
     function &shuffleText( $text )
     {
-        $num = mt_rand( 0, $this->MaxChars );
+        $num = random_int( 0, $this->MaxChars );
         for ( $i = 0; $i < $num; ++$i )
         {
-            $len = strlen( $text );
-            $offs = mt_rand( 0, $len - 1 );
+            $len = strlen( (string) $text );
+            $offs = random_int( 0, $len - 1 );
             if ( $offs == 0 )
             {
                 $tmp = $text[$offs];
@@ -81,7 +80,7 @@ class eZShuffleTranslator extends eZTranslatorHandler
 
     /// \privatesection
     /// Contains the hash table with cached 1337 translations
-    public $Messages;
+    public $Messages = [];
 }
 
 ?>

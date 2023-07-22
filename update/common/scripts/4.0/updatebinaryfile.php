@@ -11,15 +11,12 @@ require 'autoload.php';
 
 $cli = eZCLI::instance();
 
-$script = eZScript::instance( array( 'description' => ( "\nAdds the file extension suffix to the files stored by the binary file datatype\n" .
-                                                        "where it is currently missing.\n" ),
-                                     'use-session' => false,
-                                     'use-modules' => false,
-                                     'use-extensions' => true ) );
+$script = eZScript::instance( ['description' => ( "\nAdds the file extension suffix to the files stored by the binary file datatype\n" .
+                                                        "where it is currently missing.\n" ), 'use-session' => false, 'use-modules' => false, 'use-extensions' => true] );
 
 $script->startup();
 
-$options = $script->getOptions( '', '', array() );
+$options = $script->getOptions( '', '', [] );
 $script->initialize();
 
 $limit = 20;
@@ -29,15 +26,15 @@ $db = eZDB::instance();
 
 $script->setIterationData( '.', '~' );
 
-$updateDoneForId = array();
+$updateDoneForId = [];
 
-while ( $binaryFiles = eZPersistentObject::fetchObjectList( eZBinaryFile::definition(), null, null, null, array( 'offset' => $offset, 'limit' => $limit ) ) )
+while ( $binaryFiles = eZPersistentObject::fetchObjectList( eZBinaryFile::definition(), null, null, null, ['offset' => $offset, 'limit' => $limit] ) )
 {
     foreach ( $binaryFiles as $binaryFile )
     {
         $fileName = $binaryFile->attribute( 'filename' );
 
-        if ( strpos( $fileName, '.' ) !== false )
+        if ( str_contains( (string) $fileName, '.' ) )
         {
             $text = "skipping $fileName, it contains a suffix";
             $script->iterate( $cli, true, $text );

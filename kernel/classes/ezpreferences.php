@@ -20,7 +20,7 @@
 
 class eZPreferences
 {
-    const SESSION_NAME = "eZPreferences";
+    final public const SESSION_NAME = "eZPreferences";
 
     /*!
      \static
@@ -155,7 +155,7 @@ class eZPreferences
             $http = eZHTTPTool::instance();
             $useCache = ( $user->ContentObjectID == $http->sessionVariable( 'eZUserLoggedInID', false ) );
 
-            $returnArray = array();
+            $returnArray = [];
             $userID = $user->attribute( 'contentobject_id' );
             $db = eZDB::instance();
             $values = $db->arrayQuery( "SELECT name,value FROM ezpreferences WHERE user_id=$userID ORDER BY id" );
@@ -171,7 +171,7 @@ class eZPreferences
         {
             // For the anonymous user we just return all values, or empty array if session is un-started / value undefined
             $http = eZHTTPTool::instance();
-            return $http->sessionVariable( eZPreferences::SESSION_NAME, array() );
+            return $http->sessionVariable( eZPreferences::SESSION_NAME, [] );
         }
     }
 
@@ -192,7 +192,7 @@ class eZPreferences
     static function storeInSession( $name, $value )
     {
         $http = eZHTTPTool::instance();
-        $preferencesInSession = array();
+        $preferencesInSession = [];
         if ( $http->hasSessionVariable( eZPreferences::SESSION_NAME ) )
              $preferencesInSession = $http->sessionVariable( eZPreferences::SESSION_NAME );
         $preferencesInSession[$name] = $value;

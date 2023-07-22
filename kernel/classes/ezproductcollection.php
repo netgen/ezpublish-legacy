@@ -16,22 +16,7 @@ class eZProductCollection extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "created" => array( 'name' => "Created",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true ),
-                                         'currency_code' => array( 'name' => 'CurrencyCode',
-                                                                   'datatype' => 'string',
-                                                                   'default' => '',
-                                                                   'required' => true ) ),
-                      "keys" => array( "id" ),
-                      "increment_key" => "id",
-                      "class_name" => "eZProductCollection",
-                      "name" => "ezproductcollection" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "created" => ['name' => "Created", 'datatype' => 'integer', 'default' => 0, 'required' => true], 'currency_code' => ['name' => 'CurrencyCode', 'datatype' => 'string', 'default' => '', 'required' => true]], "keys" => ["id"], "increment_key" => "id", "class_name" => "eZProductCollection", "name" => "ezproductcollection"];
     }
 
     /**
@@ -41,7 +26,7 @@ class eZProductCollection extends eZPersistentObject
      */
     static function create( )
     {
-        $row = array( "created" => time() );
+        $row = ["created" => time()];
         return new eZProductCollection( $row );
     }
 
@@ -91,7 +76,7 @@ class eZProductCollection extends eZPersistentObject
     {
         return eZPersistentObject::fetchObject( eZProductCollection::definition(),
                                                 null,
-                                                array( 'id' => $productCollectionID ),
+                                                ['id' => $productCollectionID],
                                                 $asObject );
     }
 
@@ -106,7 +91,7 @@ class eZProductCollection extends eZPersistentObject
     function itemList( $asObject = true )
     {
         return eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
-                                                    null, array( "productcollection_id" => $this->ID ),
+                                                    null, ["productcollection_id" => $this->ID],
                                                     null,
                                                     null,
                                                     $asObject );
@@ -114,14 +99,14 @@ class eZProductCollection extends eZPersistentObject
 
     static function verify( $id )
     {
-        $invalidItemArray = array();
+        $invalidItemArray = [];
         $collection = eZProductCollection::fetch( $id );
         if ( !is_object( $collection ) )
              return $invalidItemArray;
 
         $currency = $collection->attribute( 'currency_code' );
         $productItemList = eZPersistentObject::fetchObjectList( eZProductCollectionItem::definition(),
-                                                                 null, array( "productcollection_id" => $id ),
+                                                                 null, ["productcollection_id" => $id],
                                                                  null,
                                                                  null,
                                                                  true );

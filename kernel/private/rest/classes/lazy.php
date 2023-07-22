@@ -19,22 +19,12 @@ class ezpRestDbConfig implements ezcBaseConfigurationInitializer
 
     protected static function lazyDbHelper()
     {
-        $dbMapping = array( 'ezmysqli' => 'mysql',
-                            'ezmysql' => 'mysql',
-                            'mysql' => 'mysql',
-                            'mysqli' => 'mysql',
-                            'pgsql' => 'pgsql',
-                            'postgresql' => 'pgsql',
-                            'ezpostgresql' => 'pgsql',
-                            'ezoracle' => 'oracle',
-                            'oracle' => 'oracle' );
+        $dbMapping = ['ezmysqli' => 'mysql', 'ezmysql' => 'mysql', 'mysql' => 'mysql', 'mysqli' => 'mysql', 'pgsql' => 'pgsql', 'postgresql' => 'pgsql', 'ezpostgresql' => 'pgsql', 'ezoracle' => 'oracle', 'oracle' => 'oracle'];
 
         $ini = eZINI::instance();
-        list( $dbType, $dbHost, $dbPort, $dbUser, $dbPass, $dbName ) =
+        [$dbType, $dbHost, $dbPort, $dbUser, $dbPass, $dbName] =
             $ini->variableMulti( 'DatabaseSettings',
-                                 array( 'DatabaseImplementation', 'Server', 'Port',
-                                        'User', 'Password', 'Database',
-                                       )
+                                 ['DatabaseImplementation', 'Server', 'Port', 'User', 'Password', 'Database']
                                 );
 
         if ( !isset( $dbMapping[$dbType] ) )
@@ -59,10 +49,7 @@ class ezpRestPoConfig implements ezcBaseConfigurationInitializer
     public static function configureObject( $instance )
     {
         return new ezcPersistentSession( ezcDbInstance::get(),
-            new ezcPersistentMultiManager( array(
-                new ezcPersistentCodeManager( 'kernel/private/rest/classes/po_maps/' ),
-                new ezcPersistentCodeManager( 'kernel/private/oauth/classes/persistentobjects/' )
-            ))
+            new ezcPersistentMultiManager( [new ezcPersistentCodeManager( 'kernel/private/rest/classes/po_maps/' ), new ezcPersistentCodeManager( 'kernel/private/oauth/classes/persistentobjects/' )])
         );
     }
 }

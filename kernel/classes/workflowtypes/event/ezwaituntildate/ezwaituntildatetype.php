@@ -15,13 +15,12 @@
 */
 class eZWaitUntilDateType  extends eZWorkflowEventType
 {
-    const WORKFLOW_TYPE_STRING = "ezwaituntildate";
+    final public const WORKFLOW_TYPE_STRING = "ezwaituntildate";
 
     public function __construct()
     {
         parent::__construct( eZWaitUntilDateType::WORKFLOW_TYPE_STRING, ezpI18n::tr( 'kernel/workflow/event', "Wait until date" ) );
-        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'before',
-                                                                               'after' ) ) ) );
+        $this->setTriggerTypes( ['content' => ['publish' => ['before', 'after']]] );
     }
 
     function execute( $process, $event )
@@ -82,9 +81,7 @@ class eZWaitUntilDateType  extends eZWorkflowEventType
 
     function attributes()
     {
-        return array_merge( array( 'contentclass_list',
-                                   'contentclassattribute_list',
-                                   'has_class_attributes' ),
+        return array_merge( ['contentclass_list', 'contentclassattribute_list', 'has_class_attributes'],
                             eZWorkflowEventType::attributes() );
     }
 
@@ -112,7 +109,7 @@ class eZWaitUntilDateType  extends eZWorkflowEventType
                 {
                     // if nothing was preselected, we will use the first one:
                     // POSSIBLE ENHANCEMENT: in the common case, the contentclass_list fetch will be called twice
-                    $classList = eZWaitUntilDateType::attribute( 'contentclass_list' );
+                    $classList = (new eZWaitUntilDateType())->attribute('contentclass_list');
                     if ( isset( $classList[0] ) )
                         $classID = $classList[0]->attribute( 'id' );
                     else
@@ -122,7 +119,7 @@ class eZWaitUntilDateType  extends eZWorkflowEventType
                 {
                    return eZContentClassAttribute::fetchListByClassID( $classID );
                 }
-                return array();
+                return [];
             }break;
             case 'has_class_attributes' :
             {

@@ -19,20 +19,19 @@ class eZSOAPRequest extends eZSOAPEnvelope
 {
     /**
      * Constructs a new eZSOAPRequest object. You have to provide the request name and the target namespace for the request.
-     * @param string $name
-     * @param string $namespace
+     * @param string $Name
+     * @param string $Namespace
      * @param array $parameters
      */
-    public function __construct( $name="", $namespace="", $parameters = array() )
+    public function __construct( /// The request name
+    public $Name="", /// The request target namespace
+    public $Namespace="", $parameters = [] )
     {
-        $this->Name = $name;
-        $this->Namespace = $namespace;
-
         parent::__construct();
 
-        foreach( $parameters as $name => $value )
+        foreach( $parameters as $Name => $value )
         {
-            $this->addParameter( $name, $value );
+            $this->addParameter( $Name, $value );
         }
     }
 
@@ -122,17 +121,11 @@ class eZSOAPRequest extends eZSOAPEnvelope
         return $doc->saveXML();
     }
 
-    /// The request name
-    public $Name;
-
-    /// The request target namespace
-    public $Namespace;
-
     /// Additional body element attributes.
-    public $BodyAttributes = array();
+    public $BodyAttributes = [];
 
     /// Contains the request parameters
-    public $Parameters = array();
+    public $Parameters = [];
 }
 
 ?>

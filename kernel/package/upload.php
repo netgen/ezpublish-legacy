@@ -13,7 +13,7 @@ if ( !eZPackage::canUsePolicyFunction( 'import' ) )
 
 $package = false;
 $installElements = false;
-$errorList = array();
+$errorList = [];
 
 if ( $module->isCurrentAction( 'UploadPackage' ) )
 {
@@ -30,20 +30,20 @@ if ( $module->isCurrentAction( 'UploadPackage' ) )
                 if ( $package->attribute( 'install_type' ) != 'install' or
                      !$package->attribute( 'can_install' ) )
                 {
-                    return $module->redirectToView( 'view', array( 'full', $package->attribute( 'name' ) ) );
+                    return $module->redirectToView( 'view', ['full', $package->attribute( 'name' )] );
                 }
                 else if ( $package->attribute( 'install_type' ) == 'install' )
                 {
-                    return $module->redirectToView( 'install', array( $package->attribute( 'name' ) ) );
+                    return $module->redirectToView( 'install', [$package->attribute( 'name' )] );
                 }
             }
             else if ( $package == eZPackage::STATUS_ALREADY_EXISTS )
             {
-                $errorList[] = array( 'description' => ezpI18n::tr( 'kernel/package', 'Package %packagename already exists, cannot import the package', false, array( '%packagename' => $packageName ) ) );
+                $errorList[] = ['description' => ezpI18n::tr( 'kernel/package', 'Package %packagename already exists, cannot import the package', false, ['%packagename' => $packageName] )];
             }
             else if ( $package == eZPackage::STATUS_INVALID_NAME )
             {
-                $errorList[] = array( 'description' => ezpI18n::tr( 'kernel/package', 'The package name %packagename is invalid, cannot import the package', false, array( '%packagename' => $packageName ) ) );
+                $errorList[] = ['description' => ezpI18n::tr( 'kernel/package', 'The package name %packagename is invalid, cannot import the package', false, ['%packagename' => $packageName] )];
             }
             else
             {
@@ -71,11 +71,8 @@ $tpl = eZTemplate::factory();
 $tpl->setVariable( 'package', $package );
 $tpl->setVariable( 'error_list', $errorList );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:package/upload.tpl" );
-$Result['path'] = array( array( 'url' => 'package/list',
-                                'text' => ezpI18n::tr( 'kernel/package', 'Packages' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/package', 'Upload' ) ) );
+$Result['path'] = [['url' => 'package/list', 'text' => ezpI18n::tr( 'kernel/package', 'Packages' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/package', 'Upload' )]];
 
 ?>

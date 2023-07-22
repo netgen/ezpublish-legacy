@@ -31,15 +31,9 @@ class eZProductCollectionItemOptionTest extends ezpDatabaseTestCase
     public function testCleanupList()
     {
         // Create a few collections
-        $row = array(
-            'item_id' => null,
-            'option_item_id' => 1,
-            'object_attribute_id' => 1,
-            'name' => __FUNCTION__,
-            'value' => __FUNCTION__,
-            'price' => 5.5 );
+        $row = ['item_id' => null, 'option_item_id' => 1, 'object_attribute_id' => 1, 'name' => __FUNCTION__, 'value' => __FUNCTION__, 'price' => 5.5];
 
-        $deleteIDArray = $keepIDArray = array();
+        $deleteIDArray = $keepIDArray = [];
         for( $i = 1; $i <= 40; $i++ )
         {
             $row['item_id'] = ceil( $i / 10 );
@@ -47,23 +41,23 @@ class eZProductCollectionItemOptionTest extends ezpDatabaseTestCase
             $item->store();
         }
 
-        eZProductCollectionItemOption::cleanupList( array( 1, 2 ) );
+        eZProductCollectionItemOption::cleanupList( [1, 2] );
 
         // Check that each item of $deleteIDArray has been removed
-        foreach( array( 1, 2 ) as $itemID )
+        foreach( [1, 2] as $itemID )
         {
             $options = eZProductCollectionItemOption::fetchList( $itemID );
-            $this->assertEquals( 0, count( $options ) );
+            static::assertEquals(0, count( $options ));
         }
 
         // And check that each item of $keepIDArray hasn't been deleted
-        foreach( array( 3, 4 ) as $itemID )
+        foreach( [3, 4] as $itemID )
         {
             $options = eZProductCollectionItemOption::fetchList( $itemID );
-            $this->assertEquals( 10, count( $options ) );
+            static::assertEquals(10, count( $options ));
             foreach( $options as $option )
             {
-                $this->assertInstanceOf( 'eZProductCollectionItemOption', $option );
+                static::assertInstanceOf('eZProductCollectionItemOption', $option);
             }
         }
     }

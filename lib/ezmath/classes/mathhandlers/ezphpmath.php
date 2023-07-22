@@ -15,7 +15,7 @@
 
 class eZPHPMath
 {
-    static function create( $type, $params = array() )
+    static function create( $type, $params = [] )
     {
         $filename = 'lib/ezmath/classes/mathhandlers/' . $type . '.php';
 
@@ -51,7 +51,7 @@ class eZPHPMath
 
     function pow( $base, $exp )
     {
-        return ( pow( $base, $exp ) );
+        return ( $base ** $exp );
     }
 
     function round( $value, $precision, $target )
@@ -64,9 +64,9 @@ class eZPHPMath
     function ceil( $value, $precision, $target )
     {
         $fractStr = $this->fractval( $value );
-        $fractPart = (int)substr( $fractStr, 0, $precision );
+        $fractPart = (int)substr( (string) $fractStr, 0, $precision );
 
-        $fractLen = strlen( $fractStr );
+        $fractLen = strlen( (string) $fractStr );
         // actual ceiling
         if ( $fractLen > $precision )
             $fractPart += 1;
@@ -89,7 +89,7 @@ class eZPHPMath
         $fractPart = $this->fractval( $value, $precision );
 
         // adjust precision
-        $fractLen = strlen( $fractPart );
+        $fractLen = strlen( (string) $fractPart );
         if ( $fractLen < $precision )
             $precision = $fractLen;
 
@@ -124,9 +124,9 @@ class eZPHPMath
     function intval( $number )
     {
         $intPart = 0;
-        $pos = strpos( $number, '.' );
+        $pos = strpos( (string) $number, '.' );
         if ( $pos !== false )
-            $intPart = substr( $number, 0, $pos );
+            $intPart = substr( (string) $number, 0, $pos );
         else
             $intPart = $number;
 
@@ -136,13 +136,13 @@ class eZPHPMath
     function fractval( $number, $precision = false )
     {
         $fractPart = 0;
-        $pos = strpos( $number, '.' );
+        $pos = strpos( (string) $number, '.' );
         if ( $pos !== false )
         {
             if ( $precision === false )
-                $fractPart = substr( $number, $pos + 1 );
+                $fractPart = substr( (string) $number, $pos + 1 );
             else
-                $fractPart = substr( $number, $pos + 1, $precision );
+                $fractPart = substr( (string) $number, $pos + 1, $precision );
         }
 
         return $fractPart;

@@ -8,7 +8,7 @@
 
 $Module = $Params['Module'];
 $http = eZHTTPTool::instance();
-$userParameters = array();
+$userParameters = [];
 
 if ( isset( $Params['UserParameters'] ) )
 {
@@ -92,23 +92,9 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             $navigationPartIdentifier = $section->attribute( 'navigation_part_identifier' );
 
         $res = eZTemplateDesignResource::instance();
-        $res->setKeys( array( array( 'object', $object->attribute( 'id' ) ),
-                              array( 'node', $node->attribute( 'node_id' ) ),
-                              array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                              array( 'class', $object->attribute( 'contentclass_id' ) ),
-                              array( 'class_identifier', $object->attribute( 'class_identifier' ) ),
-                              array( 'viewmode', $ViewMode ),
-                              array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                              array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                              array( 'navigation_part_identifier', $navigationPartIdentifier ),
-                              array( 'depth', $node->attribute( 'depth' ) ),
-                              array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                              array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) ),
-                              array( 'state', $object->attribute( 'state_id_array' ) ),
-                              array( 'state_identifier', $object->attribute( 'state_identifier_array' ) )
-                              ) );
+        $res->setKeys( [['object', $object->attribute( 'id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $object->attribute( 'class_identifier' )], ['viewmode', $ViewMode], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['navigation_part_identifier', $navigationPartIdentifier], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['state', $object->attribute( 'state_id_array' )], ['state_identifier', $object->attribute( 'state_identifier_array' )]] );
 
-        $Result = array();
+        $Result = [];
         $Result['content'] = $tpl->fetch( 'design:content/collectedinfo/' . $informationCollectionTemplate . '.tpl' );
         $Result['section_id'] = $object->attribute( 'section_id' );
         $Result['node_id'] = $node->attribute( 'node_id' );
@@ -122,24 +108,16 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
         // create path
         $parents = $node->attribute( 'path' );
 
-        $path = array();
+        $path = [];
         foreach ( $parents as $parent )
         {
-            $path[] = array( 'text' => $parent->attribute( 'name' ),
-                             'url' => '/content/view/full/' . $parent->attribute( 'node_id' ),
-                             'url_alias' => $parent->attribute( 'url_alias' ),
-                             'node_id' => $parent->attribute( 'node_id' ) );
+            $path[] = ['text' => $parent->attribute( 'name' ), 'url' => '/content/view/full/' . $parent->attribute( 'node_id' ), 'url_alias' => $parent->attribute( 'url_alias' ), 'node_id' => $parent->attribute( 'node_id' )];
         }
 
         $titlePath = $path;
-        $path[] = array( 'text' => $object->attribute( 'name' ),
-                         'url' => false,
-                         'url_alias' => false,
-                         'node_id' => $node->attribute( 'node_id' ) );
+        $path[] = ['text' => $object->attribute( 'name' ), 'url' => false, 'url_alias' => false, 'node_id' => $node->attribute( 'node_id' )];
 
-        $titlePath[] = array( 'text' => $title,
-                              'url' => false,
-                              'url_alias' => false );
+        $titlePath[] = ['text' => $title, 'url' => false, 'url_alias' => false];
 
         $Result['path'] = $path;
         $Result['title_path'] = $titlePath;
@@ -158,7 +136,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
 
     // Check every attribute if it's supposed to collect information
     $attributeDataBaseName = 'ContentObjectAttribute';
-    $unvalidatedAttributes = array();
+    $unvalidatedAttributes = [];
     $canCollect = true;
     $requireFixup = false;
     foreach ( array_keys( $contentObjectAttributes ) as $key )
@@ -182,18 +160,12 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
                     if ( !$description )
                         $description = false;
                     $validationName = $contentClassAttribute->attribute( 'name' );
-                    $unvalidatedAttributes[] = array( 'id' => $contentObjectAttribute->attribute( 'id' ),
-                                                      'identifier' => $contentClassAttribute->attribute( 'identifier' ),
-                                                      'name' => $validationName,
-                                                      'description' => $description );
+                    $unvalidatedAttributes[] = ['id' => $contentObjectAttribute->attribute( 'id' ), 'identifier' => $contentClassAttribute->attribute( 'identifier' ), 'name' => $validationName, 'description' => $description];
                 }
                 else
                 {
                     $validationName = $contentClassAttribute->attribute( 'name' );
-                    $unvalidatedAttributes[] = array( 'id' => $contentObjectAttribute->attribute( 'id' ),
-                                                      'identifier' => $contentClassAttribute->attribute( 'identifier' ),
-                                                      'name' => $validationName,
-                                                      'description' => 'Attribute did not validate as it seems to missing in form.' );
+                    $unvalidatedAttributes[] = ['id' => $contentObjectAttribute->attribute( 'id' ), 'identifier' => $contentClassAttribute->attribute( 'identifier' ), 'name' => $validationName, 'description' => 'Attribute did not validate as it seems to missing in form.'];
                 }
             }
             else if ( $status == eZInputValidator::STATE_ACCEPTED )
@@ -201,7 +173,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             }
         }
     }
-    $collectionAttributes = array();
+    $collectionAttributes = [];
 
     $db = eZDB::instance();
     $db->begin();
@@ -254,21 +226,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
                 $navigationPartIdentifier = $section->attribute( 'navigation_part_identifier' );
 
             $res = eZTemplateDesignResource::instance();
-            $res->setKeys( array( array( 'object', $object->attribute( 'id' ) ),
-                                  array( 'node', $node->attribute( 'node_id' ) ),
-                                  array( 'parent_node', $node->attribute( 'parent_node_id' ) ),
-                                  array( 'class', $object->attribute( 'contentclass_id' ) ),
-                                  array( 'class_identifier', $object->attribute( 'class_identifier' ) ),
-                                  array( 'viewmode', $ViewMode ),
-                                  array( 'remote_id', $object->attribute( 'remote_id' ) ),
-                                  array( 'node_remote_id', $node->attribute( 'remote_id' ) ),
-                                  array( 'navigation_part_identifier', $navigationPartIdentifier ),
-                                  array( 'depth', $node->attribute( 'depth' ) ),
-                                  array( 'url_alias', $node->attribute( 'url_alias' ) ),
-                                  array( 'class_group', $object->attribute( 'match_ingroup_id_list' ) ),
-                                  array( 'state', $object->attribute( 'state_id_array' ) ),
-                                  array( 'state_identifier', $object->attribute( 'state_identifier_array' ) )
-                                  ) );
+            $res->setKeys( [['object', $object->attribute( 'id' )], ['node', $node->attribute( 'node_id' )], ['parent_node', $node->attribute( 'parent_node_id' )], ['class', $object->attribute( 'contentclass_id' )], ['class_identifier', $object->attribute( 'class_identifier' )], ['viewmode', $ViewMode], ['remote_id', $object->attribute( 'remote_id' )], ['node_remote_id', $node->attribute( 'remote_id' )], ['navigation_part_identifier', $navigationPartIdentifier], ['depth', $node->attribute( 'depth' )], ['url_alias', $node->attribute( 'url_alias' )], ['class_group', $object->attribute( 'match_ingroup_id_list' )], ['state', $object->attribute( 'state_id_array' )], ['state_identifier', $object->attribute( 'state_identifier_array' )]] );
 
             $tpl->setVariable( 'node_id', $node->attribute( 'node_id' ) );
             $tpl->setVariable( 'collection_id', $collection->attribute( 'id' ) );
@@ -327,7 +285,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             if ( $ccReceivers )
             {
                 if ( !is_array( $ccReceivers ) )
-                    $ccReceivers = array( $ccReceivers );
+                    $ccReceivers = [$ccReceivers];
                 foreach ( $ccReceivers as $ccReceiver )
                 {
                     if ( $mail->validate( $ccReceiver ) )
@@ -339,7 +297,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             if ( $bccReceivers )
             {
                 if ( !is_array( $bccReceivers ) )
-                    $bccReceivers = array( $bccReceivers );
+                    $bccReceivers = [$bccReceivers];
 
                 foreach ( $bccReceivers as $bccReceiver )
                 {
@@ -353,7 +311,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             $mailResult = eZMailTransport::send( $mail );
         }
 
-        $icMap = array();
+        $icMap = [];
         if ( $http->hasSessionVariable( 'InformationCollectionMap' ) )
             $icMap = $http->sessionVariable( 'InformationCollectionMap' );
         $icMap[$object->attribute( 'id' )] = $collection->attribute( 'id' );
@@ -361,14 +319,14 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
 
         if ( is_numeric( $redirectToNodeID ) )
         {
-            $Module->redirectToView( 'view', array( 'full', $redirectToNodeID ) );
+            $Module->redirectToView( 'view', ['full', $redirectToNodeID] );
         }
         else
         {
             $display = eZInformationCollection::displayHandling( $object );
             if ( $display == 'node' )
             {
-                $Module->redirectToView( 'view', array( $ViewMode, $NodeID ) );
+                $Module->redirectToView( 'view', [$ViewMode, $NodeID] );
             }
             else if ( $display == 'redirect' )
             {
@@ -377,7 +335,7 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
             }
             else
             {
-                $Module->redirectToView( 'collectedinfo', array( $NodeID ) );
+                $Module->redirectToView( 'collectedinfo', [$NodeID] );
             }
         }
     }
@@ -385,11 +343,8 @@ if ( $Module->isCurrentAction( 'CollectInformation' ) )
     {
         $collection->remove();
 
-        return $Module->run( 'view', array( $ViewMode, $NodeID ),
-                             array( 'ViewCache' => false,
-                                    'AttributeValidation' => array( 'processed' => true,
-                                                                    'attributes' => $unvalidatedAttributes ),
-                                    'CollectionAttributes' => $collectionAttributes ) );
+        return $Module->run( 'view', [$ViewMode, $NodeID],
+                             ['ViewCache' => false, 'AttributeValidation' => ['processed' => true, 'attributes' => $unvalidatedAttributes], 'CollectionAttributes' => $collectionAttributes] );
     }
 
     return eZModule::HOOK_STATUS_CANCEL_RUN;

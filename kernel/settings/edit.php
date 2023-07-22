@@ -6,11 +6,7 @@
  * @package kernel
  */
 
-$settingTypeArray = array( 'array' => 'Array',
-                           'true/false' => 'True/False',
-                           'enable/disable' => 'Enabled/Disabled',
-                           'string' => 'String',
-                           'numeric' => 'Numeric' );
+$settingTypeArray = ['array' => 'Array', 'true/false' => 'True/False', 'enable/disable' => 'Enabled/Disabled', 'string' => 'String', 'numeric' => 'Numeric'];
 
 $tpl = eZTemplate::factory();
 $http = eZHTTPTool::instance();
@@ -38,19 +34,19 @@ if ( $http->hasPostVariable( 'SiteAccess' ) )
     $siteAccess = $http->postVariable( 'SiteAccess' );
 
 if ( $http->hasPostVariable( 'Block' ) )
-    $block = trim( $http->postVariable( 'Block' ) );
+    $block = trim( (string) $http->postVariable( 'Block' ) );
 
 if ( $http->hasPostVariable( 'SettingType' ) )
-    $settingType = trim( $http->postVariable( 'SettingType' ) );
+    $settingType = trim( (string) $http->postVariable( 'SettingType' ) );
 
 if ( $http->hasPostVariable( 'SettingName' ) )
-    $settingName = trim( $http->postVariable( 'SettingName' ) );
+    $settingName = trim( (string) $http->postVariable( 'SettingName' ) );
 
 if ( $http->hasPostVariable( 'SettingPlacement' ) )
-    $settingPlacement = trim( $http->postVariable( 'SettingPlacement' ) );
+    $settingPlacement = trim( (string) $http->postVariable( 'SettingPlacement' ) );
 
 if ( $http->hasPostVariable( 'Value' ) )
-    $valueToWrite = trim( $http->postVariable( 'Value' ) );
+    $valueToWrite = trim( (string) $http->postVariable( 'Value' ) );
 
 if ( !isset( $settingName ) )
     $settingName = '';
@@ -70,9 +66,8 @@ if ( $http->hasPostVariable( 'WriteSetting' ) )
 
     $hasValidationError = false;
     require 'kernel/settings/validation.php';
-    $validationResult = validate( array( 'Name' => $settingName,
-                                         'Value' => $valueToWrite ),
-                                  array( 'name', $settingType ), true );
+    $validationResult = validate( ['Name' => $settingName, 'Value' => $valueToWrite],
+                                  ['name', $settingType], true );
     if ( $validationResult['hasValidationError'] )
     {
         $tpl->setVariable( 'validation_field', $validationResult['fieldContainingError'] );
@@ -83,8 +78,8 @@ if ( $http->hasPostVariable( 'WriteSetting' ) )
     {
         if ( $settingType == 'array' )
         {
-            $valueArray = explode( "\n", $valueToWrite );
-            $valuesToWriteArray = array();
+            $valueArray = explode( "\n", (string) $valueToWrite );
+            $valuesToWriteArray = [];
 
             $settingCount = 0;
             foreach( $valueArray as $value )
@@ -153,7 +148,7 @@ function parseArrayToStr( $value, $separator )
     if ( !is_array( $value ) )
         return $value;
 
-    $valueArray = array();
+    $valueArray = [];
 
     foreach( $value as $param=>$key )
     {
@@ -193,13 +188,13 @@ if ( ( is_array( $value ) || $value ) and !isset( $settingType ) )
 
 }
 // Init value from ini (default\override\extensions\siteaccess)
-$values = array();
+$values = [];
 $values['default'] = getVariable( $block, $settingName, $iniFile, 'settings/' );
 $values['siteaccess'] = getVariable( $block, $settingName, $iniFile, "settings/siteaccess/$siteAccess" );
 $values['override'] = getVariable( $block, $settingName, $iniFile, "settings/override/" );
 // Get values from extensions
 $ini = eZINI::instance();
-$extensions = $ini->hasVariable( 'ExtensionSettings','ActiveExtensions' ) ? $ini->variable( 'ExtensionSettings','ActiveExtensions' ) : array();
+$extensions = $ini->hasVariable( 'ExtensionSettings','ActiveExtensions' ) ? $ini->variable( 'ExtensionSettings','ActiveExtensions' ) : [];
 $extensionDir = $ini->hasVariable( 'ExtensionSettings','ExtensionDirectory' ) ? $ini->variable( 'ExtensionSettings','ExtensionDirectory' ) : 'extension';
 foreach ( $extensions as $extension )
 {
@@ -220,10 +215,7 @@ $tpl->setVariable( 'value', $value );
 $tpl->setVariable( 'values', $values );
 $tpl->setVariable( 'placement', $settingPlacement );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( 'design:settings/edit.tpl' );
-$Result['path'] = array( array( 'text' => ezpI18n::tr( 'settings/edit', 'Settings' ),
-                                'url' => false ),
-                         array( 'text' => ezpI18n::tr( 'settings/edit', 'Edit' ),
-                                'url' => false ) );
+$Result['path'] = [['text' => ezpI18n::tr( 'settings/edit', 'Settings' ), 'url' => false], ['text' => ezpI18n::tr( 'settings/edit', 'Edit' ), 'url' => false]];
 ?>

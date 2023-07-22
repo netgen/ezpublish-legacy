@@ -15,9 +15,9 @@
 
 class eZBCMath extends eZPHPMath
 {
-    const DEFAULT_SCALE = 10;
+    final public const DEFAULT_SCALE = 10;
 
-    public function __construct( $params = array () )
+    public function __construct( $params = [] )
     {
         if( isset( $params['scale'] ) && is_numeric( $params['scale'] ) )
             $this->setScale( $params['scale'] );
@@ -37,33 +37,33 @@ class eZBCMath extends eZPHPMath
 
     function add( $a, $b )
     {
-        return ( bcadd( $a, $b, $this->Scale ) );
+        return ( bcadd( (string) $a, (string) $b, $this->Scale ) );
     }
 
     function sub( $a, $b )
     {
-        return ( bcsub( $a, $b, $this->Scale ) );
+        return ( bcsub( (string) $a, (string) $b, $this->Scale ) );
     }
 
     function mul( $a, $b )
     {
-        return ( bcmul( $a, $b, $this->Scale ) );
+        return ( bcmul( (string) $a, (string) $b, $this->Scale ) );
     }
 
     function div( $a, $b )
     {
-        return ( bcdiv( $a, $b, $this->Scale ) );
+        return ( bcdiv( (string) $a, (string) $b, $this->Scale ) );
     }
 
     function pow( $base, $exp )
     {
-        return ( bcpow( $base, $exp, $this->Scale ) );
+        return ( bcpow( (string) $base, (string) $exp, $this->Scale ) );
     }
 
     function ceil( $value, $precision, $target )
     {
         $result = eZPHPMath::ceil( $value, $precision, $target );
-        $result = rtrim( $result, '0' );
+        $result = rtrim( (string) $result, '0' );
         $result = rtrim( $result, '.' );
         return $result;
     }
@@ -71,7 +71,7 @@ class eZBCMath extends eZPHPMath
     function floor( $value, $precision, $target )
     {
         $result = eZPHPMath::floor( $value, $precision, $target );
-        $result = rtrim( $result, '0' );
+        $result = rtrim( (string) $result, '0' );
         $result = rtrim( $result, '.' );
         return $result;
     }
@@ -80,10 +80,10 @@ class eZBCMath extends eZPHPMath
     {
         $result = $value;
         $fractPart = $this->fractval( $value, $precision + 1 );
-        if ( strlen( $fractPart ) > $precision )
+        if ( strlen( (string) $fractPart ) > $precision )
         {
-            $lastDigit = (int)substr( $fractPart, -1, 1 );
-            $fractPart = substr( $fractPart, 0, $precision );
+            $lastDigit = (int)substr( (string) $fractPart, -1, 1 );
+            $fractPart = substr( (string) $fractPart, 0, $precision );
             if ( $lastDigit >= 5 )
                 $fractPart = $this->add( $fractPart, 1 );
 
@@ -92,7 +92,7 @@ class eZBCMath extends eZPHPMath
             $result = $this->add( $this->intval( $value ), $fractPart );
             $result = $this->adjustFractPart( $result, $precision, $target );
 
-            $result = rtrim( $result, '0' );
+            $result = rtrim( (string) $result, '0' );
             $result = rtrim( $result, '.' );
         }
 

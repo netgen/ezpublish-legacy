@@ -13,7 +13,7 @@
  */
 class ezpTopologicalSort
 {
-    protected $nodes = array();
+    protected $nodes = [];
 
     /**
      * Create a topological sort.
@@ -33,7 +33,7 @@ class ezpTopologicalSort
      * @param array $dependencies Array of dependencies where the keys depends on the values.
      *                            Values can either be a scalar or an array.
      */
-    function __construct( $dependencies = array() )
+    function __construct( $dependencies = [] )
     {
         foreach ( $dependencies as $dependency => $modules ) {
             if (! isset( $this->nodes[$dependency] ) )
@@ -56,7 +56,7 @@ class ezpTopologicalSort
     {
         $rootNodes = $this->getRootNodes();
 
-        $sorted = array();
+        $sorted = [];
         while ( count( $this->nodes ) > 0 ) {
             // check for circular reference
             if ( count( $rootNodes ) === 0 )
@@ -87,7 +87,7 @@ class ezpTopologicalSort
      */
     private function getRootNodes()
     {
-        $output = array();
+        $output = [];
         foreach( $this->nodes as $node )
             if (! $node->parentCount() )
                 $output[] = $node;

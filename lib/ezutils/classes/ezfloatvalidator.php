@@ -19,19 +19,16 @@ class eZFloatValidator extends eZRegExpValidator
     /**
      * Constructor
      *
-     * @param float|bool $min
-     * @param float|bool $max
+     * @param float|bool $MinValue
+     * @param float|bool $MaxValue
      */
-    public function __construct( $min = false, $max = false )
+    public function __construct( /// \privatesection
+    public $MinValue = false, public $MaxValue = false )
     {
-        $rule = array( "accepted" => "/^-?[0-9]+([.][0-9]+)?$/",
-                       "intermediate" => "/(-?[0-9]+([.][0-9]+)?)/",
-                       "fixup" => "" );
+        $rule = ["accepted" => "/^-?[0-9]+([.][0-9]+)?$/", "intermediate" => "/(-?[0-9]+([.][0-9]+)?)/", "fixup" => ""];
         parent::__construct( $rule );
-        $this->MinValue = $min;
-        $this->MaxValue = $max;
-        if ( $max !== false and $min !== false )
-            $this->MaxValue = max( $min, $max );
+        if ( $MaxValue !== false and $MinValue !== false )
+            $this->MaxValue = max( $MinValue, $MaxValue );
     }
 
     function setRange( $min, $max )
@@ -56,7 +53,7 @@ class eZFloatValidator extends eZRegExpValidator
 
     function fixup( $text )
     {
-        if ( preg_match( $this->RegExpRule["intermediate"], $text, $regs ) )
+        if ( preg_match( $this->RegExpRule["intermediate"], (string) $text, $regs ) )
             $text = $regs[1];
         if ( $this->MinValue !== false and $text < $this->MinValue )
             $text = $this->MinValue;
@@ -64,10 +61,6 @@ class eZFloatValidator extends eZRegExpValidator
             $text = $this->MaxValue;
         return $text;
     }
-
-    /// \privatesection
-    public $MinValue;
-    public $MaxValue;
 }
 
 ?>

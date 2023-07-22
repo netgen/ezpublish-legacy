@@ -27,7 +27,7 @@ class eZDFSClusterStaleCacheTest extends eZClusterStaleCacheTest
     /**
      * @var array
      **/
-    protected $sqlFiles = array( 'kernel/sql/', 'cluster_dfs_schema.sql' );
+    protected $sqlFiles = ['kernel/sql/', 'cluster_dfs_schema.sql'];
 
     protected $haveToRemoveDFSPath = false;
 

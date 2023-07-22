@@ -17,51 +17,22 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 {
     static function definition()
     {
-        return array( "fields" => array( "id" => array( 'name' => 'ID',
-                                                        'datatype' => 'integer',
-                                                        'default' => 0,
-                                                        'required' => true ),
-                                         "user_id" => array( 'name' => "UserID",
-                                                             'datatype' => 'integer',
-                                                             'default' => '',
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZUser',
-                                                             'foreign_attribute' => 'contentobject_id',
-                                                             'multiplicity' => '1..*' ),
-                                         "use_digest" => array( 'name' => "UseDigest",
-                                                                'datatype' => 'integer',
-                                                                'default' => 0,
-                                                                'required' => true ),
-                                         "node_id" => array( 'name' => "NodeID",
-                                                             'datatype' => 'integer',
-                                                             'default' => 0,
-                                                             'required' => true,
-                                                             'foreign_class' => 'eZContentObjectTreeNode',
-                                                             'foreign_attribute' => 'node_id',
-                                                             'multiplicity' => '1..*' ) ),
-                      "keys" => array( "id" ),
-                      "function_attributes" => array( 'node' => 'node' ),
-                      "increment_key" => "id",
-                      "sort" => array( "id" => "asc" ),
-                      "class_name" => "eZSubtreeNotificationRule",
-                      "name" => "ezsubtree_notification_rule" );
+        return ["fields" => ["id" => ['name' => 'ID', 'datatype' => 'integer', 'default' => 0, 'required' => true], "user_id" => ['name' => "UserID", 'datatype' => 'integer', 'default' => '', 'required' => true, 'foreign_class' => 'eZUser', 'foreign_attribute' => 'contentobject_id', 'multiplicity' => '1..*'], "use_digest" => ['name' => "UseDigest", 'datatype' => 'integer', 'default' => 0, 'required' => true], "node_id" => ['name' => "NodeID", 'datatype' => 'integer', 'default' => 0, 'required' => true, 'foreign_class' => 'eZContentObjectTreeNode', 'foreign_attribute' => 'node_id', 'multiplicity' => '1..*']], "keys" => ["id"], "function_attributes" => ['node' => 'node'], "increment_key" => "id", "sort" => ["id" => "asc"], "class_name" => "eZSubtreeNotificationRule", "name" => "ezsubtree_notification_rule"];
     }
 
 
     static function create( $nodeID, $userID, $useDigest = 0 )
     {
-        $rule = new eZSubtreeNotificationRule( array( 'user_id' => $userID,
-                                                      'use_digest' => $useDigest,
-                                                      'node_id' => $nodeID ) );
+        $rule = new eZSubtreeNotificationRule( ['user_id' => $userID, 'use_digest' => $useDigest, 'node_id' => $nodeID] );
         return $rule;
     }
 
     static function fetchNodesForUserID( $userID, $asObject = true )
     {
         $nodeIDList = eZPersistentObject::fetchObjectList( eZSubtreeNotificationRule::definition(),
-                                                            array( 'node_id' ), array( 'user_id' => $userID ),
+                                                            ['node_id'], ['user_id' => $userID],
                                                             null,null,false );
-        $nodes = array();
+        $nodes = [];
         if ( $asObject )
         {
             foreach ( $nodeIDList as $nodeRow )
@@ -82,22 +53,20 @@ class eZSubtreeNotificationRule extends eZPersistentObject
     static function fetchList( $userID, $asObject = true, $offset = false, $limit = false )
     {
         return eZPersistentObject::fetchObjectList( eZSubtreeNotificationRule::definition(),
-                                                            null, array( 'user_id' => $userID ),
-                                                            null, array( 'offset' => $offset,
-                                                                         'length' => $limit ), $asObject );
+                                                            null, ['user_id' => $userID],
+                                                            null, ['offset' => $offset, 'length' => $limit], $asObject );
     }
 
     static function fetchListCount( $userID )
     {
         $countRes = eZPersistentObject::fetchObjectList( eZSubtreeNotificationRule::definition(),
-                                                         array(),
-                                                         array( 'user_id' => $userID ),
+                                                         [],
+                                                         ['user_id' => $userID],
                                                          false,
                                                          null,
                                                          false,
                                                          false,
-                                                         array( array( 'operation' => 'count( id )',
-                                                                       'name' => 'count' ) ) );
+                                                         [['operation' => 'count( id )', 'name' => 'count']] );
         return $countRes[0]['count'];
     }
 
@@ -114,12 +83,12 @@ class eZSubtreeNotificationRule extends eZPersistentObject
     {
         if ( count( $nodeIDList ) == 0 )
         {
-            $retValue = array();
+            $retValue = [];
             return $retValue;
         }
 
         $db = eZDB::instance();
-        $concatString = $db->concatString(  array( 'user_tree.path_string', "'%'" ) );
+        $concatString = $db->concatString(  ['user_tree.path_string', "'%'"] );
 
         // Select affected users
         $sqlINString = $db->generateSQLINStatement( $nodeIDList, 'subtree_rule.node_id', false, false, 'int' );
@@ -136,14 +105,14 @@ class eZSubtreeNotificationRule extends eZPersistentObject
         $userPart = $db->arrayQuery( $sql );
 
         // Remove duplicates
-        $userNodeIDList = array();
+        $userNodeIDList = [];
         foreach ( $userPart as $row )
             $userNodeIDList[] = $row['node_id'];
         $userNodeIDList = array_unique( $userNodeIDList );
 
         if ( count( $userNodeIDList ) == 0 )
         {
-            $retValue = array();
+            $retValue = [];
             return $retValue;
         }
 
@@ -159,7 +128,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
         $nodePart = $db->arrayQuery( $sql );
 
         // Remove duplicates
-        $objectIDList = array();
+        $objectIDList = [];
         foreach ( $nodePart as $row )
             if ( $row['contentobject_id'] != '0' )
                 $objectIDList[] = $row['contentobject_id'];
@@ -167,7 +136,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
         if ( count( $objectIDList ) == 0 )
         {
-            $retValue = array();
+            $retValue = [];
             return $retValue;
         }
 
@@ -192,7 +161,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
         $rolePart = $db->arrayQuery( $sql );
 
         // Build resultArray. Make sure there are no duplicates.
-        $resultArray = array();
+        $resultArray = [];
         foreach ( $userPart as $up )
         {
             foreach ( $nodePart as $np )
@@ -204,19 +173,16 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                         if ( $np['contentobject_id'] == $rp['contentobject_id'] )
                         {
                             $key = $rp['policy_id'] . $up['user_id'] . $rp['limitation'] . $rp['value'];
-                            $resultArray[$key] = array( 'policy_id' => $rp['policy_id'],
-                                                        'user_id' => $up['user_id'],
-                                                        'limitation' => $rp['limitation'],
-                                                        'value' => $rp['value'] );
+                            $resultArray[$key] = ['policy_id' => $rp['policy_id'], 'user_id' => $up['user_id'], 'limitation' => $rp['limitation'], 'value' => $rp['value']];
                         }
                     }
                 }
             }
         }
 
-        $policyIDArray = array();
-        $limitedPolicyIDArray = array();
-        $userIDArray = array();
+        $policyIDArray = [];
+        $limitedPolicyIDArray = [];
+        $userIDArray = [];
         foreach( $resultArray as $result )
         {
             $userIDArray[(string)$result['user_id']] = (int)$result['user_id'];
@@ -230,14 +196,11 @@ class eZSubtreeNotificationRule extends eZPersistentObject
             }
             else
             {
-                $limitedPolicyIDArray[] = array( 'user_id' => $userIDArray[(string)$result['user_id']],
-                                                 'limitation' => $result['limitation'],
-                                                 'value' => $result['value'],
-                                                 'policyID' => $result['policy_id'] );
+                $limitedPolicyIDArray[] = ['user_id' => $userIDArray[(string)$result['user_id']], 'limitation' => $result['limitation'], 'value' => $result['value'], 'policyID' => $result['policy_id']];
             }
         }
 
-        $acceptedUserArray = array();
+        $acceptedUserArray = [];
         foreach( array_keys( $policyIDArray ) as $policyID )
         {
             foreach( array_keys( $policyIDArray[$policyID] ) as $key )
@@ -271,8 +234,8 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
             $userArray = eZSubtreeNotificationRule::checkObjectAccess( $contentObject,
                                                                        $policyEntry['policyID'],
-                                                                       array( $policyEntry['user_id'] ),
-                                                                       array( $policyEntry['limitation'] => $policyEntry['value'] ) );
+                                                                       [$policyEntry['user_id']],
+                                                                       [$policyEntry['limitation'] => $policyEntry['value']] );
 
             $acceptedUserArray = array_merge( $acceptedUserArray, $userArray );
             foreach ( $userArray as $userID )
@@ -292,7 +255,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
         if ( count( $acceptedUserArray ) == 0 )
         {
-            $retValue = array();
+            $retValue = [];
             return $retValue;
         }
 
@@ -323,8 +286,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
         $policy = eZPolicy::fetch( $policyID );
         if ( $userLimits )
         {
-            reset( $userLimits );
-            $policy->setAttribute( 'limit_identifier', 'User_' . key( $userLimits ) );
+            $policy->setAttribute( 'limit_identifier', 'User_' . array_key_first( $userLimits ) );
             $policy->setAttribute( 'limit_value', current( $userLimits ) );
         }
 
@@ -335,7 +297,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
         if ( isset( $limitationArray['*'] ) &&
              $limitationArray['*'] == '*' )
         {
-            $returnArray = array();
+            $returnArray = [];
             foreach ( $accessUserIDArray as $userID )
             {
                 $returnArray[] = $userID;
@@ -370,9 +332,9 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
         foreach ( array_keys( $limitationArray ) as $key )
         {
-            if ( count( $accessUserIDArray ) == 0 )
+            if ( (is_countable($accessUserIDArray) ? count( $accessUserIDArray ) : 0) == 0 )
             {
-                return array();
+                return [];
             }
             switch( $key )
             {
@@ -380,7 +342,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                 {
                     if ( !in_array( $contentObject->attribute( 'contentclass_id' ), $limitationArray[$key] )  )
                     {
-                        return array();
+                        return [];
                     }
                 } break;
 
@@ -389,7 +351,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
                     if ( !in_array( $contentObject->attribute( 'contentclass_id' ), $limitationArray[$key]  ) )
                     {
-                        return array();
+                        return [];
                     }
                 } break;
 
@@ -398,7 +360,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                 {
                     if ( !in_array( $contentObject->attribute( 'section_id' ), $limitationArray[$key]  ) )
                     {
-                        return array();
+                        return [];
                     }
                 } break;
 
@@ -406,15 +368,15 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                 {
                     if ( in_array( $contentObject->attribute( 'owner_id' ), $userIDArray ) )
                     {
-                        $accessUserIDArray = array( $contentObject->attribute( 'owner_id' ) );
+                        $accessUserIDArray = [$contentObject->attribute( 'owner_id' )];
                     }
                     else if ( in_array( $contentObject->attribute( 'id' ), $userIDArray ) )
                     {
-                        $accessUserIDArray = array( $contentObject->attribute( 'id' ) );
+                        $accessUserIDArray = [$contentObject->attribute( 'id' )];
                     }
                     else
                     {
-                        return array();
+                        return [];
                     }
                 } break;
 
@@ -431,7 +393,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                     }
                     if ( $nodeLimit && $checkedSubtree && $nodeSubtree )
                     {
-                        return array();
+                        return [];
                     }
                     $checkedNode = true;
                 } break;
@@ -446,7 +408,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                         $validSubstring = false;
                         foreach ( $subtreeArray as $subtreeString )
                         {
-                            if ( strstr( $path, $subtreeString ) )
+                            if ( strstr( (string) $path, (string) $subtreeString ) )
                             {
                                 $nodeSubtree = false;
                                 break;
@@ -459,7 +421,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                     }
                     if ( $nodeSubtree && $checkedNode && $nodeLimit )
                     {
-                        return array();
+                        return [];
                     }
                     $checkedSubtree = true;
                 } break;
@@ -474,7 +436,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                         $validSubstring = false;
                         foreach ( $subtreeArray as $subtreeString )
                         {
-                            if ( strstr( $path, $subtreeString ) )
+                            if ( strstr( (string) $path, (string) $subtreeString ) )
                             {
                                 $userSubtreeLimit = false;
                                 break;
@@ -487,25 +449,25 @@ class eZSubtreeNotificationRule extends eZPersistentObject
                     }
                     if ( $userSubtreeLimit )
                     {
-                        return array();
+                        return [];
                     }
                 } break;
                 default:
                 {
                     //check object state group limitation
-                    if ( strncmp( $key, 'StateGroup_', 11 ) === 0 )
+                    if ( str_starts_with($key, 'StateGroup_') )
                     {
                         if ( count( array_intersect( $limitationArray[$key],
                                                      $contentObject->attribute( 'state_id_array' ) ) ) == 0 )
                         {
-                            return array();
+                            return [];
                         }
                     }
                 }
             }
         }
 
-        $returnArray = array();
+        $returnArray = [];
         foreach ( $accessUserIDArray as $userID )
         {
             $returnArray[] = $userID;
@@ -524,8 +486,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
 
     static function removeByNodeAndUserID( $userID, $nodeID )
     {
-        eZPersistentObject::removeObject( eZSubtreeNotificationRule::definition(), array( 'user_id' => $userID,
-                                                                                          'node_id' => $nodeID ) );
+        eZPersistentObject::removeObject( eZSubtreeNotificationRule::definition(), ['user_id' => $userID, 'node_id' => $nodeID] );
     }
 
     /*!
@@ -537,7 +498,7 @@ class eZSubtreeNotificationRule extends eZPersistentObject
     */
     static function removeByUserID( $userID )
     {
-        eZPersistentObject::removeObject( eZSubtreeNotificationRule::definition(), array( 'user_id' => $userID ) );
+        eZPersistentObject::removeObject( eZSubtreeNotificationRule::definition(), ['user_id' => $userID] );
     }
 
     /*!

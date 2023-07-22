@@ -16,38 +16,33 @@
 
 class eZWorkflowType
 {
-    const STATUS_NONE = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REJECTED = 2;
-    const STATUS_DEFERRED_TO_CRON = 3;
-    const STATUS_DEFERRED_TO_CRON_REPEAT = 4;
-    const STATUS_RUN_SUB_EVENT = 5;
-    const STATUS_WORKFLOW_CANCELLED = 6;
-    const STATUS_FETCH_TEMPLATE = 7;
-    const STATUS_FETCH_TEMPLATE_REPEAT = 8;
-    const STATUS_REDIRECT = 10;
-    const STATUS_WORKFLOW_DONE = 9;
-    const STATUS_REDIRECT_REPEAT = 11;
-    const STATUS_WORKFLOW_RESET = 12;
+    public const STATUS_NONE = 0;
+    public const STATUS_ACCEPTED = 1;
+    public const STATUS_REJECTED = 2;
+    public const STATUS_DEFERRED_TO_CRON = 3;
+    public const STATUS_DEFERRED_TO_CRON_REPEAT = 4;
+    public const STATUS_RUN_SUB_EVENT = 5;
+    public const STATUS_WORKFLOW_CANCELLED = 6;
+    public const STATUS_FETCH_TEMPLATE = 7;
+    public const STATUS_FETCH_TEMPLATE_REPEAT = 8;
+    public const STATUS_REDIRECT = 10;
+    public const STATUS_WORKFLOW_DONE = 9;
+    public const STATUS_REDIRECT_REPEAT = 11;
+    public const STATUS_WORKFLOW_RESET = 12;
 
     /**
      * Constructor
      *
-     * @param string $group
-     * @param string $type
-     * @param string $groupName
-     * @param string $name
+     * @param string $Group
+     * @param string $Type
+     * @param string $GroupName
+     * @param string $Name
      */
-    public function __construct( $group, $type, $groupName, $name )
+    public function __construct( /// \privatesection
+    public $Group, public $Type, public $GroupName, public $Name )
     {
-        $this->Group = $group;
-        $this->Type = $type;
-        $this->TypeString = $group . "_" . $type;
-        $this->GroupName = $groupName;
-        $this->Name = $name;
-        $this->Information = "";
-        $this->ActivationDate = false;
-        $this->Attributes = array();
+        $this->TypeString = $Group . "_" . $Type;
+        $this->Attributes = [];
         $this->Attributes["group"] =& $this->Group;
         $this->Attributes["type"] =& $this->Type;
         $this->Attributes["type_string"] =& $this->TypeString;
@@ -72,9 +67,7 @@ class eZWorkflowType
     static function statusName( $status )
     {
         $statusNameMap = self::statusNameMap();
-        if ( isset( $statusNameMap[$status] ) )
-            return $statusNameMap[$status];
-        return false;
+        return $statusNameMap[$status] ?? false;
     }
 
     static function createType( $typeString )
@@ -163,7 +156,7 @@ class eZWorkflowType
         $typeString = $group . "_" . $type;
         if ( !isset( $GLOBALS["eZWorkflowTypes"] ) || !is_array( $GLOBALS["eZWorkflowTypes"] ) )
         {
-            $GLOBALS["eZWorkflowTypes"] = array();
+            $GLOBALS["eZWorkflowTypes"] = [];
         }
         if ( isset( $GLOBALS["eZWorkflowTypes"][$typeString] ) )
         {
@@ -171,13 +164,13 @@ class eZWorkflowType
         }
         else
         {
-            $GLOBALS["eZWorkflowTypes"][$typeString] = array( "class_name" => $class_name );
+            $GLOBALS["eZWorkflowTypes"][$typeString] = ["class_name" => $class_name];
         }
     }
 
     static function loadAndRegisterType( $typeString )
     {
-        $typeElements = explode( "_", $typeString );
+        $typeElements = explode( "_", (string) $typeString );
         if ( count( $typeElements ) < 2 )
         {
             eZDebug::writeError( "Workflow type not found: $typeString", __METHOD__ );
@@ -223,9 +216,7 @@ class eZWorkflowType
 
     function attributes()
     {
-        return array_merge( array( 'description',
-                                   'allowed_triggers' ),
-                            array_keys( $this->Attributes ) );
+        return ['description', 'allowed_triggers', ...array_keys( $this->Attributes )];
     }
 
     function hasAttribute( $attr )
@@ -320,7 +311,7 @@ class eZWorkflowType
         return false;
     }
 
-    function cleanupAfterRemoving( $attr = array() )
+    function cleanupAfterRemoving( $attr = [] )
     {
     }
 
@@ -335,7 +326,7 @@ class eZWorkflowType
 
     function typeFunctionalAttributes( )
     {
-        return array();
+        return [];
     }
 
     function customWorkflowEventHTTPAction( $http, $action, $workflowEvent )
@@ -388,25 +379,12 @@ class eZWorkflowType
      */
     static function statusNameMap()
     {
-        return array( self::STATUS_NONE => ezpI18n::tr( 'kernel/classes', 'No state yet' ),
-                      self::STATUS_ACCEPTED => ezpI18n::tr( 'kernel/classes', 'Accepted event' ),
-                      self::STATUS_REJECTED => ezpI18n::tr( 'kernel/classes', 'Rejected event' ),
-                      self::STATUS_DEFERRED_TO_CRON => ezpI18n::tr( 'kernel/classes', 'Event deferred to cron job' ),
-                      self::STATUS_DEFERRED_TO_CRON_REPEAT => ezpI18n::tr( 'kernel/classes', 'Event deferred to cron job, event will be rerun' ),
-                      self::STATUS_RUN_SUB_EVENT => ezpI18n::tr( 'kernel/classes', 'Event runs a sub event' ),
-                      self::STATUS_WORKFLOW_CANCELLED => ezpI18n::tr( 'kernel/classes', 'Canceled whole workflow' ),
-                      self::STATUS_WORKFLOW_RESET => ezpI18n::tr( 'kernel/classes', 'Workflow was reset for reuse' ) );
+        return [self::STATUS_NONE => ezpI18n::tr( 'kernel/classes', 'No state yet' ), self::STATUS_ACCEPTED => ezpI18n::tr( 'kernel/classes', 'Accepted event' ), self::STATUS_REJECTED => ezpI18n::tr( 'kernel/classes', 'Rejected event' ), self::STATUS_DEFERRED_TO_CRON => ezpI18n::tr( 'kernel/classes', 'Event deferred to cron job' ), self::STATUS_DEFERRED_TO_CRON_REPEAT => ezpI18n::tr( 'kernel/classes', 'Event deferred to cron job, event will be rerun' ), self::STATUS_RUN_SUB_EVENT => ezpI18n::tr( 'kernel/classes', 'Event runs a sub event' ), self::STATUS_WORKFLOW_CANCELLED => ezpI18n::tr( 'kernel/classes', 'Canceled whole workflow' ), self::STATUS_WORKFLOW_RESET => ezpI18n::tr( 'kernel/classes', 'Workflow was reset for reuse' )];
     }
-
-    /// \privatesection
-    public $Group;
-    public $Type;
     public $TypeString;
-    public $GroupName;
-    public $Name;
-    public $ActivationDate;
-    public $Information;
-    public $TriggerTypes = array( '*' => true );
+    public $ActivationDate = false;
+    public $Information = "";
+    public $TriggerTypes = ['*' => true];
 }
 
 ?>

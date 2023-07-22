@@ -33,7 +33,7 @@ class eZSysTest extends ezpTestCase
         $indexFile = eZSys::indexFile();
         self::assertEquals( "", $indexFile );
 
-        eZSys::addAccessPath( array( 'testing', 'indexFile' ) );
+        eZSys::addAccessPath( ['testing', 'indexFile'] );
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/testing/indexFile", $indexFile );
         // -------------------------------------------------------------------
@@ -67,7 +67,7 @@ class eZSysTest extends ezpTestCase
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/$defaultAccess", $indexFile );
 
-        eZSys::addAccessPath( array( 'testing', 'indexFile' ) );
+        eZSys::addAccessPath( ['testing', 'indexFile'] );
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/$defaultAccess/testing/indexFile", $indexFile );
         // -------------------------------------------------------------------
@@ -125,7 +125,7 @@ class eZSysTest extends ezpTestCase
         $indexFile = eZSys::indexFile();
         self::assertEquals( "", $indexFile );
 
-        eZSys::setAccessPath( array( 'testing', 'indexFile' ), 'test-path', false );
+        eZSys::setAccessPath( ['testing', 'indexFile'], 'test-path', false );
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/testing/indexFile", $indexFile );
         // -------------------------------------------------------------------
@@ -159,7 +159,7 @@ class eZSysTest extends ezpTestCase
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/$defaultAccess", $indexFile );
 
-        eZSys::setAccessPath( array( 'testing', 'indexFile' ), 'test-path', false );
+        eZSys::setAccessPath( ['testing', 'indexFile'], 'test-path', false );
         $indexFile = eZSys::indexFile();
         self::assertEquals( "/$defaultAccess/testing/indexFile", $indexFile );
         // -------------------------------------------------------------------
@@ -216,17 +216,17 @@ class eZSysTest extends ezpTestCase
      */
     public function providerForTestGetValidWwwDir()
     {
-        return array(
+        return [
             // expected value, script called, path of the script, name of the index
-            array( false, '', '/some/test/path/index.php', 'index.php' ),
-            array( false, '/index.php', '/some/test/path/index.php', 'indexfail.php' ),
-            array( null, '/index.php', '/some/test/path/indexfail.php', 'index.php' ),
-            array( '', '/index.php', '/some/test/path/index.php', 'index.php' ),
-            array( '~user', '/~user/index.php', '/some/test/path/user/public_html/index.php', 'index.php' ),
-            array( 'path', '/path/index.php', '/some/test/path/index.php', 'index.php' ),
-            array( 'path', '/path/index.php', '\some\test\path\index.php', 'index.php' ),
-            array( null, "/~a\"><body onload=\"alert('Xss')\">/index.php", '/some/test/path/user/public_html/index.php', 'index.php' )
-        );
+            [false, '', '/some/test/path/index.php', 'index.php'],
+            [false, '/index.php', '/some/test/path/index.php', 'indexfail.php'],
+            [null, '/index.php', '/some/test/path/indexfail.php', 'index.php'],
+            ['', '/index.php', '/some/test/path/index.php', 'index.php'],
+            ['~user', '/~user/index.php', '/some/test/path/user/public_html/index.php', 'index.php'],
+            ['path', '/path/index.php', '/some/test/path/index.php', 'index.php'],
+            ['path', '/path/index.php', '\some\test\path\index.php', 'index.php'],
+            [null, "/~a\"><body onload=\"alert('Xss')\">/index.php", '/some/test/path/user/public_html/index.php', 'index.php'],
+        ];
     }
 
     /* -----------------------------------------------------------------------
@@ -235,9 +235,7 @@ class eZSysTest extends ezpTestCase
      */
      private function setSiteAccess( $accessName )
      {
-         eZSiteAccess::change( array( 'name' => $accessName,
-                                      'type' => eZSiteAccess::TYPE_URI,
-                                      'uri_part' => array( $accessName ) ) );
+         eZSiteAccess::change( ['name' => $accessName, 'type' => eZSiteAccess::TYPE_URI, 'uri_part' => [$accessName]] );
      }
 }
 

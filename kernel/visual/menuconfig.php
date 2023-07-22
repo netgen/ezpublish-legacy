@@ -64,14 +64,14 @@ if ( $module->isCurrentAction( 'Store' ) )
         $cacheDir = $siteINI->variable( 'FileSettings', 'CacheDir' );
         if ( $cacheDir[0] == "/" )
         {
-            $cacheDir = eZDir::path( array( $cacheDir ) );
+            $cacheDir = eZDir::path( [$cacheDir] );
         }
         else
         {
             if ( $siteINI->hasVariable( 'FileSettings', 'VarDir' ) )
             {
                 $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
-                $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+                $cacheDir = eZDir::path( [$varDir, $cacheDir] );
             }
         }
     }
@@ -79,7 +79,7 @@ if ( $module->isCurrentAction( 'Store' ) )
     {
          $varDir = $siteINI->variable( 'FileSettings', 'VarDir' );
          $cacheDir = $ini->variable( 'FileSettings', 'CacheDir' );
-         $cacheDir = eZDir::path( array( $varDir, $cacheDir ) );
+         $cacheDir = eZDir::path( [$varDir, $cacheDir] );
     }
     else
     {
@@ -94,10 +94,10 @@ if ( $module->isCurrentAction( 'Store' ) )
 
 $availableMenuArray = $menuINI->variable( 'MenuSettings', 'AvailableMenuArray' );
 
-$menuArray = array();
+$menuArray = [];
 foreach ( $availableMenuArray as $menuType )
 {
-    $menuArray[] = array( 'type' => $menuType, 'settings' => $menuINI->group( $menuType ) );
+    $menuArray[] = ['type' => $menuType, 'settings' => $menuINI->group( $menuType )];
 }
 
 $tpl->setVariable( 'available_menu_array', $menuArray );
@@ -106,9 +106,8 @@ $tpl->setVariable( 'siteaccess_list', $siteAccessList );
 
 $tpl->setVariable( 'current_siteaccess', $siteAccess );
 
-$Result = array();
+$Result = [];
 $Result['content'] = $tpl->fetch( "design:visual/menuconfig.tpl" );
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'design/standard/menuconfig', 'Menu management' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'design/standard/menuconfig', 'Menu management' )]];
 
 ?>

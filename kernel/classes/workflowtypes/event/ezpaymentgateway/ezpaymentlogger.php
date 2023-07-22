@@ -47,7 +47,7 @@ class eZPaymentLogger
     {
         if( $this->file )
         {
-            $time = $this->getTime();
+            $time = static::getTime();
 
             if ( is_object( $string ) || is_array( $string ) )
                 $string = eZDebug::dumpVariable( $string );

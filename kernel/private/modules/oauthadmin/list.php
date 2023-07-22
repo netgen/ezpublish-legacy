@@ -20,10 +20,7 @@ $tpl->setVariable( 'applications', $session->find( $q, 'ezpRestClient' ) );
 
 $tpl->setVariable( 'module', $module );
 
-$Result['path'] = array( array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' ) ),
-                         array( 'url' => false,
-                                'text' => ezpI18n::tr( 'kernel/oauthadmin', 'Registered REST applications' ) ) );
+$Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'oAuth admin' )], ['url' => false, 'text' => ezpI18n::tr( 'kernel/oauthadmin', 'Registered REST applications' )]];
 
 $Result['content'] = $tpl->fetch( 'design:oauthadmin/list.tpl' );
 

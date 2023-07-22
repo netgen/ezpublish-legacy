@@ -12,7 +12,7 @@ if ( !$module->hasActionParameter( 'NodeID' ) )
 {
     eZDebug::writeError( 'Missing NodeID parameter for action ' . $module->currentAction(),
                          'content/translation' );
-    return $module->redirectToView( 'view', array( 'full', 2 ) );
+    return $module->redirectToView( 'view', ['full', 2] );
 }
 
 $nodeID = $module->actionParameter( 'NodeID' );
@@ -21,7 +21,7 @@ if ( !$module->hasActionParameter( 'LanguageCode' ) )
 {
     eZDebug::writeError( 'Missing LanguageCode parameter for action ' . $module->currentAction(),
                          'content/translation' );
-    return $module->redirectToView( 'view', array( 'full', 2 ) );
+    return $module->redirectToView( 'view', ['full', 2] );
 }
 
 $languageCode = $module->actionParameter( 'LanguageCode' );
@@ -34,14 +34,14 @@ if ( !$module->hasActionParameter( 'ViewMode' ) )
 
 if ( $module->isCurrentAction( 'Cancel' ) )
 {
-    return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+    return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
 }
 
 if ( !$module->hasActionParameter( 'ObjectID' ) )
 {
     eZDebug::writeError( 'Missing ObjectID parameter for action ' . $module->currentAction(),
                          'content/translation' );
-    return $module->redirectToView( 'view', array( 'full', 2 ) );
+    return $module->redirectToView( 'view', ['full', 2] );
 }
 $objectID = $module->actionParameter( 'ObjectID' );
 
@@ -61,17 +61,19 @@ if ( $module->isCurrentAction( 'UpdateInitialLanguage' ) )
 
         if ( !$object->canEdit() )
         {
-            return $module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array() );
+            return $module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', [] );
         }
 
         if ( eZOperationHandler::operationIsAvailable( 'content_updateinitiallanguage' ) )
         {
             $operationResult = eZOperationHandler::execute( 'content', 'updateinitiallanguage',
-                                                            array( 'object_id'               => $objectID,
-                                                                   'new_initial_language_id' => $newInitialLanguageID,
-                                                                   // note : the $nodeID parameter is ignored here but is
-                                                                   // provided for events that need it
-                                                                   'node_id'                 => $nodeID ) );
+                                                            [
+                                                                'object_id'               => $objectID,
+                                                                'new_initial_language_id' => $newInitialLanguageID,
+                                                                // note : the $nodeID parameter is ignored here but is
+                                                                // provided for events that need it
+                                                                'node_id'                 => $nodeID,
+                                                            ] );
         }
         else
         {
@@ -79,13 +81,13 @@ if ( $module->isCurrentAction( 'UpdateInitialLanguage' ) )
         }
     }
 
-    return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+    return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
 }
 else if ( $module->isCurrentAction( 'UpdateAlwaysAvailable' ) )
 {
     if ( !$object->canEdit() )
     {
-        return $module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', array() );
+        return $module->handleError( eZError::KERNEL_ACCESS_DENIED, 'kernel', [] );
     }
 
     $newAlwaysAvailable = $module->hasActionParameter( 'AlwaysAvailable' );
@@ -93,24 +95,26 @@ else if ( $module->isCurrentAction( 'UpdateAlwaysAvailable' ) )
     if ( eZOperationHandler::operationIsAvailable( 'content_updatealwaysavailable' ) )
     {
         $operationResult = eZOperationHandler::execute( 'content', 'updatealwaysavailable',
-                                                        array( 'object_id'            => $objectID,
-                                                               'new_always_available' => $newAlwaysAvailable,
-                                                               // note : the $nodeID parameter is ignored here but is
-                                                               // provided for events that need it
-                                                               'node_id'              => $nodeID ) );
+                                                        [
+                                                            'object_id'            => $objectID,
+                                                            'new_always_available' => $newAlwaysAvailable,
+                                                            // note : the $nodeID parameter is ignored here but is
+                                                            // provided for events that need it
+                                                            'node_id'              => $nodeID,
+                                                        ] );
     }
     else
     {
         eZContentOperationCollection::updateAlwaysAvailable( $objectID, $newAlwaysAvailable );
     }
 
-    return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+    return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
 }
 else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
 {
     if ( !$module->hasActionParameter( 'LanguageID' ) )
     {
-        return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+        return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
     }
 
     $languageIDArray = $module->actionParameter( 'LanguageID' );
@@ -120,11 +124,13 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
         if ( eZOperationHandler::operationIsAvailable( 'content_removetranslation' ) )
         {
             $operationResult = eZOperationHandler::execute( 'content', 'removetranslation',
-                                                            array( 'object_id'        => $objectID,
-                                                                   'language_id_list' => $languageIDArray,
-                                                                   // note : the $nodeID parameter is ignored here but is
-                                                                   // provided for events that need it
-                                                                   'node_id'          => $nodeID ) );
+                                                            [
+                                                                'object_id'        => $objectID,
+                                                                'language_id_list' => $languageIDArray,
+                                                                // note : the $nodeID parameter is ignored here but is
+                                                                // provided for events that need it
+                                                                'node_id'          => $nodeID,
+                                                            ] );
 
         }
         else
@@ -132,10 +138,10 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
             eZContentOperationCollection::removeTranslation( $objectID, $languageIDArray );
         }
 
-        return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+        return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
     }
 
-    $languages = array();
+    $languages = [];
     foreach( $languageIDArray as $languageID )
     {
         $language = eZContentLanguage::fetch( $languageID );
@@ -147,7 +153,7 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
 
     if ( !$languages )
     {
-        return $module->redirectToView( 'view', array( $viewMode, $nodeID, $languageCode ) );
+        return $module->redirectToView( 'view', [$viewMode, $nodeID, $languageCode] );
     }
 
     $tpl = eZTemplate::factory();
@@ -159,14 +165,13 @@ else if ( $module->isCurrentAction( 'RemoveTranslation' ) )
     $tpl->setVariable( 'languages', $languages );
     $tpl->setVariable( 'view_mode', $viewMode );
 
-    $Result = array();
+    $Result = [];
     $Result['content'] = $tpl->fetch( 'design:content/removetranslation.tpl' );
-    $Result['path'] = array( array( 'url' => false,
-                                    'text' => ezpI18n::tr( 'kernel/content', 'Remove translation' ) ) );
+    $Result['path'] = [['url' => false, 'text' => ezpI18n::tr( 'kernel/content', 'Remove translation' )]];
 
     return;
 }
 
-return $module->redirectToView( 'view', array( 'full', 2 ) );
+return $module->redirectToView( 'view', ['full', 2] );
 
 ?>

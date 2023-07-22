@@ -26,10 +26,10 @@ class eZImageFileRegression extends ezpDatabaseTestCase
     public function testIssue16078()
     {
         $classID = 5; // image class, can remain hardcoded, I guess
-        $baseImagePath = dirname( __FILE__ ) . '/ezimagefile_regression_issue16078.png';
+        $baseImagePath = __DIR__ . '/ezimagefile_regression_issue16078.png';
         $parts = pathinfo( $baseImagePath );
         $imagePattern = $parts['dirname'] . DIRECTORY_SEPARATOR . $parts['filename'] . '_%s_%d.' . $parts['extension'];
-        $toDelete = array();
+        $toDelete = [];
 
         // Create version 1
         $imagePath = sprintf( $imagePattern, md5(1), 1 );
@@ -56,7 +56,7 @@ class eZImageFileRegression extends ezpDatabaseTestCase
         $version->removeThis();
 
         // Check that the original file still exists
-        $this->assertTrue( file_exists( $publishedImagePath ), 'The image file from version 1 should still exist when version 2 is removed' );
+        static::assertTrue(file_exists( $publishedImagePath ), 'The image file from version 1 should still exist when version 2 is removed');
 
         array_map( 'unlink', $toDelete );
         $image->purge();
@@ -82,7 +82,7 @@ class eZImageFileRegression extends ezpDatabaseTestCase
 
         $newVersion = $object->object->version( $version->attribute( 'version' ) );
         $newVersionAttributes = $newVersion->contentObjectAttributes( $newLanguageCode );
-        $versionDataMap = array();
+        $versionDataMap = [];
         foreach( $newVersionAttributes as $attribute )
         {
             $versionDataMap[$attribute->contentClassAttributeIdentifier()] = $attribute;
