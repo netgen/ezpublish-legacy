@@ -1488,6 +1488,30 @@ class eZPersistentObject
     public $DataText5;
     public $SerializedDataText;
     public $Category;
+    public $PolicyID;
+    public $Values;
+    public $Created;
+    public $CurrencyCode;
+    public $ProductCollectionID;
+    public $ItemCount;
+    public $Price;
+    public $IsVATIncluded;
+    public $VATValue;
+    public $DiscountValue;
+    public $Email;
+    public $IsTemporary;
+    public $IsArchived;
+    public $IsActive;
+    public $OrderID;
+    public $ModifierID;
+    public $Code;
+    public $Symbol;
+    public $AutoRateValue;
+    public $CustomRateValue;
+    public $RateFactor;
+    public $Main;
+    public $MementoKey;
+    public $MainKey;
 }
 
 ?>

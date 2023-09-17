@@ -16,6 +16,14 @@
 */
 class eZPolicyLimitation extends eZPersistentObject
 {
+    // Used for assign subtree matching
+    public $LimitValue;
+
+    public $PolicyID;
+    public $LimitationID;
+    public $Value;
+    public $Values;
+
     /*!
      Constructor
     */
@@ -379,15 +387,6 @@ class eZPolicyLimitation extends eZPersistentObject
         }
         return $resultArray;
     }
-
-    // Used for assign subtree matching
-    public $LimitValue;
-
-    public $PolicyID;
-    public $LimitationID;
-    public $Value;
-    public $Values;
-
 }
 
 ?>

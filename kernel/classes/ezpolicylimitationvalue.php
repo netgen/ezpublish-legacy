@@ -16,6 +16,10 @@
 */
 class eZPolicyLimitationValue extends eZPersistentObject
 {
+    public $LimitationID;
+    public $Value;
+    public $Values;
+
     static function definition()
     {
         static $definition = array( "fields" => array( "id" => array( 'name' => 'ID',
@@ -113,10 +117,6 @@ class eZPolicyLimitationValue extends eZPersistentObject
         eZPersistentObject::removeObject( eZPolicyLimitationValue::definition(),
                                           array( "value" => $value ) );
     }
-
-    public $LimitationID;
-    public $Value;
-
 }
 
 ?>
