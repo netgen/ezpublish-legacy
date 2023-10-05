@@ -510,11 +510,11 @@ class ezoeServerFunctions extends ezjscServerFunctions
         }
         else
         {
-            $nodeArray = array();
+            $nodeArray = false;
         }
 
         // generate json response from node list
-        if ( isset( $nodeArray[0] ) )
+        if ( $nodeArray )
         {
             $list = ezjscAjaxContent::nodeEncode(
                 $nodeArray,
