@@ -65,8 +65,8 @@ class eZTemplateCompiledLoop
     {
         $fName      = $this->Name;
         $uniqid     = $this->UniqID;
-        $this->NewNodes[] = eZTemplateNodeTool::createVariableUnsetNode( "${fName}_sequence_array_$uniqid" );
-        $this->NewNodes[] = eZTemplateNodeTool::createVariableUnsetNode( "${fName}_sequence_var_$uniqid" );
+        $this->NewNodes[] = eZTemplateNodeTool::createVariableUnsetNode( "{$fName}_sequence_array_$uniqid" );
+        $this->NewNodes[] = eZTemplateNodeTool::createVariableUnsetNode( "{$fName}_sequence_var_$uniqid" );
         $this->NewNodes[] = eZTemplateNodeTool::createVariableUnsetNode( $this->Parameters['sequence_var'][0][1] );
     }
 
@@ -86,8 +86,8 @@ class eZTemplateCompiledLoop
                                                                     $this->Parameters['sequence_array'],
                                                                     $this->NodePlacement,
                                                                     array( 'treat-value-as-non-object' => true, 'text-result' => false ),
-                                                                    "${fName}_sequence_array_$uniqid" );
-        $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$${fName}_sequence_var_$uniqid = current( \$${fName}_sequence_array_$uniqid );\n" );
+                                                                    "{$fName}_sequence_array_$uniqid" );
+        $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$${$fName}_sequence_var_$uniqid = current( \$${fName}_sequence_array_$uniqid );\n" );
     }
 
     /*!
@@ -100,7 +100,7 @@ class eZTemplateCompiledLoop
 
         $fName    = $this->Name;
         $uniqid   = $this->UniqID;
-        $seqVar   = "${fName}_sequence_var_$uniqid";
+        $seqVar   = "{$fName}_sequence_var_$uniqid";
         $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "// setting current sequence value" );
         $this->NewNodes[] = eZTemplateNodeTool::createVariableNode( false, $seqVar, $this->NodePlacement, array(),
                                                                     $this->Parameters['sequence_var'][0][1],
@@ -117,8 +117,8 @@ class eZTemplateCompiledLoop
 
         $fName    = $this->Name;
         $uniqid   = $this->UniqID;
-        $seqArray = "${fName}_sequence_array_$uniqid";
-        $seqVar   = "${fName}_sequence_var_$uniqid";
+        $seqArray = "{$fName}_sequence_array_$uniqid";
+        $seqVar   = "{$fName}_sequence_var_$uniqid";
         $alterSeqValCode =
             "if ( ( \$$seqVar = next( \$$seqArray ) ) === false )\n" .
             "{\n" .
