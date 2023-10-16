@@ -87,7 +87,7 @@ class eZTemplateCompiledLoop
                                                                     $this->NodePlacement,
                                                                     array( 'treat-value-as-non-object' => true, 'text-result' => false ),
                                                                     "{$fName}_sequence_array_$uniqid" );
-        $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$${$fName}_sequence_var_$uniqid = current( \$${fName}_sequence_array_$uniqid );\n" );
+        $this->NewNodes[] = eZTemplateNodeTool::createCodePieceNode( "{\$$fName}_sequence_var_$uniqid = current( {\$$fName}_sequence_array_$uniqid );\n" );
     }
 
     /*!
