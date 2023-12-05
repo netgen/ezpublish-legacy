@@ -126,6 +126,19 @@ class eZTemplateForeachFunction
         $variableStack   = "fe_variable_stack_$uniqid";
         $namesArray = array( $array, $arrayKeys, $nItems, $nItemsProcessed, $i, $key, $val, $offset, $max, $reverse, $firstVal, $lastVal );
 
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$array = [];" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$arrayKeys = [];" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$nItems = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$nItemsProcessed  = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$i = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$key = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$val = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$offset = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$max = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$reverse = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$firstVal = 0;" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$lastVal = 0;" );
+
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "if ( !isset( \$$variableStack ) ) \$$variableStack = [];" );
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$" . $variableStack ."[] = @compact( '" . implode( "', '", $namesArray ) . "' );" );
 
@@ -182,8 +195,8 @@ class eZTemplateForeachFunction
                                                                "{" );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
 
-        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$key = \$${arrayKeys}[\$$i];" );
-        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$val = \$${array}[\$$key];" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$key = \${$arrayKeys}[\$$i];" );
+        $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "\$$val = \${$array}[\$$key];" );
 
         // export $itemVar
         $newNodes[] = eZTemplateNodeTool::createVariableNode( false, "$val", $nodePlacement, array(),
