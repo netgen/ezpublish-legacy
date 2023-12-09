@@ -615,12 +615,15 @@ class eZObjectRelationType extends eZDataType
             case 'browsed_for_selection_node':
             {
                 $nodeSelection = eZContentBrowse::result( 'SelectObjectRelationNode' );
-                if ( count( $nodeSelection ) > 0 )
+                if ( !is_bool( $nodeSelection ) )
                 {
-                    $nodeID = $nodeSelection[0];
-                    $content = $classAttribute->content();
-                    $content['default_selection_node'] = $nodeID;
-                    $classAttribute->setContent( $content );
+                    if ( count( $nodeSelection ) > 0 )
+                    {
+                        $nodeID = $nodeSelection[0];
+                        $content = $classAttribute->content();
+                        $content['default_selection_node'] = $nodeID;
+                        $classAttribute->setContent( $content );
+                    }
                 }
             } break;
             case 'disable_selection_node':
