@@ -2,7 +2,7 @@
     "name":        "se7enxweb/ezpublish",
     "description": "eZ Publish 5.99.99alpha1 (Legacy). This is an updated version of eZ Publish 4.x capable of being combined with Ibexa OSS or used by itself)",
     "homepage":    "https://se7enx.com",
-    "license":     "GPL-2.0",
+    "license":     "GPL-2.0-or-later",
     "type":        "ezpublish-legacy",
     "suggest": {
         "php-64bit": "For support of more than 30 languages, a 64bit php installation on all involved prod/dev machines is required",
