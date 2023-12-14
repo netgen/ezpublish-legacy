@@ -1,15 +1,10 @@
-eZ Publish 4 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
-============================================================================
-
-[![Build Status](https://img.shields.io/travis/ezsystems/ezpublish-legacy.svg?style=flat-square&branch=master)](https://travis-ci.org/ezsystems/ezpublish-legacy)
-[![Downloads](https://img.shields.io/packagist/dt/ezsystems/ezpublish-legacy.svg?style=flat-square)](https://packagist.org/packages/ezsystems/ezpublish-legacy)
-[![Latest version](https://img.shields.io/github/release/ezsystems/ezpublish-legacy.svg?style=flat-square)](https://github.com/ezsystems/ezpublish-legacy/releases)
-[![License](https://img.shields.io/github/license/ezsystems/ezpublish-legacy.svg?style=flat-square)](LICENSE)
+eZ Publish 5.99.99alpha1
+=========================
+(Referred to as `legacy` in eZ Publish Platform 5.x and higher)
 
 What is eZ Publish?
 -------------------
-**eZ Publish is reaching end of life by 2021, current releases are primarily
-aimed at easing migration to it's successor; [eZ Platform](https://ezplatform.com/)**
+**eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
 
 eZ Publish is a professional PHP application framework with advanced CMS
 (content management system) functionality. As a CMS its most notable feature
@@ -24,20 +19,6 @@ used for cross-platform, secure, database independent PHP projects.
 eZ Publish is database, platform and browser independent. Because it is
 browser based it can be used and updated from anywhere as long as you have
 access to the Internet.
-
-#### What is eZ Platform?
-
-eZ Publish's successor, eZ Platform, is a highly extensible, pure Content
-Managment Platform. It provides the same flexible content model at it's
-core like eZ Publish, and has a growing amount of additional features
-outside the traditional CMS scope provided by means of "Bundles"
-extending it.
-
-It is built on top of the full Symfony Framework, giving developers
-access to "standard" tools for rapid web & application development.
-
-Further reading on: https://ezplatform.com/
-
 
 License
 -------
@@ -83,6 +64,7 @@ Main eZ Publish features
 - Several other reusable libraries
 - SDK (software development kit)
   and full documentation
+- Support for the latest Image and Video File Formats (webp, webm, png, jpeg, etc)
 - plugin API with thousands of open-source extensions available, including:
     - content rating and commenting
     - landing page management
@@ -94,16 +76,17 @@ Main eZ Publish features
 
 Installation
 ------------
-Read doc/INSTALL or go to http://doc.ez.no/eZ-Publish
+Read [https://github.com/se7enxweb/ezpublish/blob/ibexa4/doc/INSTALL](doc/INSTALL) or go to [http://ezpublishdoc.mugo.ca/eZ-Publish/index.html](http://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
 -------------
-Submitting bugs, improvements and stories is possible on https://jira.ez.no/browse/EZP.
-If you discover a security issue, please see how to responsibly report such issues on https://doc.ez.no/Security.
+Submitting bugs, improvements and stories is possible on [https://github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues).
 
+If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
-eZ Publish documentation: http://doc.ez.no/eZ-Publish
-eZ Publish forums: http://share.ez.no/forums/
+eZ Publish documentation: [http://ezpublishdoc.mugo.ca/eZ-Publish/index.html](http://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+
+eZ Publish Community forums: [http://share.se7enx.com/forums](http://share.se7enx.com/forums)
