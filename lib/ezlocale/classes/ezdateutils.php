@@ -45,7 +45,7 @@ class eZDateUtils
                          9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dec' );
 
         $mon = $months[$month];
-        return gmdate( $wkday . ", d " . $mon . " Y H:i:s" . " GMT", $timestamp );
+        return $wkday . gmdate( ", d ", $timestamp ) . $mon . gmdate( " Y H:i:s", $timestamp ) . " GMT" ;
     }
 
     /*!
@@ -78,7 +78,7 @@ class eZDateUtils
                          5 => 'May', 6 => 'Jun', 7 => 'Jul', 8 => 'Aug',
                          9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dec' );
         $mon = $months[$month];
-        return gmdate( $weekday . ", d-" . $mon . "-Y H:i:s" . " GMT", $timestamp );
+        return $weekday . gmdate( ", d-", $timestamp ) . $mon . gmdate("-Y H:i:s", $timestamp) . " GMT" ;
     }
 
     /*!
