@@ -76,7 +76,7 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [https://github.com/se7enxweb/ezpublish/blob/ibexa4/doc/INSTALL](doc/INSTALL) or go to [http://ezpublishdoc.mugo.ca/eZ-Publish/index.html](http://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+Read [https://github.com/se7enxweb/ezpublish/blob/ibexa4/doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
@@ -87,6 +87,6 @@ If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
-eZ Publish documentation: [http://ezpublishdoc.mugo.ca/eZ-Publish/index.html](http://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+eZ Publish documentation: [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
-eZ Publish Community forums: [http://share.se7enx.com/forums](http://share.se7enx.com/forums)
+eZ Publish Community forums: [https://share.se7enx.com/forums](https://share.se7enx.com/forums)
