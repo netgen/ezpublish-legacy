@@ -1,4 +1,4 @@
-eZ Publish 4 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
+eZ Publish 5 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
 ============================================================================
 
 What is eZ Publish?
