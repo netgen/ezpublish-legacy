@@ -3,8 +3,7 @@ eZ Publish 4 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
 
 What is eZ Publish?
 -------------------
-**eZ Publish is reaching end of life by 2021, current releases are primarily
-aimed at easing migration to it's successor; [eZ Platform](https://ezplatform.com/)**
+**eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
 
 eZ Publish is a professional PHP application framework with advanced CMS
 (content management system) functionality. As a CMS its most notable feature
@@ -71,6 +70,7 @@ Main eZ Publish features
 - A read only REST API
 - Database abstraction layer
 - MVC architecture
+- Support for the latest Image and Video File Formats (webp, webm, png, jpeg, etc)
 - Support for highly available and scalable configurations (multi-server clusters)
 - XML handling and parsing library
 - SOAP communication library
@@ -89,16 +89,17 @@ Main eZ Publish features
 
 Installation
 ------------
-Read doc/INSTALL or go to http://doc.ez.no/eZ-Publish
+Read (doc/INSTALL)[doc/INSTALL] or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
 -------------
-Submitting bugs, improvements and stories is possible on https://jira.ez.no/browse/EZP.
-If you discover a security issue, please see how to responsibly report such issues on https://doc.ez.no/Security.
+Submitting bugs, improvements and stories is possible on (https://github.com/netgen/ezpublish-legacy/issues)[https://github.com/netgen/ezpublish-legacy/issues]
 
+If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
-eZ Publish documentation: http://doc.ez.no/eZ-Publish
-eZ Publish forums: http://share.ez.no/forums/
+eZ Publish documentation: [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+
+eZ Publish Community forums: [https://share.se7enx.com/forums](https://share.se7enx.com/forums)
