@@ -14,13 +14,13 @@
 
 class eZPublishSDK
 {
-    const VERSION_MAJOR = 5;
-    const VERSION_MINOR = 99;
-    const VERSION_RELEASE = 99;
+    const VERSION_MAJOR = 6;
+    const VERSION_MINOR = 0;
+    const VERSION_RELEASE = 0;
     const VERSION_STATE = 'alpha1';
     const VERSION_DEVELOPMENT = true;
-    const VERSION_ALIAS = '2020.99';
-    const EDITION = 'eZ Publish legacy';
+    const VERSION_ALIAS = '2024.01';
+    const EDITION = 'eZ Publish Legacy';
 
     /*!
       \return the SDK version as a string
