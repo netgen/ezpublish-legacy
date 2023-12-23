@@ -76,7 +76,7 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [https://github.com/se7enxweb/ezpublish/blob/ibexa4/doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+Read [doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
