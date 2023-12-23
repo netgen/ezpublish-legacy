@@ -38,7 +38,7 @@
         "se7enxweb/ezmultiupload-ls": "~5.3",
         "se7enxweb/ezodf-ls": "~5.3",
         "se7enxweb/ezprestapiprovider-ls": "~5.3",
-        "se7enxweb/ezstarrating-ls-extension": "~5.3",
+        "se7enxweb/ezstarrating-ls-extension": "~6.0",
         "se7enxweb/ezwt-ls-extension": "~5.3",
         "symfony/polyfill-php73":  "^1.9",
         "zetacomponents/archive": "~1.5",
