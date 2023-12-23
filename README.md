@@ -19,6 +19,10 @@ eZ Publish is database, platform and browser independent. Because it is
 browser based it can be used and updated from anywhere as long as you have
 access to the Internet.
 
+#### What version of PHP is required
+
+eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
+
 #### What is eZ Platform?
 
 eZ Publish's successor, eZ Platform, is a highly extensible, pure Content
