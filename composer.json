@@ -78,10 +78,5 @@
       "post-update-cmd": [
           "@legacy-scripts"
       ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2023.12"
-        }
     }
 }
