@@ -1,11 +1,6 @@
 eZ Publish 4 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
 ============================================================================
 
-[![Build Status](https://img.shields.io/travis/ezsystems/ezpublish-legacy.svg?style=flat-square&branch=master)](https://travis-ci.org/ezsystems/ezpublish-legacy)
-[![Downloads](https://img.shields.io/packagist/dt/ezsystems/ezpublish-legacy.svg?style=flat-square)](https://packagist.org/packages/ezsystems/ezpublish-legacy)
-[![Latest version](https://img.shields.io/github/release/ezsystems/ezpublish-legacy.svg?style=flat-square)](https://github.com/ezsystems/ezpublish-legacy/releases)
-[![License](https://img.shields.io/github/license/ezsystems/ezpublish-legacy.svg?style=flat-square)](LICENSE)
-
 What is eZ Publish?
 -------------------
 **eZ Publish is reaching end of life by 2021, current releases are primarily
