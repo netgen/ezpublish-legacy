@@ -93,7 +93,7 @@ Main eZ Publish features
 
 Installation
 ------------
-Read (doc/INSTALL)[doc/INSTALL] or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+Read [doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
