@@ -94,7 +94,7 @@ Read (doc/INSTALL)[doc/INSTALL] or go to [https://ezpublishdoc.mugo.ca/eZ-Publis
 
 Issue tracker
 -------------
-Submitting bugs, improvements and stories is possible on (https://github.com/netgen/ezpublish-legacy/issues)[https://github.com/netgen/ezpublish-legacy/issues]
+Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
