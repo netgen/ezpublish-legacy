@@ -1,6 +1,6 @@
 {
     "name":        "se7enxweb/ezpublish",
-    "description": "eZ Publish 6.0 alpha1 (Legacy). This is an updated version of eZ Publish 4.x capable of being combined with Ibexa OSS or used by itself)",
+    "description": "7x eZ Publish 6. This is capable of being used standalone or combined with the Proprietary Ibexa OSS)",
     "homepage":    "https://se7enx.com",
     "license":     "GPL-2.0-or-later",
     "type":        "ezpublish-legacy",
