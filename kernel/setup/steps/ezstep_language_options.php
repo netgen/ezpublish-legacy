@@ -134,7 +134,7 @@ class eZStepLanguageOptions extends eZStepInstaller
 
             $regionalInfo = array();
             $regionalInfo['primary_language'] = $data['Primary'];
-            if ( !in_array( $data['Primary'], $data['Languages'] ) )
+            if ( !in_array( $data['Primary'], $data['Languages'] ?? [] ) )
                 $data['Languages'][] = $data['Primary'];
             $regionalInfo['languages'] = $data['Languages'];
             $regionalInfo['enable_unicode'] = true;
