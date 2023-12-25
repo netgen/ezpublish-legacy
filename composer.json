@@ -1,6 +1,6 @@
 {
     "name":        "se7enxweb/ezpublish",
-    "description": "7x eZ Publish 6. 7x eZ Publish CMS Version 6.0.0 (alpha1) Maintained by 7x. For General Use With PHP 8.3. Further feature releases in development please sponsor our work on eZ Publish (System). This is capable of being used standalone or combined with the Proprietary Ibexa OSS)",
+    "description": "7x eZ Publish 6. 7x eZ Publish CMS Version 6.0.0 (alpha1) Maintained by 7x. 7x eZ Publish CMS Version 6.0.0 (alpha1) Maintained by 7x. For General Use With PHP 8.3. Further feature releases in development. Please sponsor our work on the eZ Publish (System). This is capable of being used standalone or combined with the Proprietary Ibexa OSS)",
     "homepage":    "https://se7enx.com",
     "license":     "GPL-2.0-or-later",
     "type":        "ezpublish-legacy",
