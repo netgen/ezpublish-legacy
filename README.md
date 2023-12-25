@@ -92,6 +92,6 @@ If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
-eZ Publish documentation: [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 eZ Publish Community forums: [https://share.se7enx.com/forums](https://share.se7enx.com/forums)
