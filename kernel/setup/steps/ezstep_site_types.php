@@ -390,7 +390,7 @@ class eZStepSiteTypes extends eZStepInstaller
 
         // Download packages that the site package requires.
         $downloadDependandPackagesResult = $this->downloadDependantPackages( $package );
-        return $downloadDependandPackagesResult == false ? false : !$downloaded;
+        return $downloadDependandPackagesResult == false ? false : $downloaded;
     }
 
     function init()
