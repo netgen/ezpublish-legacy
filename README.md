@@ -81,12 +81,12 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 
 Issue tracker
 -------------
-Submitting bugs, improvements and stories is possible on [https://github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues).
+Submitting bugs, improvements and stories is possible on [github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues).
 
 If you discover a security issue, please responsibly report such issues.
 
