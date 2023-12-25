@@ -1,6 +1,9 @@
-eZ Publish 5.99.99alpha1
+eZ Publish 6.00.00 (Alpha 1)
 =========================
-(Referred to as `legacy` in eZ Publish Platform 5.x and higher)
+
+#### What version of PHP is required
+
+eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
 What is eZ Publish?
 -------------------
@@ -19,6 +22,8 @@ used for cross-platform, secure, database independent PHP projects.
 eZ Publish is database, platform and browser independent. Because it is
 browser based it can be used and updated from anywhere as long as you have
 access to the Internet.
+
+(Referred to as `legacy` in eZ Publish Platform 5.x and Ibexa OSS)
 
 License
 -------
