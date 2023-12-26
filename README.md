@@ -96,4 +96,4 @@ Where to get more help
 ----------------------
 eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
-eZ Publish Community forums: [https://share.se7enx.com/forums](https://share.se7enx.com/forums)
+eZ Publish Community forums: [share.se7enx.com/forums](https://share.se7enx.com/forums)
