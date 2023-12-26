@@ -9,7 +9,7 @@
 <ul>
   <li>Go on %share_link%share.se7enx.com%a%</li>
   <li>Click on Register (top of the page) and create your profile</li>
-  <li>Here you can check out the %blogs_link%blog posts%a%, %articles_link%articles%a%, %forums_link%forums%...</li>
+  <li>Here you can check out the %blogs_link%blog posts%a%, %articles_link%articles%a%, %forums_link%forums%a% ...</li>
 </ul></p>
 <p>We’re looking forward to seeing what you share with the Community!</p>'|i18n('design/standard/setup/init',
     null,
@@ -17,7 +17,7 @@
         '%a%', '</a>',
         '%share_link%', '<a href="https://share.se7enx.com/?utm_source=Setup%20Wizard&utm_medium=Setup%20Wizard&utm_campaign=Setup%20Wizard">',
         '%blogs_link%', '<a href="https://share.se7enx.com/blogs/?utm_source=Setup%20Wizard&utm_medium=Setup%20Wizard&utm_campaign=Setup%20Wizard">',
-        '%aricles_link%', '<a href="https://share.se7enx.com/learn/?utm_source=Setup%20Wizard&utm_medium=Setup%20Wizard&utm_campaign=Setup%20Wizard">',
+        '%articles_link%', '<a href="https://share.se7enx.com/learn/?utm_source=Setup%20Wizard&utm_medium=Setup%20Wizard&utm_campaign=Setup%20Wizard">',
         '%forums_link%', '<a href="https://share.se7enx.com/forums/?utm_source=Setup%20Wizard&utm_medium=Setup%20Wizard&utm_campaign=Setup%20Wizard">'
     )
 )}
