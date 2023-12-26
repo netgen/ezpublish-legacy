@@ -1,7 +1,7 @@
-eZ Publish 6.00.00 (Alpha 1)
-=========================
+eZ Publish 6.0
+==============
 
-#### What version of PHP is required
+### What version of PHP is required?
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
