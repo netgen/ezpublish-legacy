@@ -103,7 +103,7 @@ class eZTemplateForFunction
         $loop->initVars();
 
         // loop header
-        $modifyLoopCounterCode = "\$for_firstval_$uniqid < \$for_lastval_$uniqid ? \$for_i_${uniqid}++ : \$for_i_${uniqid}--"; // . ";\n";
+        $modifyLoopCounterCode = "\$for_firstval_$uniqid < \$for_lastval_$uniqid ? \$for_i_{$uniqid}++ : \$for_i_{$uniqid}--"; // . ";\n";
         $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "for ( \$for_i_$uniqid = \$for_firstval_$uniqid ; ; $modifyLoopCounterCode )\n{" );
         $newNodes[] = eZTemplateNodeTool::createSpacingIncreaseNode();
         // Check for index
