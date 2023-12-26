@@ -83,7 +83,7 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
 
 
 Issue tracker
@@ -97,3 +97,6 @@ Where to get more help
 eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 eZ Publish Community forums: [share.se7enx.com/forums](https://share.se7enx.com/forums)
+
+Share eZ Publish! Telegram Community Support Chat
+[https://t.me/ezpublish](https://t.me/ezpublish)
