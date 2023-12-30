@@ -19,8 +19,8 @@ class eZPublishSDK
     const VERSION_RELEASE = 0;
     const VERSION_STATE = 'beta1';
     const VERSION_DEVELOPMENT = true;
-    const VERSION_ALIAS = '2024.01';
-    const EDITION = 'eZ Publish Legacy';
+    const VERSION_ALIAS = '6.0';
+    const EDITION = 'eZ Publish';
 
     /*!
       \return the SDK version as a string
