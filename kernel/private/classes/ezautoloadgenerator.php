@@ -410,8 +410,13 @@ class eZAutoloadGenerator
      * @param eZAutoloadGenerator $gen
      * @return array
      */
-    public static function findRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), eZAutoloadGenerator $gen )
+    public static function findRecursive( $sourceDir, array $includeFilters, array $excludeFilters, eZAutoloadGenerator $gen )
     {
+        if ( is_string( $includeFilters ) )
+          $includeFilters = array( $includeFilters );
+        if ( is_string( $excludeFilters ) )
+          $excludeFilters = array( $excludeFilters );
+
         $gen->log( "Scanning for PHP-files." );
         $gen->startProgressOutput( self::OUTPUT_PROGRESS_PHASE1 );
 
@@ -451,8 +456,13 @@ class eZAutoloadGenerator
      *         not be opened for reading.
      * @return array
      */
-    static protected function walkRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), $callback, &$callbackContext )
+    static protected function walkRecursive( $sourceDir, array $includeFilters, array $excludeFilters, $callback, &$callbackContext )
     {
+        if ( is_string( $includeFilters ) )
+          $includeFilters = array( $includeFilters );
+        if ( is_string( $excludeFilters ) )
+          $excludeFilters = array( $excludeFilters );
+
         if ( !is_dir( $sourceDir ) )
         {
             throw new ezcBaseFileNotFoundException( $sourceDir, 'directory' );
