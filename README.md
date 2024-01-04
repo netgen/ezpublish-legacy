@@ -25,7 +25,7 @@ access to the Internet.
 
 (Referred to as `legacy` in eZ Publish Platform 5.x and Ibexa OSS)
 
-eZ Publish is capable of being used standalone or combined with the Proprietary Ibexa OSS.
+eZ Publish is capable of being used standalone or combined with the Free Software Ibexa OSS.
 
 License
 -------
