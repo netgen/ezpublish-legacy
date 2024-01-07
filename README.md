@@ -1,5 +1,8 @@
 eZ Publish 6.0
 ==============
+![Artboard 1xxhdpi](https://github.com/se7enxweb/ezpublish/assets/51429274/7d03458d-adae-4f8b-9496-05585b0d6075)
+
+
 
 ### What version of PHP is required?
 
