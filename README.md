@@ -34,8 +34,7 @@ extending it.
 It is built on top of the full Symfony Framework, giving developers
 access to "standard" tools for rapid web & application development.
 
-Further reading on: https://ezplatform.com/
-
+Further reading on: [https://ezplatform.com/](http://web.archive.org/web/20200328165348/https://ezplatform.com/)
 
 License
 -------
