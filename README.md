@@ -62,7 +62,7 @@ Main eZ Publish features
 - Full support for Unicode
 - Template engine
 - A read only REST API
-- Database abstraction layer
+- Database abstraction layer supporting MySQL, SQLite, Postgres and Oracle
 - MVC architecture
 - Support for highly available and scalable configurations (multi-server clusters)
 - XML handling and parsing library
