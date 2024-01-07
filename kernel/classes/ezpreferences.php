@@ -124,7 +124,7 @@ class eZPreferences
         $userID = $user->attribute( 'contentobject_id' );
         $existingRes = $db->arrayQuery( "SELECT value FROM ezpreferences WHERE user_id = $userID AND name = '$name'" );
 
-        if ( count( $existingRes ) == 1 )
+        if ( is_countable( $existingRes ) && count( $existingRes ) == 1 )
         {
             $value = $existingRes[0]['value'];
             if ( $useCache )
