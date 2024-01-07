@@ -581,8 +581,15 @@ class eZObjectRelationType extends eZDataType
     {
         $content = $this->defaultClassAttributeContent();
         $root = $doc->documentElement;
-        $constraints = $root->getElementsByTagName( 'constraints' )->item( 0 );
-        if ( $constraints )
+	if ( $root !== null )
+	{
+            $constraints = $root->getElementsByTagName( 'constraints' )->item( 0 );
+	}
+	else
+	{
+	    $constraints = null;
+	}
+        if ( $constraints !== null )
         {
             $allowedClassList = $constraints->getElementsByTagName( 'allowed-class' );
             foreach( $allowedClassList as $allowedClass )
