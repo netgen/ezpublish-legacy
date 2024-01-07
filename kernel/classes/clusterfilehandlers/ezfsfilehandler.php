@@ -397,6 +397,12 @@ class eZFSFileHandler implements eZClusterFileHandlerInterface
                     $extraData['noCache'] = true;
                 if ( $extraData !== null )
                     $args[] = $extraData;
+
+                if ( $generateCallback[1] == 'generateUserCacheForFile' )
+                {
+                    $args[] = $extraData;
+                }
+
                 $fileData = call_user_func_array( $generateCallback, $args );
                 return $this->storeCache( $fileData, $storeCache );
             }
