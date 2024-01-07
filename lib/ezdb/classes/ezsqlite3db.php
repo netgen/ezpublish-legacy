@@ -461,7 +461,11 @@ class eZSQLite3DB extends eZDBInterface
     function databaseServerVersion()
     {
         // no server, so returning client version
-        return $this->databaseClientVersion();
+        //return $this->databaseClientVersion();
+        //setup require string instead of array
+        $versionInfo = SQLite3::version();
+        $versionString = $versionInfo['versionString'];
+        return array( 'string' => $versionString, 'values' => $versionString );
     }
 
     /*!
