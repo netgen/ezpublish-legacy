@@ -4,7 +4,7 @@ class eZSQLiteSchema extends eZDBSchemaInterface
 {
     function __construct( $params )
     {
-        $this->eZDBSchemaInterface( $params );
+        parent::__construct( $params );
     }
 
     /*!
