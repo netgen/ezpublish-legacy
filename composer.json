@@ -41,6 +41,7 @@
         "se7enxweb/ezstarrating-ls-extension": "~6.0",
         "se7enxweb/ezwt-ls-extension": "~6.0",
         "se7enxweb/swark": "~1.0.2",
+        "se7enxweb/owsimpleoperator": "~1.2.0",
         "se7enxweb/bcgooglesitemaps": "~1.1.6",
         "symfony/polyfill-php73":  "^1.9",
         "zetacomponents/archive": "~1.5",
