@@ -182,15 +182,27 @@ class eZContentObjectVersion extends eZPersistentObject
         $version = (int) $version;
         $contentObjectID = (int) $contentObjectID;
 
-        // Select for update, to lock the row
-        $resArray = $db->arrayQuery(
-            "SELECT * FROM
-                 ezcontentobject_version
-             WHERE
-                 version='$version' AND
-                 contentobject_id='$contentObjectID'
-             FOR UPDATE"
-        );
+        if ( $db->DatabaseName() === 'sqlite' )
+        {
+             // Select for update, to lock the row
+             $resArray = $db->arrayQuery(
+             "SELECT * FROM
+                  ezcontentobject_version
+              WHERE
+                  version='$version' AND
+                  contentobject_id='$contentObjectID'" );
+        }
+        else
+        {
+             // Select for update, to lock the row
+             $resArray = $db->arrayQuery(
+             "SELECT * FROM
+                  ezcontentobject_version
+              WHERE
+                  version='$version' AND
+                  contentobject_id='$contentObjectID'
+              FOR UPDATE" );
+        }
 
         if ( !is_array( $resArray ) || count( $resArray ) !== 1 )
         {
@@ -966,9 +978,18 @@ class eZContentObjectVersion extends eZPersistentObject
         $db = eZDB::instance();
         $db->begin();
 
-        // Ensure no one else deletes this version while we are doing it.
-        $db->query( 'SELECT * FROM ezcontentobject_version
+        if ( $db->DatabaseName() === 'sqlite' )
+        {
+            // Ensure no one else deletes this version while we are doing it.
+            $db->query( 'SELECT * FROM ezcontentobject_version
+                         WHERE id=' . $this->attribute( 'id' ) );
+        }
+        else
+        {
+            // Ensure no one else deletes this version while we are doing it.
+            $db->query( 'SELECT * FROM ezcontentobject_version
                          WHERE id=' . $this->attribute( 'id' ) . ' FOR UPDATE' );
+        }
 
         $contentObjectTranslations = $this->translations();
 
