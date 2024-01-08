@@ -72,7 +72,7 @@
 <br />
 <font color="white">
 <center>
-<a href="http://ez.no/developer">eZ Publish&trade;</a> copyright &copy; 1999-2014 <a href="http://ez.no">eZ Systems AS</a>
+<a href="https://share.se7enx.com/get-involved">eZ Publish&trade;</a> copyright &copy; 1999-2024 <a href="https://se7enx.com">7x</a>
 </center>
 </font>
 <br />

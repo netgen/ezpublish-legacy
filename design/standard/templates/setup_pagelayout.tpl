@@ -63,7 +63,7 @@
     </aside>
 
     <footer>
-        <p><a href="http://ez.no">eZ Publish&trade;</a> copyright &copy; 1999-2014 <a href="http://ez.no">eZ Systems AS</a></p>
+        <p><a href="https://ezpublishlegacy.se7enx.com">eZ Publish&trade;</a> copyright &copy; 1999-2024 <a href="https://se7enx.com">7x</a></p>
     </footer>
 
 </section>

@@ -45,7 +45,8 @@ class eZContentClassEditHandler
                     $objectAttribute->removeThis( $objectAttribute->attribute( 'id' ) );
                 }
 
-                $oldClassAttribute->datatype()->deleteNotVersionedStoredClassAttribute( $oldClassAttribute );
+                if( $oldClassAttribute->datatype() !== null )
+                    $oldClassAttribute->datatype()->deleteNotVersionedStoredClassAttribute( $oldClassAttribute );
             }
         }
         $class->storeDefined( $attributes );

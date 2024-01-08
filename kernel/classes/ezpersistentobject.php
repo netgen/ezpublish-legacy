@@ -530,7 +530,14 @@ class eZPersistentObject
             unset( $use_values_hash );
             $value_text = implode( ", ", $use_values );
 
-            $sql = "INSERT INTO $table ($field_text) VALUES($value_text)";
+            if( $db->DatabaseName() == 'sqlite' )
+            {
+                $sql = "INSERT OR REPLACE INTO $table ($field_text) VALUES($value_text)";
+            }
+            else
+            {
+                $sql = "INSERT INTO $table ($field_text) VALUES($value_text)";
+            }
             $db->query( $sql );
 
             if ( isset( $def["increment_key"] ) &&

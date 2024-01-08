@@ -19,6 +19,8 @@ eZ Publish is database, platform and browser independent. Because it is
 browser based it can be used and updated from anywhere as long as you have
 access to the Internet.
 
+(Referred to as `legacy` in eZ Publish Platform 5.x and Ibexa OSS)
+
 #### What version of PHP is required
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
@@ -71,7 +73,7 @@ Main eZ Publish features
 - Full support for Unicode
 - Template engine
 - A read only REST API
-- Database abstraction layer
+- Database abstraction layer supporting MySQL, SQLite, Postgres and Oracle
 - MVC architecture
 - Support for the latest Image and Video File Formats (webp, webm, png, jpeg, etc)
 - Support for highly available and scalable configurations (multi-server clusters)
@@ -81,6 +83,7 @@ Main eZ Publish features
 - Several other reusable libraries
 - SDK (software development kit)
   and full documentation
+- Support for the latest Image and Video File Formats (webp, webm, png, jpeg, etc)
 - plugin API with thousands of open-source extensions available, including:
     - content rating and commenting
     - landing page management
@@ -92,17 +95,21 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [doc/INSTALL](doc/INSTALL) or go to [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
-
+Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
 
 Issue tracker
 -------------
+
 Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
-eZ Publish documentation: [https://ezpublishdoc.mugo.ca/eZ-Publish/index.html](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
-eZ Publish Community forums: [https://share.se7enx.com/forums](https://share.se7enx.com/forums)
+eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
+
+eZ Publish Community forums: [share.se7enx.com/forums](https://share.se7enx.com/forums)
+
+Share eZ Publish! Telegram Community Support Chat
+[https://t.me/ezpublish](https://t.me/ezpublish)
