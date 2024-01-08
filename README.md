@@ -1,9 +1,5 @@
-eZ Publish 6.0
-==============
-
-### What version of PHP is required?
-
-eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
+eZ Publish 5 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
+============================================================================
 
 What is eZ Publish?
 -------------------
@@ -25,7 +21,22 @@ access to the Internet.
 
 (Referred to as `legacy` in eZ Publish Platform 5.x and Ibexa OSS)
 
-eZ Publish is capable of being used standalone or combined with the Free Software Ibexa OSS.
+#### What version of PHP is required
+
+eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
+
+#### What is eZ Platform?
+
+eZ Publish's successor, eZ Platform, is a highly extensible, pure Content
+Managment Platform. It provides the same flexible content model at it's
+core like eZ Publish, and has a growing amount of additional features
+outside the traditional CMS scope provided by means of "Bundles"
+extending it.
+
+It is built on top of the full Symfony Framework, giving developers
+access to "standard" tools for rapid web & application development.
+
+Further reading on: [https://ezplatform.com/](http://web.archive.org/web/20200328165348/https://ezplatform.com/)
 
 License
 -------
@@ -64,6 +75,7 @@ Main eZ Publish features
 - A read only REST API
 - Database abstraction layer supporting MySQL, SQLite, Postgres and Oracle
 - MVC architecture
+- Support for the latest Image and Video File Formats (webp, webm, png, jpeg, etc)
 - Support for highly available and scalable configurations (multi-server clusters)
 - XML handling and parsing library
 - SOAP communication library
@@ -85,15 +97,16 @@ Installation
 ------------
 Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
 
-
 Issue tracker
 -------------
-Submitting bugs, improvements and stories is possible on [github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues).
+
+Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
 Where to get more help
 ----------------------
+
 eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
 eZ Publish Community forums: [share.se7enx.com/forums](https://share.se7enx.com/forums)
