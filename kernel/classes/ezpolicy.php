@@ -414,8 +414,13 @@ class eZPolicy extends eZPersistentObject
      */
     public function createTemporaryCopy()
     {
-        if ( $this->attribute( 'original_id' ) === 0 )
-            throw new Exception( 'eZPolicy #' . $this->attribute( 'id' ) . ' is already a temporary item (original: #'. $this->attribute( 'original_id' ) . ')' );
+        $db = eZDB::instance();
+
+        if( $db->DatabaseName() != 'sqlite' )
+        {
+            if ( $this->attribute( 'original_id' ) === 0 )
+                throw new Exception( 'eZPolicy #' . $this->attribute( 'id' ) . ' is already a temporary item (original: #'. $this->attribute( 'original_id' ) . ')' );
+        }
 
         $policyCopy = self::copy( $this->attribute( 'role_id' ) );
         $policyCopy->setAttribute( 'original_id', $this->attribute( 'id' ) );

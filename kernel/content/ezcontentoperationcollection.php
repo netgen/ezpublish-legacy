@@ -132,7 +132,15 @@ class eZContentOperationCollection
 
         if ( !$versionNum )
         {
-            $objectRows = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id = $objectID FOR UPDATE" );
+            if( $db->DatabaseName() == 'sqlite' )
+            {
+                $objectRows = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id = $objectID" );
+            }
+            else
+            {
+                $objectRows = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id = $objectID FOR UPDATE" );
+            }
+
             if ( empty( $objectRows ) )
             {
                 $db->commit(); // We haven't made any changes, but commit here to avoid affecting any outer transactions.
@@ -142,7 +150,15 @@ class eZContentOperationCollection
             $versionNum = $objectRows[0]['current_version'];
         }
 
-        $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $versionNum AND contentobject_id = $objectID FOR UPDATE" );
+        if( $db->DatabaseName() == 'sqlite' )
+        {
+            $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $versionNum AND contentobject_id = $objectID" );
+        }
+        else
+        {
+            $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $versionNum AND contentobject_id = $objectID FOR UPDATE" );
+        }
+
         if ( empty( $versionRows ) )
         {
             $db->commit(); // We haven't made any changes, but commit here to avoid affecting any outer transactions.

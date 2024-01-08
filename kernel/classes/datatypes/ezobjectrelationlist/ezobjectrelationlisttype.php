@@ -1491,7 +1491,9 @@ class eZObjectRelationListType extends eZDataType
     {
         $content = $this->defaultClassAttributeContent();
         $root = $doc->documentElement;
-        $objectPlacement = $root->getElementsByTagName( 'contentobject-placement' )->item( 0 );
+        if( $root !== null )
+        {
+             $objectPlacement = $root->getElementsByTagName( 'contentobject-placement' )->item( 0 );
 
         if ( $objectPlacement and $objectPlacement->hasAttributes() )
         {
@@ -1522,7 +1524,7 @@ class eZObjectRelationListType extends eZDataType
         {
             $content['object_class'] = $objectClass->getAttribute( 'value' );
         }
-
+        }
         return $content;
     }
 

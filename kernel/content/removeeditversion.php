@@ -31,7 +31,15 @@ if ( $isConfirmed )
 
     $db->begin();
 
-    $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $version AND contentobject_id = $objectID FOR UPDATE" );
+    if( $db->DatabaseName() == 'sqlite' )
+    {
+        $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $version AND contentobject_id = $objectID" );
+     }
+     else
+     {
+        $versionRows = $db->arrayQuery( "SELECT * FROM ezcontentobject_version WHERE version = $version AND contentobject_id = $objectID FOR UPDATE" );
+    }
+
     if ( empty( $versionRows ) )
     {
         $db->commit(); // We haven't made any changes, but commit here to avoid affecting any outer transactions.
