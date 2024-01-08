@@ -382,6 +382,10 @@ class eZStepInstaller
                                'charset' => $dbCharset );
         $dbParameters = array_merge( $dbParameters, $overrideDBParameters );
 
+        // SQLite requires us to specifiy a database name
+        if( $dbParameters['database'] == '' and $this->PersistenceList['database_info']['type'] == 'sqlite' )
+            $dbParameters['database'] = 'sqlite.db';
+
         // PostgreSQL requires us to specify database name.
         // We use template1 here since it exists on all PostgreSQL installations.
         if( $dbParameters['database'] == '' and $this->PersistenceList['database_info']['type'] == 'pgsql' )
