@@ -947,8 +947,16 @@ class eZContentObject extends eZPersistentObject
         $db = eZDB::instance();
         $id = (int) $id;
 
-        // Select for update, to lock the row
-        $resArray = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id='$id' FOR UPDATE" );
+        if ( $db->DatabaseName() === 'sqlite' )
+        {
+            // Select for update, to lock the row
+            $resArray = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id='$id'" );
+        }
+        else
+        {
+            // Select for update, to lock the row
+            $resArray = $db->arrayQuery( "SELECT * FROM ezcontentobject WHERE id='$id' FOR UPDATE" );
+        }
 
         if ( !is_array( $resArray ) || count( $resArray ) !== 1 )
         {

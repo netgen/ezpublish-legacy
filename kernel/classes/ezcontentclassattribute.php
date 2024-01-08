@@ -977,16 +977,31 @@ class eZContentClassAttribute extends eZPersistentObject
             $cols = implode( ', ', array_keys( $data ) );
             $values = implode( ', ', $data );
 
-            $sql = "INSERT INTO ezcontentobject_attribute( $cols )
-            SELECT $values
-            FROM ezcontentobject_attribute a, ezcontentobject o
-            WHERE o.id = a.contentobject_id AND
-                  o.contentclass_id=$classID
-            GROUP BY contentobject_id,
-                     version,
-                     language_code";
+            if( $db->DatabaseName() == 'sqlite' )
+            {
+                 $sql = "INSERT OR REPLACE INTO ezcontentobject_attribute( $cols )
+                         SELECT $values
+                         FROM ezcontentobject_attribute a, ezcontentobject o
+                         WHERE o.id = a.contentobject_id AND
+                               o.contentclass_id=$classID
+                         GROUP BY contentobject_id,
+                                  version,
+                                  language_code";
+            }
+            else
+            {
+                 $sql = "INSERT INTO ezcontentobject_attribute( $cols )
+                         SELECT $values
+                         FROM ezcontentobject_attribute a, ezcontentobject o
+                         WHERE o.id = a.contentobject_id AND
+                               o.contentclass_id=$classID
+                         GROUP BY contentobject_id,
+                                  version,
+                                  language_code";
+            }
 
             $db->query( $sql );
+
             // update ids to keep them same with one attribute for different versions
             if( $db->databaseName() == 'mysql' )
             {

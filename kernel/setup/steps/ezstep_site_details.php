@@ -314,6 +314,9 @@ class eZStepSiteDetails extends eZStepInstaller
         if( $databaseInfo['info']['type'] == 'pgsql' )
             $dbParameters['database'] = 'template1';
 
+        if( $databaseInfo['info']['type'] == 'sqlite' )
+            $dbParameters['database'] = 'sqlite.db';
+
         $db = eZDB::instance( $dbDriver, $dbParameters, true );
         $availDatabases = $db->availableDatabases();
 

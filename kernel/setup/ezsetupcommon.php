@@ -29,7 +29,13 @@ function eZSetupOptionalTests()
 
 function eZSetupDatabaseMap()
 {
-    return array( 'mysqli' => array( 'type' => 'mysqli',
+    return array( 'sqlite' => array( 'type' => 'sqlite',
+                                     'driver' => 'sqlite',
+                                     'name' => 'SQLLite',
+                                     'required_version' => '3.0.1',
+                                     'has_demo_data' => true,
+                                     'supports_unicode' => true ),
+                  'mysqli' => array( 'type' => 'mysqli',
                                      'driver' => 'ezmysqli',
                                      'name' => 'MySQL Improved',
                                      'required_version' => '4.1.1',
