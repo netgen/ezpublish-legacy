@@ -143,7 +143,13 @@ class eZISBNGroupRange extends eZPersistentObject
         $db = eZDB::instance();
         $definition = eZISBNGroupRange::definition();
         $table = $definition['name'];
-        $sql = "TRUNCATE TABLE " . $table;
+        if ( $db->DatabaseName() == 'sqlite' )
+            $sql  = "DELETE FROM " . $table;
+        else
+        {
+            $sql = "TRUNCATE TABLE " . $table;
+        }
+
         $db->query( $sql );
     }
 

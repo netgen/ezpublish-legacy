@@ -116,7 +116,12 @@ class eZISBNGroup extends eZPersistentObject
         $db = eZDB::instance();
         $definition = eZISBNGroup::definition();
         $table = $definition['name'];
-        $sql = "TRUNCATE TABLE " . $table;
+        if ( $db->DatabaseName() == 'sqlite' )
+            $sql  = "DELETE FROM " . $table;
+        else
+        {
+            $sql = "TRUNCATE TABLE " . $table;
+        }
         $db->query( $sql );
     }
 }
