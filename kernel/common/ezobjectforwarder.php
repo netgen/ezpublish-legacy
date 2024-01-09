@@ -482,7 +482,7 @@ class eZObjectForwarder
                 $matchCount = 0;
                 foreach ( $viewFileMatch['custom_match'] as $customMatch )
                 {
-                    $matchConditionCount = count( $customMatch['conditions'] );
+                    $matchConditionCount = is_countable( $customMatch['conditions'] ) && count( $customMatch['conditions'] );
                     $code = '';
                     if ( $matchCount > 0 )
                     {
