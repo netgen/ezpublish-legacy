@@ -58,7 +58,7 @@ For the rest of the installation steps you will find the installation guide at h
 Composer Installation Guide
 ------------------
 
-- Download the package from se7enxweb/ezpublish
+- Download the package from [se7enxweb/ezpublish](https://packagist.org/packages/se7enxweb/ezpublish)
 
 `mkdir ezpublish;`
 

@@ -1,5 +1,10 @@
-eZ Publish 5 (Referred to as `legacy` in eZ Publish Platform 5.x and higher)
-============================================================================
+eZ Publish 6.0
+==============
+![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/7d03458d-adae-4f8b-9496-05585b0d6075)
+
+### What version of PHP is required?
+
+eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
 What is eZ Publish?
 -------------------
@@ -95,7 +100,7 @@ Main eZ Publish features
 
 Installation
 ------------
-Read [doc/INSTALL](doc/INSTALL) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
+Read [doc/INSTALL.md](doc/INSTALL.md) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
 
 Issue tracker
 -------------

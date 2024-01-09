@@ -189,7 +189,12 @@ class eZISBNRegistrantRange extends eZPersistentObject
         $db = eZDB::instance();
         $definition = eZISBNRegistrantRange::definition();
         $table = $definition['name'];
-        $sql = "TRUNCATE TABLE " . $table;
+        if ( $db->DatabaseName() == 'sqlite' )
+            $sql  = "DELETE FROM " . $table;
+        else
+        {
+            $sql = "TRUNCATE TABLE " . $table;
+        }
         $db->query( $sql );
     }
 }
