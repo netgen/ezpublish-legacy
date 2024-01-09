@@ -10,8 +10,11 @@ What is eZ Publish?
 -------------------
 **eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
 
-eZ Publish is a professional PHP application framework with advanced CMS
-(content management system) functionality. As a CMS its most notable feature
+eZ Publish is the application of intrest delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
+
+eZ Publish with a full complement of all popular and available php extensions installed like SQLite3 you no longer require a dedicated database server anymore with eZ Publish 6.
+
+eZ Publish is a professional PHP application framework with advanced CMS (content management system) functionality. As a CMS its most notable feature
 is its fully customizable and extendable content model.
 It is also suitable as a platform for general PHP development, allowing
 you to develop professional Internet applications, fast.
