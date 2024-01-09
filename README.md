@@ -13,9 +13,16 @@ eZ Publish Project Status
 What is eZ Publish?
 -------------------
 
-eZ Publish is the application of intrest delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
+#### Recent improvements to eZ Publish
+eZ Publish (the application of interest) delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
 
-eZ Publish with a full complement of all popular and available php extensions installed like SQLite3 you no longer require a dedicated database server anymore with eZ Publish 6.
+eZ Publish with a full complement of all popular and available php extensions installed like SQLite3 users no longer require a dedicated database server anymore with eZ Publish 6.
+
+With PHP we require composer to install eZ Publish software and no other software required to run
+the application. This is an incredible improvement to the kernel (core) of eZ Publish.
+
+
+#### What does eZ Publish provide for end users building websites?
 
 eZ Publish is a professional PHP application framework with advanced CMS (content management system) functionality. As a CMS its most notable feature
 is its fully customizable and extendable content model.
