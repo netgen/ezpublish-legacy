@@ -42,10 +42,10 @@ access to the Internet.
 # Requirements
 - PHP
 - (Optional) Web server. Used to deliver the website to the end user.
-- (Optional) Database server. Used to store website content and application information)
+- (Optional) Database server. Used to store website content (and application information)
 - Composer. Used to download eZ Publish software packages for installation, also notebly installs the required Zeta Components php libraries.
 - Computer to run the PHP website application.
-- 
+
 ## What version of PHP is required
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
