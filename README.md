@@ -2,7 +2,7 @@ eZ Publish 6.0
 ==============
 ![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/7d03458d-adae-4f8b-9496-05585b0d6075)
 
-### What version of PHP is required?
+## What version of PHP is required?
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
@@ -13,7 +13,7 @@ eZ Publish Project Status
 What is eZ Publish?
 -------------------
 
-#### Recent improvements to eZ Publish
+## Recent improvements to eZ Publish
 eZ Publish (the application of interest) delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
 
 eZ Publish with a full complement of all popular and available php extensions installed like SQLite3 users no longer require a dedicated database server anymore with eZ Publish 6.
@@ -22,7 +22,7 @@ With PHP we require composer to install eZ Publish software and no other softwar
 the application. This is an incredible improvement to the kernel (core) of eZ Publish.
 
 
-#### What does eZ Publish provide for end users building websites?
+## What does eZ Publish provide for end users building websites?
 
 eZ Publish is a professional PHP application framework with advanced CMS (content management system) functionality. As a CMS its most notable feature
 is its fully customizable and extendable content model.
@@ -39,11 +39,18 @@ access to the Internet.
 
 (Referred to as `legacy` in eZ Publish Platform 5.x and Ibexa OSS)
 
-#### What version of PHP is required
+# Requirements
+- PHP
+- (Optional) Web server. Used to deliver the website to the end user.
+- (Optional) Database server. Used to store website content and application information)
+- Composer. Used to download eZ Publish software packages for installation, also notebly installs the required Zeta Components php libraries.
+- Computer to run the PHP website application.
+- 
+## What version of PHP is required
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
-#### What is eZ Platform?
+## What is eZ Platform?
 
 eZ Publish's successor, eZ Platform, is a highly extensible, pure Content
 Managment Platform. It provides the same flexible content model at it's
