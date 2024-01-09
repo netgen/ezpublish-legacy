@@ -6,9 +6,12 @@ eZ Publish 6.0
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
 
+eZ Publish Project Status
+--------------------------
+**eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
+
 What is eZ Publish?
 -------------------
-**eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
 
 eZ Publish is the application of intrest delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
 
