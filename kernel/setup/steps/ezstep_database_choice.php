@@ -52,7 +52,6 @@ class eZStepDatabaseChoice extends eZStepInstaller
             if ( isset( $databaseMap[$extension] ) )
             {
                 $this->PersistenceList['database_info'] = $databaseMap[$extension];
-		echo 'hit';die();
                 return $this->kickstartContinueNextStep();
             }
         }
