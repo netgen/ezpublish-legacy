@@ -87,7 +87,7 @@ Read [doc/INSTALL.md](doc/INSTALL.md) or go to [ezpublishdoc.mugo.ca/eZ-Publish/
 
 # Issue tracker
 
-Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
+Submitting bugs, improvements and stories is possible on [https://github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
