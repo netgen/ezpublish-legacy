@@ -1,13 +1,12 @@
 # eZ Publish 6.0
-==============
+
 ![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/7d03458d-adae-4f8b-9496-05585b0d6075)
 
 # eZ Publish Project Status
---------------------------
+
 **eZ Publish has made it beyond it's end of life in 2021 and survived. Current releases are primarily aimed at easing the requirements to support current versions of the PHP language like PHP 8.2 and 8.3.**
 
 # What is eZ Publish?
--------------------
 
 ## Recent improvements to eZ Publish
 eZ Publish (the application of interest) delivered to users worldwide by a web server (PHP built-in, Apache, Nginx, lighttpd, Among others).
@@ -16,7 +15,6 @@ eZ Publish with a full complement of all popular and available php extensions in
 
 With PHP we require composer to install eZ Publish software and no other software required to run
 the application. This is an incredible improvement to the kernel (core) of eZ Publish.
-
 
 ## What does eZ Publish provide for end users building websites?
 
@@ -45,18 +43,6 @@ access to the Internet.
 ## What version of PHP is required
 
 eZ Publish Legacy supports PHP 7.4 -> 8.3 please use the latest version of PHP available on your OS.
-
-# What is eZ Platform?
-
-eZ Publish's technological successor, eZ Platform, is a highly extensible, pure Content Managment Platform. It provides the same flexible content model at it's core like eZ Publish, and has a growing amount of additional features outside the traditional CMS scope provided by means of "Bundles"
-extending it.
-
-It is built on top of the full Symfony Framework, giving developers
-access to "standard" tools for rapid web & application development.
-
-eZ Platform in some users view suffered a slow road to a stable datatype compatability with existing custom implementations of eZ Publish. Today all of these conserns are now gone with a solid choice left leaving both eZ Publish Platform and eZ Platform as serious contenders to be carefully considered. [Netgen's Media Website Core software](https://github.com/netgen/media-site) represents a much more modern eZ Platform core powered by Ibexa OSS. If your going to choose; Choose wisely.
-
-Further reading on: [https://ezplatform.com/](http://web.archive.org/web/20200328165348/https://ezplatform.com/)
 
 # Main eZ Publish features
 ------------------------
@@ -100,14 +86,12 @@ Further reading on: [https://ezplatform.com/](http://web.archive.org/web/2020032
 Read [doc/INSTALL.md](doc/INSTALL.md) or go to [ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html](https://ezpublishdoc.mugo.ca/eZ-Publish/Technical-manual/4.7/Installation.html)
 
 # Issue tracker
--------------
 
 Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
 # Where to get more help
-----------------------
 
 eZ Publish documentation: [ezpublishdoc.mugo.ca/eZ-Publish](https://ezpublishdoc.mugo.ca/eZ-Publish/index.html)
 
@@ -115,6 +99,17 @@ eZ Publish Community forums: [share.se7enx.com/forums](https://share.se7enx.com/
 
 Share eZ Publish! Telegram Community Support Chat
 [https://t.me/ezpublish](https://t.me/ezpublish)
+
+# What is eZ Platform?
+
+eZ Publish's technological successor, eZ Platform, is a highly extensible, pure Content Managment Platform built upon the ideals core to Symfony. It provides the same flexible content model at it's core like eZ Publish, and has a growing amount of additional features outside the traditional CMS scope provided by means of "Bundles"
+extending it.
+
+It is built on top of the full Symfony Framework, giving developers access to "standard" tools for rapid web & application development.
+
+eZ Platform in some users view suffered a slow road to a stable datatype compatability with existing custom implementations of eZ Publish. Today all of these conserns are now gone with a solid choice left leaving both eZ Publish Platform and eZ Platform as serious contenders to be carefully considered. [Netgen's Media Website Core software](https://github.com/netgen/media-site) represents a much more modern eZ Platform core powered by Ibexa OSS. If your going to choose; Choose wisely.
+
+Further reading on: [https://ezplatform.com/](http://web.archive.org/web/20200328165348/https://ezplatform.com/)
 
 # License
 -------
