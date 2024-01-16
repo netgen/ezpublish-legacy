@@ -1,6 +1,8 @@
 # eZ Publish 6.0
 
-![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/7d03458d-adae-4f8b-9496-05585b0d6075)
+![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/b969638f-5f74-490a-8659-dd46c1b4d46e)
+![eZ Publish - Powered by SQLite Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/b09e3459-4614-49b2-8256-666073b1b8af)
+
 
 # eZ Publish Project Status
 
