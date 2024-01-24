@@ -19,7 +19,7 @@ class eZSQLiteSchema extends eZDBSchemaInterface
 
         if ( $this->Schema === false )
         {
-            $tableArray = $this->DBInstance->arrayQuery( "SHOW TABLES" );
+            $tableArray = $this->DBInstance->arrayQuery( "SELECT name FROM sqlite_master WHERE type='table'" );
 
             foreach( $tableArray as $tableNameArray )
             {
@@ -56,7 +56,7 @@ class eZSQLiteSchema extends eZDBSchemaInterface
     {
         $fields = array();
 
-        $resultArray = $this->DBInstance->arrayQuery( "DESCRIBE $table" );
+        $resultArray = $this->DBInstance->arrayQuery( "PRAGMA table_info($table)" );
 
         foreach( $resultArray as $row )
         {
@@ -130,7 +130,7 @@ class eZSQLiteSchema extends eZDBSchemaInterface
                 $field['default'] = false;
             }
 
-            if ( substr ( $row['Extra'], 'auto_increment' ) !== false )
+            if ( str_contains( $row['Extra'], 'auto_increment' ) !== false )
             {
                 unset( $field['length'] );
                 $field['not_null'] = 0;
@@ -161,7 +161,7 @@ class eZSQLiteSchema extends eZDBSchemaInterface
 
         $indexes = array();
 
-        $resultArray = $this->DBInstance->arrayQuery( "SHOW INDEX FROM $table" );
+        $resultArray = $this->DBInstance->arrayQuery( "PRAGMA index_info( $table )" );
 
         foreach( $resultArray as $row )
         {
