@@ -96,6 +96,7 @@
   </td>
 </tr>
 
+{if $database_info.info.type|ne('sqlite')}
 <tr>
   <td class="normal"><label class="textfield">{"Servername"|i18n("design/standard/setup/init")}:</label></td>
   <td class="normal"><input type="text" name="eZSetupDatabaseServer" size="16" value="{$database_info.server|wash}" /></td>
@@ -112,6 +113,7 @@
   <td class="normal"><label class="textfield">{"Password"|i18n("design/standard/setup/init")}:</label></td>
   <td class="normal"><input type="password" name="eZSetupDatabasePassword" size="16" value="{$database_info.password|wash}" /></td>
 </tr>
+{/if}
 {if or(eq($database_info.info.driver,'ezmysql'), eq($database_info.info.driver,'ezmysqli'))}
 <tr>
   <td class="normal"><label class="textfield">{"Socket (optional)"|i18n("design/standard/setup/init")}:</label></td>
