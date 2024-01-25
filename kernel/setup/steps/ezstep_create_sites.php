@@ -651,11 +651,11 @@ class eZStepCreateSites extends eZStepInstaller
         if ( function_exists( 'eZSitePreInstall' ) )
             eZSitePreInstall( $siteType );
 
+        $engLanguageObj = eZContentLanguage::fetchByLocale( 'eng-GB' );
 
         // Make sure objects use the selected main language instead of eng-GB
-        if ( $primaryLanguageLocaleCode != 'eng-GB' )
+        if ( $engLanguageObj != false && $primaryLanguageLocaleCode != 'eng-GB' )
         {
-            $engLanguageObj = eZContentLanguage::fetchByLocale( 'eng-GB' );
             $engLanguageID = (int)$engLanguageObj->attribute( 'id' );
             $updateSql = "UPDATE ezcontent_language
 SET
