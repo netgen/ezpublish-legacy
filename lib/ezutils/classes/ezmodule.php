@@ -1935,6 +1935,7 @@ class eZModule
             }
 
             $moduleRepositories = array_merge( $moduleRepositories, $globalExtensionRepositories );
+            $moduleRepositories = array_reverse( $moduleRepositories );
         }
 
         return $moduleRepositories;
