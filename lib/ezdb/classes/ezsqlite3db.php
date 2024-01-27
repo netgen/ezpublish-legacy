@@ -49,10 +49,14 @@ class eZSQLite3DB extends eZDBInterface
         $numAttempts = 1;
         while ( ( $connection == false || $error !== 0 ) && $numAttempts <= $maxAttempts )
         {
-            $fullPath = $fileName == ':memory:' ? $fileName : eZDir::path( array( 'var/storage/sqlite3', $fileName ) );
+            $directoryPath = 'var/storage/sqlite3';
+            $fullPath = $fileName == ':memory:' ? $fileName : eZDir::path( array( $directoryPath, $fileName ) );
 
-//            if( !file_exists( $fullPath ) )
-//	      $fh = fopen($fullPath, 'w') or eZDebug::writeError( "Connection error: Couldn't create database file. Please try again later or inform the system administrator.", "eZSQLite3DB" );
+            if( !file_exists( $directoryPath ) )
+                mkdir( $directoryPath, 0775 );
+
+            if( !file_exists( $fullPath ) )
+                $fh = fopen($fullPath, 'w') or eZDebug::writeError( "Connection error: Couldn't create database file. Please try again later or inform the system administrator.", "eZSQLite3DB" );
             $connection = new SQLite3( $fullPath );
             eZDebug::writeDebug( $connection );
 
