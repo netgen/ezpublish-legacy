@@ -52,7 +52,6 @@ class eZStepDatabaseChoice extends eZStepInstaller
             if ( isset( $databaseMap[$extension] ) )
             {
                 $this->PersistenceList['database_info'] = $databaseMap[$extension];
-		echo 'hit';die();
                 return $this->kickstartContinueNextStep();
             }
         }
@@ -79,7 +78,7 @@ class eZStepDatabaseChoice extends eZStepInstaller
             }
         }
 
-        if ( $databaseCount == 1 )
+        if ( $databaseCount != 1 )
         {
             return false;
         }
@@ -94,9 +93,6 @@ class eZStepDatabaseChoice extends eZStepInstaller
         $databaseMap = eZSetupDatabaseMap();
         $availableDatabases = array();
         $databaseList = array();
-
-        // PHP has built in sqlite support by default so it's always available.
-        $databaseList[] = $databaseMap['sqlite'];
 
         if ( isset( $this->PersistenceList['database_extensions']['found'] ) )
         {
