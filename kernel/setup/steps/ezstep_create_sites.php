@@ -896,7 +896,6 @@ language_locale='eng-GB'";
                                                     'restore_dates' => true,
                                                     'user_id' => $user->attribute( 'contentobject_id' ),
                                                     'non-interactive' => true );
-echo 'hit';
                         $status = $package->install( $installParameters );
                         if ( !$status )
                         {
