@@ -294,7 +294,12 @@ class eZStepSiteDetails extends eZStepInstaller
         $dbDriver = $databaseInfo['info']['driver'];
         $dbServer = $databaseInfo['server'];
         $dbPort = $databaseInfo['port'];
-        $dbName = isset( $databaseInfo['dbname'] ) ? $databaseInfo['dbname'] : $databaseInfo['database'];
+
+        if ( $databaseInfo['info']['type'] == 'mysqli' )
+            $dbName = 'mysql';
+        else
+            $dbName = isset( $databaseInfo['dbname'] ) ? $databaseInfo['dbname'] : $databaseInfo['database'];
+
         $dbUser = $databaseInfo['user'];
         $dbSocket = $databaseInfo['socket'];
         if ( trim( $dbSocket ) == '' )
