@@ -520,7 +520,7 @@ class eZStepCreateSites extends eZStepInstaller
                 }
             }
 
-            if ( $result )
+            if ( $result && $db->databaseName() != 'sqlite' )
             {
                 // Inserting data from the dba-data files of the datatypes
                 eZDataType::loadAndRegisterAllTypes();

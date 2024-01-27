@@ -95,8 +95,7 @@
   {$database_info.info.name|wash}
   </td>
 </tr>
-
-{if $database_info.info.type|ne('sqlite')}
+{if $database_info.info.type|ne('sqlite3')}
 <tr>
   <td class="normal"><label class="textfield">{"Servername"|i18n("design/standard/setup/init")}:</label></td>
   <td class="normal"><input type="text" name="eZSetupDatabaseServer" size="16" value="{$database_info.server|wash}" /></td>
