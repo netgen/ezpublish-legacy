@@ -33,7 +33,7 @@
         "se7enxweb/ezdemo-ls-extension": "~5.4",
         "se7enxweb/ezflow-ls-extension": "~5.3",
         "se7enxweb/ezgmaplocation-ls-extension": "~6.0",
-        "se7enxweb/ezie-ls": "~5.3",
+        "se7enxweb/ezie": "~6.0.0",
         "se7enxweb/ezmbpaex-ls": "~5.3",
         "se7enxweb/ezmultiupload": "~6.0.1",
         "se7enxweb/ezodf": "~6.0.0",
