@@ -29,7 +29,7 @@
         "ext-spl": "*",
         "ext-simplexml": "*",
         "se7enxweb/ezpublish-legacy-installer": "*",
-        "se7enxweb/ezautosave-ls": "~5.3",
+        "se7enxweb/ezautosave": "~6.0.0",
         "se7enxweb/ezdemo-ls-extension": "~5.4",
         "se7enxweb/ezflow-ls-extension": "~5.3",
         "se7enxweb/ezgmaplocation-ls-extension": "~6.0",
