@@ -11,11 +11,12 @@
         "ext-mysqli": "Mysqli is the default database handler used by eZ Publish",
         "ext-openssl": "OpenSSL provides cryptographically secure random bytes, which is used in certain parts of the product to greatly improve security",
         "ext-pcntl": "If you plan to take advantage of eZ Publish Async publishing feature, then pcntl extension is required",
-        "se7enxweb/ezsi-ls": "ezsi would allow you to use Edge/Server Side Includes of blocks in templates",
-        "se7enxweb/ezscriptmonitor-ls": "ezscriptmonitor makes it possible to better deal with long running bulk operations within eZ Publish",
-        "se7enxweb/ezfind-ls": "ezfind is a Solr based advance search engine for eZ Publish with a lot more features then the built in search",
-        "se7enxweb/eztags-ls": "eztags is a full tagging/taxonomy solution for eZ Publish replacing the simpler builtin ezkeywords datatype",
-        "se7enxweb/ezoracle": "ezoracle is a full database solution for eZ Publish replacing the simpler builtin mysql database support"
+        "se7enxweb/ezsi": "ezsi would allow you to use Edge/Server Side Includes of blocks in templates",
+        "se7enxweb/ezscriptmonitor": "ezscriptmonitor makes it possible to better deal with long running bulk operations within eZ Publish",
+        "se7enxweb/ezfind": "ezfind is a Solr based advance search engine for eZ Publish with a lot more features then the built in search",
+        "se7enxweb/eztags": "eztags is a full tagging/taxonomy solution for eZ Publish replacing the simpler builtin ezkeywords datatype",
+        "se7enxweb/ezoracle": "ezoracle is a full database solution for eZ Publish replacing the simpler builtin mysql database support",
+        "se7enxweb/ezauthorize": "ezauthorize is a feature complete transparent (no redirect away to paypal.com website distractions) payment solution for eZ Publish replacing the simpler builtin ezpaypal redirection based web shop payment support"
     },
     "require": {
         "php": "^7.4 || ^8.1",
