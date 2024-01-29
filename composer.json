@@ -16,7 +16,8 @@
         "se7enxweb/ezfind": "ezfind is a Solr based advance search engine for eZ Publish with a lot more features then the built in search",
         "se7enxweb/eztags": "eztags is a full tagging/taxonomy solution for eZ Publish replacing the simpler builtin ezkeywords datatype",
         "se7enxweb/ezoracle": "ezoracle is a full database solution for eZ Publish replacing the simpler builtin mysql database support",
-        "se7enxweb/ezauthorize": "ezauthorize is a feature complete transparent (no redirect away to paypal.com website distractions) payment solution for eZ Publish replacing the simpler builtin ezpaypal redirection based web shop payment support"
+        "se7enxweb/ezauthorize": "ezauthorize is a feature complete transparent (no redirect away to paypal.com website distractions) payment solution for eZ Publish replacing the simpler builtin ezpaypal redirection based web shop payment support",
+        "se7enxweb/xrowmetadata": "xrowmetadata is a feature complete seo enhancing solution that provides simply amazing results in terms of search engine seo optimization of existing content in a website. Try it today and you won't be disappointed."
     },
     "require": {
         "php": "^7.4 || ^8.1",
