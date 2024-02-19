@@ -1,8 +1,4 @@
-# eZ Publish 6.0
-![eZ Publish - Powered by SQLite Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/b969638f-5f74-490a-8659-dd46c1b4d46e)
-
-![eZ Publish - Project Logo](https://github.com/se7enxweb/ezpublish/assets/51429274/b09e3459-4614-49b2-8256-666073b1b8af)
-
+# eZ Publish Legacy (Ibexa 4 Branch)
 
 # eZ Publish Project Status
 
@@ -89,7 +85,7 @@ Read [doc/INSTALL.md](doc/INSTALL.md) or go to [ezpublishdoc.mugo.ca/eZ-Publish/
 
 # Issue tracker
 
-Submitting bugs, improvements and stories is possible on [https://github.com/se7enxweb/ezpublish/issues](https://github.com/se7enxweb/ezpublish/issues)
+Submitting bugs, improvements and stories is possible on [https://github.com/netgen/ezpublish-legacy/issues](https://github.com/netgen/ezpublish-legacy/issues)
 
 If you discover a security issue, please responsibly report such issues.
 
