@@ -1,7 +1,7 @@
 {
-    "name":        "se7enxweb/ezpublish",
-    "description": "eZ Publish 6. Maintained by 7x. For General Use With PHP 8.3. Further feature releases in development. Please sponsor our work on the eZ Publish (System). This is capable of being used standalone or combined with Ibexa OSS",
-    "homepage":    "https://se7enx.com",
+    "name":        "netgen/ezpublish-legacy",
+    "description": "eZ Publish Legacy. Maintained by Netgen. For General Use With PHP 8.3. This is capable of being used standalone or combined with Ibexa OSS",
+    "homepage":    "https://netgen.io",
     "license":     "GPL-2.0-or-later",
     "type":        "ezpublish-legacy",
     "suggest": {
