@@ -58,7 +58,7 @@
     </div>
     <div class="object">
         <p>
-            The following is a list of the third-party software that is distributed with this copy of <a href="https://ezpublishlegacy.se7en.com">eZ Publish</a>. The list of third party
+            The following is a list of the third-party software that is distributed with this copy of <a href="https://github.com/netgen/ezpublish-legacy">eZ Publish</a>. The list of third party
             software includes the license for the software in question and the directory or files that contain the third-party software.
         </p>
 
