@@ -27,8 +27,8 @@
 </div>
 <div class="object">
 <p>
-    The following is a list of <a href="https://ezpublishlegacy.se7enx.com">eZ Publish</a> contributors who have licensed their work for use by <a href="https://se7enx.com">7x</a> under the terms and conditions of
-    the eZ Systems Contributor Licensing Agreement. As permitted by this agreement with the contributors, <a href="https://se7enx.com">7x</a> is redistributing the
+    The following is a list of <a href="https://github.com/netgen/ezpublish-legacy">eZ Publish</a> contributors who have licensed their work for use by <a href="https://netgen.io">Netgen</a> under the terms and conditions of
+    the eZ Systems Contributor Licensing Agreement. As permitted by this agreement with the contributors, <a href="https://netgen.io">Netgen</a> is redistributing the
     contribution under the same license as the file that the contribution is included in. The list of contributors includes the
     contributors&apos;s name, optional contact info and a list of files that they have either contributed or contributed work to.
 </p>
@@ -74,7 +74,7 @@
     <h2>{'Extensions'|i18n('design/standard/ezinfo/about')}</h2>
 </div>
 <div class="object">
-    <p>The following is a list of the extensions that have been loaded at run-time by this copy of <a href="https://ezpublishlegacy.se7enx.com">eZ Publish</a>.</p>
+    <p>The following is a list of the extensions that have been loaded at run-time by this copy of <a href="https://github.com/netgen/ezpublish-legacy">eZ Publish</a>.</p>
     {if is_set( $extensions )}
         {foreach $extensions as $ext_name => $extension}
             {if is_array( $extension )}
