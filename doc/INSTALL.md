@@ -46,7 +46,7 @@ GitHub Installation Guide
 
 - Clone the repository
 
-`git clone git@github.com:se7enxweb/ezpublish.git;`
+`git clone git@github.com:netgen/ezpublish-legacy.git;`
 
 - Install eZ Publish required PHP libraries like Zeta Components and eZ Publish extensions as specified in this project's composer.json.
 
@@ -58,12 +58,12 @@ For the rest of the installation steps you will find the installation guide at h
 Composer Installation Guide
 ------------------
 
-- Download the package from [se7enxweb/ezpublish](https://packagist.org/packages/se7enxweb/ezpublish)
+- Download the package from [netgen/ezpublish-legacy](https://packagist.org/packages/netgen/ezpublish-legacy)
 
 `mkdir ezpublish;`
 
 - Install eZ Publish required PHP libraries like Zeta Components and eZ Publish extensions as specified in this project's composer.json.
 
-`cd ezpublish; composer require se7enxweb/ezpublish:v6.0.0;`
+`cd ezpublish; composer require netgen/ezpublish-legacy:ibexa4;`
 
 For the rest of the installation steps you will find the installation guide at https://ezpublishdoc.mugo.ca
