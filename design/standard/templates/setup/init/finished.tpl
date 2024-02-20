@@ -19,7 +19,7 @@
   If you find a bug (error), please go to %buglink and report it.
   With your help we can fix the errors eZ Publish might have and implement new features."
  |i18n("design/standard/setup/init",,
-       hash('%buglink',concat('<a target="_other" href="https://github.com/se7enxweb/ezpublish/issues">',"eZ Publish bug reports"|i18n("design/standard/setup/init"),'</a>'),
+       hash('%buglink',concat('<a target="_other" href="https://github.com/netgen/ezpublish-legacy/issues">',"eZ Publish bug reports"|i18n("design/standard/setup/init"),'</a>'),
             '%ezlink',concat('<a target="_other" href="https://share.se7enx.com/forums/developer">',"Share eZ Publish! Forums"|i18n("design/standard/setup/init"),'</a>')))}
 </p>
 
