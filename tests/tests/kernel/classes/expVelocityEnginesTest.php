@@ -315,6 +315,33 @@ class expVelocityEnginesTest extends ezpTestCase
     }
 
     /**
+     * [CacheSettings] Enabled=disabled writes enabled: false. The server's own
+     * default is on, so leaving the key out kept the response cache running.
+     */
+    public function testTheResponseCacheIsSwitchedOffWhenDisabled()
+    {
+        ezpINIHelper::setINISetting( 'velocity.ini', 'CacheSettings', 'Enabled', 'disabled' );
+        $cache = $this->qbixWebConfig( expVelocity::create( 'velocity.ini', 'qbix' ) )['cache'] ?? array();
+        $this->assertArrayHasKey( 'enabled', $cache );
+        $this->assertFalse( $cache['enabled'] );
+
+        ezpINIHelper::setINISetting( 'velocity.ini', 'CacheSettings', 'Enabled', 'enabled' );
+        $cache = $this->qbixWebConfig( expVelocity::create( 'velocity.ini', 'qbix' ) )['cache'] ?? array();
+        $this->assertTrue( $cache['enabled'] ?? null );
+    }
+
+    /**
+     * Q.web as the qbix engine writes it.
+     */
+    protected function qbixWebConfig( expVelocity $velocity )
+    {
+        $write = new ReflectionMethod( $velocity, 'writeServerConfig' );
+        $write->setAccessible( true );
+        $config = json_decode( file_get_contents( $write->invoke( $velocity ) ), true );
+        return $config['Q']['web'] ?? array();
+    }
+
+    /**
      * Q.webserver as the qbix engine writes it to var/tmp/velocity-server.json.
      */
     protected function qbixWebserverConfig( expVelocity $velocity )

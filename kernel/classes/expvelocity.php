@@ -1177,10 +1177,10 @@ class expVelocity
 
         // Switch it on, and give Exponential's pages a lifetime.
         //
-        // Everything above only tunes a cache the server keeps off unless
-        // told otherwise, and nothing here told it: an anonymous front page
-        // was rendered on every request, 27 req/s against about 3,500 from
-        // the cache on the same machine. Switching it on is not enough by
+        // Everything above only tunes the cache; whether it runs is said
+        // here, both ways. Before it was said, an anonymous front page was
+        // rendered on every request, 27 req/s against about 3,500 from the
+        // cache on the same machine. Switching it on is not enough by
         // itself either. Exponential sends Cache-Control: no-cache,
         // must-revalidate, which the server does not treat as a refusal, so a
         // page is stored only when it has a lifetime -- its own max-age, or
@@ -1243,6 +1243,16 @@ class expVelocity
                 'every'  => (int)$this->cacheSetting( 'SweepEvery', null, '300' ),
                 'maxAge' => (int)$this->cacheSetting( 'SweepMaxAge', null, '86400' ),
             );
+        }
+        else
+        {
+            // Off has to be said. The server's own default is on (with no
+            // lifetime), so leaving the key out kept the cache running: it
+            // stored every answer that brought a lifetime of its own -- the
+            // HTTP cache's anonymous pages carry public, max-age=300 -- in
+            // files/cache/reverse beside the installation, where nothing
+            // here clears it, and answered from there for five minutes.
+            $cache['enabled'] = false;
         }
 
         if ( $cache )
